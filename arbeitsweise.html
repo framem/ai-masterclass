@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Arbeitsweise — Befehl · Plan · Ziel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <rect x="200" y="330" width="220" height="150" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="490" y="330" width="220" height="150" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="780" y="330" width="220" height="150" rx="14" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
+    <text x="310" y="415" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Befehl</text>
+    <text x="600" y="415" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Plan</text>
+    <text x="890" y="415" text-anchor="middle" font-family="serif" font-size="30" fill="#fff">Ziel</text>
+    <text x="600" y="250" text-anchor="middle" font-family="serif" font-size="48" fill="#15110c" font-weight="500">Arbeitsweise</text>
+  </svg>
+</template>
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --quiz-ok: #3d8a4a;
+    --quiz-no: #a83020;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    /* projection-appropriate type scale (1920×1080) */
+    --type-title: 88px;
+    --type-h2: 64px;
+    --type-subtitle: 42px;
+    --type-lede: 30px;
+    --type-body: 26px;
+    --type-small: 19px;
+    --type-mono: 23px;
+    --type-eyebrow: 18px;
+    --pad-top: 56px;
+    --pad-bottom: 56px;
+    --pad-x: 80px;
+    --gap-title: 36px;
+    --gap-item: 22px;
+  }
+
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* shared chrome */
+  .chrome {
+    position: absolute;
+    inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 44px 0 26px;
+  }
+
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: var(--type-h2); line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1600px;
+  }
+  h3.subtitle {
+    font-size: var(--type-subtitle); line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede {
+    font-size: var(--type-lede); line-height: 1.4; color: var(--ink-2);
+    max-width: 1500px;
+  }
+  p.body {
+    font-size: var(--type-body); line-height: 1.5; color: var(--ink-2);
+    max-width: 1100px;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* card primitives */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+  .card.dark {
+    background: var(--ink); color: #f0ece3;
+    border-color: var(--ink);
+  }
+
+  /* Merksatz callout */
+  .callout {
+    margin-top: 24px;
+    padding: 20px 28px;
+    min-height: 76px;
+    box-sizing: border-box;
+    display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+
+  /* ===== Übungs-Slides ===== */
+  .qrow {
+    display: grid; grid-template-columns: 48px 1fr; gap: 18px;
+    align-items: start;
+  }
+  .qrow + .qrow { margin-top: 14px; }
+  .qrow .letter {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 20px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0;
+  }
+  .qrow .qtext { font-size: 21px; line-height: 1.45; color: var(--ink-2); padding-top: 8px; }
+  .qrow .qtext em { color: var(--ink); font-style: italic; }
+  .qrow .qtext .blank {
+    display: inline-block; min-width: 140px;
+    border-bottom: 1.5px dashed var(--ink-3); margin: 0 6px;
+    color: transparent;
+  }
+
+  .solution-row {
+    display: grid; grid-template-columns: 48px 1fr 1fr; gap: 16px;
+    align-items: center;
+    padding: 10px 0;
+  }
+  .solution-row + .solution-row { border-top: 1px solid rgba(255,255,255,0.10); }
+  .solution-row .letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 17px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .solution-row .stext { font-size: 17px; line-height: 1.35; color: #d8d2c5; }
+  .solution-row .schoice {
+    font-family: var(--mono); font-size: 17px; color: #f0ece3;
+    font-weight: 500; letter-spacing: 0.02em;
+  }
+  .solution-row .schoice small {
+    display: block; font-family: var(--sans); font-size: 14px;
+    font-weight: 400; color: #c8c2b6; margin-top: 2px; letter-spacing: 0;
+  }
+
+  .options-rail {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    margin-top: 14px;
+  }
+  .options-rail .opt {
+    background: var(--bg-2); border: 1px solid var(--hair);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .options-rail .opt .opt-name {
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    color: var(--ink);
+  }
+  .options-rail .opt .opt-tag {
+    font-size: 13px; line-height: 1.35; color: var(--ink-3); margin-top: 4px;
+  }
+
+  /* ===== Interaktive Quiz-Mechanik ===== */
+  .quiz { display: flex; flex-direction: column; gap: 7px; }
+
+  .qitem {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    column-gap: 16px;
+    row-gap: 6px;
+    align-items: center;
+    padding: 7px 14px;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+  }
+  .qitem .qletter {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qitem .qbody { font-size: 17px; line-height: 1.35; color: var(--ink-2); }
+  .qitem .qbody em { color: var(--ink); font-style: italic; }
+  /* Buttons und Feedback liegen in der zweiten Zeile unter der Frage
+     und teilen sich dieselbe Zelle — so wächst die Zeile beim Antworten nicht. */
+  .qitem .qchoices {
+    grid-column: 2; grid-row: 2;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qchoices { opacity: 0; pointer-events: none; }
+  .qitem .qfb {
+    grid-column: 2; grid-row: 2;
+    align-self: center;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--ink-3); line-height: 1.4;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qfb { opacity: 1; }
+  .qitem.answered .qfb .ok { color: var(--quiz-ok); font-weight: 600; }
+  .qitem.answered .qfb .no { color: var(--quiz-no); font-weight: 600; }
+
+  .qchoice {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    padding: 5px 11px; border-radius: 8px;
+    background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+    white-space: nowrap;
+  }
+  .qchoice:hover { background: var(--ink); color: var(--bg); }
+  .qchoice:active { transform: translateY(1px); }
+  .qchoice.picked-ok { background: var(--quiz-ok); color: #fff; border-color: var(--quiz-ok); }
+  .qchoice.picked-no { background: var(--quiz-no); color: #fff; border-color: var(--quiz-no); }
+  .qchoice.show-ok { border-color: var(--quiz-ok); color: var(--quiz-ok); background: transparent; border-style: dashed; }
+  .qitem.answered .qchoice { pointer-events: none; opacity: 0.85; }
+  .qitem.answered .qchoice.picked-ok,
+  .qitem.answered .qchoice.picked-no,
+  .qitem.answered .qchoice.show-ok { opacity: 1; }
+
+  /* Multiple-Choice-Karten für A2A / MCP */
+  .mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mcq {
+    text-align: left; cursor: pointer; appearance: none;
+    background: var(--paper); border: 1.5px solid var(--hair);
+    border-radius: 14px; padding: 20px 24px;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.05s;
+  }
+  .mcq:hover { border-color: var(--ink); }
+  .mcq:active { transform: translateY(1px); }
+  .mcq .mcq-head { display: flex; gap: 14px; align-items: baseline; }
+  .mcq .mcq-letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mcq .mcq-title { font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.25; color: var(--ink); text-align: left; }
+  .mcq .mcq-note { font-size: 17px; color: var(--ink-2); margin: 8px 0 0 54px; line-height: 1.4; }
+  .mcq.picked-ok { border-color: var(--quiz-ok); background: color-mix(in oklab, var(--quiz-ok) 8%, var(--paper)); }
+  .mcq.picked-no { border-color: var(--quiz-no); background: color-mix(in oklab, var(--quiz-no) 6%, var(--paper)); }
+  .mcq.show-ok { border-color: var(--quiz-ok); border-style: dashed; }
+  .mcq.picked-ok .mcq-letter, .mcq.show-ok .mcq-letter { background: var(--quiz-ok); }
+  .mcq.picked-no .mcq-letter { background: var(--quiz-no); }
+  .mcq-grid.answered .mcq { pointer-events: none; }
+
+  /* ===== Szenario-Match: zweispaltiges Karten-Raster (Befehl/Plan/Ziel) ===== */
+  .ex-stage { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .smatch-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px;
+    flex: 1; min-height: 0; align-content: start;
+  }
+  .smatch-item {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+    padding: 12px 16px;
+    display: grid; grid-template-columns: 100%; grid-template-rows: 1fr auto;
+  }
+  .smatch-item .sm-scn { font-family: var(--serif); font-size: 21px; line-height: 1.3; color: var(--ink); }
+  .smatch-item .sm-scn .sm-meta { font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .smatch-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; grid-area: 2 / 1; align-self: end; }
+  .sm-btns { display: flex; gap: 8px; }
+  .sm-btn {
+    appearance: none; cursor: pointer; font-family: var(--mono); font-size: 14px; font-weight: 600;
+    padding: 7px 15px; border-radius: 8px; background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent; letter-spacing: 0.03em; transition: background .15s, color .15s, transform .05s;
+  }
+  .sm-btn:hover { background: var(--ink); color: var(--bg); }
+  .sm-btn:active { transform: translateY(1px); }
+  .sm-btn.picked-ok { background: var(--quiz-ok); color: #fff; border-color: var(--quiz-ok); }
+  .sm-btn.picked-no { background: var(--quiz-no); color: #fff; border-color: var(--quiz-no); }
+  .sm-btn.show-ok { background: transparent; color: var(--quiz-ok); border-color: var(--quiz-ok); border-style: dashed; }
+  .smatch-item.answered .sm-btn { pointer-events: none; }
+  /* Buttons und Begründung teilen dieselbe Grid-Zelle; ein unsichtbarer Sizer
+     reserviert die Höhe der längsten Begründung — die Karte springt nicht. */
+  .sm-fb, .sm-fb-sizer { grid-area: 2 / 1; align-self: end; margin-top: 8px; font-size: 17px; line-height: 1.4; color: var(--ink-3); }
+  .sm-fb-sizer { visibility: hidden; }
+  .sm-fb { visibility: hidden; opacity: 0; transition: opacity .25s ease; }
+  .smatch-item.answered .sm-fb { visibility: visible; opacity: 1; }
+  .smatch-item.answered .smatch-row { visibility: hidden; }
+  .sm-fb b { color: var(--ink); font-weight: 600; }
+  .sm-fb .sm-fb-tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+  .sm-fb .sm-fb-tag.ok { color: var(--quiz-ok); }
+  .sm-fb .sm-fb-tag.no { color: var(--quiz-no); }
+
+  /* Reveal-Button */
+  .reveal-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px; gap: 16px;
+  }
+  .reveal-status {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .reveal-status .score { color: var(--ink); font-weight: 600; }
+  .qbutton {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--bg); border: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .qbutton:hover { background: var(--accent); }
+  .qbutton:active { transform: translateY(1px); }
+  .qbutton.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .qbutton.ghost:hover { background: var(--ink); color: var(--bg); }
+
+  /* ===== Workshop-Agenda ===== */
+  .agenda-row {
+    display: grid; grid-template-columns: 72px 1fr 92px;
+    gap: 20px; align-items: center;
+    padding: 14px 20px;
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px;
+  }
+  .agenda-row.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .agenda-row .a-num {
+    font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.08em;
+  }
+  .agenda-row.dark .a-num { color: var(--accent-soft); }
+  .agenda-row .a-title {
+    font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15;
+  }
+  .agenda-row .a-desc {
+    font-size: 16px; color: var(--ink-3); margin-top: 3px; line-height: 1.35;
+  }
+  .agenda-row.dark .a-desc { color: #c8c2b6; }
+  .agenda-row .a-time {
+    font-family: var(--mono); font-size: 17px; text-align: right;
+    color: var(--accent);
+  }
+  .agenda-row.dark .a-time { color: var(--accent-soft); }
+
+  .goal {
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 18px; color: var(--ink-2); line-height: 1.4;
+  }
+  .goal strong { color: var(--ink); }
+
+  /* ===== Cheat-Sheet ===== */
+  .cs-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .cs-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cs-card .cs-num {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em;
+  }
+  .cs-card.dark .cs-num { color: var(--accent-soft); }
+  .cs-card .cs-name {
+    font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .cs-card .cs-row { margin-top: 14px; }
+  .cs-card .cs-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .cs-card.dark .cs-label { color: #c8c2b6; }
+  .cs-card .cs-val {
+    font-size: 15.5px; color: var(--ink-2); line-height: 1.4; margin-top: 3px;
+  }
+  .cs-card.dark .cs-val { color: #d8d2c5; }
+  .cs-card .cs-val.mono { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+  .cs-card.dark .cs-val.mono { color: #f0ece3; }
+
+  .cs-rules {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-top: 14px;
+  }
+  .cs-rule {
+    background: transparent; border: 1px dashed var(--hair);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .cs-rule .r-when {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cs-rule .r-then {
+    font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;
+  }
+  .cs-rule .r-then strong { color: var(--ink); }
+
+  /* ===== Echte Praxis · Pair-Programming ===== */
+  .role-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; flex-direction: column;
+  }
+  .role-card .r-tag {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .role-card .r-name {
+    font-family: var(--serif); font-size: 30px; font-weight: 500;
+    line-height: 1; margin-top: 4px;
+  }
+  .role-card .r-sub {
+    font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .role-card .r-body {
+    font-size: 16px; color: var(--ink-2); line-height: 1.45; margin-top: 10px;
+  }
+
+  .gate-list { display: flex; flex-direction: column; gap: 10px; }
+  .gate-list .gate-item {
+    display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+    padding: 8px 0;
+  }
+  .gate-list .gate-item + .gate-item { border-top: 1px solid rgba(255,255,255,0.10); }
+  .gate-list .g-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gate-list .g-body { font-size: 16px; line-height: 1.35; color: #d8d2c5; padding-top: 5px; }
+  .gate-list .g-body strong { color: #f0ece3; }
+  .gate-list .g-body em {
+    display: block; font-family: var(--mono); font-style: normal;
+    font-size: 14px; color: var(--accent-soft); margin-top: 3px;
+  }
+
+  .task-row {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 14px; align-items: start;
+    padding: 9px 0;
+  }
+  .task-row + .task-row { border-top: 1px solid var(--hair); }
+  .task-row .t-letter {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-row .t-body { font-size: 16px; line-height: 1.4; color: var(--ink-2); padding-top: 4px; }
+  .task-row .t-body strong { color: var(--ink); }
+
+  /* Aufklapp-Erklärung nach Auflösung (für Übung 3 + 4) */
+  .explain {
+    margin-top: 16px;
+    background: var(--ink); color: #d8d2c5;
+    border-radius: 14px; padding: 18px 26px;
+    display: none;
+  }
+  .explain.open { display: block; }
+  .explain strong { color: #f0ece3; }
+  .explain .explain-accent { color: var(--accent-soft); font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ===== Arbeitsweise — Stufen ===== */
+  .lvl-rail {
+    display: grid; grid-template-columns: 1fr 56px 1fr 56px 1fr;
+    align-items: stretch; margin-top: 30px;
+  }
+  .lvl-card {
+    background: var(--paper); border: 1px solid var(--ink);
+    border-radius: 16px; padding: 30px 30px; display: flex; flex-direction: column;
+  }
+  .lvl-card.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .lvl-card .lv-num { font-family: var(--mono); font-size: 20px; color: var(--ink-3); letter-spacing: 0.14em; }
+  .lvl-card.accent .lv-num { color: rgba(255,255,255,0.72); }
+  .lvl-card .lv-name { font-family: var(--serif); font-size: 44px; font-weight: 500; line-height: 1; margin-top: 8px; letter-spacing: -0.01em; }
+  .lvl-card .lv-tag { font-family: var(--mono); font-size: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 16px; }
+  .lvl-card.accent .lv-tag { color: #fff; }
+  .lvl-card .lv-line { font-size: 24px; line-height: 1.4; color: var(--ink-2); margin-top: 14px; }
+  .lvl-card.accent .lv-line { color: rgba(255,255,255,0.92); }
+  .lvl-card .lv-line strong { color: var(--ink); }
+  .lvl-card.accent .lv-line strong { color: #fff; }
+  .lvl-arrow { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 34px; color: var(--accent); }
+
+  .spectrum { position: relative; margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--hair); }
+  .spectrum .spec-grid {
+    position: relative;
+    display: grid; grid-template-columns: 1fr 56px 1fr 56px 1fr; align-items: center;
+    min-height: 72px;
+  }
+  .spectrum .spec-wedge {
+    position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+    height: 72px; border-radius: 3px; z-index: 0;
+    background: linear-gradient(90deg, rgba(21,17,12,0.16), var(--accent));
+    clip-path: polygon(0 43%, 100% 4%, 100% 96%, 0 57%);
+  }
+  .spectrum .spec-node { position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; }
+  .spectrum .spec-node .sn-name {
+    position: absolute; bottom: calc(100% + 14px); white-space: nowrap;
+    font-family: var(--mono); font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .spectrum .spec-node.is-accent .sn-name { color: var(--accent); }
+  .spectrum .sn-dot { border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); box-shadow: 0 0 0 6px var(--paper); }
+  .spectrum .sn-dot.d1 { width: 16px; height: 16px; }
+  .spectrum .sn-dot.d2 { width: 22px; height: 22px; }
+  .spectrum .sn-dot.d3 { width: 32px; height: 32px; background: var(--accent); border-color: var(--accent); }
+  .spectrum .spec-ends {
+    margin-top: 30px; display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 18px; color: var(--ink-3); letter-spacing: 0.04em;
+  }
+
+  /* level detail */
+  .lvl-detail { display: grid; grid-template-columns: 0.72fr 1.28fr; gap: 56px; margin-top: 30px; flex: 1; min-height: 0; }
+  .lvl-detail .ld-left { display: flex; flex-direction: column; }
+  .ld-bignum { font-family: var(--mono); font-size: 30px; color: var(--accent); letter-spacing: 0.12em; }
+  .ld-bigname { font-family: var(--serif); font-size: 80px; font-weight: 500; line-height: 0.98; margin-top: 10px; letter-spacing: -0.02em; }
+  .ld-model { font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--ink-3); margin-top: 22px; line-height: 1.3; max-width: 520px; }
+  .ld-tags { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+  .spec { display: flex; flex-direction: column; }
+  .spec .srow { display: grid; grid-template-columns: 190px 1fr; gap: 28px; padding: 18px 0; border-top: 1px solid var(--hair); align-items: start; }
+  .spec .srow:first-child { border-top: none; padding-top: 0; }
+  .spec .slabel { font-family: var(--mono); font-size: 16px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding-top: 5px; }
+  .spec .sval { font-size: 26px; line-height: 1.42; color: var(--ink-2); }
+  .spec .sval strong { color: var(--ink); }
+  .ex-block {
+    font-family: var(--mono); font-size: 20px; line-height: 1.48;
+    background: var(--bg-2); border-radius: 12px; padding: 15px 20px; color: var(--ink);
+  }
+  .ex-block .u { color: var(--ink-3); }
+  .ex-block .res { color: var(--ink-2); }
+  .ex-block .agent-plan { display: grid; gap: 2px; margin: 5px 0 7px; padding-left: 1.7em; font-size: 18px; }
+  .ex-block .agent-plan .n { color: var(--accent); font-weight: 600; margin-right: 0.15em; }
+
+</style>
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+
+<body>
+<deck-stage>
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span></span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — Wie viel du dem Agenten überlässt</div>
+      <h1 class="title" style="margin-top: 32px;">Befehl, Plan<br/>oder <span class="accent">Ziel</span>.</h1>
+
+      <h3 class="subtitle" style="margin-top: 28px;">
+        Dieselbe Aufgabe, drei Eingriffstiefen. Je autonomer, desto mehr denkt der Agent selbst — und desto mehr Kontrolle gibst du an Freigabe-Punkte und Guardrails ab.
+      </h3>
+
+      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">So klein wie möglich</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">So autonom wie nötig</span>
+      </div>
+
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 02 ÜBERSICHT — DAS SPEKTRUM ===================== -->
+  <section data-screen-label="02 Das Spektrum">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Eine Achse, drei Stationen</div>
+      <h2 class="title" style="font-size: 60px;">Von <span class="accent">steuern</span> zu <span class="accent">delegieren</span>.</h2>
+
+      <p class="lede" style="margin-top: 4px;">
+        Es ist nicht „Befehl <em>oder</em> Autonomie" — es ist ein Schieberegler. Du wählst pro Aufgabe, wie viel du dem Agenten überlässt — und wo du eingreifen willst.
+      </p>
+
+      <div class="lvl-rail">
+        <div class="lvl-card">
+          <div class="lv-num">01</div>
+          <div class="lv-name">Befehl</div>
+          <div class="lv-tag">Eingriff: jeder Schritt</div>
+          <div class="lv-line">Du gibst <strong>eine Anweisung</strong>, der Agent führt genau sie aus.</div>
+        </div>
+        <div class="lvl-arrow">→</div>
+        <div class="lvl-card">
+          <div class="lv-num">02</div>
+          <div class="lv-name">Plan</div>
+          <div class="lv-tag">Eingriff: Plan-Freigabe</div>
+          <div class="lv-line">Du gibst <strong>das Ziel</strong>, gibst den Plan frei — dann erfolgt die Umsetzung.</div>
+        </div>
+        <div class="lvl-arrow">→</div>
+        <div class="lvl-card accent">
+          <div class="lv-num">03</div>
+          <div class="lv-name">Ziel</div>
+          <div class="lv-tag">Eingriff: am Ergebnis</div>
+          <div class="lv-line">Du gibst <strong>die Erfolgsbedingung</strong>, der Agent läuft eigenständig.</div>
+        </div>
+      </div>
+
+      <div class="spectrum">
+        <div class="spec-grid">
+          <div class="spec-wedge"></div>
+          <div class="spec-node"><span class="sn-name">Befehl</span><span class="sn-dot d1"></span></div>
+          <div></div>
+          <div class="spec-node"><span class="sn-name">Plan</span><span class="sn-dot d2"></span></div>
+          <div></div>
+          <div class="spec-node is-accent"><span class="sn-name">Ziel</span><span class="sn-dot d3"></span></div>
+        </div>
+        <div class="spec-ends">
+          <span>← mehr Kontrolle · kleinerer Handlungsspielraum</span>
+          <span>mehr Autonomie · größerer Handlungsspielraum →</span>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: auto; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">Wähl die <strong>niedrigste Stufe, die die Aufgabe noch in einem Rutsch erledigt.</strong> Mehr Autonomie ist kein Ziel, sondern ein Werkzeug.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 STUFE 1 — BEFEHL ===================== -->
+  <section data-screen-label="03 Stufe 1 Befehl" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Stufe 01 — du steuerst</div>
+
+      <div class="lvl-detail">
+        <div class="ld-left">
+          <div class="ld-bigname">Befehl</div>
+          <div class="ld-model">„Du führst, das Modell führt aus — jeder Schritt unter deiner Kontrolle."</div>
+          <div class="ld-tags">
+            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">Eingriff: jeder Schritt</span>
+            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">Kontrolle maximal</span>
+          </div>
+        </div>
+
+        <div class="spec">
+          <div class="srow">
+            <div class="slabel">Was</div>
+            <div class="sval" data-nd='Eine konkrete Anweisung. Der Agent führt <strong>genau sie</strong> aus — ein Schritt, ein Ergebnis, sofort prüfbar.'>Eine konkrete Anweisung. Der Agent führt <strong>genau sie</strong> aus — ein Schritt, ein Ergebnis, sofort prüfbar.</div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Beispiel</div>
+            <div class="sval">
+              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Ersetz im ganzen Bericht „<strong>Q3</strong>“ durch „<strong>Q4</strong>“.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">22 Treffer ersetzt ✓</span><br/><span class="u">du</span>&nbsp;»Formulier diesen Absatz eine Spur förmlicher.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">Absatz überarbeitet ✓</span>'>
+                <span class="u">du</span>&nbsp;»Benenne <strong>getUser</strong> überall zu <strong>fetchUser</strong> um.«<br/>
+                <span class="u">agent</span>&nbsp;→ <span class="res">14 Stellen in 6 Dateien umbenannt ✓</span><br/>
+                <span class="u">du</span>&nbsp;»Füg hier einen Null-Check ein.«<br/>
+                <span class="u">agent</span>&nbsp;→ <span class="res">3 Zeilen ergänzt ✓</span>
+              </div>
+            </div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Wann</div>
+            <div class="sval" data-nd='Klein und eindeutig. Du weißt <strong>genau</strong>, was du willst — ein punktgenauer Eingriff.'>Klein und eindeutig. Du weißt <strong>genau</strong>, was du willst — eine punktgenaue Änderung.</div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Grenze</div>
+            <div class="sval" data-nd='Du denkst, der Agent schreibt. Skaliert nicht auf große, mehrstufige Aufgaben.'>Du denkst, der Agent tippt. Skaliert nicht auf große, mehrstufige Aufgaben.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">Wenn du es <strong>in einem Satz präzise</strong> sagen kannst — sag es als Befehl. Kein Plan, kein Overhead.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 STUFE 2 — PLAN ===================== -->
+  <section data-screen-label="04 Stufe 2 Plan" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Stufe 02 — du gibst den Plan frei</div>
+
+      <div class="lvl-detail">
+        <div class="ld-left">
+          <div class="ld-bigname">Plan</div>
+          <div class="ld-model">„Das Modell erstellt einen Plan, du gibst frei — die Umsetzung folgt erst nach deiner Freigabe."</div>
+          <div class="ld-tags">
+            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">Eingriff: Plan-Freigabe</span>
+            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">wichtigster Checkpoint</span>
+          </div>
+        </div>
+
+        <div class="spec">
+          <div class="srow">
+            <div class="slabel">Was</div>
+            <div class="sval" data-nd='Du beschreibst das Ergebnis. Der Agent schlägt <strong>zuerst einen Plan</strong> vor; du gibst frei oder korrigierst — dann erst die Umsetzung.'>Du beschreibst das Ergebnis. Der Agent schlägt <strong>zuerst einen Plan</strong> vor; du gibst frei oder korrigierst — dann erst die Umsetzung.</div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Beispiel</div>
+            <div class="sval">
+              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Bau aus diesem Bericht eine Präsentation — <strong>erst ein Plan.</strong>«<br/><span class="u">agent</span>&nbsp;→ Plan:<div class="agent-plan"><div><span class="n">1·</span>Kernaussagen je Kapitel ziehen</div><div><span class="n">2·</span>In 8 Folien gliedern</div><div><span class="n">3·</span>Diagramme vorschlagen</div></div><span class="u">du</span>&nbsp;→ »<strong>Punkt 3 weglassen</strong> — Rest passt.«'>
+                <span class="u">du</span>&nbsp;»Pagination auf der Orders-Liste — <strong>erst ein Plan.</strong>«<br/>
+                <span class="u">agent</span>&nbsp;→ Plan:
+                <div class="agent-plan">
+                  <div><span class="n">1·</span>Query auf LIMIT / OFFSET umstellen</div>
+                  <div><span class="n">2·</span>Seiten-Controls in die UI einbauen</div>
+                  <div><span class="n">3·</span>Tests für leere &amp; letzte Seite</div>
+                </div>
+                <span class="u">du</span>&nbsp;→ »<strong>Punkt 2 später</strong> — Rest freigegeben.«
+              </div>
+            </div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Wann</div>
+            <div class="sval" data-nd='Mittlere Aufgaben über mehrere Dokumente; Unklarheit, die du <strong>vor</strong> der Umsetzung sehen willst.'>Mittlere Aufgaben über mehrere Dateien; Unklarheit, die du <strong>vor</strong> dem Code sehen willst.</div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Gewinn</div>
+            <div class="sval" data-nd='Fängt „die falsche Aufgabe gelöst" ab, <strong>bevor</strong> überhaupt etwas erstellt ist.'>Fängt „die falsche Aufgabe gelöst" ab, <strong>bevor</strong> überhaupt etwas erstellt ist.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;" data-nd='Einen <strong>Plan zu ändern ist günstig</strong> — die fertige Arbeit umzuwerfen teuer. Lies den Plan, bevor du ihn freigibst.'>Einen <strong>Plan zu ändern ist günstig</strong> — fertigen Code umzuwerfen teuer. Lies den Plan, bevor du ihn freigibst.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 STUFE 3 — ZIEL / AUTOPILOT ===================== -->
+  <section data-screen-label="05 Stufe 3 Ziel Autopilot" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Stufe 03 — du delegierst das Ziel</div>
+
+      <div class="lvl-detail">
+        <div class="ld-left">
+          <div class="ld-bigname">Ziel</div>
+          <div class="ld-model">„Du definierst das Ziel, der Agent liefert — du kontrollierst das Ergebnis."</div>
+          <div class="ld-tags">
+            <span class="pill" style="font-size: 18px; padding: 8px 16px;">Claude · Goal</span>
+            <span class="pill" style="font-size: 18px; padding: 8px 16px;">Copilot · Autopilot</span>
+          </div>
+        </div>
+
+        <div class="spec">
+          <div class="srow">
+            <div class="slabel">Was</div>
+            <div class="sval" data-nd='Du setzt Ziel + Erfolgskriterium — <strong>ohne Plan-Freigabe</strong>. Der Agent plant und fährt den ganzen Ablauf selbst; dein Eingriff erst am fertigen Ergebnis.'>Du setzt Ziel + Erfolgskriterium — <strong>ohne Plan-Freigabe</strong>. Der Agent plant und fährt den ganzen Loop selbst; dein Eingriff erst am fertigen Ergebnis.</div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Beispiel</div>
+            <div class="sval">
+              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Bring den Monatsreport <strong>durch die Plausibilitätsprüfung</strong>.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">prüft, korrigiert 4 Werte … ✓ stimmig</span><br/><span class="u">du</span>&nbsp;»Übertrag alle Verträge ins neue Format, <strong>leg sie zur Freigabe vor</strong>.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">37 Verträge übertragen, liegen bereit</span>'>
+                <span class="u">du</span>&nbsp;»Mach die <strong>Test-Suite grün</strong>.«<br/>
+                <span class="u">agent</span>&nbsp;→ <span class="res">fixt 3 Tests, läuft 2× nach … ✓ grün</span><br/>
+                <span class="u">du</span>&nbsp;»Migrier das Modul auf die neue API, <strong>öffne einen PR</strong>.«<br/>
+                <span class="u">agent</span>&nbsp;→ <span class="res">umgestellt, getestet, PR #248 offen</span>
+              </div>
+            </div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Wann</div>
+            <div class="sval" data-nd='Klar abgegrenzte, aber mehrstufige Arbeit mit guten Leitplanken (Vorlagen, Prüfregeln), denen du vertraust.'>Klar abgegrenzte, aber mehrstufige Arbeit mit guten Guardrails (Tests, CI), denen du vertraust.</div>
+          </div>
+          <div class="srow">
+            <div class="slabel">Risiko</div>
+            <div class="sval" data-nd='Größter Handlungsspielraum. Braucht klare Prüfregeln; wandert bei <strong>unscharfem Ziel</strong>.'>Größter Handlungsspielraum. Braucht Tests / Sandbox; wandert bei <strong>unscharfem Ziel</strong>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;" data-nd='Autonomie ist nur so sicher wie deine Leitplanken. <strong>Erst die Prüfregeln, dann der Autopilot.</strong>'>Autonomie ist nur so sicher wie deine Guardrails. <strong>Erst Tests, dann Autopilot.</strong></div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06 ÜBUNG — WELCHE STUFE? ===================== -->
+  <section data-screen-label="06 Übung Welche Stufe" data-roleswitch="">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Welche Stufe passt?</div>
+      <h2 class="title" style="font-size: 56px;">Befehl, Plan <span style="color: var(--ink-3); font-weight: 400;">oder</span> <span class="accent">Ziel</span>?</h2>
+      <p class="body" style="margin: 0 0 14px; font-size: 19px;">Ordne jedem Szenario die passende Stufe zu — <strong>Befehl</strong>, <strong>Plan</strong> oder <strong>Ziel</strong>.</p>
+
+      <div class="ex-stage">
+        <div class="smatch-grid" id="stage-grid"></div>
+
+        <div class="reveal-row">
+          <div class="reveal-status" id="stage-status">Noch nichts beantwortet.</div>
+          <div style="display: flex; gap: 10px;">
+            <button class="qbutton ghost" data-stage-action="reset">Zurücksetzen</button>
+            <button class="qbutton" data-stage-action="reveal">Alles auflösen</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+<script src="exercises/stage-match.js"></script>
+<script src="exercises/role-switch.js"></script>
+</body>
+</html>

@@ -1,0 +1,1576 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Context — Arbeitsgedächtnis des Modells</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <rect x="200" y="320" width="800" height="180" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="210" y="330" width="180" height="160" rx="8" fill="#c8421f"/>
+    <rect x="400" y="330" width="120" height="160" rx="8" fill="#e89379"/>
+    <rect x="530" y="330" width="100" height="160" rx="8" fill="#f6dccf"/>
+    <text x="600" y="240" text-anchor="middle" font-family="serif" font-size="48" fill="#15110c" font-weight="500">Context</text>
+    <text x="600" y="560" text-anchor="middle" font-family="monospace" font-size="20" fill="#6b6357">200.000 TOKENS · ENDLICH</text>
+  </svg>
+</template>
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --quiz-ok: #3d8a4a;
+    --quiz-no: #a83020;
+    --warn: #b8841f;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --type-title: 88px;
+    --type-h2: 64px;
+    --type-subtitle: 42px;
+    --type-lede: 30px;
+    --type-body: 26px;
+    --type-small: 19px;
+    --type-mono: 23px;
+    --type-eyebrow: 18px;
+    --pad-top: 56px;
+    --pad-bottom: 56px;
+    --pad-x: 80px;
+  }
+
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  .chrome {
+    position: absolute;
+    inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 44px 0 26px;
+  }
+
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: var(--type-h2); line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1600px;
+  }
+  h3.subtitle {
+    font-size: var(--type-subtitle); line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede {
+    font-size: var(--type-lede); line-height: 1.4; color: var(--ink-2);
+    max-width: 1500px;
+  }
+  p.body {
+    font-size: var(--type-body); line-height: 1.5; color: var(--ink-2);
+    max-width: 1100px;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+  .card.dark {
+    background: var(--ink); color: #f0ece3;
+    border-color: var(--ink);
+  }
+
+  .callout {
+    margin-top: 24px;
+    padding: 20px 28px;
+    min-height: 76px;
+    box-sizing: border-box;
+    display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+  .pill.warn { background: var(--warn); color: #fff; }
+
+  /* Agenda rows */
+  .agenda-row {
+    display: grid; grid-template-columns: 60px 1fr auto;
+    gap: 18px; align-items: baseline;
+    padding: 14px 20px;
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 10px;
+  }
+  .agenda-row.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .agenda-row.dark .a-desc { color: #c8c2b6; }
+  .agenda-row.dark .a-num { color: var(--accent-soft); }
+  .a-num { font-family: var(--mono); font-size: 16px; color: var(--accent); letter-spacing: 0.08em; }
+  .a-title { font-family: var(--serif); font-size: 26px; font-weight: 500; }
+  .a-desc { font-size: 17px; color: var(--ink-3); margin-top: 4px; }
+  .a-time { font-family: var(--mono); font-size: 16px; color: var(--ink-3); }
+
+  .goal {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 10px; padding: 12px 18px;
+    font-size: 19px; line-height: 1.4; color: var(--ink-2);
+  }
+  .goal strong { color: var(--ink); }
+
+  /* Source bar — stacked horizontal */
+  .source-bar {
+    display: flex; height: 80px; border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--hair);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    color: var(--ink);
+  }
+  .source-bar > div {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 16px;
+    border-right: 1px solid rgba(21,17,12,0.18);
+  }
+  .source-bar > div:last-child { border-right: none; }
+  .source-bar .src-label { font-size: 13px; letter-spacing: 0.04em; }
+  .source-bar .src-tok { font-size: 11px; color: var(--ink-3); margin-top: 4px; font-weight: 500; }
+
+  /* Cost cards */
+  .cost-card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 24px 28px;
+    display: flex; flex-direction: column;
+  }
+  .cost-card .cost-icon {
+    font-family: var(--mono); font-size: 18px; color: var(--accent);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .cost-card h4 {
+    font-family: var(--serif); font-size: 32px; font-weight: 500;
+    margin: 8px 0 12px;
+  }
+  .cost-card .cost-desc {
+    font-size: 19px; line-height: 1.4; color: var(--ink-2);
+  }
+  .cost-card .cost-num {
+    font-family: var(--mono); font-size: 44px; font-weight: 600;
+    color: var(--ink); margin-top: 14px;
+  }
+  .cost-card .cost-cap {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-top: 6px;
+  }
+
+  /* Optimization patterns */
+  .opt-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 16px 22px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .opt-card .opt-head {
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .opt-card .opt-num {
+    font-family: var(--mono); font-size: 14px; color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  .opt-card .opt-name {
+    font-family: var(--serif); font-size: 26px; font-weight: 500;
+  }
+  .opt-card .opt-desc {
+    font-size: 17px; line-height: 1.45; color: var(--ink-2);
+  }
+  .opt-card .opt-code {
+    font-family: var(--mono); font-size: 14px; line-height: 1.5;
+    background: var(--bg-2); padding: 8px 12px; border-radius: 6px;
+    color: var(--ink-2);
+  }
+
+  /* Anti-pattern rows */
+  .anti-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 18px; padding: 16px 22px;
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 10px;
+    align-items: center;
+  }
+  .anti-row .anti-bad {
+    font-family: var(--serif); font-size: 22px; color: var(--quiz-no);
+    line-height: 1.35;
+  }
+  .anti-row .anti-bad::before {
+    content: "✗"; font-family: var(--mono); font-size: 18px;
+    margin-right: 10px; font-weight: 700;
+  }
+  .anti-row .anti-good {
+    font-size: 18px; color: var(--ink-2); line-height: 1.4;
+  }
+  .anti-row .anti-good::before {
+    content: "→ "; color: var(--accent); font-weight: 600;
+  }
+
+  /* ===== DnD Übung ===== */
+  .dnd-stage {
+    display: grid;
+    grid-template-columns: 360px 1fr 380px;
+    gap: 18px;
+    flex: 1;
+    min-height: 0;
+    margin-top: 14px;
+  }
+  .dnd-pool {
+    background: var(--bg-2);
+    border: 1px dashed var(--hair);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .dnd-pool-head {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .dnd-pool-head .ph-hint {
+    font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: none;
+    font-style: italic;
+  }
+  .dnd-tiles { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; overflow-y: auto; }
+
+  .tile {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.1s, box-shadow 0.15s, border-color 0.15s;
+  }
+  .tile:hover { border-color: var(--ink); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .tile:active { cursor: grabbing; }
+  .tile.dragging { opacity: 0.4; }
+  .tile-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 4px;
+  }
+  .tile-kind {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tile-kind .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--ink-3);
+  }
+  .tile.is-question .tile-kind .dot { background: var(--accent); }
+  .tile.is-mcp .tile-kind .dot { background: #2a7ab8; }
+  .tile-tokens {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--ink-2);
+    padding: 2px 7px; border-radius: 5px;
+    background: var(--bg-2);
+  }
+  .tile-name {
+    font-family: var(--serif); font-size: 17px; font-weight: 500;
+    color: var(--ink); line-height: 1.25;
+  }
+  .tile.is-mcp .tile-name { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+  .tile-sub {
+    font-size: 12px; color: var(--ink-3); margin-top: 3px; line-height: 1.3;
+  }
+
+  /* Context drop zone — center */
+  .ctx-box {
+    background: var(--ink);
+    color: #f0ece3;
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  }
+  .ctx-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .ctx-title {
+    font-family: var(--serif); font-size: 22px; font-weight: 500;
+    color: #f0ece3;
+  }
+  .ctx-title .small {
+    display: block; font-family: var(--mono); font-size: 11px;
+    color: #c8c2b6; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .ctx-status {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  }
+  .ctx-status .ctx-tok-num {
+    font-family: var(--mono); font-size: 22px; font-weight: 600;
+    color: #f0ece3;
+  }
+  .ctx-status .ctx-tok-num.warn { color: var(--accent-soft); }
+  .ctx-status .ctx-tok-num.bad { color: var(--accent); }
+  .ctx-status .ctx-tok-cap {
+    font-family: var(--mono); font-size: 10px; color: #c8c2b6;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  /* token meter */
+  .ctx-meter {
+    margin-top: 14px;
+    height: 26px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ctx-meter-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--quiz-ok);
+    transition: width 0.3s ease, background 0.3s ease;
+    width: 0%;
+  }
+  .ctx-meter-fill.warn { background: var(--warn); }
+  .ctx-meter-fill.bad { background: var(--accent); }
+  .ctx-meter-zones {
+    position: absolute; inset: 0;
+    display: flex;
+    font-family: var(--mono); font-size: 10px;
+    color: rgba(240,236,227,0.5);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    pointer-events: none;
+  }
+  .ctx-meter-zones .z {
+    flex: 1;
+    border-right: 1px dashed rgba(255,255,255,0.18);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ctx-meter-zones .z:last-child { border-right: none; }
+  .ctx-meter-labels {
+    display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 10px;
+    color: #c8c2b6; letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+
+  /* drop area */
+  .ctx-drop {
+    margin-top: 12px;
+    flex: 1; min-height: 0;
+    border: 1.5px dashed rgba(255,255,255,0.22);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    overflow-y: auto;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .ctx-drop.drag-over {
+    border-color: var(--accent-soft);
+    background: rgba(232,147,121,0.08);
+  }
+  .ctx-drop .ctx-empty {
+    margin: auto; text-align: center;
+    font-family: var(--serif); font-style: italic;
+    color: #8a847a; font-size: 18px;
+    max-width: 360px; line-height: 1.4;
+  }
+  .ctx-drop .tile {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.14);
+    color: #f0ece3;
+  }
+  .ctx-drop .tile:hover {
+    border-color: rgba(255,255,255,0.4);
+    box-shadow: none;
+  }
+  .ctx-drop .tile .tile-name { color: #f0ece3; }
+  .ctx-drop .tile .tile-sub { color: #c8c2b6; }
+  .ctx-drop .tile .tile-tokens {
+    background: rgba(255,255,255,0.1); color: #f0ece3;
+  }
+  .ctx-drop .tile .tile-kind { color: #c8c2b6; }
+
+  /* pool drag-over */
+  .dnd-pool.drag-over {
+    background: var(--accent-pale);
+    border-color: var(--accent);
+  }
+
+  /* Feedback bar */
+  .ctx-feedback {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    font-family: var(--mono); font-size: 12px;
+  }
+  .ctx-feedback .fb-block .fb-label {
+    color: #c8c2b6; letter-spacing: 0.1em; text-transform: uppercase;
+    font-size: 10px;
+  }
+  .ctx-feedback .fb-block .fb-value {
+    color: #f0ece3; margin-top: 4px; font-size: 13px; line-height: 1.4;
+  }
+  .ctx-feedback .fb-block .fb-value .ok { color: #7ab87a; }
+  .ctx-feedback .fb-block .fb-value .warn { color: var(--accent-soft); }
+  .ctx-feedback .fb-block .fb-value .bad { color: var(--accent); }
+
+  /* Reset button */
+  .ctx-reset {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    padding: 5px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.08); color: #f0ece3;
+    border: 1px solid rgba(255,255,255,0.14);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: background 0.15s;
+  }
+  .ctx-reset:hover { background: rgba(255,255,255,0.16); }
+
+  /* cheat sheet */
+  .cheat-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px; margin-top: 16px;
+    flex: 1; min-height: 0;
+  }
+  .cheat-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 20px 22px;
+    display: flex; flex-direction: column;
+  }
+  .cheat-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cheat-card h4 {
+    font-family: var(--serif); font-size: 26px; font-weight: 500;
+    margin: 0 0 10px;
+  }
+  .cheat-card .ch-num {
+    font-family: var(--mono); font-size: 13px;
+    color: var(--accent); letter-spacing: 0.1em;
+  }
+  .cheat-card.dark .ch-num { color: var(--accent-soft); }
+  .cheat-card ul {
+    margin: 8px 0 0; padding-left: 22px;
+    font-size: 17px; line-height: 1.5; color: var(--ink-2);
+  }
+  .cheat-card.dark ul { color: #d8d2c5; }
+  .cheat-card li + li { margin-top: 4px; }
+
+  /* Mitnehmen: statisches Echo der Übersichtskachel-Animation (.a-ctx auf index.html) */
+  .cs-head-row { display: flex; align-items: flex-end; gap: 48px; }
+  .cs-head-row .cs-head-main { flex: 1; min-width: 0; }
+  .cs-emblem {
+    flex: 0 0 auto; width: 400px; align-self: center;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 22px 26px 24px; display: flex; flex-direction: column; gap: 14px;
+    box-shadow: 0 14px 32px -26px rgba(21,17,12,0.5);
+  }
+  .cs-emblem .em-cap { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .cs-emblem .ctx-bar { position: relative; height: 20px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--hair); overflow: hidden; }
+  .cs-emblem .ctx-fill { position: absolute; top: 1px; bottom: 1px; left: 1px; width: 58%; border-radius: 999px; background: var(--accent); }
+  .cs-emblem .ctx-limit { position: absolute; top: -1px; bottom: -1px; left: 86%; width: 0; border-left: 2px dotted rgba(21,17,12,0.5); }
+  .cs-emblem .em-foot { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+</style>
+
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+<body>
+
+<deck-stage>
+
+  <script type="application/json" id="speaker-notes">
+  []
+  </script>
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span></span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — Was ein Modell <em>wirklich</em> sieht</div>
+      <h1 class="title" style="margin-top: 32px;"><span class="accent">Context.</span><br/>Endlich.<br/>Teuer.</h1>
+
+      <h3 class="subtitle" style="margin-top: 28px;">
+        200.000 Tokens klingen viel — bis du sie mit MCPs vollstopfst.
+      </h3>
+
+      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Window ist Budget</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Tools kosten Tokens</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Just-in-time</span>
+        <span class="pill accent" style="font-size: 24px; padding: 10px 20px;">Weniger ist mehr</span>
+      </div>
+
+      <!-- Visual: token bar of an unoptimized context -->
+      <div style="margin-top: auto; padding-bottom: 24px;">
+        <div style="font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 14px;">
+          Ein typisches „Alles-an"-Setup &nbsp;·&nbsp; <span class="accent">~98.000 Tokens verbraucht, bevor du tippst</span>
+        </div>
+
+        <div class="source-bar" style="height: 88px;">
+          <div style="background: #c8421f; color: #fff; flex: 15;">
+            <div class="src-label">AWS MCP</div><div class="src-tok" style="color: rgba(255,255,255,0.8);">15.000</div>
+          </div>
+          <div style="background: #e89379; flex: 8;">
+            <div class="src-label">GitHub</div><div class="src-tok">8.000</div>
+          </div>
+          <div style="background: #f6dccf; flex: 6;">
+            <div class="src-label">Playwright</div><div class="src-tok">6.000</div>
+          </div>
+          <div style="background: #faf7f1; flex: 5;">
+            <div class="src-label">Confluence</div><div class="src-tok">5.200</div>
+          </div>
+          <div style="background: #faf7f1; flex: 5;">
+            <div class="src-label">Jira</div><div class="src-tok">4.500</div>
+          </div>
+          <div style="background: #ebe6db; flex: 4;">
+            <div class="src-label">Slack</div><div class="src-tok">3.500</div>
+          </div>
+          <div style="background: #ebe6db; flex: 4;">
+            <div class="src-label">+ 5 weitere</div><div class="src-tok">~18.000</div>
+          </div>
+          <div style="background: #d6cfbf; flex: 12;">
+            <div class="src-label">Conversation-History</div><div class="src-tok">~38.000</div>
+          </div>
+          <div style="background: var(--ink); color: #f0ece3; flex: 18;">
+            <div class="src-label" style="color: #f0ece3;">noch frei</div>
+            <div class="src-tok" style="color: #c8c2b6;">~102.000</div>
+          </div>
+        </div>
+        <div style="font-family: var(--mono); font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em; margin-top: 10px; display: flex; justify-content: space-between;">
+          <span>0 tok</span><span>50.000</span><span>100.000</span><span>150.000</span><span style="color: var(--ink);">200.000 ⌐</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 02 AGENDA + LERNZIELE ===================== -->
+  <section data-screen-label="02 Agenda Lernziele">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Agenda &amp; Lernziele</div>
+      <h2 class="title" style="font-size: 60px;">Wir öffnen das <span class="accent">Context-Window</span> — und räumen es auf.</h2>
+
+      <p class="lede" style="margin-top: 4px;">
+        Theorie kompakt, dann eine echte <strong>Drag-&amp;-Drop-Übung</strong>: Frage und MCP-Tools in den Context ziehen — sehen, wie schnell das Budget knapp wird.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1.45fr 1fr; gap: 36px; margin-top: 28px; flex: 1; min-height: 0;">
+
+        <!-- AGENDA -->
+        <div style="display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px;">Ablauf</div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="agenda-row">
+              <div class="a-num">01</div>
+              <div>
+                <div class="a-title">Theorie · Was ist Context, was kostet er</div>
+                <div class="a-desc">Die fünf Quellen im Window, drei Kosten (Tokens · Latenz · Qualität), Context-Rot.</div>
+              </div>
+              <div class="a-time">15 min</div>
+            </div>
+
+            <div class="agenda-row">
+              <div class="a-num">02</div>
+              <div>
+                <div class="a-title">Optimierung · weniger ist mehr</div>
+                <div class="a-desc">Fünf Patterns: MCPs reduzieren, Just-in-time-Reads, Subagents, <span class="mono">/clear</span> &amp; Compact, Skills.</div>
+              </div>
+              <div class="a-time">10 min</div>
+            </div>
+
+            <div class="agenda-row dark">
+              <div class="a-num">03</div>
+              <div>
+                <div class="a-title">Praxis · Drag-&amp;-Drop-Übung</div>
+                <div class="a-desc">Zieh die Frage und nur die nötigen MCP-Tools in den Context. Live-Token-Meter, Live-Feedback.</div>
+              </div>
+              <div class="a-time">15 min</div>
+            </div>
+
+            <div class="agenda-row">
+              <div class="a-num">04</div>
+              <div>
+                <div class="a-title">Anti-Patterns &amp; Cheat-Sheet</div>
+                <div class="a-desc">Was wir <em>nicht</em> tun. Und ein A4-Spickzettel zum Mitnehmen.</div>
+              </div>
+              <div class="a-time">5 min</div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top: auto; padding: 14px 22px; min-height: 0;">
+            <div class="callout-label">Format</div>
+            <div class="callout-body" style="font-size: 18px;">
+              <strong>Theorie kurz, Übung lang.</strong> Die DnD-Übung wird in Paaren gespielt — laut diskutieren, wie ihr entscheidet.
+            </div>
+          </div>
+        </div>
+
+        <!-- LERNZIELE -->
+        <div style="display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px;">Danach kannst du …</div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div class="goal">
+              das <strong>Context-Window</strong> als knappes, endliches Budget verstehen — nicht als Gratis-Speicher.
+            </div>
+            <div class="goal">
+              die <strong>fünf Quellen</strong> nennen, die in das Fenster laufen, und ihre typische Größenordnung.
+            </div>
+            <div class="goal">
+              <strong>Context Rot</strong> erklären — warum ein volles Fenster die Antwortqualität senkt.
+            </div>
+            <div class="goal">
+              bewusst entscheiden, welche <strong>MCP-Tools</strong> du an- oder abschaltest — und welche du <em>on-demand</em> lädst.
+            </div>
+            <div class="goal">
+              <strong>/clear</strong>, <strong>compact</strong> und <strong>Subagents</strong> als Aufräum-Hebel einsetzen.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 WAS IST CONTEXT ===================== -->
+  <section data-screen-label="03 Was ist Context">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Was ist Context überhaupt?</div>
+      <h2 class="title" style="font-size: 56px;">Context ist <span class="accent">alles, was vor dem Output steht</span>.</h2>
+
+      <p class="lede" style="margin-top: 4px; max-width: 1600px;">
+        Das Modell hat kein Gedächtnis zwischen Chat-Nachrichten. Was es „weiß", ist nur das, was wir bei jeder Chat-Nachricht wieder ins Window legen. Endliches Fenster, fünf Quellen, sehr unterschiedliche Größenordnung.
+      </p>
+
+      <!-- Stacked source bar -->
+      <div style="margin-top: 28px;">
+        <div style="font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between;">
+          <span>Fünf Quellen — von klein nach groß</span>
+          <span>Skala 200.000 Tokens · Claude Sonnet 4.6</span>
+        </div>
+
+        <div class="source-bar" style="height: 70px;">
+          <div style="background: var(--paper); flex: 2;">
+            <div class="src-label">System-Prompt</div><div class="src-tok">~500</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 4;">
+            <div class="src-label">AGENTS.md</div><div class="src-tok">~1.500</div>
+          </div>
+          <div style="background: #f6dccf; flex: 10;">
+            <div class="src-label">Skills &amp; Tool-Schemas</div><div class="src-tok">5–50k</div>
+          </div>
+          <div style="background: #e89379; flex: 14;">
+            <div class="src-label">Files · Tool-Output · RAG</div><div class="src-tok">variabel</div>
+          </div>
+          <div style="background: #c8421f; color: #fff; flex: 20;">
+            <div class="src-label">Conversation-History</div><div class="src-tok" style="color: rgba(255,255,255,0.8);">10–100k</div>
+          </div>
+          <div style="background: var(--ink); color: #f0ece3; flex: 30;">
+            <div class="src-label" style="color: #f0ece3;">… verbleibendes Budget</div>
+            <div class="src-tok" style="color: #c8c2b6;">je weniger, desto schlechter die Qualität</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sources detail + key insight -->
+      <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; margin-top: 28px; flex: 1; min-height: 0;">
+
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Was sich in der Praxis aufsummiert</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px;">Tool-Schemas sind der Stille Killer</div>
+
+          <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div>
+                <div class="mono" style="font-size: 15px; font-weight: 600;">Jira MCP</div>
+                <div style="font-size: 14px; color: var(--ink-3);">~20 Tools mit Schema, Beschreibungen, Beispielen</div>
+              </div>
+              <div class="mono accent" style="font-size: 15px;">~4.500 tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div>
+                <div class="mono" style="font-size: 15px; font-weight: 600;">GitHub MCP</div>
+                <div style="font-size: 14px; color: var(--ink-3);">~30 Tools — issues, PRs, repos, releases, workflows</div>
+              </div>
+              <div class="mono accent" style="font-size: 15px;">~8.000 tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div>
+                <div class="mono" style="font-size: 15px; font-weight: 600;">AWS MCP</div>
+                <div style="font-size: 14px; color: var(--ink-3);">Hunderte Services — der größte Brocken überhaupt</div>
+              </div>
+              <div class="mono accent" style="font-size: 15px;">~15.000 tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div>
+                <div class="mono" style="font-size: 15px; font-weight: 600;">Playwright / Browser</div>
+                <div style="font-size: 14px; color: var(--ink-3);">DOM-Operationen, viele Selektoren-Tools</div>
+              </div>
+              <div class="mono accent" style="font-size: 15px;">~6.000 tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--ink); color: #f0ece3; border-radius: 8px;">
+              <div>
+                <div class="mono" style="font-size: 15px; font-weight: 600;">Alle gleichzeitig aktiv</div>
+                <div style="font-size: 14px; color: #c8c2b6;">und das, <em>bevor</em> du irgendetwas gefragt hast</div>
+              </div>
+              <div class="mono" style="font-size: 15px; color: var(--accent-soft);">≈ 35–50k tok</div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card dark" style="padding: 22px 26px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 13px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">Die wichtige Einsicht</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px;">Tools sind kein „Gratis-Feature".</div>
+
+          <div style="height: 1px; background: rgba(255,255,255,0.14); margin: 16px 0;"></div>
+
+          <p style="font-size: 19px; line-height: 1.5; color: #d8d2c5; margin: 0;">
+            Jedes verbundene MCP injiziert seine kompletten Tool-Definitionen in <em>jede</em> Chat-Nachricht — auch wenn du es nie benutzt.
+          </p>
+
+          <p style="font-size: 19px; line-height: 1.5; color: #d8d2c5; margin: 14px 0 0;">
+            Das Modell muss alle lesen, prüfen, ignorieren. Das kostet Tokens, Latenz <strong style="color: #f0ece3;">und</strong> Aufmerksamkeit.
+          </p>
+
+          <div style="margin-top: auto; padding-top: 16px;">
+            <div class="mono" style="color: var(--accent-soft); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;">Faustregel</div>
+            <div style="font-size: 18px; color: #f0ece3; line-height: 1.4; margin-top: 4px;">
+              MCPs gehören <strong>pro Aufgabe</strong> dazu — nicht pro Konto.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 DREI KOSTEN + CONTEXT ROT ===================== -->
+  <section data-screen-label="04 Drei Kosten Context Rot">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Warum „mehr Context" nicht „bessere Antwort" heißt</div>
+      <h2 class="title" style="font-size: 56px;">Drei Kosten — und die <span class="accent">teuerste</span> sieht man nicht.</h2>
+
+      <p class="lede" style="margin-top: 4px;">
+        Tokens und Latenz stehen in der Rechnung. Qualitätsverlust steht nirgends — aber er kostet am meisten.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 28px;">
+
+        <div class="cost-card">
+          <div class="cost-icon">$ &nbsp; Tokens</div>
+          <h4>Geld.</h4>
+          <p class="cost-desc">Was reinläuft, wird abgerechnet — bei <em>jedem</em> Turn neu. Lange Threads multiplizieren sich.</p>
+          <div class="cost-num">×N</div>
+          <div class="cost-cap">pro Turn neu bezahlt</div>
+        </div>
+
+        <div class="cost-card">
+          <div class="cost-icon">⏱ &nbsp; Latenz</div>
+          <h4>Zeit.</h4>
+          <p class="cost-desc">Verdoppelter Context ≈ verdoppelte Antwortzeit. Auch das KV-Cache-Aufbauen kostet.</p>
+          <div class="cost-num">~2×</div>
+          <div class="cost-cap">linear mit Window-Füllung</div>
+        </div>
+
+        <div class="cost-card" style="background: var(--ink); color: #f0ece3; border-color: var(--ink);">
+          <div class="cost-icon" style="color: var(--accent-soft);">⚠ &nbsp; Qualität — versteckt</div>
+          <h4 style="color: #f0ece3;">Context Rot.</h4>
+          <p class="cost-desc" style="color: #d8d2c5;">Volles Window &rArr; das Modell verliert Fokus, „vergisst" frühere Anweisungen, halluziniert öfter.</p>
+          <div class="cost-num" style="color: var(--accent-soft);">↓ Qualität</div>
+          <div class="cost-cap" style="color: #c8c2b6;">nicht-linear · steigt steil ab ~50%</div>
+        </div>
+
+      </div>
+
+      <!-- Lost-in-the-middle visualization -->
+      <div class="card" style="margin-top: 24px; padding: 22px 26px; flex: 1; min-height: 0; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+          <div>
+            <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Lost in the Middle &middot; messbarer Effekt</div>
+            <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; margin-top: 2px;">Wo im Window die Anweisung steht, entscheidet, ob sie befolgt wird.</div>
+          </div>
+          <div class="mono" style="font-size: 13px; color: var(--ink-3);">Recall einer Anweisung je nach Position</div>
+        </div>
+
+        <!-- Bar chart-ish curve -->
+        <div style="display: flex; align-items: end; gap: 2px; height: 160px; margin-top: 14px; padding: 0 10px;">
+          <div style="flex: 1; background: var(--quiz-ok); height: 95%; border-radius: 4px 4px 0 0;" title="Anfang"></div>
+          <div style="flex: 1; background: var(--quiz-ok); height: 92%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--quiz-ok); height: 85%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--warn); height: 72%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--warn); height: 58%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--accent); height: 48%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--accent); height: 42%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--accent); height: 45%; border-radius: 4px 4px 0 0;" title="Mitte"></div>
+          <div style="flex: 1; background: var(--accent); height: 52%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--warn); height: 65%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--warn); height: 75%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--quiz-ok); height: 85%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--quiz-ok); height: 92%; border-radius: 4px 4px 0 0;"></div>
+          <div style="flex: 1; background: var(--quiz-ok); height: 96%; border-radius: 4px 4px 0 0;" title="Ende"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.06em; margin-top: 8px; padding: 0 10px;">
+          <span>↑ Anfang des Windows</span>
+          <span style="color: var(--accent);">↓ in der Mitte: Recall fällt um 40–50%</span>
+          <span>↑ Ende des Windows</span>
+        </div>
+
+        <div class="callout" style="margin-top: auto; padding: 14px 22px; min-height: 0;">
+          <div class="callout-label">Praxis</div>
+          <div class="callout-body" style="font-size: 19px;">
+            Wichtigste Anweisung an den <strong>Anfang</strong> oder ans <strong>Ende</strong> &middot; Conversation regelmäßig <strong style="font-family: var(--mono);">/compact</strong>en &middot; bei neuer Aufgabe <strong style="font-family: var(--mono);">/clear</strong>.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 OPTIMIERUNG ===================== -->
+  <section data-screen-label="05 Optimierung Patterns">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Weniger ist mehr</div>
+      <h2 class="title" style="font-size: 52px; margin-bottom: 16px;">Fünf Patterns, die das Window <span class="accent">aufgeräumt</span> halten.</h2>
+
+      <p class="lede" style="margin-top: 0; font-size: 22px;">
+        Reihenfolge der Wirkung: <strong>MCPs reduzieren</strong> &gt; Subagents &gt; <span class="mono">/clear</span> &amp; compact &gt; Just-in-time-Reads &gt; Skills statt System-Prompt.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; flex: 1; min-height: 0;">
+
+        <div class="opt-card">
+          <div class="opt-head">
+            <div class="opt-num">01</div>
+            <div class="opt-name">MCPs reduzieren</div>
+            <span class="pill accent" style="margin-left: auto; font-size: 11px;">stärkster Hebel</span>
+          </div>
+          <div class="opt-desc">
+            Nur die MCPs aktivieren, die du <em>für diese Session</em> brauchst. Default: <strong>Filesystem</strong>. Alles andere: bewusst dazuschalten.
+          </div>
+          <div class="opt-code">
+            <span style="color: var(--ink-3);"># nicht „connect all"</span><br/>
+            $ <span style="color: var(--accent);">claude mcp enable</span> jira filesystem
+          </div>
+        </div>
+
+        <div class="opt-card">
+          <div class="opt-head">
+            <div class="opt-num">02</div>
+            <div class="opt-name">Subagents · Sandbox</div>
+          </div>
+          <div class="opt-desc">
+            Schwere Recherche / großes Tool-Output in einen <strong>Subagent</strong> auslagern. Der bekommt eigenes, frisches Window — du bekommst nur die Zusammenfassung zurück.
+          </div>
+          <div class="opt-code">
+            <span style="color: var(--accent);">Task</span>(prompt: "scanne 200 Files, finde alle TODOs")<br/>
+            <span style="color: var(--ink-3);">// 30k Tokens dort · 200 Tokens hier</span>
+          </div>
+        </div>
+
+        <div class="opt-card">
+          <div class="opt-head">
+            <div class="opt-num">03</div>
+            <div class="opt-name"><span class="mono">/clear</span> &amp; <span class="mono">/compact</span></div>
+          </div>
+          <div class="opt-desc">
+            Neue Aufgabe = neues Window. <span class="mono">/clear</span> bei Themenwechsel; <span class="mono">/compact</span> bei langem Thread zum gleichen Thema — komprimiert History auf eine Zusammenfassung.
+          </div>
+          <div class="opt-code">
+            <span style="color: var(--ink-3);"># nach 45 Min Pair-Programming</span><br/>
+            $ <span style="color: var(--accent);">/compact</span> &nbsp; <span style="color: var(--ink-3);"># 80k → 8k</span>
+          </div>
+        </div>
+
+        <div class="opt-card">
+          <div class="opt-head">
+            <div class="opt-num">04</div>
+            <div class="opt-name">Just-in-time statt Just-in-case</div>
+          </div>
+          <div class="opt-desc">
+            Nicht 30 Dateien vorladen — <em>einen</em> Pointer (Pfad, Ticket-ID, URL) geben. Das Modell holt sich den Rest on-demand über Tools.
+          </div>
+          <div class="opt-code">
+            <span style="color: var(--accent);">✗</span> komplettes Repo dumpen<br/>
+            <span style="color: var(--accent);">✓</span> "schau in src/auth/, lies was nötig"
+          </div>
+        </div>
+
+        <div class="opt-card dark" style="grid-column: 1 / -1; background: var(--ink); color: #f0ece3; border-color: var(--ink);">
+          <div class="opt-head">
+            <div class="opt-num" style="color: var(--accent-soft);">05</div>
+            <div class="opt-name" style="color: #f0ece3;">Skills statt aufgeblähter System-Prompt</div>
+          </div>
+          <div class="opt-desc" style="color: #d8d2c5;">
+            Lange „immer-dabei"-Instruktionen kosten in <em>jeder</em> Chat-Nachricht Tokens. <strong style="color: #f0ece3;">Skills</strong> sind on-demand — werden nur geladen, wenn die Aufgabe sie wirklich braucht. Genau wie MCPs: pro Aufgabe, nicht pro Konto.
+          </div>
+          <div class="opt-code" style="background: rgba(255,255,255,0.06); color: #d8d2c5;">
+            <span style="color: var(--accent-soft);">AGENTS.md</span> &nbsp; → kurz, projekt-spezifisch, Pointer<br/>
+            <span style="color: var(--accent-soft);">Skill</span>(<span style="color: #f0ece3;">"pptx-export"</span>) &nbsp; → 8k tok, aber nur wenn nötig
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06 ANTI-PATTERNS ===================== -->
+  <section data-screen-label="06 Anti-Patterns">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Was wir <em>nicht</em> tun</div>
+      <h2 class="title" style="font-size: 56px;">Sechs Anti-Patterns, die das Window <span class="accent">vergiften</span>.</h2>
+
+      <p class="lede" style="margin-top: 4px;">
+        Die meisten sehen harmlos aus. Sie kumulieren sich — und dann wundert man sich, warum „das Modell heute so dumm ist".
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px; flex: 1; min-height: 0;">
+
+        <div class="anti-row">
+          <div class="anti-bad">„Ich hab einfach alle MCPs an, weiß ja nie, was ich brauche."</div>
+          <div class="anti-good">Pro Session überlegen: <strong>welche 2–3</strong> MCPs hier? Rest aus.</div>
+        </div>
+
+        <div class="anti-row">
+          <div class="anti-bad">„Schau dir mal das ganze Repo an und dann …"</div>
+          <div class="anti-good">Pointer geben (Pfad / Datei / Ticket-ID). Das Modell <strong>liest selbst</strong>, was es braucht.</div>
+        </div>
+
+        <div class="anti-row">
+          <div class="anti-bad">3-Stunden-Thread, in dem 4 Themen behandelt werden.</div>
+          <div class="anti-good">Pro Thema einen Thread — oder zwischendurch <strong><span class="mono">/clear</span></strong>.</div>
+        </div>
+
+        <div class="anti-row">
+          <div class="anti-bad">AGENTS.md mit 4.000 Wörtern „für den Fall der Fälle".</div>
+          <div class="anti-good">AGENTS.md kurz halten. Details in <strong>Skills</strong>, die on-demand geladen werden.</div>
+        </div>
+
+        <div class="anti-row">
+          <div class="anti-bad">10 Files reinkopieren, „damit der Context stimmt".</div>
+          <div class="anti-good">1–2 wirklich relevante Snippets, der Rest per <strong>Tool-Aufruf</strong> bei Bedarf.</div>
+        </div>
+
+        <div class="anti-row">
+          <div class="anti-bad">„Recherchier mal alles über X" — direkt im Haupt-Thread.</div>
+          <div class="anti-good">Recherche in <strong>Subagent</strong> auslagern. Du kriegst die Summary, nicht den Müll.</div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 20px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">
+          Das Window ist wie ein Schreibtisch: <strong>aufgeräumt arbeitet es sich besser.</strong> Alles Liegengelassene lenkt ab — auch wenn du es nicht brauchst.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 DRAG-&-DROP-ÜBUNG ===================== -->
+  <section data-screen-label="07 Übung DnD Context">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Drag-&amp;-Drop · was brauche ich wirklich?</div>
+      <h2 class="title" style="font-size: 38px; margin-bottom: 4px;">
+        Zieh <span class="accent">eine Frage</span> und die <span class="accent">nötigen MCP-Tools</span> in den Context. Beobachte den Zähler.
+      </h2>
+      <p class="body" style="margin: 0; max-width: 1700px; font-size: 18px;">
+        Alles, was du in den Context ziehst, verbraucht Tokens — auch die Frage, auch ungenutzte Tools. Ziel: alle nötigen Tools drin, kein einziges zu viel. Du kannst Kacheln jederzeit zurückziehen.
+      </p>
+
+      <div class="dnd-stage">
+
+        <!-- LEFT: Questions pool -->
+        <div class="dnd-pool" id="q-pool" data-pool="questions">
+          <div class="dnd-pool-head">
+            <span>Fragen <span style="color: var(--accent);">●</span></span>
+            <span class="ph-hint">eine auswählen</span>
+          </div>
+          <div class="dnd-tiles">
+
+            <div class="tile is-question" draggable="true" data-id="q1" data-kind="question" data-tokens="280" data-needs="jira">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>Frage</span>
+                <span class="tile-tokens">280 tok</span>
+              </div>
+              <div class="tile-name">„Was ist die Priorität von Ticket DATA-417?"</div>
+              <div class="tile-sub">braucht Zugriff auf Jira-Tickets</div>
+            </div>
+
+            <div class="tile is-question" draggable="true" data-id="q2" data-kind="question" data-tokens="380" data-needs="github,confluence">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>Frage</span>
+                <span class="tile-tokens">380 tok</span>
+              </div>
+              <div class="tile-name">„Schreib Release-Notes für PR #482, im Format unseres Release-Templates."</div>
+              <div class="tile-sub">PR-Inhalt + Confluence-Template</div>
+            </div>
+
+            <div class="tile is-question" draggable="true" data-id="q3" data-kind="question" data-tokens="340" data-needs="filesystem,confluence">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>Frage</span>
+                <span class="tile-tokens">340 tok</span>
+              </div>
+              <div class="tile-name">„Refactor src/auth.ts nach unseren Coding-Standards."</div>
+              <div class="tile-sub">Files lesen + Standards-Doku</div>
+            </div>
+
+            <div class="tile is-question" draggable="true" data-id="q4" data-kind="question" data-tokens="240" data-needs="slack">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>Frage</span>
+                <span class="tile-tokens">240 tok</span>
+              </div>
+              <div class="tile-name">„Welcher Slack-Thread von heute hatte die meisten Reaktionen?"</div>
+              <div class="tile-sub">Slack-Channels durchsuchen</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CENTER: Context drop zone -->
+        <div class="ctx-box" id="ctx-box">
+          <div class="ctx-head">
+            <div>
+              <div class="ctx-title">Context Window<span class="small">Alles hier drin wird bei jeder Chat-Nachricht gesendet</span></div>
+            </div>
+            <div class="ctx-status">
+              <div class="ctx-tok-num" id="ctx-tok-num">0 tok</div>
+              <div class="ctx-tok-cap" id="ctx-tok-cap">von 60.000 effektivem Budget</div>
+            </div>
+          </div>
+
+          <!-- Token meter -->
+          <div class="ctx-meter">
+            <div class="ctx-meter-fill" id="ctx-meter-fill"></div>
+            <div class="ctx-meter-zones">
+              <div class="z" style="flex: 30;">Lean</div>
+              <div class="z" style="flex: 30;">OK</div>
+              <div class="z" style="flex: 40;">Context Rot</div>
+            </div>
+          </div>
+          <div class="ctx-meter-labels">
+            <span>0</span>
+            <span>18.000 (30%)</span>
+            <span>36.000 (60%)</span>
+            <span style="color: var(--accent-soft);">60.000+</span>
+          </div>
+
+          <!-- Drop area -->
+          <div class="ctx-drop" id="ctx-drop">
+            <div class="ctx-empty" id="ctx-empty">
+              Window ist leer.<br/>
+              <span style="font-size: 14px; font-family: var(--mono); font-style: normal; color: #6b6357; letter-spacing: 0.06em;">↓ Frage und Tools hier ablegen</span>
+            </div>
+          </div>
+
+          <!-- Feedback -->
+          <div class="ctx-feedback">
+            <div class="fb-block">
+              <div class="fb-label">Frage</div>
+              <div class="fb-value" id="fb-question"><span class="warn">keine</span></div>
+            </div>
+            <div class="fb-block">
+              <div class="fb-label">Coverage</div>
+              <div class="fb-value" id="fb-coverage">—</div>
+            </div>
+            <div class="fb-block">
+              <div class="fb-label">Qualität / Status</div>
+              <div class="fb-value" id="fb-quality">—</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+            <button class="ctx-reset" id="ctx-reset">↺ Alles zurück</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: MCP pool -->
+        <div class="dnd-pool" id="mcp-pool" data-pool="mcp">
+          <div class="dnd-pool-head">
+            <span>MCP-Tools <span style="color: #2a7ab8;">●</span></span>
+            <span class="ph-hint">nur was nötig ist</span>
+          </div>
+          <div class="dnd-tiles">
+
+            <div class="tile is-mcp" draggable="true" data-id="jira" data-kind="mcp" data-tokens="4500">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">4.500 tok</span>
+              </div>
+              <div class="tile-name">Jira</div>
+              <div class="tile-sub">~20 Tools · Tickets, Sprints, Boards</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="confluence" data-kind="mcp" data-tokens="5200">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">5.200 tok</span>
+              </div>
+              <div class="tile-name">Confluence</div>
+              <div class="tile-sub">~25 Tools · Spaces, Pages, Templates</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="github" data-kind="mcp" data-tokens="8000">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">8.000 tok</span>
+              </div>
+              <div class="tile-name">GitHub</div>
+              <div class="tile-sub">~30 Tools · PRs, Issues, Releases</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="slack" data-kind="mcp" data-tokens="3500">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">3.500 tok</span>
+              </div>
+              <div class="tile-name">Slack</div>
+              <div class="tile-sub">~15 Tools · Channels, Threads, Search</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="filesystem" data-kind="mcp" data-tokens="2000">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">2.000 tok</span>
+              </div>
+              <div class="tile-name">Filesystem</div>
+              <div class="tile-sub">8 Tools · read, write, glob, grep</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="postgres" data-kind="mcp" data-tokens="3000">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">3.000 tok</span>
+              </div>
+              <div class="tile-name">Datenbank</div>
+              <div class="tile-sub">12 Tools · query, schema, explain</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="playwright" data-kind="mcp" data-tokens="6000">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">6.000 tok</span>
+              </div>
+              <div class="tile-name">Playwright</div>
+              <div class="tile-sub">~25 Tools · Browser automation</div>
+            </div>
+
+            <div class="tile is-mcp" draggable="true" data-id="aws" data-kind="mcp" data-tokens="15000">
+              <div class="tile-head">
+                <span class="tile-kind"><span class="dot"></span>MCP</span>
+                <span class="tile-tokens">15.000 tok</span>
+              </div>
+              <div class="tile-name">AWS</div>
+              <div class="tile-sub">~100 Tools · alle Services — riesig</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08 CHEAT SHEET ===================== -->
+  <section data-screen-label="08 Cheat Sheet">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Context</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="cs-head-row">
+        <div class="cs-head-main">
+          <div class="eyebrow">Was du an die Wand hängst</div>
+          <h2 class="title" style="font-size: 56px; margin-bottom: 0;">Context Engineering — in <span class="accent">einem Blick</span>.</h2>
+        </div>
+        <div class="cs-emblem" aria-hidden="true">
+          <span class="em-cap">Context Window</span>
+          <div class="ctx-bar"><span class="ctx-fill"></span><span class="ctx-limit"></span></div>
+          <div class="em-foot"><span>Füllen</span><span>Kompaktieren</span></div>
+        </div>
+      </div>
+
+      <div class="cheat-grid">
+
+        <div class="cheat-card">
+          <div class="ch-num">01 · DENKE</div>
+          <h4>Window = Budget</h4>
+          <ul>
+            <li>200k Tokens klingen viel — Qualität fällt schon ab ~30%.</li>
+            <li>Drei Kosten: <strong>Tokens · Latenz · Qualität</strong>.</li>
+            <li>Wichtigste Anweisung an Anfang oder Ende.</li>
+            <li>„Lost in the Middle" ist real und messbar.</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="ch-num">02 · TUE</div>
+          <h4>5 Hebel</h4>
+          <ul>
+            <li><strong>MCPs reduzieren</strong> — nur was gebraucht wird.</li>
+            <li>Schwere Recherche in <strong>Subagent</strong>.</li>
+            <li><span class="mono">/clear</span> bei Themenwechsel, <span class="mono">/compact</span> bei langem Thread.</li>
+            <li><strong>Just-in-time</strong>: Pointer geben, nicht alles dumpen.</li>
+            <li><strong>Skills</strong> on-demand statt fetter System-Prompt.</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card dark">
+          <div class="ch-num">03 · LASSE</div>
+          <h4>Anti-Patterns</h4>
+          <ul>
+            <li>„Alle MCPs an, weiß ja nie."</li>
+            <li>Ganzes Repo als Context dumpen.</li>
+            <li>Marathon-Thread mit 4 Themen.</li>
+            <li>AGENTS.md als 4.000-Wort-Manifesto.</li>
+            <li>Recherche-Müll im Haupt-Thread.</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 24px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">
+          Context-Engineering ist <strong>kuratieren, nicht akkumulieren</strong>. Frag nicht „was könnte hilfreich sein?", sondern „was <em>brauche</em> ich jetzt?".
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+
+<script>
+  // ============ DnD: Context-Budget-Übung ============
+  (function() {
+    var section = document.querySelector('[data-screen-label="07 Übung DnD Context"]');
+    if (!section) return;
+
+    var qPool = section.querySelector('#q-pool .dnd-tiles');
+    var mcpPool = section.querySelector('#mcp-pool .dnd-tiles');
+    var ctxDrop = section.querySelector('#ctx-drop');
+    var ctxEmpty = section.querySelector('#ctx-empty');
+    var meter = section.querySelector('#ctx-meter-fill');
+    var tokNum = section.querySelector('#ctx-tok-num');
+    var tokCap = section.querySelector('#ctx-tok-cap');
+    var fbQ = section.querySelector('#fb-question');
+    var fbC = section.querySelector('#fb-coverage');
+    var fbQual = section.querySelector('#fb-quality');
+    var resetBtn = section.querySelector('#ctx-reset');
+
+    var BUDGET = 60000;          // "healthy" budget for the meter
+    var LEAN_THRESHOLD = 0.30;   // <30% = green
+    var OK_THRESHOLD = 0.60;     // <60% = warn ; >=60% = red
+
+    // -------- Drag handlers --------
+    var draggedEl = null;
+
+    section.querySelectorAll('.tile').forEach(function(tile) {
+      tile.addEventListener('dragstart', function(e) {
+        draggedEl = tile;
+        tile.classList.add('dragging');
+        try { e.dataTransfer.setData('text/plain', tile.dataset.id); } catch (_) {}
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      tile.addEventListener('dragend', function() {
+        tile.classList.remove('dragging');
+        draggedEl = null;
+      });
+    });
+
+    function makeDropZone(zone, accepts /* 'all' | 'questions' | 'mcp' */) {
+      zone.addEventListener('dragover', function(e) {
+        if (!draggedEl) return;
+        if (accepts !== 'all' && draggedEl.dataset.kind !== accepts) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', function(e) {
+        // only remove if leaving the zone entirely
+        if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over');
+      });
+      zone.addEventListener('drop', function(e) {
+        zone.classList.remove('drag-over');
+        if (!draggedEl) return;
+        if (accepts !== 'all' && draggedEl.dataset.kind !== accepts) return;
+        e.preventDefault();
+        zone.appendChild(draggedEl);
+        recalc();
+      });
+    }
+
+    // Context zone: accept everything
+    makeDropZone(ctxDrop, 'all');
+
+    // Double-click a tile inside the context window -> send it back to its pool
+    function sendHome(tile) {
+      if (tile.dataset.kind === 'question') qPool.appendChild(tile);
+      else mcpPool.appendChild(tile);
+      recalc();
+    }
+    ctxDrop.addEventListener('dblclick', function(e) {
+      var tile = e.target.closest('.tile');
+      if (tile && ctxDrop.contains(tile)) sendHome(tile);
+    });
+
+    // Pools: accept only their own kind; drop into the inner tiles container
+    section.querySelectorAll('.dnd-pool').forEach(function(pool) {
+      var accepts = pool.getAttribute('data-pool') === 'questions' ? 'question' : 'mcp';
+      var inner = pool.querySelector('.dnd-tiles');
+      if (!inner) return;
+      pool.addEventListener('dragover', function(e) {
+        if (!draggedEl) return;
+        if (draggedEl.dataset.kind !== accepts) return;
+        e.preventDefault();
+        pool.classList.add('drag-over');
+      });
+      pool.addEventListener('dragleave', function(e) {
+        if (!pool.contains(e.relatedTarget)) pool.classList.remove('drag-over');
+      });
+      pool.addEventListener('drop', function(e) {
+        pool.classList.remove('drag-over');
+        if (!draggedEl) return;
+        if (draggedEl.dataset.kind !== accepts) return;
+        e.preventDefault();
+        inner.appendChild(draggedEl);
+        recalc();
+      });
+    });
+
+    // -------- Reset --------
+    resetBtn.addEventListener('click', function() {
+      ctxDrop.querySelectorAll('.tile').forEach(function(t) {
+        if (t.dataset.kind === 'question') qPool.appendChild(t);
+        else mcpPool.appendChild(t);
+      });
+      recalc();
+    });
+
+    // -------- Recalc & feedback --------
+    function recalc() {
+      var tiles = ctxDrop.querySelectorAll('.tile');
+
+      // Empty hint visibility
+      ctxEmpty.style.display = tiles.length === 0 ? '' : 'none';
+
+      // Total tokens
+      var total = 0;
+      var inCtxIds = [];
+      var inCtxMcps = [];
+      var question = null;
+      tiles.forEach(function(t) {
+        total += parseInt(t.dataset.tokens || 0, 10);
+        inCtxIds.push(t.dataset.id);
+        if (t.dataset.kind === 'mcp') inCtxMcps.push(t.dataset.id);
+        if (t.dataset.kind === 'question') question = t;
+      });
+
+      // Meter
+      var pct = Math.min(total / BUDGET, 1);
+      meter.style.width = (pct * 100) + '%';
+      var ratio = total / BUDGET;
+      meter.classList.remove('warn', 'bad');
+      tokNum.classList.remove('warn', 'bad');
+      if (ratio >= OK_THRESHOLD) {
+        meter.classList.add('bad');
+        tokNum.classList.add('bad');
+      } else if (ratio >= LEAN_THRESHOLD) {
+        meter.classList.add('warn');
+        tokNum.classList.add('warn');
+      }
+
+      // Token number
+      tokNum.textContent = total.toLocaleString('de-DE') + ' tok';
+
+      // Question feedback
+      if (!question) {
+        fbQ.innerHTML = '<span class="warn">keine Frage im Context</span>';
+      } else {
+        fbQ.innerHTML = '<span class="ok">' + (question.dataset.id || '').toUpperCase() + '</span> · ' +
+                        (question.querySelector('.tile-name').textContent.length > 50
+                          ? question.querySelector('.tile-name').textContent.slice(0, 50) + '…'
+                          : question.querySelector('.tile-name').textContent);
+      }
+
+      // Coverage feedback
+      if (!question) {
+        fbC.innerHTML = '<span style="color:#c8c2b6;">Frage fehlt — keine Bewertung</span>';
+      } else {
+        var needs = (question.dataset.needs || '').split(',').filter(Boolean);
+        var missing = needs.filter(function(n) { return inCtxMcps.indexOf(n) === -1; });
+        var surplus = inCtxMcps.filter(function(m) { return needs.indexOf(m) === -1; });
+
+        var parts = [];
+        if (missing.length === 0 && surplus.length === 0 && needs.length > 0) {
+          parts.push('<span class="ok">✓ perfekt — genau die nötigen Tools</span>');
+        } else if (missing.length === 0 && needs.length === 0) {
+          parts.push('<span class="ok">✓ keine MCPs nötig</span>');
+          if (surplus.length > 0) parts.push('<span class="warn">• surplus: ' + surplus.join(', ') + '</span>');
+        } else {
+          if (missing.length === 0) {
+            parts.push('<span class="ok">✓ alle nötigen Tools dabei</span>');
+          } else {
+            parts.push('<span class="bad">✗ fehlt: ' + missing.join(', ') + '</span>');
+          }
+          if (surplus.length > 0) {
+            parts.push('<span class="warn">• zu viel: ' + surplus.join(', ') + '</span>');
+          }
+        }
+        fbC.innerHTML = parts.join('<br/>');
+      }
+
+      // Quality feedback
+      var qParts = [];
+      if (ratio >= OK_THRESHOLD) {
+        qParts.push('<span class="bad">⚠ Context Rot wahrscheinlich</span>');
+        qParts.push('<span style="color:#c8c2b6;">' + Math.round(ratio * 100) + '% des Budgets — Modell verliert Fokus</span>');
+      } else if (ratio >= LEAN_THRESHOLD) {
+        qParts.push('<span class="warn">◐ OK — aber Tools rauswerfen, die du nicht brauchst</span>');
+        qParts.push('<span style="color:#c8c2b6;">' + Math.round(ratio * 100) + '% des Budgets</span>');
+      } else if (total === 0) {
+        qParts.push('<span style="color:#c8c2b6;">leerer Context</span>');
+      } else {
+        qParts.push('<span class="ok">✓ Lean — effizient</span>');
+        qParts.push('<span style="color:#c8c2b6;">' + Math.round(ratio * 100) + '% des Budgets</span>');
+      }
+      fbQual.innerHTML = qParts.join('<br/>');
+    }
+
+    recalc();
+  })();
+</script>
+
+
+</body>
+</html>

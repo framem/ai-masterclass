@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Master Class — Glossar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --hair-2: rgba(21, 17, 12, 0.07);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+  /* ---------- Header · Bold Terracotta ---------- */
+  header {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(110% 90% at 85% -10%, #d8552f 0%, rgba(216,85,47,0) 55%),
+      var(--accent);
+    color: var(--paper);
+  }
+  header .dots {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1.5px);
+    background-size: 34px 34px;
+  }
+  header .wrap { position: relative; z-index: 1; }
+  .topline {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 14px; color: rgba(250,247,241,0.78);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 28px 0 0;
+  }
+  .topline a.back { color: rgba(250,247,241,0.78); transition: color .18s ease; }
+  .topline a.back:hover { color: var(--paper); }
+  .topline .pip {
+    display: inline-block; width: 10px; height: 10px;
+    background: var(--paper); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+    box-shadow: 0 0 0 0 rgba(250,247,241,0.5);
+    animation: pip-pulse 2.6s ease-out infinite;
+  }
+  @keyframes pip-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(250,247,241,0.5); }
+    70%  { box-shadow: 0 0 0 12px rgba(250,247,241,0); }
+    100% { box-shadow: 0 0 0 0 rgba(250,247,241,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .topline .pip { animation: none; } }
+  .hero { padding: 64px 0 70px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: clamp(13px, 1.1vw, 16px);
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(250,247,241,0.9); margin: 0 0 26px;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-size: clamp(48px, 9vw, 116px); line-height: 0.92; letter-spacing: -0.04em;
+    font-weight: 600; margin: 0; max-width: 11ch; color: var(--paper);
+  }
+  h1 .accent { color: var(--ink); }
+  .hero p {
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(20px, 2.4vw, 30px); line-height: 1.32; color: rgba(250,247,241,0.92);
+    max-width: 44ch; margin: 30px 0 0;
+  }
+
+  /* ---------- Filter bar ---------- */
+  .toolbar {
+    position: sticky; top: 0; z-index: 5;
+    background: rgba(244,241,234,0.9); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hair);
+  }
+  .toolbar .wrap {
+    display: flex; align-items: center; gap: 20px;
+    padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap;
+  }
+  .search {
+    flex: 1; min-width: 240px;
+    display: flex; align-items: center; gap: 12px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+    padding: 12px 18px;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+  .search:focus-within {
+    border-color: rgba(200,66,31,0.55);
+    box-shadow: 0 0 0 3px rgba(200,66,31,0.12);
+  }
+  .search svg { flex: 0 0 auto; color: var(--ink-3); }
+  .search input {
+    flex: 1; border: 0; background: transparent; outline: none;
+    font-family: var(--sans); font-size: 17px; color: var(--ink);
+  }
+  .search input::placeholder { color: var(--ink-3); }
+  .count {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em;
+    color: var(--ink-3); white-space: nowrap;
+  }
+  .count b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- Glossary list ---------- */
+  main.wrap { padding: 40px 40px 130px; }
+  .gloss {
+    display: grid; gap: 0 56px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .item {
+    display: grid; grid-template-columns: 168px 1fr; gap: 22px;
+    align-items: baseline;
+    padding: 20px 0; border-bottom: 1px solid var(--hair);
+  }
+  .term {
+    font-family: var(--mono); font-size: 18px; font-weight: 500;
+    color: var(--accent); letter-spacing: 0.01em;
+  }
+  .def {
+    font-size: 17px; line-height: 1.5; color: var(--ink-2);
+  }
+  .def em { font-style: italic; color: var(--ink); }
+  .def .mono {
+    font-family: var(--mono); font-size: 0.92em;
+    background: var(--bg-2); border: 1px solid var(--hair);
+    border-radius: 6px; padding: 1px 7px; color: var(--ink);
+  }
+  mark {
+    background: var(--accent-pale); color: var(--ink);
+    border-radius: 3px; padding: 0 2px;
+  }
+
+  .empty {
+    display: none; padding: 60px 0; text-align: center;
+    font-family: var(--serif); font-style: italic; font-size: 24px; color: var(--ink-3);
+  }
+  .gloss.is-empty + .empty { display: block; }
+
+  footer {
+    border-top: 1px solid var(--hair);
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  footer .wrap {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 24px; padding-bottom: 40px; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 860px) {
+    .gloss { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 22px; }
+    .hero { padding: 44px 0 52px; }
+    main.wrap { padding: 32px 22px 96px; }
+    .item { grid-template-columns: 1fr; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<template id="__bundler_thumbnail" data-bg-color="#c8421f">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#c8421f" />
+    <circle cx="372" cy="300" r="34" fill="#faf7f1" />
+    <text x="430" y="318" font-family="monospace" font-size="74" fill="#15110c">Aa</text>
+    <text x="372" y="470" font-family="Georgia, serif" font-style="italic" font-size="96" fill="#faf7f1">Glossar</text>
+    <rect x="372" y="520" width="456" height="6" rx="3" fill="#faf7f1" opacity="0.4" />
+    <text x="372" y="582" font-family="monospace" font-size="28" letter-spacing="6" fill="#faf7f1" opacity="0.85">NACHSCHLAGEN</text>
+  </svg>
+</template>
+
+<header>
+  <div class="dots"></div>
+  <div class="wrap">
+    <div class="topline">
+      <span><span class="pip"></span>AI Master Class</span>
+      <a class="back" href="index.html#vertiefung">← Übersicht</a>
+    </div>
+    <div class="hero">
+      <p class="eyebrow">Nachschlagen</p>
+      <h1><span class="accent">Wort</span>liste.</h1>
+      <p>Die wichtigsten Begriffe aus dem gesamten Workshop — kompakt zum Nachschlagen, von A2A bis Workflow.</p>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <label class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input id="q" type="search" placeholder="Begriff suchen — z. B. Token, RAG, MCP …" autocomplete="off" />
+    </label>
+    <span class="count"><b id="shown">35</b> von 35 Begriffen</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="gloss" id="gloss">
+
+    <div class="item">
+      <div class="term">A2A</div>
+      <div class="def"><em>Agent-to-Agent</em> — offenes Protokoll, mit dem Agenten verschiedener Anbieter sich finden und Aufgaben austauschen können.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Agent</div>
+      <div class="def">LLM, das selbst entscheidet, welche Werkzeuge es in welcher Reihenfolge benutzt, um ein Ziel zu erreichen.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Agent Card</div>
+      <div class="def">Öffentliches Profil eines A2A-Agents: Fähigkeiten, Endpunkt, Authentifizierung — damit andere Agenten ihn finden.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Agentic Loop</div>
+      <div class="def">Zyklus aus Denken und Handeln: der Agent plant, ruft ein Tool, beobachtet das Ergebnis und entscheidet neu — bis das Ziel erreicht ist. Gegenstück zur linearen Pipeline.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">AGENTS.md</div>
+      <div class="def">Projektweite Anweisungsdatei für Coding-Agenten: Tech-Stack, Konventionen, Standards. Wird als Kontext mitgeladen, damit der Agent im Haus-Stil arbeitet.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Context Engineering</div>
+      <div class="def">Die Disziplin, dem Modell <em>genau das Richtige</em> in den Kontext zu legen — nicht möglichst viel. Während der Prompt das WAS liefert, liefert der Context das WORAUF.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Context Rot</div>
+      <div class="def">Qualitätsverlust bei zu vollem Kontextfenster: das Modell verliert den Fokus, „vergisst" frühe Anweisungen und halluziniert eher.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Context Window</div>
+      <div class="def">Maximale Token-Menge, die das Modell bei einer Anfrage gleichzeitig sehen kann (z.&nbsp;B. 128&nbsp;K).</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Embedding</div>
+      <div class="def">Übersetzung von Text in einen Punkt im hochdimensionalen Raum. Ähnliche Bedeutung → nahe Punkte.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Eval / Evaluation</div>
+      <div class="def">Systematische Messung der Output-Qualität gegen Testfälle — statt Sichtprüfung nach Gefühl. Macht zwei Prompt-Varianten anhand <em>einer Zahl</em> vergleichbar.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Few-Shot</div>
+      <div class="def">Dem Prompt ein paar Beispiele (Input → Output) mitgeben, statt die Aufgabe zu erklären. Drei Beispiele schlagen oft 500 Wörter Anleitung.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Golden-Set</div>
+      <div class="def">Kuratierte Sammlung echter Fälle mit erwartetem Ergebnis — die Messlatte, gegen die jede Eval läuft.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Guardrail</div>
+      <div class="def">Schutzschicht, die Ein- und Ausgaben eines KI-Systems prüft und begrenzt — z.&nbsp;B. PII-Filter, Prompt-Injection-Erkennung, Confidence-Schwelle. Wirkt in mehreren Ebenen.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Hallucination</div>
+      <div class="def">Wenn das Modell etwas Plausibles, aber Falsches generiert. Folge daraus: Outputs gegen Quellen prüfen.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">LLM-as-Judge</div>
+      <div class="def">Ein zweites LLM bewertet den Output des ersten — nützlich, wenn es keine <em>eine</em> richtige Antwort gibt, sondern Qualität (Ton, Plausibilität) zählt.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Logit</div>
+      <div class="def">Roh-Score, den das Modell jedem möglichen nächsten Token gibt. Wird mit Softmax in Wahrscheinlichkeiten umgewandelt.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">MCP</div>
+      <div class="def"><em>Model Context Protocol</em> — offener Standard, der Tools (Server) und Agenten (Clients) verbindet. USB-C für KI-Werkzeuge.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Memory</div>
+      <div class="def">Persistenter Speicher über einzelne Gespräche hinaus — Fakten, Präferenzen, Historie. Anders als der Context, der pro Aufruf neu gefüllt wird.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Multi-Agent</div>
+      <div class="def">Mehrere spezialisierte Agenten arbeiten zusammen — als Supervisor-Team, Pipeline oder Schwarm.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Prompt</div>
+      <div class="def">Die Eingabe an ein Modell — die „Bestellung". Sagt, <em>was</em> passieren soll (Aufgabe, Rolle, Format); der Context liefert das <em>worauf</em>.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Prompt Injection</div>
+      <div class="def">Angriff, bei dem manipulierte Eingaben — oder Inhalte aus Tools/Web — das Modell zu unerwünschten Aktionen verleiten. Top-Bedrohung für Agenten.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">RAG</div>
+      <div class="def"><em>Retrieval-Augmented Generation</em> — eigene Dokumente per Vektor-Suche dem LLM mitgeben.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">ReAct</div>
+      <div class="def"><em>Reason + Act</em> — Muster für Agenten-Loops: abwechselnd nachdenken (Reason), handeln (Act) und das Ergebnis beobachten (Observe).</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Reasoning Effort</div>
+      <div class="def">Stellrad, wie viel ein Modell vor der Antwort „nachdenkt". Mehr&nbsp;≠&nbsp;besser: bei einfachen Aufgaben kostet es nur Zeit und Tokens (Overthinking).</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Scorer</div>
+      <div class="def">Die Funktion, die einen Output bewertet — von exakt (<span class="mono">exact-match</span>) über Regex bis LLM-as-Judge. Passend zur Aufgabe gewählt.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">SDLC</div>
+      <div class="def"><em>Software Development Life Cycle</em> — Plan, Code, Test, Review, Deploy, Operate. Zeigt, wo KI andockt und wo Begleitpflicht herrscht.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Skill</div>
+      <div class="def">Wiederverwendbares Paket aus Anleitung + Werkzeugen, das ein Agent bei Bedarf lädt (<span class="mono">SKILL.md</span>) — nur dann im Kontext, wenn er gebraucht wird.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">SLM / LLM</div>
+      <div class="def"><em>Small / Large Language Model</em>. Klein, lokal, spezialisiert vs. groß, breit, im Rechenzentrum.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Softmax</div>
+      <div class="def">Mathe-Funktion, die beliebige Zahlen in Prozente verwandelt, die zusammen 100&nbsp;% ergeben.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">System-Prompt</div>
+      <div class="def">Persistente Anweisung, die bei <em>jedem</em> Aufruf vorab gesendet wird — Rolle, Ton, Regeln. Gilt fürs ganze Gespräch, anders als die einzelne User-Nachricht.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Temperatur</div>
+      <div class="def">Stellrad für Zufall: 0&nbsp;= immer höchster Logit · &gt;1&nbsp;= mehr Vielfalt, mehr Risiko.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Token</div>
+      <div class="def">Kleinster Sprachbaustein für ein LLM — ein Wort, ein Wortteil oder ein Satzzeichen. „Brötchen" kann z.&nbsp;B. <span class="mono">Brötch</span> + <span class="mono">en</span> sein.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Tool</div>
+      <div class="def">Funktion mit Name, Parametern und Rückgabewert, die ein Agent aufrufen darf — z.&nbsp;B. <span class="mono">search_db</span>, <span class="mono">send_email</span>.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Vektor-DB</div>
+      <div class="def">Spezialdatenbank, die Embeddings speichert und blitzschnell die nächsten Nachbarn findet.</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Workflow</div>
+      <div class="def">Vorab definierte Kette von Schritten, in der das LLM nur an festen Stellen aufgerufen wird.</div>
+    </div>
+
+  </div>
+  <div class="empty">Kein Begriff gefunden.</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>AI Master Class · Glossar · 2026</span>
+    <span><a href="index.html#vertiefung">← Zurück zur Übersicht</a></span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var input = document.getElementById('q');
+    var gloss = document.getElementById('gloss');
+    var shown = document.getElementById('shown');
+    var items = Array.prototype.slice.call(gloss.querySelectorAll('.item'));
+
+    // cache plain-text haystacks
+    items.forEach(function (it) {
+      it._hay = it.textContent.toLowerCase();
+    });
+
+    function norm(s) { return s.toLowerCase().trim(); }
+
+    function run() {
+      var q = norm(input.value);
+      var n = 0;
+      items.forEach(function (it) {
+        var hit = q === '' || it._hay.indexOf(q) !== -1;
+        it.style.display = hit ? '' : 'none';
+        if (hit) n++;
+      });
+      shown.textContent = n;
+      gloss.classList.toggle('is-empty', n === 0);
+    }
+
+    input.addEventListener('input', run);
+  })();
+</script>
+
+</body>
+</html>

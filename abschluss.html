@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Master Class — Abschluss · Lernziele, Selbst-Check & Capstone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --hair-2: rgba(21, 17, 12, 0.07);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --ok: #3d8a4a;
+    --warn: #a83020;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+  /* ---------- Header ---------- */
+  header {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(115% 95% at 88% -10%, #d8552f 0%, rgba(216,85,47,0) 55%),
+      var(--accent);
+    color: var(--paper);
+  }
+  header .dots {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1.5px);
+    background-size: 34px 34px;
+  }
+  header .wrap { position: relative; z-index: 1; display: flex; flex-direction: column; }
+  .topline {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 13px; color: rgba(250,247,241,0.82);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 26px 0 18px;
+    border-bottom: 1px solid rgba(250,247,241,0.22);
+  }
+  .topline a.home { display: inline-flex; align-items: center; gap: 10px; color: var(--paper); font-weight: 500; transition: opacity .15s; }
+  .topline a.home:hover { opacity: 0.78; }
+  .topline a.home .bk { font-size: 15px; }
+  .hero { padding: 70px 0 78px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: clamp(13px, 1.1vw, 16px);
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(250,247,241,0.9); margin: 0 0 26px;
+  }
+  h1 {
+    font-family: var(--sans); font-size: clamp(44px, 7.4vw, 92px);
+    line-height: 0.96; letter-spacing: -0.035em; font-weight: 600;
+    margin: 0; max-width: 16ch; color: var(--paper);
+  }
+  h1 .accent { color: var(--ink); }
+  .hero p {
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(19px, 2.2vw, 28px); line-height: 1.34; color: rgba(250,247,241,0.92);
+    max-width: 50ch; margin: 28px 0 0;
+  }
+
+  /* ---------- Sections ---------- */
+  main.wrap { padding: 72px 40px 140px; }
+  .section + .section { margin-top: 76px; }
+  .section { scroll-margin-top: 28px; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 18px;
+    padding-bottom: 22px; margin-bottom: 30px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .section-head h2 { font-family: var(--serif); font-weight: 500; font-size: 30px; letter-spacing: -0.01em; margin: 0; }
+  .section-head .count { font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.08em; }
+  .intro {
+    font-family: var(--serif); font-size: clamp(18px, 1.8vw, 21px);
+    line-height: 1.5; color: var(--ink-2); max-width: none; margin: 0 0 30px; text-wrap: pretty;
+  }
+
+  /* ---------- Self-check progress ---------- */
+  .progress-bar {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(244,241,234,0.92); backdrop-filter: blur(8px);
+    border: 1px solid var(--hair); border-radius: 14px;
+    padding: 16px 22px; margin-bottom: 26px;
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px 22px;
+  }
+  .progress-bar .pg-label {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); white-space: nowrap;
+  }
+  .progress-bar .pg-track { height: 10px; border-radius: 999px; background: var(--bg-2); overflow: hidden; }
+  .progress-bar .pg-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 999px; transition: width .35s cubic-bezier(.2,.7,.3,1); }
+  .progress-bar .pg-count {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-2);
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .progress-bar .pg-count b { color: var(--accent); }
+  .progress-bar .pg-reset {
+    grid-column: 3; appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-3); background: transparent; border: 1px solid var(--hair); border-radius: 999px;
+    padding: 6px 14px; transition: color .15s, border-color .15s;
+  }
+  .progress-bar .pg-reset:hover { color: var(--accent); border-color: var(--accent); }
+  @media (max-width: 620px) {
+    .progress-bar { grid-template-columns: 1fr auto; }
+    .progress-bar .pg-track { grid-column: 1 / -1; order: 3; }
+  }
+
+  /* ---------- Objective cards ---------- */
+  .obj-stack { display: grid; gap: 16px; }
+  .obj-card {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 16px;
+    overflow: hidden;
+    display: grid; grid-template-columns: 232px 1fr;
+  }
+  @media (max-width: 720px) { .obj-card { grid-template-columns: 1fr; } }
+  .obj-aside {
+    background: var(--bg-2); border-right: 1px solid var(--hair-2);
+    padding: 26px 26px 24px; display: flex; flex-direction: column;
+  }
+  @media (max-width: 720px) { .obj-aside { border-right: none; border-bottom: 1px solid var(--hair-2); } }
+  .obj-aside .oa-num {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .obj-aside .oa-title { font-family: var(--serif); font-weight: 500; font-size: 27px; line-height: 1.08; letter-spacing: -0.01em; margin-top: 8px; }
+  .obj-aside .oa-link {
+    margin-top: auto; padding-top: 18px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--ink-3);
+    display: inline-flex; align-items: center; gap: 8px; transition: color .15s, gap .15s;
+  }
+  .obj-aside .oa-link:hover { color: var(--accent); gap: 13px; }
+  .obj-aside .oa-mini {
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
+    margin-top: 14px; letter-spacing: 0.02em;
+  }
+  .obj-aside .oa-mini b { color: var(--accent); }
+
+  .obj-list { padding: 16px 22px 18px; display: flex; flex-direction: column; }
+  .check {
+    display: grid; grid-template-columns: 26px 1fr; gap: 14px; align-items: start;
+    padding: 13px 8px; cursor: pointer; border-radius: 10px;
+    transition: background .14s;
+  }
+  .check + .check { border-top: 1px solid var(--hair-2); }
+  .check:hover { background: var(--bg); }
+  .check .box {
+    width: 24px; height: 24px; margin-top: 1px;
+    border: 1.6px solid var(--ink-3); border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    color: transparent; font-size: 14px; font-weight: 700;
+    transition: background .14s, border-color .14s, color .14s;
+  }
+  .check .ct { font-size: 17px; line-height: 1.45; color: var(--ink-2); }
+  .check .ct b { color: var(--ink); font-weight: 600; }
+  .check[aria-checked="true"] .box { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .check[aria-checked="true"] .ct { color: var(--ink-3); }
+  .check[aria-checked="true"] .ct b { color: var(--ink-2); }
+
+  /* ---------- Capstone ---------- */
+  .cap-lede {
+    display: grid; grid-template-columns: 1fr; gap: 0;
+    background: var(--ink); color: #f0ece3; border-radius: 18px;
+    padding: 34px 38px; margin-bottom: 22px;
+  }
+  .cap-lede .cl-tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-soft); }
+  .cap-lede .cl-title { font-family: var(--serif); font-weight: 500; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.08; margin: 12px 0 0; }
+  .cap-lede .cl-body { font-size: 18px; line-height: 1.55; color: #d8d2c5; margin: 16px 0 0; max-width: 70ch; }
+  .cap-lede .cl-body b { color: #fff; }
+
+  .track-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+  @media (max-width: 720px) { .track-row { grid-template-columns: 1fr; } }
+  .track {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 16px;
+    padding: 26px 28px; display: flex; flex-direction: column;
+  }
+  .track.dev { border-top: 4px solid var(--ink); }
+  .track.nondev { border-top: 4px solid var(--accent); }
+  .track .tk-tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .track.nondev .tk-tag { color: var(--accent); }
+  .track .tk-name { font-family: var(--serif); font-weight: 500; font-size: 26px; line-height: 1.1; margin-top: 6px; }
+  .track .tk-mission { font-size: 16.5px; line-height: 1.5; color: var(--ink-2); margin-top: 10px; }
+  .track .tk-mission b { color: var(--ink); }
+  .track .tk-alt { margin-top: auto; padding-top: 16px; font-family: var(--mono); font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+
+  .deliver { display: grid; gap: 12px; }
+  .dl-item {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 18px 24px;
+    display: grid; grid-template-columns: 150px 1fr; gap: 8px 24px; align-items: baseline;
+  }
+  @media (max-width: 640px) { .dl-item { grid-template-columns: 1fr; } }
+  .dl-item .dl-chap { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--accent); }
+  .dl-item .dl-what b { color: var(--ink); font-weight: 600; }
+  .dl-item .dl-what { font-size: 16.5px; line-height: 1.5; color: var(--ink-2); }
+
+  .rubric { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .rubric th, .rubric td { text-align: left; padding: 14px 18px; vertical-align: top; font-size: 15px; line-height: 1.45; }
+  .rubric thead th {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3); border-bottom: 1px solid var(--hair); font-weight: 500;
+  }
+  .rubric tbody tr { border-bottom: 1px solid var(--hair-2); }
+  .rubric tbody td:first-child { font-family: var(--serif); font-weight: 500; font-size: 17px; color: var(--ink); white-space: nowrap; }
+  .rubric .weak { color: var(--warn); }
+  .rubric .strong { color: var(--ok); }
+
+  .meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+  @media (max-width: 640px) { .meta-row { grid-template-columns: 1fr; } }
+  .meta-card { background: var(--bg-2); border: 1px solid var(--hair); border-radius: 14px; padding: 18px 22px; }
+  .meta-card .mc-l { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .meta-card .mc-v { font-size: 16px; color: var(--ink-2); margin-top: 6px; line-height: 1.45; }
+  .meta-card .mc-v b { color: var(--ink); }
+
+  .callout {
+    margin-top: 22px; padding: 18px 26px;
+    display: flex; align-items: center; gap: 22px;
+    border-left: 3px solid var(--accent); background: var(--paper); border-radius: 0 12px 12px 0;
+    font-size: 17px; line-height: 1.45; color: var(--ink-2);
+  }
+  .callout .cl-lbl { flex: 0 0 auto; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .callout b { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--hair);
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.04em;
+  }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; padding-bottom: 40px; flex-wrap: wrap; gap: 12px; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 22px; }
+    main.wrap { padding: 52px 22px 96px; }
+  }
+</style>
+</head>
+<body>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea" />
+    <path d="M470 410 l70 70 160 -180" fill="none" stroke="#3d8a4a" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="600" y="600" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="64" fill="#c8421f">Abschluss</text>
+    <text x="600" y="675" text-anchor="middle" font-family="monospace" font-size="26" letter-spacing="5" fill="#6b6357">LERNZIELE · CAPSTONE</text>
+  </svg>
+</template>
+
+<header>
+  <div class="dots"></div>
+  <div class="wrap">
+    <div class="topline">
+      <a class="home" href="index.html"><span class="bk">←</span> Übersicht</a>
+      <span>Abschluss · Stand Juni 2026</span>
+    </div>
+    <div class="hero">
+      <p class="eyebrow">Lernziele · Selbst-Check · Capstone</p>
+      <h1>Kannst du es jetzt — <span class="accent">und kannst du es zeigen?</span></h1>
+      <p>Zuerst hältst du fest, was du sicher beherrschst. Dann weist du es an einer echten Aufgabe nach, die den gesamten Stoff zusammenführt — von Prompt bis Guardrail, mit Beleg.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ LERNZIELE & SELBST-CHECK ============ -->
+  <section class="section" id="selbstcheck">
+    <div class="section-head">
+      <h2>Lernziele &amp; Selbst-Check</h2>
+      <span class="count">Vorbereitung + 4 Kapitel · Selbst-Einschätzung</span>
+    </div>
+    <p class="intro">
+      Pro Einheit: <strong>„Das kannst du danach."</strong> Markiere ehrlich, was du sicher beherrschst — der Fortschritt wird lokal gespeichert. Was offen bleibt, ist deine Lese-Liste vor dem Capstone.
+    </p>
+
+    <div class="progress-bar">
+      <span class="pg-label">Dein Stand</span>
+      <div class="pg-track"><div class="pg-fill" id="pgFill"></div></div>
+      <span class="pg-count"><b id="pgDone">0</b> / <span id="pgTotal">0</span> Zielen sicher</span>
+      <button class="pg-reset" id="pgReset" type="button">Zurücksetzen</button>
+    </div>
+
+    <div class="obj-stack" id="objStack">
+
+      <div class="obj-card">
+        <div class="obj-aside">
+          <span class="oa-num">Vorbereitung</span>
+          <span class="oa-title">Was ist ein LM?</span>
+          <a class="oa-link" href="01-lm-refresher.html">Einheit öffnen →</a>
+        </div>
+        <div class="obj-list">
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann erklären, dass ein Modell <b>Token für Token</b> das jeweils wahrscheinlichste Folge-Token vorhersagt.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann die drei Phasen <b>Tokenize → Predict → Sample</b> in eigenen Worten beschreiben.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann Begriffe wie <b>Token, Context und Temperatur</b> grob einordnen.</span></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-aside">
+          <span class="oa-num">Kapitel 01</span>
+          <span class="oa-title">Prompting &amp; Context</span>
+          <a class="oa-link" href="02-prompting-context.html">Einheit öffnen →</a>
+        </div>
+        <div class="obj-list">
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann einen Prompt <b>strukturiert</b> aufbauen (Rolle, Aufgabe, Kontext, gewünschtes Format).</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kenne die <b>fünf Prompt-Muster</b> und setze sie gezielt statt zufällig ein.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kuratiere den Context <b>bewusst</b> — nur was die Aufgabe braucht, statt das Fenster zu füllen.</span></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-aside">
+          <span class="oa-num">Kapitel 02</span>
+          <span class="oa-title">Agentic Workflows</span>
+          <a class="oa-link" href="03-agentic-workflows.html">Einheit öffnen →</a>
+        </div>
+        <div class="obj-list">
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann eine Aufgabe in <b>Explore → Plan → Execute → Commit</b> zerlegen.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich erkenne, <b>wann ein Plan-Gate</b> nötig ist, bevor der Agent ausführt.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann ein <b>Pair-Refactoring</b> mit einem Agenten diszipliniert durchführen.</span></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-aside">
+          <span class="oa-num">Kapitel 03</span>
+          <span class="oa-title">Workflows vs Agents · MCP</span>
+          <a class="oa-link" href="04-workflows-agents-mcp.html">Einheit öffnen →</a>
+        </div>
+        <div class="obj-list">
+          <div class="check"><span class="box">✓</span><span class="ct">Ich unterscheide <b>Augmented LLM, Workflow und Agent</b> und wähle je nach Aufgabe.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann erklären, was <b>Tool-Use und MCP</b> leisten — und wo ihre Grenzen liegen.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich entscheide bewusst: <b>fester Pfad</b> (Workflow) oder <b>selbst entscheidender Agent</b>.</span></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-aside">
+          <span class="oa-num">Kapitel 04</span>
+          <span class="oa-title">AI im SDLC + Guardrails</span>
+          <a class="oa-link" href="05-ai-sdlc-guardrails.html">Einheit öffnen →</a>
+        </div>
+        <div class="obj-list">
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann pro <b>SDLC-Phase</b> die AI-Andockpunkte benennen und Sweet-Spots von Begleitpflicht trennen.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kenne die <b>vier Guardrail-Ebenen</b> und die <b>vier Top-Bedrohungen</b>.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann den <b>Org-Reifegrad</b> ehrlich einordnen — und sagen, was die nächste Stufe braucht.</span></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-aside">
+          <span class="oa-num">Kapitel 05</span>
+          <span class="oa-title">Evaluation &amp; Vertrauen</span>
+          <a class="oa-link" href="06-evaluation-trust.html">Einheit öffnen →</a>
+          <span class="oa-mini"><b>neu</b> · schließt das Curriculum</span>
+        </div>
+        <div class="obj-list">
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kann ein <b>Golden-Set</b> anlegen und den <b>passenden Scorer</b> dafür wählen.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich vergleiche <b>zwei Prompt-Varianten anhand einer Zahl</b> statt nach Gefühl.</span></div>
+          <div class="check"><span class="box">✓</span><span class="ct">Ich kalibriere Vertrauen: <b>vertrauen / stichproben / verifizieren</b> — je nach Schaden &amp; Prüfbarkeit.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============ CAPSTONE ============ -->
+  <section class="section" id="capstone">
+    <div class="section-head">
+      <h2>Capstone</h2>
+      <span class="count">Eine Aufgabe, der gesamte Stoff</span>
+    </div>
+    <p class="intro">
+      Der Selbst-Check zeigt, was du <em>weißt</em>. Der Capstone zeigt, was du <em>kannst</em>. Eine kleine, echte Aufgabe — durchgezogen vom Prompt bis zum Beleg, dass es funktioniert.
+    </p>
+
+    <div class="cap-lede">
+      <span class="cl-tag">Die Mission</span>
+      <span class="cl-title">Baue einen AI-Helfer für eine echte Aufgabe — und weise nach, dass er gut ist.</span>
+      <span class="cl-body">
+        Kein Tool-Wettbewerb, kein Production-System. Ziel ist die <b>durchgängige Denkweise</b>: einen Prompt entwerfen, das Vorgehen wählen, Leitplanken setzen — und am Ende mit einer <b>Zahl auf festen Fällen</b> zeigen, dass deine Lösung besser ist als der erste Entwurf. Wähle eine der zwei Spuren.
+      </span>
+    </div>
+
+    <div class="track-row">
+      <div class="track dev">
+        <span class="tk-tag">Spur A · Dev</span>
+        <span class="tk-name">Commits → Release-Changelog</span>
+        <span class="tk-mission">Baue einen Helfer, der aus einer Liste von Commit-Messages einen <b>sauberen, gruppierten Changelog</b> macht — ohne erfundene Einträge, mit Ticket-Bezug.</span>
+        <span class="tk-alt">Alternativen: PR-Pre-Review · Test-Generator aus einer User-Story · Log-Triage.</span>
+      </div>
+      <div class="track nondev">
+        <span class="tk-tag">Spur B · Non-Dev</span>
+        <span class="tk-name">Mail-Eingang → Action-Items</span>
+        <span class="tk-mission">Baue einen Helfer, der aus einer langen E-Mail <b>klare Action-Items + einen Antwortentwurf</b> zieht — nichts erfindet, Fristen korrekt überträgt.</span>
+        <span class="tk-alt">Alternativen: Meeting-Notiz → To-dos · Angebots-Triage · FAQ-Antwortentwurf.</span>
+      </div>
+    </div>
+
+    <p class="intro" style="font-family: var(--sans); font-size: 16px; color: var(--ink-3); margin: 0 0 18px;">
+      <strong style="color: var(--ink);">Fünf Liefergegenstände</strong> — je einer pro Kapitel. Kurz halten: ein Satz bis ein Absatz reicht.
+    </p>
+
+    <div class="deliver">
+      <div class="dl-item">
+        <span class="dl-chap">Kapitel 01</span>
+        <span class="dl-what"><b>Prompt &amp; Context.</b> Dein finaler Prompt (Rolle, Aufgabe, Format) plus: welcher Kontext ist <em>immer</em> dabei, welcher nur <em>on-demand</em>?</span>
+      </div>
+      <div class="dl-item">
+        <span class="dl-chap">Kapitel 02 + 03</span>
+        <span class="dl-what"><b>Vorgehen.</b> Die EPEC-Zerlegung der Aufgabe — und die Entscheidung: <em>fester Workflow</em> oder <em>Agent</em>? Welche Tools/MCP, falls überhaupt?</span>
+      </div>
+      <div class="dl-item">
+        <span class="dl-chap">Kapitel 04</span>
+        <span class="dl-what"><b>Guardrails.</b> Welche der vier Ebenen greifen bei dir? Nenne <em>eine konkrete Bedrohung</em>, die du aktiv mitigierst.</span>
+      </div>
+      <div class="dl-item">
+        <span class="dl-chap">Kapitel 05</span>
+        <span class="dl-what"><b>Eval.</b> Ein Golden-Set von <em>≥ 5 echten Fällen</em>, der gewählte Scorer, und der <em>Score zweier Prompt-Varianten</em> (A vs. B).</span>
+      </div>
+      <div class="dl-item">
+        <span class="dl-chap">Kapitel 05</span>
+        <span class="dl-what"><b>Trust-Entscheidung.</b> Wo sitzt deine Aufgabe auf der Schaden×Prüfbarkeit-Matrix — und welche Prüf-Strategie folgt daraus?</span>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--serif); font-weight: 500; font-size: 24px; margin: 40px 0 8px;">Bewertungsraster</h3>
+    <p class="intro" style="font-family: var(--sans); font-size: 15px; color: var(--ink-3); margin: 0 0 12px;">
+      So wird ein guter Capstone von einem schwachen unterschieden — Maßstab ist die <em>Nachweisbarkeit</em>, nicht die Politur.
+    </p>
+    <table class="rubric">
+      <thead>
+        <tr><th>Kriterium</th><th>Schwach</th><th>Stark</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Prompt &amp; Context</td>
+          <td class="weak">Ein langer Wunschsatz; gesamter Kontext immer geladen.</td>
+          <td class="strong">Strukturiert; bewusst getrennt, was immer vs. on-demand geladen wird.</td>
+        </tr>
+        <tr>
+          <td>Vorgehen</td>
+          <td class="weak">Modell direkt angefragt, kein erkennbares Vorgehen.</td>
+          <td class="strong">Begründete Wahl Workflow vs. Agent; EPEC sichtbar.</td>
+        </tr>
+        <tr>
+          <td>Guardrails</td>
+          <td class="weak">Keine Guardrails benannt.</td>
+          <td class="strong">Mind. eine Ebene + eine konkret mitigierte Bedrohung.</td>
+        </tr>
+        <tr>
+          <td>Evaluation</td>
+          <td class="weak">Sichtprüfung, keine Testfälle.</td>
+          <td class="strong">Golden-Set + Scorer + Zahl für A und B.</td>
+        </tr>
+        <tr>
+          <td>Trust</td>
+          <td class="weak">Vertrauen ohne Begründung.</td>
+          <td class="strong">Verortet auf der Matrix; Strategie folgt aus Schaden &amp; Prüfbarkeit.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="meta-row">
+      <div class="meta-card">
+        <div class="mc-l">Format</div>
+        <div class="mc-v"><b>Paare oder Trios.</b> Eine Folie / ein Doc pro Liefergegenstand reicht.</div>
+      </div>
+      <div class="meta-card">
+        <div class="mc-l">Timebox</div>
+        <div class="mc-v"><b>60–90 Min</b> Bauen · <b>5 Min</b> Vorstellen pro Gruppe.</div>
+      </div>
+      <div class="meta-card">
+        <div class="mc-l">Abgabe</div>
+        <div class="mc-v">Das <b>Golden-Set + die zwei Scores</b> sind das Herzstück — der Rest erklärt den Weg dahin.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="cl-lbl">Moderation</span>
+      <span><b>Erst die Spur wählen lassen, dann die Aufgabe einfrieren.</b> Die häufigste Falle ist Scope-Creep — wer ein Production-System baut, kommt nie zur Eval. Das Lernziel ist die Kette, nicht das Produkt.</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>AI Master Class · Abschluss · 2026</span>
+    <span><a href="index.html" style="color: var(--accent);">← zurück zur Übersicht</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var KEY = 'amc-selfcheck-v1';
+  var checks = Array.prototype.slice.call(document.querySelectorAll('.check'));
+  var fill = document.getElementById('pgFill');
+  var doneEl = document.getElementById('pgDone');
+  var totalEl = document.getElementById('pgTotal');
+  var resetBtn = document.getElementById('pgReset');
+
+  // stable id per check = chapter index + position
+  checks.forEach(function (c, i) { c.setAttribute('data-ck', 'ck' + i); c.setAttribute('role', 'checkbox'); c.setAttribute('tabindex', '0'); c.setAttribute('aria-checked', 'false'); });
+  totalEl.textContent = checks.length;
+
+  function load() {
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
+    checks.forEach(function (c) {
+      if (saved[c.getAttribute('data-ck')]) c.setAttribute('aria-checked', 'true');
+    });
+  }
+  function save() {
+    var out = {};
+    checks.forEach(function (c) { if (c.getAttribute('aria-checked') === 'true') out[c.getAttribute('data-ck')] = 1; });
+    try { localStorage.setItem(KEY, JSON.stringify(out)); } catch (e) {}
+  }
+  function refresh() {
+    var n = checks.filter(function (c) { return c.getAttribute('aria-checked') === 'true'; }).length;
+    doneEl.textContent = n;
+    fill.style.width = (checks.length ? (n / checks.length * 100) : 0) + '%';
+  }
+  function toggle(c) {
+    c.setAttribute('aria-checked', c.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+    save(); refresh();
+  }
+
+  checks.forEach(function (c) {
+    c.addEventListener('click', function () { toggle(c); });
+    c.addEventListener('keydown', function (e) {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(c); }
+    });
+  });
+  resetBtn.addEventListener('click', function () {
+    checks.forEach(function (c) { c.setAttribute('aria-checked', 'false'); });
+    save(); refresh();
+  });
+
+  load(); refresh();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2537 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Workflows vs Agents · Tool-Use &amp; MCP — Kapitel 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <rect x="120" y="320" width="280" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="460" y="320" width="280" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="800" y="320" width="280" height="160" rx="14" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
+    <text x="260" y="410" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Augmented LLM</text>
+    <text x="600" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#15110c">Workflow</text>
+    <text x="940" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#fff">Agent</text>
+    <text x="600" y="240" text-anchor="middle" font-family="serif" font-size="46" fill="#15110c" font-weight="500">Workflows vs Agents</text>
+    <text x="410" y="410" font-family="monospace" font-size="22" fill="#c8421f">→</text>
+    <text x="750" y="410" font-family="monospace" font-size="22" fill="#c8421f">→</text>
+  </svg>
+</template>
+
+<link rel="stylesheet" href="exercises/exercises.css" />
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --pad-top: 56px;
+    --pad-x: 80px;
+  }
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg); color: var(--ink);
+    position: relative; overflow: hidden;
+    font-family: var(--sans); font-feature-settings: "ss01", "cv11";
+  }
+  .chrome {
+    position: absolute; inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 18px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin: 44px 0 26px;
+  }
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: 64px; line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1700px;
+  }
+  h3.subtitle {
+    font-size: 40px; line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede { font-size: 28px; line-height: 1.4; color: var(--ink-2); max-width: 1600px; }
+  p.body { font-size: 22px; line-height: 1.5; color: var(--ink-2); max-width: 1500px; }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+  .card { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 28px 32px; }
+  .card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .callout {
+    margin-top: 24px; padding: 20px 28px; min-height: 76px;
+    box-sizing: border-box; display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent); background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto; font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+
+  /* Cheat-Sheet primitives */
+  .cs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .cs-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cs-card .cs-num { font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; }
+  .cs-card.dark .cs-num { color: var(--accent-soft); }
+  .cs-card .cs-name {
+    font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 4px;
+    letter-spacing: -0.01em; line-height: 1.05;
+  }
+  .cs-card .cs-row { margin-top: 14px; }
+  .cs-card .cs-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .cs-card.dark .cs-label { color: #c8c2b6; }
+  .cs-card .cs-val { font-size: 15.5px; color: var(--ink-2); line-height: 1.4; margin-top: 3px; }
+  .cs-card.dark .cs-val { color: #d8d2c5; }
+  .cs-card .cs-val.mono { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+  .cs-card.dark .cs-val.mono { color: #f0ece3; }
+
+  .cs-rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .cs-rule { background: transparent; border: 1px dashed var(--hair); border-radius: 10px; padding: 12px 16px; }
+
+  /* Mitnehmen: statisches Echo der Übersichtskachel-Animation (.a-mcp auf index.html) */
+  .cs-head-row { display: flex; align-items: stretch; gap: 54px; }
+  .cs-head-row .cs-head-main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+  .cs-emblem {
+    flex: 0 0 auto; width: 430px; align-self: stretch;
+    padding-left: 54px; border-left: 1px solid var(--hair);
+    display: flex; flex-direction: column; justify-content: center; gap: 18px;
+  }
+  .cs-emblem .em-cap {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .cs-emblem .em-cap::after { content: ""; flex: 1 1 auto; height: 1px; background: var(--hair); }
+  .cs-emblem .mtag { display: block; margin-bottom: 7px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .cs-emblem .em-chip { font-family: var(--mono); font-size: 12.5px; padding: 6px 11px; border-radius: 8px; background: var(--bg-2); border: 1px solid var(--hair); color: var(--ink-2); white-space: nowrap; }
+  .cs-emblem .em-chip.magent { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .cs-emblem .mtrack { display: flex; align-items: center; }
+  .cs-emblem .mlink { position: relative; flex: 1 1 auto; min-width: 18px; height: 1px; background: rgba(21,17,12,0.25); }
+  .cs-emblem .mlink::after { content: ""; position: absolute; right: 0; top: 50%; width: 5px; height: 5px; border-top: 1px solid rgba(21,17,12,0.45); border-right: 1px solid rgba(21,17,12,0.45); transform: translateY(-50%) rotate(45deg); }
+  .cs-emblem .mfan { display: flex; align-items: center; }
+  .cs-emblem .mfan-svg { width: 48px; height: 74px; flex: none; }
+  .cs-emblem .mfan-svg .fp { fill: none; stroke: rgba(21,17,12,0.25); stroke-width: 1.5; }
+  .cs-emblem .mfan-svg .fp.hot { stroke: var(--accent); stroke-width: 2; }
+  .cs-emblem .mfan-targets { display: flex; flex-direction: column; gap: 7px; }
+  .cs-rule .r-when {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cs-rule .r-then { font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+  .cs-rule .r-then strong { color: var(--ink); }
+
+  /* ===== Pattern-Diagramme (SVG-ähnlich, mit HTML) ===== */
+  .pat {
+    display: flex; flex-direction: column; gap: 8px;
+    align-items: stretch;
+  }
+  .pat-row { display: flex; align-items: center; gap: 8px; }
+  .node {
+    background: var(--bg-2); border: 1.5px solid var(--ink);
+    border-radius: 8px; padding: 6px 10px;
+    font-family: var(--mono); font-size: 13px; color: var(--ink);
+    text-align: center; min-width: 64px;
+  }
+  .node.accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .node.ghost { background: transparent; border-style: dashed; color: var(--ink-3); }
+  .arrow {
+    font-family: var(--mono); font-size: 14px; color: var(--accent); font-weight: 600;
+  }
+
+  /* ===== Tool-Use Loop visualization ===== */
+  .loop-frame {
+    display: grid;
+    grid-template-columns: 1.1fr auto 1fr;
+    gap: 32px; align-items: stretch;
+  }
+  .loop-step {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 18px 22px;
+  }
+  .loop-step .ls-tag {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .loop-step .ls-title {
+    font-family: var(--serif); font-size: 24px; font-weight: 500;
+    line-height: 1.15; margin-top: 4px;
+  }
+  .loop-step .ls-body { font-size: 16px; color: var(--ink-2); line-height: 1.4; margin-top: 8px; }
+  .loop-step pre {
+    margin: 8px 0 0; background: var(--bg-2); border-radius: 6px;
+    padding: 8px 12px; font-family: var(--mono); font-size: 13px;
+    line-height: 1.5; color: var(--ink); white-space: pre-wrap; overflow: hidden;
+  }
+
+  /* ===== Decision matrix ===== */
+  .matrix {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+    overflow: hidden;
+  }
+  .matrix th, .matrix td {
+    text-align: left; padding: 12px 18px; border-bottom: 1px solid var(--hair);
+    font-size: 17px; line-height: 1.4; color: var(--ink-2); vertical-align: top;
+  }
+  .matrix th {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-3); background: var(--bg-2);
+    border-bottom: 1px solid var(--hair);
+  }
+  .matrix tr:last-child td { border-bottom: none; }
+  .matrix td.cell-yes { color: var(--ink); font-family: var(--mono); font-size: 15px; font-weight: 600; }
+  .matrix td.cell-soft { color: var(--ink-3); }
+  .matrix td .ww {
+    display: inline-block; padding: 3px 9px; border-radius: 999px;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  .ww.ww-w { background: var(--ink); color: var(--bg); }
+  .ww.ww-a { background: var(--accent); color: #fff; }
+  .ww.ww-m { background: var(--bg-2); color: var(--ink); border: 1px solid var(--hair); }
+</style>
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+<style id="quiz-mechanik">
+  /* Quiz-Mechanik — übernommen aus Kapitel 02 */
+  :root { --quiz-ok: #3d8a4a; --quiz-no: #a83020; }
+
+  /* ===== Interaktive Quiz-Mechanik ===== */
+  .quiz { display: flex; flex-direction: column; gap: 10px; }
+
+  .qitem {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 7px;
+    padding: 10px 16px;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+  }
+  .qitem .qbody { grid-column: 1; grid-row: 1; font-size: 19px; line-height: 1.4; color: var(--ink-2); }
+  .qitem .qbody em { color: var(--ink); font-style: italic; }
+  /* Antworten stehen unter der Frage. Buttons und Begründung teilen dieselbe
+     zweite Zeile — die Buttons blenden aus, die Begründung ein, ohne Sprung. */
+  .qitem .qchoices {
+    grid-column: 1; grid-row: 2;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qchoices { opacity: 0; pointer-events: none; }
+  .qitem .qfb {
+    grid-column: 1; grid-row: 2;
+    justify-self: start; align-self: center;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--ink-3); line-height: 1.4;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qfb { opacity: 1; }
+  .qitem.answered .qfb .ok { color: var(--quiz-ok); font-weight: 600; }
+  .qitem.answered .qfb .no { color: var(--quiz-no); font-weight: 600; }
+
+  .qchoice {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    padding: 7px 12px; border-radius: 8px;
+    background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+    white-space: nowrap;
+  }
+  .qchoice:hover { background: var(--ink); color: var(--bg); }
+  .qchoice:active { transform: translateY(1px); }
+  .qchoice.picked-ok { background: var(--quiz-ok); color: #fff; border-color: var(--quiz-ok); }
+  .qchoice.picked-no { background: var(--quiz-no); color: #fff; border-color: var(--quiz-no); }
+  .qchoice.show-ok { border-color: var(--quiz-ok); color: var(--quiz-ok); background: transparent; border-style: dashed; }
+  .qitem.answered .qchoice { pointer-events: none; opacity: 0.85; }
+  .qitem.answered .qchoice.picked-ok,
+  .qitem.answered .qchoice.picked-no,
+  .qitem.answered .qchoice.show-ok { opacity: 1; }
+
+  /* Multiple-Choice-Karten für A2A / MCP */
+  .mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mcq {
+    text-align: left; cursor: pointer; appearance: none;
+    background: var(--paper); border: 1.5px solid var(--hair);
+    border-radius: 14px; padding: 20px 24px;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.05s;
+  }
+  .mcq:hover { border-color: var(--ink); }
+  .mcq:active { transform: translateY(1px); }
+  .mcq .mcq-head { display: flex; gap: 14px; align-items: baseline; }
+  .mcq .mcq-letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mcq .mcq-title { font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.25; color: var(--ink); text-align: left; }
+  .mcq .mcq-note { font-size: 17px; color: var(--ink-2); margin: 8px 0 0 54px; line-height: 1.4; }
+  .mcq.picked-ok { border-color: var(--quiz-ok); background: color-mix(in oklab, var(--quiz-ok) 8%, var(--paper)); }
+  .mcq.picked-no { border-color: var(--quiz-no); background: color-mix(in oklab, var(--quiz-no) 6%, var(--paper)); }
+  .mcq.show-ok { border-color: var(--quiz-ok); border-style: dashed; }
+  .mcq.picked-ok .mcq-letter, .mcq.show-ok .mcq-letter { background: var(--quiz-ok); }
+  .mcq.picked-no .mcq-letter { background: var(--quiz-no); }
+  .mcq-grid.answered .mcq { pointer-events: none; }
+
+  /* Reveal-Button */
+  .reveal-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 14px; gap: 16px;
+  }
+  .reveal-status {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .reveal-status .score { color: var(--ink); font-weight: 600; }
+  .qbutton {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--bg); border: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .qbutton:hover { background: var(--accent); }
+  .qbutton:active { transform: translateY(1px); }
+  .qbutton.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .qbutton.ghost:hover { background: var(--ink); color: var(--bg); }
+  /* invite-interaction pulse — same expanding accent ring used across the course's sliders & buttons. */
+  .qbutton:not(.ghost):not(:disabled) { animation: qbtn-attention-pulse 2.2s ease-out infinite; }
+  @keyframes qbtn-attention-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,66,31,0.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(200,66,31,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  .qbutton:not(.ghost):hover { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .qbutton:not(.ghost) { animation: none; }
+  }
+
+  /* Aufklapp-Erklärung nach Auflösung (für Übung 3 + 4) */
+  .explain {
+    margin-top: 16px;
+    background: var(--ink); color: #d8d2c5;
+    border-radius: 14px; padding: 18px 26px;
+    display: none;
+  }
+  .explain.open { display: block; }
+  .explain strong { color: #f0ece3; }
+  .explain .explain-accent { color: var(--accent-soft); font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+</head>
+
+<body>
+<deck-stage>
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span></span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — was die Eng-Architektur braucht</div>
+      <h1 class="title" style="margin-top: 32px;">Workflow oder<br/><span class="accent">Agent?</span></h1>
+
+      <h3 class="subtitle" style="margin-top: 28px;">
+        Ein Spektrum, fünf Muster, ein Tool-Loop — und ein Stecker, der alle Werkzeuge spricht.
+      </h3>
+
+      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Spektrum, nicht Schalter</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">5 Workflow-Patterns</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Tool-Use-Loop</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">MCP als USB-C</span>
+      </div>
+
+      <div style="margin-top: auto; padding-bottom: 24px;">
+        <div style="font-family: var(--mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 14px;">
+          <span style="display: inline-block; width: 28px; height: 1px; background: var(--accent);"></span>
+          Das Spektrum in 3 Stationen
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center;">
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">STATION 01</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Augmented LLM</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">ein Prompt + Tools</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">→</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">STATION 02</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Workflow</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">Code orchestriert</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">→</div>
+          <div style="background: var(--accent); border: 1px solid var(--accent); border-radius: 12px; padding: 22px 24px; color: #fff;">
+            <div class="mono" style="font-size: 18px; color: rgba(255,255,255,0.7); letter-spacing: 0.1em;">STATION 03</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Agent</div>
+            <div style="font-size: 18px; color: rgba(255,255,255,0.85); margin-top: 4px;">Modell entscheidet</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 02 DAS SPEKTRUM ===================== -->
+  <section data-screen-label="02 Spektrum">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Kein Schalter — ein Schieberegler</div>
+      <h2 class="title" style="font-size: 56px;">Wer trifft die <span class="accent">Entscheidungen</span>?</h2>
+
+      <p class="lede" style="margin-top: 6px; max-width: 1700px;">
+        Der Unterschied liegt nicht in den Modellen, sondern in der <strong>Kontrolle des Kontrollflusses</strong>. Bei einem Workflow entscheidet <em>dein Code</em>, was als nächstes passiert. Bei einem Agenten entscheidet das <em>Modell</em>. Dazwischen liegt alles.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 28px; flex: 1;">
+
+        <div class="card" style="padding: 24px 28px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">STATION 01</div>
+            <span class="pill outline" style="font-size: 11px;">einfachster Fall</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Augmented LLM</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">ein Modell + Werkzeuge</div>
+          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
+          <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 0 0 12px;">
+            Ein Aufruf, optional Retrieval/Tools/Memory. Kein Loop, keine Verzweigung — Aufruf rein, Antwort raus.
+          </p>
+          <div class="mono" style="font-size: 13px; line-height: 1.55; color: var(--ink-2); background: var(--bg-2); padding: 10px 12px; border-radius: 6px;">
+            <span style="color: var(--ink-3);"># Beispiel</span><br/>
+            chat(prompt + RAG-context)
+          </div>
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↑ Kontrolle</div>
+            <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">100 % beim Aufrufer. Das Modell antwortet — sonst nichts.</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 24px 28px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">STATION 02</div>
+            <span class="pill outline" style="font-size: 11px;">vorhersehbar</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Workflow</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">Code orchestriert mehrere LLM-Aufrufe</div>
+          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
+          <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 0 0 12px;">
+            Dein Code legt fest, in welcher Reihenfolge welche Modelle/Tools laufen. Verzweigungen sind hartcodiert, keine offene Schleife.
+          </p>
+          <div class="mono" style="font-size: 13px; line-height: 1.55; color: var(--ink-2); background: var(--bg-2); padding: 10px 12px; border-radius: 6px;">
+            <span style="color: var(--ink-3);"># Beispiel</span><br/>
+            classify → if A: extract<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;else: summarize
+          </div>
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↑ Kontrolle</div>
+            <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">Beim Code. Reproduzierbar, testbar — dafür starrer.</div>
+          </div>
+        </div>
+
+        <div class="card dark" style="padding: 24px 28px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--accent-soft); letter-spacing: 0.08em;">STATION 03</div>
+            <span class="pill accent" style="font-size: 11px;">offen</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em; color: #f0ece3;">Agent</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: #c8c2b6; margin-top: 2px;">Modell wählt Tools &amp; Reihenfolge selbst</div>
+          <div style="height: 1px; background: rgba(255,255,255,0.14); margin: 16px 0;"></div>
+          <p style="font-size: 18px; line-height: 1.45; color: #d8d2c5; margin: 0 0 12px;">
+            Loop: Modell denkt → ruft Tool → liest Ergebnis → entscheidet selbst, was als nächstes — bis ein Abbruchkriterium greift.
+          </p>
+          <div class="mono" style="font-size: 13px; line-height: 1.55; color: #d8d2c5; background: rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 6px;">
+            <span style="color: #c8c2b6;"># Beispiel</span><br/>
+            while not done:<br/>
+            &nbsp;&nbsp;think + call_tool()
+          </div>
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono" style="color: var(--accent-soft); font-size: 13px; letter-spacing: 0.06em;">↑ Kontrolle</div>
+            <div style="font-size: 16px; color: #d8d2c5; margin-top: 4px; line-height: 1.4;">Beim Modell. Flexibel — und teurer, langsamer, schwerer zu testen.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 22px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">
+          Bei einem <strong>Workflow ist der Pfad bekannt</strong>, das Modell füllt die Schritte. Bei einem <strong>Agenten ist nur das Ziel bekannt</strong>, das Modell findet den Pfad. <em>Beides ist erlaubt — aber kosten unterschiedlich.</em>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 WORKFLOW-PATTERNS ===================== -->
+  <section data-screen-label="03 Workflow Patterns">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Bevor du zum Agenten greifst</div>
+      <h2 class="title" style="font-size: 56px;">Fünf Muster, die <span class="accent">90 %</span> der Fälle abdecken.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1700px;">
+        Kombinier- und stapelbar. Jedes Muster hat einen klaren Anwendungsfall — und einen typischen Fehler, wenn du daraus einen Agenten machst, der es nicht braucht.
+      </p>
+
+      <!-- 5 pattern cards in a grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 14px; margin-top: 24px;">
+
+        <!-- Prompt Chaining -->
+        <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 01</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Prompt<br/>Chaining</div>
+
+          <div class="pat" style="margin: 14px 0;">
+            <div class="pat-row" style="justify-content: center;">
+              <div class="node">LLM</div><div class="arrow">→</div>
+              <div class="node">LLM</div><div class="arrow">→</div>
+              <div class="node accent">LLM</div>
+            </div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em;">Ausgabe = nächste Eingabe</div>
+          </div>
+
+          <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Aufgabe in feste Teilschritte zerlegen — jeder Schritt prüfbar.
+          </div>
+          <div style="margin-top: auto; padding-top: 12px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Outline → Entwurf → Review</div>
+          </div>
+        </div>
+
+        <!-- Routing -->
+        <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 02</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Routing</div>
+
+          <div class="pat" style="margin: 14px 0; align-items: center;">
+            <div class="pat-row">
+              <div class="node">Router</div><div class="arrow">→</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">A</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">B</div>
+                <div class="node accent" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">C</div>
+              </div>
+            </div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">klassifizieren → spezialisieren</div>
+          </div>
+
+          <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Eingabe in Typen einsortieren — jeder Typ kriegt seinen eigenen Prompt/sein eigenes Modell.
+          </div>
+          <div style="margin-top: auto; padding-top: 12px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Support-Tickets: Refund / Tech / Sales</div>
+          </div>
+        </div>
+
+        <!-- Parallelization -->
+        <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 03</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Parallelisation</div>
+
+          <div class="pat" style="margin: 14px 0; align-items: center;">
+            <div class="pat-row" style="justify-content: center;">
+              <div class="node">Split</div>
+              <div class="arrow">→</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">LLM</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">LLM</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">LLM</div>
+              </div>
+              <div class="arrow">→</div>
+              <div class="node accent">Merge</div>
+            </div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">sectioning · voting</div>
+          </div>
+
+          <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Mehrere Aufrufe gleichzeitig — entweder Teile (sectioning) oder Stimmen (voting).
+          </div>
+          <div style="margin-top: auto; padding-top: 12px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Mehrfach prüfen, Mehrheit gewinnt</div>
+          </div>
+        </div>
+
+        <!-- Orchestrator-Workers -->
+        <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 04</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Orchestrator<br/>+ Workers</div>
+
+          <div class="pat" style="margin: 14px 0; align-items: center;">
+            <div class="pat-row" style="justify-content: center;">
+              <div class="node accent">Orch.</div>
+              <div class="arrow">↔</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">Worker</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">Worker</div>
+                <div class="node ghost" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">…</div>
+              </div>
+            </div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">Aufgaben zur Laufzeit verteilen</div>
+          </div>
+
+          <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Ein LLM teilt eine Aufgabe in Subtasks, delegiert an Worker-LLMs, fasst zusammen.
+          </div>
+          <div style="margin-top: auto; padding-top: 12px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Multi-File-Refactor über ein Repo</div>
+          </div>
+        </div>
+
+        <!-- Evaluator-Optimizer -->
+        <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 05</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Evaluator<br/>+ Optimizer</div>
+
+          <div class="pat" style="margin: 14px 0; align-items: center;">
+            <div class="pat-row" style="justify-content: center;">
+              <div class="node">Gen.</div>
+              <div class="arrow">→</div>
+              <div class="node">Eval</div>
+              <div class="arrow">↺</div>
+              <div class="node accent">OK</div>
+            </div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">Feedback-Schleife bis Kriterium</div>
+          </div>
+
+          <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Ein LLM generiert, ein zweites bewertet — Schleife bis das Ergebnis den Test besteht.
+          </div>
+          <div style="margin-top: auto; padding-top: 12px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Übersetzung mit literarischem Lektorat</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 22px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Anti-Pattern</div>
+        <div class="callout-body" style="font-size: 20px;">
+          „Wir brauchen einen <em>Agenten</em>." — meistens nein. Erst die Patterns prüfen. Ein <strong>Workflow</strong> ist <strong>billiger, schneller, testbarer</strong>. Agenten erst, wenn der Pfad <em>tatsächlich</em> nicht vorab bekannt ist.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 WANN AGENT, WANN WORKFLOW ===================== -->
+  <section data-screen-label="04 Wann was">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Wann was — die Architektur-Frage</div>
+      <h2 class="title" style="font-size: 56px;">Workflow oder <span class="accent">Agent</span>?</h2>
+
+      <p class="body" style="margin: 0 0 22px; max-width: 1700px;">
+        Default: <strong>so wenig Autonomie wie möglich</strong>. Jeder Schritt in Richtung Agent erkauft Flexibilität mit Kosten, Latenz und Unvorhersehbarkeit. Diese Tabelle hilft bei der Wahl.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1.55fr 1fr; gap: 28px;">
+
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th style="width: 26%;">Dimension</th>
+              <th>Workflow</th>
+              <th>Agent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pfad bekannt?</strong></td>
+              <td class="cell-yes">ja — fest verdrahtet</td>
+              <td class="cell-soft">nein — Modell entscheidet</td>
+            </tr>
+            <tr>
+              <td><strong>Reproduzierbarkeit</strong></td>
+              <td class="cell-yes">hoch — gleiche Eingabe, gleicher Pfad</td>
+              <td class="cell-soft">niedrig — Pfad variiert mit Sample</td>
+            </tr>
+            <tr>
+              <td><strong>Testbarkeit</strong></td>
+              <td class="cell-yes">Unit-Tests pro Schritt</td>
+              <td class="cell-soft">End-to-End-Evals, Trajektorien</td>
+            </tr>
+            <tr>
+              <td><strong>Kosten / Latenz</strong></td>
+              <td class="cell-yes">vorhersagbar, niedrig</td>
+              <td class="cell-soft">unbegrenzte Loops möglich</td>
+            </tr>
+            <tr>
+              <td><strong>Aufgaben-Form</strong></td>
+              <td class="cell-yes">stabil, wiederkehrend</td>
+              <td class="cell-soft">offen, explorativ</td>
+            </tr>
+            <tr>
+              <td><strong>Fehlerbild</strong></td>
+              <td class="cell-yes">starr — übersehene Ausnahmen</td>
+              <td class="cell-soft">Driftet, irrt, dreht im Kreis</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="card" style="padding: 20px 24px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">→ Default</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Workflow</div>
+            <p style="font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 6px 0 0;">
+              Augmented LLM oder ein Pattern aus der vorherigen Folie. <strong>90 % der Produktionsfälle.</strong>
+            </p>
+          </div>
+          <div class="card" style="padding: 20px 24px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">→ Eskalation</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Agent</div>
+            <p style="font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 6px 0 0;">
+              Wenn Aufgaben <em>genuin offen</em> sind und die Anzahl der Schritte <em>nicht vorab</em> bekannt — z. B. agentic Coding, Research, Exploration.
+            </p>
+          </div>
+          <div class="card dark" style="padding: 20px 24px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">→ Pflicht für Agenten</div>
+            <ul style="font-size: 16px; color: #d8d2c5; line-height: 1.5; margin: 8px 0 0; padding-left: 22px;">
+              <li>Loop-Limit + Token-Budget</li>
+              <li>klar definierte Stop-Conditions</li>
+              <li>Mensch-im-Loop bei irreversiblen Aktionen</li>
+              <li>Trace + Replay pro Run</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 22px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Faustregel</div>
+        <div class="callout-body" style="font-size: 20px;">
+          <strong>Workflow → Vorhersagbarkeit. Agent → Flexibilität.</strong> Wähle die <em>einfachste Lösung</em>, die das Problem löst. Komplexität ist eine Schuld, die du später bezahlst — in Bugs, Kosten und Vertrauen.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 FLOW: Workflow vs Agent ===================== -->
+  <section data-screen-label="05 Flow Workflow vs Agent">
+    <div class="chrome">
+      <div class="topbar"><span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span><span></span></div>
+
+      <div class="eyebrow">Mensch im Loop — wer steuert den Pfad?</div>
+      <h2 class="title" style="font-size: 48px; margin-bottom: 4px;">Den Pfad steuern — oder nur das <span class="accent">Ziel</span> setzen.</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 12px;">
+
+        <!-- ============ WORKFLOW DIAGRAM ============ -->
+        <div class="card" style="padding: 22px 24px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+            <div>
+              <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;">Workflow</div>
+              <div style="font-size: 26px; font-weight: 500; margin-top: 2px;">Mensch <span class="accent">steuert</span> den Pfad</div>
+            </div>
+            <span class="pill outline">deterministisch</span>
+          </div>
+
+          <svg viewBox="0 0 760 540" style="width: 100%; height: 500px; display: block;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#15110c"/>
+              </marker>
+              <marker id="arrWa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#c8421f"/>
+              </marker>
+            </defs>
+
+            <!-- Human start -->
+            <g>
+              <rect x="40" y="30" width="180" height="64" rx="32" fill="#15110c"/>
+              <text x="130" y="60" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#c8c2b6" letter-spacing="1">MENSCH</text>
+              <text x="130" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="18" fill="#f0ece3" font-weight="500">definiert Schritte</text>
+            </g>
+            <line x1="130" y1="94" x2="130" y2="124" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
+
+            <!-- Step 1 -->
+            <rect x="40" y="124" width="180" height="56" rx="8" fill="#faf7f1" stroke="#15110c" stroke-width="2"/>
+            <text x="130" y="148" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">1. E-Mail empfangen</text>
+            <text x="130" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#6b6357">trigger</text>
+            <line x1="130" y1="180" x2="130" y2="206" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
+
+            <!-- Step 2 LLM -->
+            <rect x="40" y="206" width="180" height="56" rx="8" fill="#f6dccf" stroke="#c8421f" stroke-width="2"/>
+            <text x="130" y="230" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">2. LLM klassifiziert</text>
+            <text x="130" y="250" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#7a2a10">prompt #1</text>
+            <line x1="130" y1="262" x2="130" y2="288" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
+
+            <!-- Step 3 LLM -->
+            <rect x="40" y="288" width="180" height="56" rx="8" fill="#f6dccf" stroke="#c8421f" stroke-width="2"/>
+            <text x="130" y="312" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">3. LLM entwirft</text>
+            <text x="130" y="332" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#7a2a10">prompt #2</text>
+            <line x1="130" y1="344" x2="130" y2="370" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
+
+            <!-- Human gate -->
+            <g>
+              <rect x="20" y="370" width="220" height="68" rx="34" fill="#15110c"/>
+              <text x="130" y="398" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#c8c2b6" letter-spacing="1">MENSCH · GATE</text>
+              <text x="130" y="420" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" fill="#f0ece3" font-weight="500">prüft &amp; gibt frei</text>
+            </g>
+            <line x1="130" y1="438" x2="130" y2="466" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
+
+            <!-- Step 4 send -->
+            <rect x="40" y="466" width="180" height="50" rx="8" fill="#faf7f1" stroke="#15110c" stroke-width="2"/>
+            <text x="130" y="496" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">4. Antwort senden</text>
+
+            <!-- Right side annotations -->
+            <line x1="240" y1="62" x2="370" y2="62" stroke="#c8421f" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#arrWa)"/>
+            <text x="380" y="58" font-family="JetBrains Mono" font-size="14" fill="#c8421f">vorab</text>
+            <text x="380" y="76" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">Pfad ist festgelegt,</text>
+            <text x="380" y="94" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">bevor irgendetwas läuft</text>
+
+            <line x1="240" y1="234" x2="370" y2="234" stroke="#c8421f" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#arrWa)"/>
+            <text x="380" y="230" font-family="JetBrains Mono" font-size="14" fill="#c8421f">LLM-Aufrufe</text>
+            <text x="380" y="248" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">eng begrenzt: ein Job,</text>
+            <text x="380" y="266" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">ein Output, weiter im Pfad</text>
+
+            <line x1="240" y1="404" x2="370" y2="404" stroke="#c8421f" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#arrWa)"/>
+            <text x="380" y="400" font-family="JetBrains Mono" font-size="14" fill="#c8421f">Kontrollpunkt</text>
+            <text x="380" y="418" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">Mensch sieht jeden</text>
+            <text x="380" y="436" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">Output bevor er rausgeht</text>
+
+            <!-- Legend -->
+            <rect x="380" y="486" width="14" height="14" fill="#f6dccf" stroke="#c8421f" stroke-width="1.5"/>
+            <text x="402" y="498" font-family="JetBrains Mono" font-size="13" fill="#3a342a">LLM-Schritt</text>
+            <rect x="500" y="486" width="14" height="14" fill="#15110c"/>
+            <text x="522" y="498" font-family="JetBrains Mono" font-size="13" fill="#3a342a">Mensch</text>
+            <rect x="600" y="486" width="14" height="14" fill="#faf7f1" stroke="#15110c" stroke-width="1.5"/>
+            <text x="622" y="498" font-family="JetBrains Mono" font-size="13" fill="#3a342a">Code/System</text>
+          </svg>
+        </div>
+
+        <!-- ============ AGENT DIAGRAM ============ -->
+        <div class="card dark" style="padding: 22px 24px 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+            <div>
+              <div class="mono" style="font-size: 15px; color: #c8c2b6; letter-spacing: 0.08em; text-transform: uppercase;">Agent</div>
+              <div style="font-size: 26px; font-weight: 500; margin-top: 2px; color: #f0ece3;">Mensch <span class="accent">setzt nur das Ziel</span></div>
+            </div>
+            <span class="pill accent">autonom</span>
+          </div>
+
+          <svg viewBox="0 0 760 540" style="width: 100%; height: 500px; display: block;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#f0ece3"/>
+              </marker>
+              <marker id="arrAa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#e89379"/>
+              </marker>
+            </defs>
+
+            <!-- Human start -->
+            <g>
+              <rect x="280" y="20" width="200" height="64" rx="32" fill="#c8421f"/>
+              <text x="380" y="48" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#fff" letter-spacing="1">MENSCH</text>
+              <text x="380" y="70" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" fill="#fff" font-weight="500">gibt Ziel vor</text>
+            </g>
+            <line x1="380" y1="84" x2="380" y2="118" stroke="#f0ece3" stroke-width="2" marker-end="url(#arrA)"/>
+
+            <!-- Agent loop center -->
+            <circle cx="380" cy="280" r="160" fill="none" stroke="#e89379" stroke-width="1.5" stroke-dasharray="4 6"/>
+            <text x="380" y="160" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#e89379" letter-spacing="1">AUTONOMER LOOP</text>
+
+            <!-- Think node (top) -->
+            <rect x="310" y="170" width="140" height="50" rx="8" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
+            <text x="380" y="194" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#f0ece3">Denke</text>
+            <text x="380" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#c8c2b6">LLM-Reasoning</text>
+
+            <!-- Act node (right) -->
+            <rect x="510" y="255" width="140" height="50" rx="8" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
+            <text x="580" y="279" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#f0ece3">Handle</text>
+            <text x="580" y="297" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#c8c2b6">Tool-Aufruf</text>
+
+            <!-- Observe node (bottom) -->
+            <rect x="310" y="340" width="140" height="50" rx="8" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
+            <text x="380" y="364" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#f0ece3">Beobachte</text>
+            <text x="380" y="382" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#c8c2b6">Ergebnis</text>
+
+            <!-- Tools node (left) -->
+            <rect x="110" y="255" width="140" height="50" rx="8" fill="#1f1a13" stroke="#c8c2b6" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <text x="180" y="279" text-anchor="middle" font-family="IBM Plex Sans" font-size="16" fill="#c8c2b6">Werkzeuge</text>
+            <text x="180" y="297" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#c8c2b6">Suche · Code · API</text>
+
+            <!-- Loop arrows: think -> act -->
+            <path d="M 450 195 Q 540 220 555 254" fill="none" stroke="#e89379" stroke-width="2" marker-end="url(#arrAa)"/>
+            <!-- act -> observe -->
+            <path d="M 555 305 Q 540 340 450 360" fill="none" stroke="#e89379" stroke-width="2" marker-end="url(#arrAa)"/>
+            <!-- observe -> think -->
+            <path d="M 310 360 Q 220 340 220 280 Q 220 220 310 200" fill="none" stroke="#e89379" stroke-width="2" marker-end="url(#arrAa)"/>
+
+            <!-- act <-> tools -->
+            <line x1="510" y1="280" x2="252" y2="280" stroke="#c8c2b6" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+            <!-- Decision: done? -->
+            <g>
+              <path d="M 380 410 L 430 440 L 380 470 L 330 440 z" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
+              <text x="380" y="438" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="500" fill="#f0ece3">Ziel</text>
+              <text x="380" y="454" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="500" fill="#f0ece3">erreicht?</text>
+            </g>
+            <!-- no -> back to think -->
+            <path d="M 330 440 Q 240 440 240 380 Q 240 250 290 195" fill="none" stroke="#e89379" stroke-width="1.5" stroke-dasharray="2 4" marker-end="url(#arrAa)"/>
+            <text x="218" y="395" font-family="JetBrains Mono" font-size="12" fill="#e89379">nein ↺</text>
+
+            <!-- yes -> human end -->
+            <line x1="380" y1="470" x2="380" y2="496" stroke="#f0ece3" stroke-width="2" marker-end="url(#arrA)"/>
+            <text x="395" y="488" font-family="JetBrains Mono" font-size="12" fill="#f0ece3">ja</text>
+
+            <!-- Human end -->
+            <g>
+              <rect x="280" y="496" width="200" height="36" rx="18" fill="#c8421f"/>
+              <text x="380" y="520" text-anchor="middle" font-family="IBM Plex Sans" font-size="16" fill="#fff" font-weight="500">Mensch erhält Ergebnis</text>
+            </g>
+          </svg>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 14px; padding: 14px 22px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body"><strong>Mensch im Workflow:</strong> definiert Pfad &amp; sitzt an jedem Gate.&nbsp;&nbsp;·&nbsp;&nbsp;<strong>Mensch beim Agent:</strong> definiert Ziel &amp; Werkzeuge — sieht erst das Ergebnis.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05A WISSENSCHECK — PATTERN-ERKENNUNG ===================== -->
+  <section data-screen-label="05a Wissenscheck Patterns">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.03em; margin: 40px 0 0;">Fünf Szenarien — ordne jedes dem passenden Muster zu. Die <strong style="color: var(--ink);">Leitfrage bleibt: wer entscheidet den Pfad?</strong></div>
+      <div class="eyebrow" style="margin: 18px 0 22px;">Szenario → Muster — die fünf Workflow-Patterns &amp; der Agent</div>
+      <h2 class="title" style="font-size: 52px; margin-bottom: 18px;">Welches Muster passt? <span class="accent">Eine</span> richtige Antwort pro Szenario.</h2>
+
+      <div class="quiz" data-quiz="patterns">
+
+        <div class="qitem" data-correct="chaining">
+          <div class="qbody"><em>„Outline → Entwurf → Lektorat → Veröffentlichen."</em> Jeder Schritt nimmt das Ergebnis des vorigen — kein Verzweigen, kein Loop.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
+            <button class="qchoice" data-key="routing">Routing</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Prompt-Chaining</span> — linearer Output-zu-Input-Chain, vorab festgelegt. <span class="no">Routing</span> würde verzweigen, ein <span class="no">Agent</span> den Pfad selbst wählen.</div>
+        </div>
+
+        <div class="qitem" data-correct="routing">
+          <div class="qbody"><em>„Pro Support-Ticket: einordnen (Bug / Frage / Refund), je nach Kategorie passend behandeln — bei Bug an Eng eskalieren."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
+            <button class="qchoice" data-key="routing">Routing</button>
+            <button class="qchoice" data-key="parallel">Parallelisierung</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Routing</span> — Klassifikation + Dispatch. Der Klassifizierer ist die einzige variable Stelle, jede Sub-Pipeline bleibt deterministisch.</div>
+        </div>
+
+        <div class="qitem" data-correct="evaloptimizer">
+          <div class="qbody"><em>„Generiere einen Blogpost. Ein Editor-Modell bewertet Stil &amp; Faktendichte — solange Score &lt; 8, überarbeite."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
+            <button class="qchoice" data-key="evaloptimizer">Evaluator-Optimizer</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Evaluator-Optimizer</span> — Generieren + Bewerten + Verfeinern bis zur Qualitätsschwelle. Der definierende Feedback-Loop, mit endlicher Iteration.</div>
+        </div>
+
+        <div class="qitem" data-correct="parallel">
+          <div class="qbody"><em>„Ein Dokument gleichzeitig auf Sentiment, Thema und Sprache analysieren, dann die Ergebnisse zusammenführen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="routing">Routing</button>
+            <button class="qchoice" data-key="parallel">Parallelisierung</button>
+            <button class="qchoice" data-key="evaloptimizer">Evaluator-Optimizer</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Parallelisierung</span> — unabhängige Teilaufgaben im Fan-out, danach Aggregat. <span class="no">Routing</span> wählt <em>einen</em> Pfad, hier laufen mehrere gleichzeitig.</div>
+        </div>
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody"><em>„Plan ein langes Wochenende in Lissabon — 600 € Budget, Kunst-Fokus."</em> Recherchier Flüge, Hotels, Museen — und koordinier alles.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
+            <button class="qchoice" data-key="routing">Routing</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Agent</span> — die Schritte hängen davon ab, was du findest. Der Pfad lässt sich nicht vorab planen — genau die Definition für einen Agenten.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 5 beantwortet · <em>Tippe deine Antwort an — das Feedback klappt sofort auf.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06 TOOL-USE LOOP ===================== -->
+  <section data-screen-label="06 Tool-Use Loop">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Was passiert, wenn ein Modell ein Tool ruft</div>
+      <h2 class="title" style="font-size: 56px;">Der <span class="accent">Tool-Use-Loop</span>.</h2>
+
+      <p class="body" style="margin: 0 0 22px; max-width: 1700px;">
+        Egal ob Workflow oder Agent — der Mechanismus ist derselbe. Du registrierst Tools (Name + JSON-Schema), das Modell antwortet mit einem <span class="mono">tool_use</span>-Block, dein Code führt das Tool aus, du gibst das Ergebnis zurück. Wiederholen.
+      </p>
+
+      <!-- 4-step loop visualization -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 4px;">
+
+        <div class="loop-step">
+          <div class="ls-tag">SCHRITT 01</div>
+          <div class="ls-title">Tools registrieren</div>
+          <div class="ls-body">Du gibst dem Modell pro Tool: Name, Beschreibung, Input-Schema (JSON).</div>
+<pre>tools = [{
+  name: "search_jira",
+  description: "Suche Tickets nach JQL.",
+  input_schema: {…}
+}]</pre>
+        </div>
+
+        <div class="loop-step">
+          <div class="ls-tag">SCHRITT 02</div>
+          <div class="ls-title">Modell fragt an</div>
+          <div class="ls-body">Statt Text gibt das Modell ein <span class="mono">tool_use</span>-Objekt zurück — mit Tool-Name und Argumenten.</div>
+<pre>{
+  type: "tool_use",
+  name: "search_jira",
+  input: { jql: "P1 AND…" }
+}</pre>
+        </div>
+
+        <div class="loop-step">
+          <div class="ls-tag">SCHRITT 03</div>
+          <div class="ls-title">Dein Code führt aus</div>
+          <div class="ls-body">Dein Code (oder MCP-Server) führt das Tool tatsächlich aus — das Modell <em>kann nicht</em> selbst auf die API.</div>
+<pre>result = jira.search(
+  jql=input["jql"]
+)</pre>
+        </div>
+
+        <div class="loop-step" style="background: var(--ink); color: #f0ece3; border-color: var(--ink);">
+          <div class="ls-tag" style="color: var(--accent-soft);">SCHRITT 04</div>
+          <div class="ls-title" style="color: #f0ece3;">Ergebnis zurück</div>
+          <div class="ls-body" style="color: #d8d2c5;">Das Ergebnis fließt zurück ins Modell als <span class="mono" style="color: var(--accent-soft);">tool_result</span>. Modell denkt weiter oder antwortet final.</div>
+<pre style="background: rgba(255,255,255,0.06); color: #f0ece3;">{
+  type: "tool_result",
+  content: [...]
+}</pre>
+        </div>
+
+      </div>
+
+      <!-- key properties -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px;">
+        <div class="card" style="padding: 16px 22px;">
+          <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Wichtig 01</div>
+          <div style="font-size: 18px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Das Modell <strong>führt nichts aus</strong>. Es schreibt nur, <em>was</em> ausgeführt werden soll. Sicherheit/Authorisation liegen bei deinem Code.
+          </div>
+        </div>
+        <div class="card" style="padding: 16px 22px;">
+          <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Wichtig 02</div>
+          <div style="font-size: 18px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            <strong>Tool-Beschreibungen sind Prompts.</strong> Schlechte Beschreibungen = schlechte Tool-Wahl. Hier zählt jedes Wort.
+          </div>
+        </div>
+        <div class="card" style="padding: 16px 22px;">
+          <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Wichtig 03</div>
+          <div style="font-size: 18px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+            Loop endet, wenn das Modell <span class="mono">stop_reason: end_turn</span> liefert — oder dein Code einen <strong>Loop-Limit</strong> reißt.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">
+          Ein „agentic Tool-Call" ist <strong>kein magischer Aufruf</strong> — es ist ein JSON-Block hin, ein JSON-Block zurück. Wer das versteht, debugged Agenten.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 MCP ===================== -->
+  <section data-screen-label="07 MCP">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Der USB-C-Stecker für LLM-Tools</div>
+      <h2 class="title" style="font-size: 56px;">MCP — <span class="accent">ein</span> Protokoll, viele Quellen.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1700px;">
+        <strong>Model Context Protocol</strong>: offener Standard, der LLM-Clients (Desktop-App, IDE, Agent) eine einheitliche Sprache gibt, um Tools, Daten und Ressourcen einzubinden. Pro Datenquelle ein <em>MCP-Server</em> — jeder MCP-fähige Client kann ihn nutzen.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 28px; margin-top: 24px; flex: 1;">
+
+        <!-- Architecture diagram -->
+        <div class="card" style="padding: 24px 28px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Architektur</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px;">Client &middot; Protokoll &middot; Server</div>
+
+          <div style="margin-top: 22px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; flex: 1;">
+
+            <!-- Clients -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="mono" style="font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">CLIENTS</div>
+              <div class="node" style="font-size: 14px; padding: 10px 14px;">Desktop-App</div>
+              <div class="node" style="font-size: 14px; padding: 10px 14px;">Cursor / IDE</div>
+              <div class="node" style="font-size: 14px; padding: 10px 14px;">Agent (eigen)</div>
+              <div class="node ghost" style="font-size: 14px; padding: 10px 14px;">… alle MCP-fähigen</div>
+            </div>
+
+            <!-- Protocol -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+              <div class="arrow" style="font-size: 18px;">↔</div>
+              <div class="pill accent" style="font-size: 12px;">MCP</div>
+              <div class="mono" style="font-size: 10px; color: var(--ink-3); writing-mode: vertical-rl; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 6px;">JSON-RPC · stdio/SSE</div>
+              <div class="arrow" style="font-size: 18px; margin-top: 6px;">↔</div>
+            </div>
+
+            <!-- Servers -->
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div class="mono" style="font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">SERVER</div>
+              <div class="node accent" style="font-size: 14px; padding: 10px 14px;">jira-mcp</div>
+              <div class="node accent" style="font-size: 14px; padding: 10px 14px;">confluence-mcp</div>
+              <div class="node accent" style="font-size: 14px; padding: 10px 14px;">postgres-mcp</div>
+              <div class="node accent" style="font-size: 14px; padding: 10px 14px;">filesystem-mcp</div>
+            </div>
+
+          </div>
+
+          <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--hair);">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Der Trick</div>
+            <div style="font-size: 16px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
+              Ein Server pro Quelle — geschrieben einmal, genutzt von allen Clients. Keine N×M-Integrationen mehr.
+            </div>
+          </div>
+        </div>
+
+        <!-- Was ein MCP-Server exponiert + ohne/mit MCP comparison -->
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+
+          <div class="card" style="padding: 22px 26px;">
+            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Was ein MCP-Server exponiert</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+              <div>
+                <div class="mono" style="font-size: 13px; color: var(--accent);">tools</div>
+                <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4;">Aktionen (lesen, schreiben, suchen) — vom Modell aufrufbar.</div>
+              </div>
+              <div>
+                <div class="mono" style="font-size: 13px; color: var(--accent);">resources</div>
+                <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4;">Daten/Dateien, die als Kontext geladen werden können.</div>
+              </div>
+              <div>
+                <div class="mono" style="font-size: 13px; color: var(--accent);">prompts</div>
+                <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4;">Vorgefertigte Templates, die der Client einbinden kann.</div>
+              </div>
+              <div>
+                <div class="mono" style="font-size: 13px; color: var(--accent);">sampling</div>
+                <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4;">Optional: Server bittet Client um Modell-Aufrufe.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card dark" style="padding: 22px 26px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">Ohne MCP vs. mit MCP</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 12px;">
+              <div>
+                <div style="font-family: var(--serif); font-size: 20px; font-weight: 500; color: #f0ece3;">N × M Integrationen</div>
+                <div style="font-size: 15px; color: #c8c2b6; line-height: 1.4; margin-top: 4px;">
+                  Pro Client × Tool eine eigene Anbindung. Jede API-Änderung trifft alle.
+                </div>
+              </div>
+              <div>
+                <div style="font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--accent-soft);">N + M Integrationen</div>
+                <div style="font-size: 15px; color: #d8d2c5; line-height: 1.4; margin-top: 4px;">
+                  Jeder Client spricht MCP. Jedes Tool stellt einen Server. Patch im Server — alle profitieren.
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Architektur-Frage</div>
+        <div class="callout-body" style="font-size: 20px;">
+          Wenn dein Team einen <em>eigenen Connector</em> baut, frag zuerst: <strong>Gibt es einen MCP-Server dafür?</strong> Falls nein — schreibt euren als MCP-Server, nicht als Custom-Tool. Andere Teams (und Vendor-Clients) profitieren mit.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07A ÜBUNG CONNECTION-GRAPH (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="07a Übung Connection-Graph" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <h2 class="title" style="margin-top: 20px;">Wähle eine Aufgabe und <span class="accent">aktiviere</span> nur die nötigen Knoten.</h2>
+
+      <div class="ex-stage cgraph" id="ex-cgraph">
+        <div class="cgraph-board">
+          <div class="cgraph-picker">
+            <span class="cgp-label">Aufgabe</span>
+            <div class="cgp-dd" id="cgraph-dd">
+              <button type="button" class="cgp-trigger" id="cgraph-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Aufgabe wählen">
+                <span class="cgp-trigger-text" id="cgraph-trigger-text"></span>
+                <span class="cgp-caret" aria-hidden="true"></span>
+              </button>
+              <div class="cgp-menu" id="cgraph-menu" role="listbox" hidden></div>
+            </div>
+            <button class="cgp-reset" id="cgraph-reset" title="Zurücksetzen" aria-label="Zurücksetzen">↺</button>
+          </div>
+          <div class="cgraph-canvas" id="cgraph-canvas">
+            <svg id="cgraph-edges" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div id="cgraph-labels"></div>
+          </div>
+        </div>
+
+        <div class="cgraph-trace">
+          <div class="cgraph-trace-head">Context-Window</div>
+          <div id="cgraph-trace-body"></div>
+          <div class="cgraph-insight" id="cgraph-insight" hidden></div>
+          <div class="cgraph-check">
+            <button class="btn accent" id="cgraph-pruefen" disabled>Prüfen</button>
+            <button class="btn ghost" id="cgraph-clear" disabled>Leeren</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07B MCP IN DER PRAXIS — JIRA & CONFLUENCE ===================== -->
+  <section data-screen-label="07b MCP Praxis Jira Confluence">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Konkret: Jira &amp; Confluence per MCP</div>
+      <h2 class="title" style="font-size: 48px;">So sieht <span class="accent">MCP</span> im Alltag aus.</h2>
+      <p class="body" style="margin: 0 0 14px; max-width: 1600px; font-size: 20px;">
+        Ein MCP-Server kapselt die jeweilige API als standardisierte Tools. Der Agent muss weder Atlassian-REST-Endpoints noch Auth-Details kennen — er sagt, <em>was</em> er will, der Server übersetzt.
+      </p>
+
+      <!-- Zwei Spalten: Jira / Confluence -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px;">
+
+        <!-- ===== Jira ===== -->
+        <div class="card" style="padding: 16px 26px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <div>
+              <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">MCP-Server</div>
+              <div style="font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 2px;"><span class="mono" style="font-size: 28px;">jira-mcp</span></div>
+            </div>
+            <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.06em;">issues · sprints · comments · transitions</div>
+          </div>
+
+          <!-- Use Case 1 -->
+          <div style="padding: 8px 0; border-top: 1px solid var(--hair);">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Sprint-Triage</div>
+            <div style="font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 4px;">„Welche <strong>P1-Bugs</strong> in PROJ sind älter als 7 Tage und ohne Assignee?"</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 4px; line-height: 1.4;">→ Agent ruft <span class="mono">jira.search_issues(jql=…)</span>, liefert sortierte Tabelle mit Link &amp; Last-Update.</div>
+          </div>
+
+          <!-- Use Case 2 -->
+          <div style="padding: 8px 0; border-top: 1px solid var(--hair);">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Ticket aus Chat</div>
+            <div style="font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 4px;">„Leg ein Bug-Ticket an: Logout liefert 500 bei abgelaufenem Token. Component <strong>Auth</strong>, Prio Hoch."</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 4px; line-height: 1.4;">→ <span class="mono">jira.create_issue(…)</span> · Agent gibt PROJ-1234 + Link zurück, fragt nach Reproduktionsschritten.</div>
+          </div>
+
+          <!-- Use Case 3 -->
+          <div style="padding: 8px 0; border-top: 1px solid var(--hair);">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Status-Report</div>
+            <div style="font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 4px;">„Schreib mir einen <strong>Sprint-Burndown</strong> für Sprint 42 — was hängt in Review, was blockiert?"</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 4px; line-height: 1.4;">→ Agent liest Sprint-Board, gruppiert nach Status, markiert Tickets ohne Bewegung seit 3 Tagen.</div>
+          </div>
+        </div>
+
+        <!-- ===== Confluence ===== -->
+        <div class="card" style="padding: 16px 26px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <div>
+              <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">MCP-Server</div>
+              <div style="font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 2px;"><span class="mono" style="font-size: 28px;">confluence-mcp</span></div>
+            </div>
+            <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.06em;">pages · spaces · search · attachments</div>
+          </div>
+
+          <!-- Use Case 1 -->
+          <div style="padding: 8px 0; border-top: 1px solid var(--hair);">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Wissens-Lookup</div>
+            <div style="font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 4px;">„Wie funktioniert unser <strong>SSO-Flow</strong>? Fass die relevanten Seiten zusammen — mit Quellen."</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 4px; line-height: 1.4;">→ <span class="mono">confluence.search()</span>, holt Top-Treffer, liefert Synthese inkl. Seiten-Links und Update-Datum.</div>
+          </div>
+
+          <!-- Use Case 2 -->
+          <div style="padding: 8px 0; border-top: 1px solid var(--hair);">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">ADR anlegen</div>
+            <div style="font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 4px;">„Erstelle <strong>ADR-014</strong> im Space <em>Architecture</em>: Wechsel von REST auf gRPC für interne Services."</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 4px; line-height: 1.4;">→ Agent erzeugt Seite nach Template, füllt <em>Context / Decision / Consequences</em>, verlinkt zurück zum Jira-Epic.</div>
+          </div>
+
+          <!-- Use Case 3 -->
+          <div style="padding: 8px 0; border-top: 1px solid var(--hair);">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Doku-Update</div>
+            <div style="font-family: var(--mono); font-size: 17px; line-height: 1.45; color: var(--ink); margin-top: 4px;">„Ergänze die <strong>Onboarding-Doku</strong> um den neuen 2FA-Schritt zwischen Login und Dashboard."</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 4px; line-height: 1.4;">→ Agent öffnet Seite, fügt Abschnitt an der richtigen Stelle ein, behält Formatierung, speichert mit Edit-Kommentar.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Kombi-Beispiel -->
+      <div class="card dark" style="margin-top: 14px; padding: 16px 28px;">
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;">
+          <div>
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Beide zusammen</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px;">Mehrere Server,<br/>ein Agent.</div>
+          </div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 18px; line-height: 1.5; color: #f0ece3;">
+              „Welche Tickets aus Q1 referenzieren die <strong>Auth-Service-Architektur-Doku</strong>? Schreib mir eine kurze Übersicht."
+            </div>
+            <div style="font-size: 16px; line-height: 1.45; color: #c8c2b6; margin-top: 8px;">
+              → Agent fragt <span class="mono" style="color: var(--accent-soft);">jira-mcp</span> nach Tickets mit Confluence-Link, holt via <span class="mono" style="color: var(--accent-soft);">confluence-mcp</span> die Doku-Metadaten, korreliert beides. Ein Prompt — zwei Quellen.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 12px; padding: 11px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 19px;">
+          Die <strong>API gehört dem MCP-Server</strong>, nicht dem Agenten. Atlassian patcht ihre REST-Schnittstelle — der Server wird aktualisiert, alle MCP-fähigen Clients profitieren mit. Keine Doppelarbeit pro Tool.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07C ÜBUNG — MCP-VERSTÄNDNIS ===================== -->
+  <section data-screen-label="07c Übung MCP">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Aufgabe</div>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 8px;">Welches Szenario ist <span class="accent">echtes MCP</span>?</h2>
+      <p class="body" style="margin: 0; max-width: 1600px;">
+        MCP = offener Standard, der LLM-<strong>Clients</strong> (Desktop-App, IDE, Agent) eine einheitliche Sprache gibt, um <strong>Tools, Daten und Ressourcen</strong> einzubinden — ohne pro Quelle eine eigene Integration zu bauen.
+      </p>
+
+      <!-- Antwortmöglichkeiten (klickbar) -->
+      <div class="mcq-grid" data-quiz="mcp" data-correct="A" style="margin-top: 22px;">
+
+        <button class="mcq" data-key="A" type="button">
+          <div class="mcq-head">
+            <div class="mcq-letter">A</div>
+            <div class="mcq-title" data-nd='Der Agent bindet einen MCP-Server für euer Ticketsystem ein und kann darüber Vorgänge lesen &amp; anlegen — genauso für Chat &amp; Datenbank.'>Der Agent bindet einen <span class="mono" style="font-size: 20px;">jira-mcp</span>-Server ein und kann darüber Tickets lesen &amp; anlegen — unverändert auch für Slack &amp; Postgres.</div>
+          </div>
+          <p class="mcq-note" data-nd='Ein Protokoll, viele Quellen. Der Client kennt das Ticketsystem nicht direkt — nur MCP.'>Ein Protokoll, viele Quellen. Der Client kennt keine Jira-API direkt — nur MCP.</p>
+        </button>
+
+        <button class="mcq" data-key="B" type="button">
+          <div class="mcq-head">
+            <div class="mcq-letter">B</div>
+            <div class="mcq-title" data-nd='Eine Anwendung schickt direkt einen Prompt an die Modell-Schnittstelle.'>Ein Python-Skript schickt mit <span class="mono" style="font-size: 20px;">requests.post()</span> einen Prompt an die Anthropic-API.</div>
+          </div>
+          <p class="mcq-note">Direkter Modellaufruf. Kein Tool, kein Protokoll dazwischen.</p>
+        </button>
+
+        <button class="mcq" data-key="C" type="button">
+          <div class="mcq-head">
+            <div class="mcq-letter">C</div>
+            <div class="mcq-title">Zwei autonome Agenten verhandeln über ein offenes Protokoll, wer welche Teilaufgabe übernimmt.</div>
+          </div>
+          <p class="mcq-note">Klingt ähnlich — ist aber das andere Protokoll (A2A).</p>
+        </button>
+
+        <button class="mcq" data-key="D" type="button">
+          <div class="mcq-head">
+            <div class="mcq-letter">D</div>
+            <div class="mcq-title">Ein Workflow ruft drei Modelle nacheinander auf und reicht das Ergebnis weiter.</div>
+          </div>
+          <p class="mcq-note">Code orchestriert Modelle — hat mit MCP nichts zu tun.</p>
+        </button>
+
+      </div>
+
+      <!-- Frage 2: Transfer -->
+      <div class="quiz" data-quiz="mcp-transfer" style="margin-top: 16px;">
+        <div class="qitem" data-correct="mcp">
+          <div class="qbody" data-nd='<em>„Euer Agent nutzt das Ticketsystem schon per MCP. Jetzt soll er zusätzlich die <strong>Wissensdatenbank</strong> durchsuchen. Was ist der MCP-Weg?"</em>'><em>„Euer Agent nutzt schon <span class="mono">jira-mcp</span>. Jetzt soll er zusätzlich <strong>Confluence-Seiten</strong> lesen. Was ist der MCP-Weg?"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="rest">Eigene REST-Integration</button>
+            <button class="qchoice" data-key="mcp">MCP-Server einbinden</button>
+            <button class="qchoice" data-key="agent">Zweiten Agenten bauen</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ MCP-Server einbinden</span> — gleicher Client, ein Server mehr. <span class="no">Eigene Integration</span> = Aufwand pro Quelle. <span class="no">Zweiter Agent</span> = unnötig, das wäre A2A-Territorium.'><span class="ok">✓ MCP-Server einbinden</span> — <span class="mono">confluence-mcp</span> dazu, gleicher Client. <span class="no">REST</span> = Integration pro Quelle. <span class="no">Zweiter Agent</span> = unnötig, das wäre A2A-Territorium.</div>
+        </div>
+      </div>
+
+      <!-- Erklärung (klappt nach Antwort / Reveal auf) -->
+      <div class="explain" data-explain>
+        <div style="display: flex; gap: 24px; align-items: flex-start;">
+          <div style="flex-shrink: 0;">
+            <div class="explain-accent">↳ Auflösung</div>
+            <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; color: var(--accent-soft); line-height: 1; margin-top: 4px;">A</div>
+          </div>
+          <div style="flex: 1; padding-left: 22px; border-left: 1px solid rgba(255,255,255,0.14);">
+            <div style="font-size: 18px; line-height: 1.5;">
+              MCP ist der <strong>USB-C-Stecker für LLM-Tools</strong>: ein Client, ein Protokoll, beliebig viele MCP-Server. <strong>B</strong> ist reine API-Anfrage, <strong>C</strong> ist A2A (zwischen Agenten), <strong>D</strong> ein Workflow.
+            </div>
+            <div class="mono" style="margin-top: 10px; font-size: 13px; color: var(--accent-soft); letter-spacing: 0.06em;">
+              Merksatz: MCP verbindet einen Agenten <em>mit Werkzeugen</em>. A2A verbindet Agenten <em>untereinander</em>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status">Zwei Fragen — klick deine Antworten an, oder lass auflösen.</div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07D ÜBUNG — EIGENES MCP-TOOL SCHREIBEN ===================== -->
+  <style id="mtx-style">
+    /* ===== Paar-Übung: eigenes MCP-Tool (07d) ===== */
+
+    /* Interaktiver Timer — gleiche Mechanik wie Kap. 02/03 */
+    .timer { display: inline-flex; align-items: center; gap: 8px; }
+    .timer .t-display {
+      font-size: 19px; font-weight: 600; color: var(--ink);
+      font-variant-numeric: tabular-nums; min-width: 62px; letter-spacing: 0.02em;
+    }
+    .timer .t-display.running { color: var(--accent); }
+    .timer .t-display.done { color: var(--quiz-no); animation: timer-blink 0.9s steps(1) infinite; }
+    @keyframes timer-blink { 50% { opacity: 0.25; } }
+    .timer .t-btn {
+      appearance: none; cursor: pointer; font-family: var(--mono);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 999px;
+      background: var(--paper); color: var(--ink); border: 1.5px solid var(--ink);
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    }
+    .timer .t-btn:hover { background: var(--bg-2); }
+    .timer .t-toggle[data-running="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* Setup-Leiste */
+    .mtx-setup {
+      display: flex; align-items: center; gap: 22px;
+      margin-top: 16px; padding: 12px 20px;
+      background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+    }
+    .mtx-setup .s-tag {
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
+      background: var(--accent); border-radius: 999px; padding: 5px 12px; white-space: nowrap;
+    }
+    .mtx-setup .s-step { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; color: var(--ink-2); white-space: nowrap; }
+    .mtx-setup .s-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--ink); color: var(--bg);
+      font-family: var(--mono); font-size: 12px; font-weight: 600;
+    }
+    .mtx-setup .s-roles { font-size: 15.5px; color: var(--ink-2); line-height: 1.3; }
+    .mtx-setup .s-roles strong { color: var(--ink); }
+    .mtx-setup .s-div { width: 1px; align-self: stretch; background: var(--hair); }
+
+    /* Linke dunkle Karte: Tool-Entwurf */
+    .mtx-file { background: var(--ink); border: 1px solid var(--ink); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+    .mtx-filebar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 22px; border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .mtx-fname { font-family: var(--mono); font-size: 15px; color: var(--accent-soft); letter-spacing: 0.04em; }
+    .mtx-fmeta { font-family: var(--mono); font-size: 13px; color: #c8c2b6; }
+    .mtx-filebody { padding: 16px 24px 18px; flex: 1; min-height: 0; }
+    .mtx-code { font-family: var(--mono); font-size: 15.5px; line-height: 1.66; color: #e9e4d9; white-space: pre-wrap; margin: 0; }
+    .mtx-code .c { color: #8a8273; }
+    .mtx-code .str { color: var(--accent-soft); }
+    .mtx-code .fn { color: #f0ece3; font-weight: 600; }
+    .mtx-code .src { color: #f0ece3; font-weight: 600; background: rgba(232,147,121,0.16); border-radius: 4px; padding: 0 5px; }
+
+    /* Non-Dev-Variante: Steckbrief-Zeilen in der dunklen Karte */
+    .mtx-form { display: flex; flex-direction: column; }
+    .mtx-frow { display: flex; gap: 18px; align-items: baseline; padding: 13px 0; }
+    .mtx-frow + .mtx-frow { border-top: 1px solid rgba(255,255,255,0.08); }
+    .mtx-flabel { flex: 0 0 190px; font-family: var(--mono); font-size: 14px; color: var(--accent-soft); letter-spacing: 0.04em; }
+    .mtx-fval { font-size: 16.5px; color: #d8d2c5; line-height: 1.45; }
+    .mtx-fval b { color: #f0ece3; font-weight: 600; }
+    .mtx-fval .src { color: #f0ece3; font-weight: 600; background: rgba(232,147,121,0.16); border-radius: 4px; padding: 0 5px; font-family: var(--mono); font-size: 14px; }
+    .mtx-blank { color: #6f675a; letter-spacing: 0.06em; }
+
+    /* Quellen-Spickzettel */
+    .mtx-src-row { display: flex; gap: 14px; align-items: flex-start; padding: 7px 0; }
+    .mtx-src-row + .mtx-src-row { border-top: 1px dashed var(--hair); }
+    .mtx-src-chip {
+      flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--accent); color: #fff;
+      font-family: var(--mono); font-size: 15px; font-weight: 700;
+    }
+    .mtx-src-name { font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--ink); }
+    .mtx-src-desc { font-size: 14.5px; color: var(--ink-2); line-height: 1.35; margin-top: 1px; }
+    .mtx-src-desc em { color: var(--ink); }
+
+    /* Tool-Ideen */
+    .mtx-idea { display: flex; gap: 14px; align-items: baseline; padding: 5px 0; }
+    .mtx-idea + .mtx-idea { border-top: 1px dashed var(--hair); }
+    .mtx-idea .i-name { flex: 0 0 235px; font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--ink); }
+    .mtx-idea .i-desc { font-size: 15px; color: var(--ink-2); line-height: 1.35; }
+  </style>
+  <section data-screen-label="07d Übung MCP-Tool schreiben" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; margin: 32px 0 16px;">
+        <div class="eyebrow" style="margin: 0;"><span class="mtx-ex">Paar-Übung · 15 min · Papier schlägt Editor</span><span class="mtx-sol" hidden>Paar-Übung · Beispiellösung — eine von vielen richtigen</span></div>
+        <button class="ex-eg-btn" type="button" data-eg-open="eg-mcp" style="flex: none;">Beispiel-Runde ansehen</button>
+      </div>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 8px;"><span class="mtx-ex">Schreibt euer <span class="accent">eigenes MCP-Tool</span> — Definition, nicht Code.</span><span class="mtx-sol" hidden>Beispiellösung: <span class="accent">„Wie wird das Wetter?“</span></span></h2>
+      <p class="body" style="margin: 0; max-width: 1700px; font-size: 19px;"><span class="mtx-ex" data-nd='Zu zweit. Ihr schreibt den Steckbrief eines Werkzeugs, das euer Assistent nutzen soll: Name, Beschreibung, benötigte Angaben. Keine Technik — die eigentliche Arbeit ist, für <strong>jede Angabe</strong> zu beantworten: <em>Woher bekommt das Modell diesen Wert?</em>'>Zu zweit. Ihr schreibt genau das, was sonst in <span class="mono" style="font-size: 17px;">registerTool()</span> steht: Name, Beschreibung, Parameter-Schema. Kein Handler, kein Code dahinter — die eigentliche Arbeit ist, für <strong>jeden Parameter</strong> zu beantworten: <em>Woher bekommt das Modell diesen Wert?</em></span><span class="mtx-sol" hidden>Zwei Parameter reichen: <strong>Ort</strong> (Pflicht) und <strong>Tag</strong> (optional, Standard: heute). Entscheidend ist nicht das Schema — sondern dass für <strong>jeden Wert die Quelle</strong> geklärt ist.</span></p>
+
+      <div class="mtx-setup">
+        <span class="s-tag"><span class="mtx-ex">Setup · 2 min</span><span class="mtx-sol" hidden>Auflösung</span></span>
+        <span class="mtx-ex" style="display: contents;">
+        <span class="s-step"><span class="s-num">1</span> Paarbildung</span>
+        <span class="s-step"><span class="s-num">2</span> Tool-Idee rechts wählen</span>
+        <span class="s-step"><span class="s-num">3</span> Timer starten</span>
+        <span class="s-div"></span>
+        <span class="s-roles"><strong>Rollen:</strong> Eine:r schreibt (<strong>Autor</strong>) · eine:r spielt das Modell (<strong>Modell-Anwalt</strong>) und fragt bei jedem Parameter laut: <em>„Woher weiß ich das?“</em></span>
+        </span>
+        <span class="mtx-sol s-roles" hidden>Vergleicht euren Entwurf: <strong>gleiche Parameter, gleiche Quellen?</strong> Abweichung heißt nicht falsch — oft ist es nur eine andere, ebenso gültige Quelle.</span>
+        <span style="margin-left: auto;"></span>
+        <span class="timer" data-seconds="900">
+          <span class="t-display mono">15:00</span>
+          <button class="t-btn t-toggle" type="button">Start</button>
+          <button class="t-btn t-reset" type="button">Reset</button>
+        </span>
+        <button class="mtx-sol-btn" type="button" data-on="false">Lösung zeigen</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.08fr 1fr; gap: 18px; margin-top: 14px; flex: 1; min-height: 0;">
+
+        <!-- Links: das Gerüst, das die Paare füllen -->
+        <div class="mtx-file">
+          <div class="mtx-filebar">
+            <span class="mtx-fname"><span class="mtx-ex" data-nd='Werkzeug-Steckbrief'>tools/euer-tool.ts</span><span class="mtx-sol" hidden data-nd='Werkzeug-Steckbrief · ausgefüllt'>tools/get-weather.ts</span></span>
+            <span class="mtx-fmeta"><span class="mtx-ex" data-nd='4 Felder — Papier oder Whiteboard reicht'>das Innere von registerTool() — mehr nicht</span><span class="mtx-sol" hidden>so sieht ein fertiger Entwurf aus</span></span>
+          </div>
+          <div class="mtx-filebody mtx-ex" data-nd='<div class="mtx-form"><div class="mtx-frow"><div class="mtx-flabel">① Name</div><div class="mtx-fval">Verb + Objekt, eindeutig — z. B. <b>urlaub_beantragen</b>: <span class="mtx-blank">______________</span></div></div><div class="mtx-frow"><div class="mtx-flabel">② Beschreibung</div><div class="mtx-fval">Zwei Sätze <b>für das Modell</b>, nicht für Menschen: Wann soll der Assistent das Werkzeug nutzen — und wann <b>nicht</b>?</div></div><div class="mtx-frow"><div class="mtx-flabel">③ Benötigte Angaben</div><div class="mtx-fval">Mindestens drei Zeilen, je: <b>Angabe</b> · Pflicht oder optional? · Quelle <span class="src">A–E</span> vom Spickzettel rechts.<br>1. <span class="mtx-blank">__________</span> · <span class="src">?</span>&nbsp;&nbsp; 2. <span class="mtx-blank">__________</span> · <span class="src">?</span>&nbsp;&nbsp; 3. <span class="mtx-blank">__________</span> · <span class="src">?</span></div></div><div class="mtx-frow"><div class="mtx-flabel">④ Ergebnis</div><div class="mtx-fval">Ein Satz: Was kommt zurück? Den technischen Unterbau baut später die IT — heute zählt nur die Schnittstelle.</div></div></div>'>
+<pre class="mtx-code"><span class="c">// Euer Entwurf — Lücken füllen. Pro Parameter: Quelle A–E notieren (Spickzettel →)</span>
+server.<span class="fn">registerTool</span>(
+  <span class="str">"verb_objekt"</span>,                      <span class="c">// ① Name — eindeutig, Verb + Objekt</span>
+  {
+    title: <span class="str">"______________"</span>,
+    description: <span class="str">"______________</span>     <span class="c">// ② Wann nutzen? Wann NICHT?</span>
+<span class="str">      ____________________________"</span>, <span class="c">//    Liest das Modell — nicht der User.</span>
+    inputSchema: {
+      ________: z.string(),            <span class="c">// ③ Quelle? → <span class="src">A B C D E</span></span>
+      ________: z.string(),            <span class="c">//    Quelle? → <span class="src">A B C D E</span></span>
+      ________: z.enum([______]),      <span class="c">//    Pflicht — oder optional?</span>
+    },
+  },
+  <span class="c">async</span> (args) =&gt; { <span class="c">/* ④ der echte Call — baut heute niemand */</span> }
+);</pre>
+          </div>
+          <div class="mtx-filebody mtx-sol" hidden data-nd='<div class="mtx-form"><div class="mtx-frow"><div class="mtx-flabel">① Name</div><div class="mtx-fval"><b>wetter_abfragen</b> — Verb + Objekt, eindeutig.</div></div><div class="mtx-frow"><div class="mtx-flabel">② Beschreibung</div><div class="mtx-fval">„Liefert die Wettervorhersage für einen Ort. Nutzen bei Fragen wie <b>„Wie wird das Wetter?“</b>. Fehlt der Ort und ist er nicht aus dem Gespräch klar: <b>nachfragen, nicht raten</b>.“</div></div><div class="mtx-frow"><div class="mtx-flabel">③ Benötigte Angaben</div><div class="mtx-fval">1. <b>Ort</b> · Pflicht · Quelle <span class="src">A</span> Auftrag — fehlt er: <span class="src">B</span> Rückfrage<br>2. <b>Tag</b> · optional · Standard: <b>heute</b> <span class="src">E</span> — oder aus dem Auftrag <span class="src">A</span> („morgen“)</div></div><div class="mtx-frow"><div class="mtx-flabel">④ Ergebnis</div><div class="mtx-fval">Vorhersage für Ort + Tag: Temperatur, Niederschlag, ein Satz Zusammenfassung.</div></div></div>'>
+<pre class="mtx-code"><span class="c">// Beispiellösung — kompakt, aber vollständig</span>
+server.<span class="fn">registerTool</span>(
+  <span class="str">"get_weather"</span>,                       <span class="c">// ① Verb + Objekt, eindeutig</span>
+  {
+    title: <span class="str">"Wettervorhersage"</span>,
+    description: <span class="str">"Liefert die Wettervorhersage für einen Ort.</span>
+<span class="str">      Nutzen bei Fragen wie 'Wie wird das Wetter?'.</span>      <span class="c">// ② wann nutzen</span>
+<span class="str">      Wenn kein Ort genannt oder aus dem Kontext klar ist:</span>
+<span class="str">      nachfragen — nicht raten."</span>,                          <span class="c">//    wann NICHT raten → <span class="src">B</span></span>
+    inputSchema: {
+      ort: z.string(),                     <span class="c">// ③ Pflicht · Quelle <span class="src">A</span> Auftrag, sonst <span class="src">B</span></span>
+      tag: z.string().optional()           <span class="c">//    optional · <span class="src">A</span> („morgen“)</span>
+            .default(<span class="str">"heute"</span>),             <span class="c">//    fehlt er → Default <span class="src">E</span></span>
+    },
+  },
+  <span class="c">async</span> ({ ort, tag }) =&gt; { <span class="c">/* ④ Wetter-API → Temperatur, Niederschlag, Zusammenfassung */</span> }
+);</pre>
+          </div>
+        </div>
+
+        <!-- Rechts: Quellen-Spickzettel + Tool-Ideen -->
+        <div style="display: flex; flex-direction: column; gap: 14px; min-height: 0;">
+
+          <div class="card" style="padding: 16px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">Spickzettel · Woher bekommt das Modell den Wert?</div>
+            <div style="margin-top: 6px;">
+              <div class="mtx-src-row">
+                <div class="mtx-src-chip">A</div>
+                <div><div class="mtx-src-name">Nutzer-Anfrage</div><div class="mtx-src-desc" data-nd='Steht schon wörtlich im Auftrag — <em>„buch den großen Raum für Donnerstag“</em>.'>Steht schon wörtlich im Auftrag — <em>„leg ein Ticket für den Login-Bug an“</em>.</div></div>
+              </div>
+              <div class="mtx-src-row">
+                <div class="mtx-src-chip">B</div>
+                <div><div class="mtx-src-name">Rückfrage</div><div class="mtx-src-desc">Fehlt und ist wichtig → das Modell muss <em>nachfragen</em>, statt zu raten. Die Beschreibung sollte das sagen.</div></div>
+              </div>
+              <div class="mtx-src-row">
+                <div class="mtx-src-chip">C</div>
+                <div><div class="mtx-src-name">Session / Kontext</div><div class="mtx-src-desc">Ergibt sich aus dem bisherigen Gespräch, angehängten Dateien oder dem geöffneten Projekt.</div></div>
+              </div>
+              <div class="mtx-src-row">
+                <div class="mtx-src-chip">D</div>
+                <div><div class="mtx-src-name">Anderer Tool-Call</div><div class="mtx-src-desc" data-nd='Ein Such-Werkzeug liefert vorher die ID — erst <em>suchen</em>, dann <em>ändern</em>.'>Ein Lookup-Tool liefert vorher die ID — erst <em>search_x</em>, dann <em>update_x</em>.</div></div>
+              </div>
+              <div class="mtx-src-row">
+                <div class="mtx-src-chip">E</div>
+                <div><div class="mtx-src-name">Config / Default</div><div class="mtx-src-desc">Fest hinterlegt (Profil, Projekt, Umgebung) — gehört dann oft <em>gar nicht</em> ins Schema.</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mtx-ex" style="padding: 16px 22px; flex: 1; min-height: 0;">
+            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Tool-Ideen · pickt eine — oder nehmt eine echte aus eurem Alltag</div>
+            <div style="margin-top: 6px;" data-nd='<div class="mtx-idea"><div class="i-name">urlaub_beantragen</div><div class="i-desc">Urlaubsantrag im HR-System einreichen.</div></div><div class="mtx-idea"><div class="i-name">raum_buchen</div><div class="i-desc">Meetingraum für einen Termin reservieren.</div></div><div class="mtx-idea"><div class="i-name">bericht_ziehen</div><div class="i-desc">Monatszahlen aus dem CRM zusammenstellen.</div></div><div class="mtx-idea"><div class="i-name">rechnung_pruefen</div><div class="i-desc">Status einer Eingangsrechnung abfragen.</div></div>'>
+              <div class="mtx-idea"><div class="i-name">create_ticket</div><div class="i-desc">Bug-Ticket im Tracker anlegen.</div></div>
+              <div class="mtx-idea"><div class="i-name">trigger_deploy</div><div class="i-desc">Deployment einer Umgebung anstoßen.</div></div>
+              <div class="mtx-idea"><div class="i-name">query_logs</div><div class="i-desc">Fehler-Logs eines Service durchsuchen.</div></div>
+              <div class="mtx-idea"><div class="i-name">summarize_prs</div><div class="i-desc">Gemergte PRs der Woche einsammeln.</div></div>
+            </div>
+          </div>
+
+          <div class="card mtx-sol" hidden style="padding: 16px 22px; flex: 1; min-height: 0;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">So füllt das Modell die Parameter — drei Fälle</div>
+            <div style="margin-top: 6px;">
+              <div class="mtx-dlg">
+                <div class="d-user">„Wie wird das Wetter <em>morgen in Hamburg</em>?“</div>
+                <div class="d-act" data-nd='→ <b>wetter_abfragen</b>( Ort: <b>Hamburg</b> <span class="src">A</span>, Tag: <b>morgen</b> <span class="src">A</span> ) — alles steht im Auftrag.'>→ get_weather( ort: <b>"Hamburg"</b> <span class="src">A</span>, tag: <b>"morgen"</b> <span class="src">A</span> ) — alles steht im Auftrag.</div>
+              </div>
+              <div class="mtx-dlg">
+                <div class="d-user">„Wie wird das Wetter?“</div>
+                <div class="d-act" data-nd='→ kein Werkzeug-Einsatz. Erst Rückfrage <span class="src">B</span>: <b>„Für welchen Ort?“</b> — die Pflicht-Angabe fehlt, raten verboten.'>→ kein Tool-Call. Erst Rückfrage <span class="src">B</span>: <b>„Für welchen Ort?“</b> — der Pflicht-Parameter fehlt, raten verboten.</div>
+              </div>
+              <div class="mtx-dlg">
+                <div class="d-user">„Wie wird das Wetter <em>in Kiel</em>?“</div>
+                <div class="d-act" data-nd='→ <b>wetter_abfragen</b>( Ort: <b>Kiel</b> <span class="src">A</span> ) — Tag weggelassen, Standard greift: <b>heute</b> <span class="src">E</span>.'>→ get_weather( ort: <b>"Kiel"</b> <span class="src">A</span> ) — tag weggelassen, Default greift: <b>heute</b> <span class="src">E</span>.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 16px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label"><span class="mtx-ex">Debrief · 5 min</span><span class="mtx-sol" hidden>Warum das eine gute Lösung ist</span></div>
+        <div class="callout-body" style="font-size: 19px;">
+          <span class="mtx-ex">Welcher Parameter war <strong>strittig</strong> — und welche Quelle hat gewonnen? Und: Welche Angabe gehört <strong>gar nicht ins Tool</strong>, sondern in die Konfiguration?</span><span class="mtx-sol" hidden><strong>Minimal:</strong> nur zwei Angaben — kein Zugangsschlüssel, keine Einheit, kein Format: das gehört in die Config <span class="mono" style="font-size: 15px; color: var(--accent);">E</span>, nicht ins Schema. Und die Beschreibung sagt dem Modell explizit, wann es <strong>nachfragen</strong> statt raten soll.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Beispielaufgabe · gespielte Runde (wer sagt was · Learning) -->
+    <div class="ex-eg-backdrop" id="eg-mcp">
+      <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel-Runde">
+        <div class="ex-eg-head">
+          <div>
+            <div class="eg-eyebrow">Beispiel-Runde · so entsteht ein Tool-Steckbrief</div>
+            <div class="eg-title" data-nd="Beispiel-Runde: <span class='accent'>Wetter abfragen</span> — wer fragt was?">Beispiel-Runde: <span class="accent">get_weather</span> — wer fragt was?</div>
+          </div>
+          <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
+        </div>
+        <div class="ex-eg-body">
+          <div class="eg-script">
+            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Beschreibung</span></div><div class="eg-say">Dein Werkzeug heißt nur „Wetter“. Wenn jemand fragt „wie wird das Wetter?“ — was tue ich, wenn <strong>kein Ort</strong> dasteht?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say">Stimmt. Die Beschreibung muss sagen: fehlt der Ort, <strong>nachfragen</strong> — nicht raten.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Angabe · Ort</span></div><div class="eg-say">Erste Angabe: Ort. Woher nehme ich den?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say">Quelle <strong>A</strong> — steht im Auftrag: „morgen in Hamburg“.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Angabe · Tag</span></div><div class="eg-say">Und der Tag? Wenn keiner gesagt wird?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say" data-nd="Optional, Standard heute — Quelle E. Keine Pflicht-Angabe.">Optional, Standard heute — Quelle E. Kein Pflichtfeld.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Konfiguration</span></div><div class="eg-say" data-nd="Brauchst du einen Zugangsschlüssel im Steckbrief?">Brauchst du einen Zugangsschlüssel im Schema?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say" data-nd="Nein — der gehört in die Konfiguration, nicht in den Steckbrief. Raus damit.">Nein — der ist Config, nicht Sache des Modells. Raus aus dem Schema.</div></div>
+          </div>
+          <div class="eg-aside">
+            <div class="eg-setup">
+              <div class="eg-setup-label">Die Aufgabe</div>
+              <div class="eg-setup-task" data-nd="<strong>Werkzeug-Steckbrief</strong> — Name, Beschreibung, benötigte Angaben. Für jede Angabe: woher bekommt das Modell den Wert? In 15 Minuten."><strong>Tool-Steckbrief</strong> — Name, Beschreibung, Parameter-Schema. Für jeden Parameter: woher bekommt das Modell den Wert? In 15 Minuten.</div>
+            </div>
+            <div class="eg-learning">
+              <div class="eg-learning-label">Das Learning</div>
+              <div class="eg-learning-text" data-nd="Der Modell-Anwalt hat keinen Steckbrief geschrieben — er hat bei jeder Angabe nur gefragt: <em>„Woher weiß ich das?“</em> Das deckte zwei Dinge auf: eine Beschreibung, die <strong>Nachfragen statt Raten</strong> erzwingt, und eine Angabe (Zugangsschlüssel), die gar nicht in den Steckbrief gehört. Gutes Werkzeug-Design entscheidet sich nicht am Typ — sondern an der <strong>Quelle jedes Werts</strong>.">Der Modell-Anwalt hat kein Schema geschrieben — er hat bei jedem Wert nur gefragt: <em>„Woher weiß ich das?“</em> Das deckte zwei Dinge auf: eine Beschreibung, die <strong>Nachfragen statt Raten</strong> erzwingt, und ein Feld (Zugangsschlüssel), das gar nicht ins Schema gehört. Gutes Tool-Design entscheidet sich nicht am Parameter-Typ — sondern an der <strong>Quelle jedes Werts</strong>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== 07D LÖSUNG-STYLES (Umschalter auf der Übungsfolie) ===================== -->
+  <style id="mtx-solution-style">
+    /* Lösung-Umschalter auf der Übungsfolie */
+    .mtx-ex[hidden], .mtx-sol[hidden] { display: none !important; }
+    .mtx-sol-btn {
+      appearance: none; cursor: pointer; font-family: var(--mono);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 999px;
+      background: var(--ink); color: var(--bg); border: 1.5px solid var(--ink);
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+      white-space: nowrap;
+    }
+    .mtx-sol-btn:hover { background: var(--ink-2); border-color: var(--ink-2); }
+    .mtx-sol-btn[data-on="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .mtx-dlg { display: flex; flex-direction: column; gap: 5px; padding: 9px 0; }
+    .mtx-dlg + .mtx-dlg { border-top: 1px dashed var(--hair); }
+    .mtx-dlg .d-user { font-size: 16px; color: var(--ink); }
+    .mtx-dlg .d-user em { font-style: italic; }
+    .mtx-dlg .d-act {
+      font-family: var(--mono); font-size: 13.5px; color: var(--ink-2); line-height: 1.5;
+      background: var(--bg-2); border-radius: 8px; padding: 7px 12px;
+    }
+    .mtx-dlg .d-act .src {
+      color: #fff; font-weight: 700; background: var(--accent);
+      border-radius: 4px; padding: 0 5px;
+    }
+    .mtx-dlg .d-act b { color: var(--ink); }
+  </style>
+
+  <!-- ===================== 08 ANATOMIE EINES AGENTEN ===================== -->
+  <style id="agent-anatomy-style">
+    .ag-grid { display: grid; grid-template-columns: 1.12fr 1fr; gap: 26px; margin-top: 18px; flex: 1; min-height: 0; }
+
+    /* --- The agent file panel (left) --- */
+    .ag-file { background: var(--ink); border: 1px solid var(--ink); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .ag-file-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px; border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .ag-file-bar .ag-fname { font-family: var(--mono); font-size: 15px; color: var(--accent-soft); letter-spacing: 0.04em; }
+    .ag-file-bar .ag-fmeta { font-family: var(--mono); font-size: 13px; color: #c8c2b6; }
+    .ag-zone { padding: 13px 24px 15px 26px; }
+    .ag-zone + .ag-zone { border-top: 1px solid rgba(255,255,255,0.08); }
+    .ag-zone.front { background: rgba(232,147,121,0.08); border-left: 3px solid var(--accent); }
+    .ag-zone.body { border-left: 3px solid #4d463a; }
+    .ag-ztag {
+      display: block; text-align: right; margin-bottom: 4px;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent-soft);
+    }
+    .ag-zone.body .ag-ztag { color: #8a8273; }
+
+    .ag-code { font-family: var(--mono); font-size: 15.5px; line-height: 1.62; color: #e9e4d9; white-space: pre-wrap; margin: 0; }
+    .ag-code .k   { color: #6f675a; }
+    .ag-code .key { color: var(--accent-soft); }
+    .ag-code .h   { color: #f0ece3; font-weight: 600; }
+    .ag-code .hh  { color: var(--accent-soft); font-weight: 600; }
+    .ag-code .c   { color: #8a8273; }
+
+    /* --- Right column cards --- */
+    .ag-side { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+    .ag-card { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 20px 24px; }
+    .ag-card.dark { background: var(--ink); border-color: var(--ink); }
+    .ag-card-label { font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; }
+    .ag-card.dark .ag-card-label { color: var(--accent-soft); }
+
+    /* file-location rows */
+    .ag-loc { display: flex; align-items: flex-start; gap: 14px; padding: 11px 0; border-bottom: 1px dashed var(--hair); }
+    .ag-loc:last-child { border-bottom: none; }
+    .ag-loc .ag-glyph {
+      flex: 0 0 auto; width: 26px; height: 26px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 15px; font-weight: 700; margin-top: 1px;
+    }
+    .ag-glyph.yes { background: var(--accent); color: #fff; }
+    .ag-glyph.info { background: var(--bg-2); color: var(--ink); border: 1px solid var(--hair); }
+    .ag-glyph.no { background: transparent; color: var(--ink-3); border: 1px dashed var(--ink-3); }
+    .ag-loc .ag-path { font-family: var(--mono); font-size: 16px; color: var(--ink); }
+    .ag-loc.bad .ag-path { color: var(--ink-3); text-decoration: line-through; text-decoration-thickness: 1px; }
+    .ag-loc .ag-meaning { font-size: 14.5px; color: var(--ink-2); line-height: 1.36; margin-top: 2px; }
+    .ag-loc .ag-meaning strong { color: var(--ink); }
+
+    /* building blocks */
+    .ag-block { display: flex; align-items: baseline; gap: 14px; padding: 9px 0; }
+    .ag-block + .ag-block { border-top: 1px solid rgba(255,255,255,0.08); }
+    .ag-block .ag-bk-key { flex: 0 0 132px; font-family: var(--mono); font-size: 15px; color: var(--accent-soft); }
+    .ag-block .ag-bk-txt { font-size: 15px; color: #d8d2c5; line-height: 1.4; }
+    .ag-block .ag-bk-txt b { color: #f0ece3; font-weight: 600; }
+    .ag-principle { margin-top: 14px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 16px; color: #e9e4d9; line-height: 1.42; }
+    .ag-principle strong { color: var(--accent-soft); }
+  </style>
+  <section data-screen-label="08 Anatomie eines Agenten">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Vom Ziel zur Datei — wie ein spezifischer Agent entsteht</div>
+      <h2 class="title" style="font-size: 52px; margin-bottom: 8px;">Anatomie eines <span class="accent">spezifischen Agenten</span>.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1700px; font-size: 20px;">
+        Ein Agent ist kein Programm, das du schreibst — es ist eine <strong>Markdown-Datei</strong>, die beschreibt, <em>wer</em> er ist, <em>was</em> er nutzen darf und <em>wie</em> er vorgeht. Vier Bausteine, eine feste Adresse im Repo.
+      </p>
+
+      <div class="ag-grid">
+
+        <!-- ============ ANNOTATED AGENT FILE ============ -->
+        <div class="ag-file">
+          <div class="ag-file-bar">
+            <span class="ag-fname">.agents/release-notes.md</span>
+            <span class="ag-fmeta">~520 tokens · YAML + Markdown</span>
+          </div>
+
+          <div class="ag-zone front">
+            <span class="ag-ztag">Verschaltung</span>
+<pre class="ag-code"><span class="k">---</span>
+<span class="key">name</span>: Release-Notes-Agent
+<span class="key">mcps</span>: [github, linear]
+<span class="key">skills</span>: [markdown-report]
+<span class="key">schedule</span>: "Fri 16:00 Europe/Berlin"
+<span class="k">---</span></pre>
+          </div>
+
+          <div class="ag-zone body">
+            <span class="ag-ztag">Anleitung</span>
+<pre class="ag-code"><span class="h"># Release-Notes-Agent</span>
+
+<span class="hh">## Rolle</span>
+Du fasst die Releases der Woche für das
+#product-Update zusammen.
+
+<span class="hh">## Workflow</span>
+1. GitHub: gemergte PRs mit Label `release`.
+2. Linear: geschlossene Issues im Cycle.
+3. Skill `markdown-report` → Template release-notes.
+4. Schreibe nach docs/releases/&lt;datum&gt;.md.
+
+<span class="hh">## Ton &amp; Grenzen</span>
+Knapp, nutzerorientiert, kein interner Jargon.
+Bei Unklarheit nachfragen — nicht raten.</pre>
+          </div>
+        </div>
+
+        <!-- ============ RIGHT: LOCATION + BUILDING BLOCKS ============ -->
+        <div class="ag-side">
+
+          <div class="ag-card">
+            <div class="ag-card-label">Wohin gehört die Datei?</div>
+            <div style="margin-top: 8px;">
+              <div class="ag-loc">
+                <span class="ag-glyph yes">✓</span>
+                <div>
+                  <div class="ag-path">.agents/&lt;name&gt;.md</div>
+                  <div class="ag-meaning">Genau hier. <strong>Ein Agent = eine Datei</strong>, klein und benannt.</div>
+                </div>
+              </div>
+              <div class="ag-loc">
+                <span class="ag-glyph info">·</span>
+                <div>
+                  <div class="ag-path">AGENTS.md</div>
+                  <div class="ag-meaning">Etwas <strong>anderes</strong>: Team-Regeln für <em>alle</em> Agenten — always-on, kein einzelner Agent.</div>
+                </div>
+              </div>
+              <div class="ag-loc bad">
+                <span class="ag-glyph no">✗</span>
+                <div>
+                  <div class="ag-path">release-notes.agent.md</div>
+                  <div class="ag-meaning">Gibt's nicht. Erfundene Endung, die <strong>kein Tool</strong> als Agent erkennt.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ag-card dark" style="flex: 1; display: flex; flex-direction: column;">
+            <div class="ag-card-label">Die 4 Bausteine</div>
+            <div style="margin-top: 6px;">
+              <div class="ag-block">
+                <span class="ag-bk-key">name</span>
+                <span class="ag-bk-txt"><b>Identität</b> — ein eindeutiger Name.</span>
+              </div>
+              <div class="ag-block">
+                <span class="ag-bk-key">mcps</span>
+                <span class="ag-bk-txt"><b>Werkzeuge</b> — welche MCP-Server er nutzen darf.</span>
+              </div>
+              <div class="ag-block">
+                <span class="ag-bk-key">skills</span>
+                <span class="ag-bk-txt"><b>Rezepte</b> — Prozesswissen, on-demand geladen.</span>
+              </div>
+              <div class="ag-block">
+                <span class="ag-bk-key">Rolle · Workflow · Ton</span>
+                <span class="ag-bk-txt"><b>Anleitung</b> — ein Satz, nummerierte Schritte, Stil + Grenzen.</span>
+              </div>
+            </div>
+            <div class="ag-principle" style="margin-top: auto;">
+              Du schreibst <strong>keinen Code</strong> — du verschaltest, was schon existiert: vorhandene MCPs + Skills, gebündelt zu einem Ziel.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">
+          <span class="mono" style="color: var(--ink);">.agents/&lt;name&gt;.md</span> = <strong>ein</strong> Agent.&nbsp;&nbsp;·&nbsp;&nbsp;<span class="mono" style="color: var(--ink);">AGENTS.md</span> = das <strong>ganze Team</strong>.&nbsp;&nbsp;·&nbsp;&nbsp;Eine eigene <span class="mono" style="color: var(--ink);">*.agent.md</span> gibt es <strong>nicht</strong>.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08A ÜBUNG AGENT-BUILDER (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="08a Übung Agent-Builder" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">IDE-Ansicht · welcher Kontext ist da, was kommt dazu</div>
+      <h2 class="title">Beschreibe deinen Agenten — sieh, welche <span class="accent">Dateien relevant</span> werden.</h2>
+      <p class="ex-instructions" style="margin-top: 6px;">
+        Klicke links Dateien an, um sie zu lesen. Wähle rechts ein Szenario — die ★-markierten Dateien werden für den Agenten relevant. Drücke <strong>Agent erzeugen</strong>: die neue Definition erscheint im Tree.
+      </p>
+
+      <div class="ex-stage ide-stage" id="ex-agent-builder">
+        <div class="ide-tree" id="agent-tree"></div>
+        <div class="ide-viewer">
+          <div class="ide-viewer-tab" id="agent-viewer-tab"></div>
+          <div class="ide-viewer-content" id="agent-viewer-content"></div>
+        </div>
+        <div class="ide-builder">
+          <div class="ide-builder-section scenarios">
+            <div class="ide-builder-label">Beschreib einen Agenten</div>
+            <div id="agent-scenarios"></div>
+          </div>
+          <div class="ide-analysis" id="agent-analysis"></div>
+          <div class="ide-insight" id="agent-insight"></div>
+          <div class="ide-actions">
+            <button class="btn accent" id="agent-create" disabled>↳ Agent erzeugen</button>
+            <button class="btn ghost" id="agent-reset">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08B WISSENSCHECK — KAPITEL-RECAP ===================== -->
+  <section data-screen-label="08b Wissenscheck Kapitel-Recap">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.03em; margin: 40px 0 0;">Sechs Fragen quer durchs Kapitel — jede mit sofortigem Richtig/Falsch-Feedback. Diesmal <strong style="color: var(--ink);">gibt es eine richtige Antwort.</strong></div>
+      <div class="eyebrow" style="margin: 18px 0 22px;">Sitzt das Modell — Workflow, Agent, Tool-Use, MCP?</div>
+      <h2 class="title" style="font-size: 52px; margin-bottom: 18px;">Prüf dich selbst — <span class="accent">eine</span> richtige Antwort pro Frage.</h2>
+
+      <div class="quiz" data-quiz="recap">
+
+        <div class="qitem" data-correct="workflow">
+          <div class="qbody"><em>„E-Mail empfangen → klassifizieren → Entwurf → Mensch gibt frei → senden."</em> Fester Pfad, vorab festgelegt.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Workflow</span> — der Pfad steht fest, <em>bevor</em> etwas läuft. Das Modell füllt nur einzelne, fest verdrahtete Schritte.</div>
+        </div>
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody"><em>„Das Modell wählt selbst, welche Werkzeuge es in welcher Reihenfolge nutzt — bis das Ziel erreicht ist."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Agent</span> — nicht der Code, das <em>Modell</em> steuert den Pfad. Du setzt nur das Ziel, nicht die Schritte.</div>
+        </div>
+
+        <div class="qitem" data-correct="routing">
+          <div class="qbody"><em>„Ein erster Schritt sortiert die Anfrage und leitet sie an den passenden Spezial-Prompt."</em> Welches Workflow-Muster?</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
+            <button class="qchoice" data-key="routing">Routing</button>
+            <button class="qchoice" data-key="parallel">Parallelisierung</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Routing</span> — erst klassifizieren, dann in den richtigen Zweig leiten. <span class="no">Chaining</span> = feste Schrittkette, <span class="no">Parallelisierung</span> = mehrere Wege gleichzeitig.</div>
+        </div>
+
+        <div class="qitem" data-correct="nocall">
+          <div class="qbody">Der <em>Tool-Use-Loop</em> läuft so lange, bis …</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="fixed">… eine feste Schrittzahl erreicht ist</button>
+            <button class="qchoice" data-key="nocall">… das Modell keinen Tool-Call mehr ausgibt</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Kein Tool-Call mehr</span> — das Modell signalisiert selbst, dass es fertig ist. Eine Max-Steps-Grenze dient nur als Notbremse, nicht als Taktgeber.</div>
+        </div>
+
+        <div class="qitem" data-correct="tools">
+          <div class="qbody"><strong>MCP</strong> verbindet vor allem …</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="tools">… einen Agenten mit Werkzeugen &amp; Daten</button>
+            <button class="qchoice" data-key="agents">… mehrere Agenten untereinander</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Agent ↔ Werkzeuge</span> — ein Protokoll, viele Quellen (USB-C für LLM-Tools). <span class="no">Agenten untereinander</span> verbindet A2A.</div>
+        </div>
+
+        <div class="qitem" data-correct="workflow">
+          <div class="qbody">Faustregel für die Architektur-Wahl im Zweifelsfall:</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent — maximale Flexibilität</button>
+            <button class="qchoice" data-key="workflow">Workflow — Agent nur wenn nötig</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Erst Workflow</span> — deterministisch, testbar, günstiger. Ein Agent kommt erst, wenn sich der Pfad <em>nicht</em> vorab festlegen lässt.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · <em>Tippe deine Antwort an — das Feedback klappt sofort auf.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 09 CHEAT-SHEET / TAKE-AWAYS ===================== -->
+  <section data-screen-label="09 Cheat Sheet">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="cs-head-row">
+        <div class="cs-head-main">
+          <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
+          <h2 class="title" style="font-size: 56px; margin-bottom: 14px;">Architektur auf <span class="accent">einer Seite</span>.</h2>
+          <p class="body" style="margin: 0; max-width: 1100px; font-size: 19px;">
+            Vier Stationen mit Auslöser, Default-Werkzeug, Failure-Mode und einer Daumenregel — abfotografieren, an die Wand hängen.
+          </p>
+        </div>
+        <div class="cs-emblem" aria-hidden="true">
+          <span class="em-cap">Wer entscheidet?</span>
+          <div class="mrow">
+            <span class="mtag">Workflow · fester Pfad</span>
+            <div class="mtrack">
+              <span class="em-chip">Step 1</span><span class="mlink"></span>
+              <span class="em-chip">Step 2</span><span class="mlink"></span>
+              <span class="em-chip">Step 3</span>
+            </div>
+          </div>
+          <div class="mrow">
+            <span class="mtag">Agent · entscheidet selbst</span>
+            <div class="mfan">
+              <span class="em-chip magent">Agent</span>
+              <svg class="mfan-svg" viewBox="0 0 56 104" aria-hidden="true">
+                <path class="fp" d="M0 52 C 22 52, 26 15, 56 15"></path>
+                <path class="fp" d="M0 52 L 56 52"></path>
+                <path class="fp" d="M0 52 C 22 52, 26 89, 56 89"></path>
+                <path class="fp hot" d="M0 52 L 56 52"></path>
+              </svg>
+              <div class="mfan-targets">
+                <span class="em-chip">Skill</span>
+                <span class="em-chip">MCP · Tool</span>
+                <span class="em-chip">Antwort</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cs-grid">
+        <div class="cs-card">
+          <div class="cs-num">01</div>
+          <div class="cs-name">Augmented LLM</div>
+          <div class="cs-row">
+            <div class="cs-label">Auslöser</div>
+            <div class="cs-val">eine Antwort, keine Verzweigung nötig</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Default-Tool</div>
+            <div class="cs-val mono">chat() + RAG / Tool-Use</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">Aufgabe zu groß für einen Aufruf — Halluzination</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Erstmal nur eine Antwort holen.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">02</div>
+          <div class="cs-name">Workflow</div>
+          <div class="cs-row">
+            <div class="cs-label">Auslöser</div>
+            <div class="cs-val">Pfad ist bekannt, Schritte sind stabil</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Default-Tool</div>
+            <div class="cs-val mono">Chain · Router · Parallel</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">starr — Ausnahmen werden zum Bug</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Code orchestriert — das Modell denkt.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">03</div>
+          <div class="cs-name">Agent</div>
+          <div class="cs-row">
+            <div class="cs-label">Auslöser</div>
+            <div class="cs-val">Schrittanzahl unbekannt, Pfad genuin offen</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Default-Tool</div>
+            <div class="cs-val mono">Loop mit Tool-Use + Stop-Conditions</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">Drift, endlose Schleifen, hohe Kosten</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Loop-Limit + Mensch-im-Loop.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card dark">
+          <div class="cs-num">04</div>
+          <div class="cs-name">MCP</div>
+          <div class="cs-row">
+            <div class="cs-label">Auslöser</div>
+            <div class="cs-val">Tools sollen wiederverwendbar sein</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Default-Tool</div>
+            <div class="cs-val mono">MCP-Server pro Datenquelle</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">N × M-Integrationen statt N + M</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent-soft);">Daumenregel</div>
+            <div class="cs-val"><strong>Custom-Connector? Erst nach MCP fragen.</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 22px;">
+        <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Wenn / Dann · drei Architektur-Heuristiken</div>
+        <div class="cs-rules">
+          <div class="cs-rule">
+            <div class="r-when">Wenn jemand „Agent" sagt</div>
+            <div class="r-then"><strong>Frag</strong>, welcher <em>Schritt</em> nicht vorab bekannt ist. Wenn keiner — Workflow.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn der Loop &gt; 10 Tool-Aufrufe braucht</div>
+            <div class="r-then"><strong>Zerlege.</strong> Orchestrator + Workers oder Sub-Workflow — keine 50-Step-Agents.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn ein Tool irreversibel ist</div>
+            <div class="r-then"><strong>Mensch-im-Loop</strong> — Approval-Gate vor dem Aufruf, nicht danach.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Mitnehmen</div>
+        <div class="callout-body" style="font-size: 19px;">
+          Wähl die <strong>einfachste Architektur, die funktioniert</strong>: Workflow vor Agent, Agent nur bei genuin offenem Pfad — und <strong>Mensch-im-Loop</strong>, sobald ein Schritt irreversibel ist.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+<script>
+  // ============ Interaktiver Wissenscheck ============
+  (function() {
+    // Begründungs-Tag einheitlich: Richtig · LABEL / Daneben · richtig wäre LABEL / Lösung · LABEL
+    function labelOfCorrect(item) {
+      var keys = item.getAttribute('data-correct').split(/\s+/);
+      return keys.map(function(k) {
+        var b = item.querySelector('.qchoice[data-key="' + k + '"]');
+        return b ? b.textContent.trim() : k;
+      }).join(' / ');
+    }
+    function setFb(item, mode) {
+      var fb = item.querySelector('.qfb');
+      if (!fb) return;
+      var span = fb.querySelector('span');
+      if (!span) return;
+      var label = labelOfCorrect(item);
+      if (mode === 'no') {
+        span.className = 'no';
+        span.textContent = 'Daneben · richtig wäre ' + label;
+      } else if (mode === 'reveal') {
+        span.className = 'ok';
+        span.textContent = 'Lösung · ' + label;
+      } else {
+        span.className = 'ok';
+        span.textContent = 'Richtig · ' + label;
+      }
+    }
+
+    // ---- Übung 1 + 2: Quiz mit mehreren Fragen pro Folie ----
+    document.querySelectorAll('.quiz').forEach(function(quiz) {
+      var items = quiz.querySelectorAll('.qitem');
+      var slide = quiz.closest('section');
+      var statusEl = slide && slide.querySelector('.reveal-status .score');
+
+      function updateScore() {
+        if (!statusEl) return;
+        var answered = quiz.querySelectorAll('.qitem.answered').length;
+        statusEl.textContent = answered;
+      }
+
+      items.forEach(function(item) {
+        item.querySelectorAll('.qchoice').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (item.classList.contains('answered')) return;
+            // data-correct darf mehrere Keys enthalten (leerzeichen-getrennt)
+            var corrects = item.getAttribute('data-correct').split(/\s+/);
+            var key = btn.getAttribute('data-key');
+            if (corrects.indexOf(key) !== -1) {
+              btn.classList.add('picked-ok');
+              setFb(item, 'ok');
+            } else {
+              btn.classList.add('picked-no');
+              setFb(item, 'no');
+            }
+            // alle (weiteren) gültigen Antworten zur Aufklärung markieren
+            corrects.forEach(function(c) {
+              var ok = item.querySelector('.qchoice[data-key="' + c + '"]');
+              if (ok && ok !== btn) ok.classList.add('show-ok');
+            });
+            item.classList.add('answered');
+            updateScore();
+          });
+        });
+      });
+    });
+
+    // ---- Übung 3 + 4: Single-Choice mit Karten ----
+    document.querySelectorAll('.mcq-grid').forEach(function(grid) {
+      var correct = grid.getAttribute('data-correct');
+      var slide = grid.closest('section');
+      var explain = slide && slide.querySelector('[data-explain]');
+
+      grid.querySelectorAll('.mcq').forEach(function(card) {
+        card.addEventListener('click', function() {
+          if (grid.classList.contains('answered')) return;
+          var key = card.getAttribute('data-key');
+          if (key === correct) {
+            card.classList.add('picked-ok');
+          } else {
+            card.classList.add('picked-no');
+            var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+            if (ok) ok.classList.add('show-ok');
+          }
+          grid.classList.add('answered');
+          if (explain) explain.classList.add('open');
+        });
+      });
+    });
+
+    // ---- Reveal-Buttons: alle Antworten auf der Folie aufdecken ----
+    document.querySelectorAll('[data-action="reveal"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        // Übung 1 + 2
+        slide.querySelectorAll('.qitem:not(.answered)').forEach(function(item) {
+          item.getAttribute('data-correct').split(/\s+/).forEach(function(c) {
+            var ok = item.querySelector('.qchoice[data-key="' + c + '"]');
+            if (ok) ok.classList.add('show-ok');
+          });
+          setFb(item, 'reveal');
+          item.classList.add('answered');
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) {
+          statusEl.textContent = slide.querySelectorAll('.qitem.answered').length;
+        }
+
+        // Übung 3 + 4
+        slide.querySelectorAll('.mcq-grid:not(.answered)').forEach(function(grid) {
+          var correct = grid.getAttribute('data-correct');
+          var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+          if (ok) ok.classList.add('show-ok');
+          grid.classList.add('answered');
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.add('open');
+      });
+    });
+
+    // ---- Reset-Buttons: alles auf Folie zurücksetzen ----
+    document.querySelectorAll('[data-action="reset"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        slide.querySelectorAll('.qitem').forEach(function(item) {
+          item.classList.remove('answered');
+          item.querySelectorAll('.qchoice').forEach(function(b) {
+            b.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) statusEl.textContent = '0';
+
+        slide.querySelectorAll('.mcq-grid').forEach(function(grid) {
+          grid.classList.remove('answered');
+          grid.querySelectorAll('.mcq').forEach(function(c) {
+            c.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.remove('open');
+      });
+    });
+
+    // ---- Pfeil-/Tastatur-Nav nicht abfangen, wenn auf Button geklickt wird ----
+    // (die Buttons absorbieren Klicks bereits — kein Fokus-Loop nötig)
+
+  })();
+</script>
+
+<script>
+  // ---- Interaktiver Praxis-Timer (Paar-Übung 07d) ----
+  (function () {
+    document.querySelectorAll('.timer').forEach(function (timer) {
+      var total = parseInt(timer.getAttribute('data-seconds'), 10) || 900;
+      var remaining = total;
+      var tick = null;
+      var display = timer.querySelector('.t-display');
+      var toggle = timer.querySelector('.t-toggle');
+      var reset = timer.querySelector('.t-reset');
+
+      function fmt(s) {
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+      function render() { display.textContent = fmt(remaining); }
+      function stop() {
+        if (tick) { clearInterval(tick); tick = null; }
+        toggle.textContent = 'Start';
+        toggle.setAttribute('data-running', 'false');
+        display.classList.remove('running');
+      }
+      function start() {
+        if (tick || remaining <= 0) return;
+        toggle.textContent = 'Stop';
+        toggle.setAttribute('data-running', 'true');
+        display.classList.add('running');
+        display.classList.remove('done');
+        tick = setInterval(function () {
+          remaining -= 1;
+          if (remaining <= 0) {
+            remaining = 0;
+            render();
+            stop();
+            display.classList.add('done');
+            return;
+          }
+          render();
+        }, 1000);
+      }
+
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (tick) stop(); else start();
+      });
+      reset.addEventListener('click', function (e) {
+        e.stopPropagation();
+        stop();
+        remaining = total;
+        display.classList.remove('done');
+        render();
+      });
+      render();
+    });
+  })();
+
+  // ---- Lösung-Umschalter (Paar-Übung MCP-Tool) ----
+  (function () {
+    var btn = document.querySelector('.mtx-sol-btn');
+    if (!btn) return;
+    var sec = btn.closest('section');
+    if (!sec) return;
+    var on = false;
+    function apply() {
+      sec.querySelectorAll('.mtx-ex').forEach(function (el) { el.hidden = on; });
+      sec.querySelectorAll('.mtx-sol').forEach(function (el) { el.hidden = !on; });
+      btn.textContent = on ? 'Zurück zur Übung' : 'Lösung zeigen';
+      btn.setAttribute('data-on', String(on));
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      on = !on;
+      apply();
+    });
+    apply();
+  })();
+</script>
+<!-- Exercise scripts -->
+<script src="exercises/connection-graph.js"></script>
+<script src="exercises/agent-builder.js"></script>
+<script src="exercises/role-switch.js"></script>
+<script src="exercises/example-task.js"></script>
+</body>
+</html>

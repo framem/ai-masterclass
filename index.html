@@ -1,0 +1,1786 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Master Class — Übersicht</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --hair-2: rgba(21, 17, 12, 0.07);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+  /* ---------- Header · Bold Terracotta ---------- */
+  header {
+    position: relative; overflow: hidden;
+    min-height: 100vh; min-height: 100svh;
+    display: flex;
+    background:
+      radial-gradient(110% 90% at 85% -10%, #d8552f 0%, rgba(216,85,47,0) 55%),
+      var(--accent);
+    color: var(--paper);
+  }
+  header .dots {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.14) 1px, transparent 1.5px);
+    background-size: 34px 34px;
+  }
+  header .wrap { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; }
+  .topline {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 13px; color: rgba(250,247,241,0.82);
+    letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 26px 0 18px;
+    border-bottom: 1px solid rgba(250,247,241,0.22);
+  }
+  .topline .mast {
+    display: inline-flex; align-items: center; gap: 13px;
+    font-weight: 500;
+  }
+  .topline .mast-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 600; letter-spacing: 0.1em;
+    padding: 4px 8px; line-height: 1;
+    border: 1px solid rgba(250,247,241,0.45);
+    border-radius: 5px; color: var(--paper);
+  }
+  .topline .mast-name { letter-spacing: 0.2em; }
+  .topline .mast-meta {
+    color: rgba(250,247,241,0.62); letter-spacing: 0.16em;
+  }
+  @media (max-width: 560px) { .topline .mast-meta { display: none; } }
+  .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 64px 0 72px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: clamp(13px, 1.1vw, 16px);
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(250,247,241,0.9); margin: 0 0 30px;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-size: clamp(48px, 9vw, 116px); line-height: 0.92; letter-spacing: -0.04em;
+    font-weight: 600; margin: 0; max-width: 13ch; color: var(--paper);
+  }
+  h1 .accent { color: var(--ink); }
+  h1 .hl-static { display: block; }
+  h1 .hl-morph { display: block; position: relative; }
+  #wordfield { display: block; }
+  h1 .hl-fallback { display: none; color: var(--ink); }
+  h1 .hl-fallback .dot { color: var(--paper); }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #wordfield { display: none; }
+    h1 .hl-fallback { display: inline; }
+  }
+  .hero p {
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(20px, 2.4vw, 32px); line-height: 1.32; color: rgba(250,247,241,0.92);
+    max-width: 44ch; margin: 32px 0 0;
+  }
+
+  /* ---------- Sections ---------- */
+  main.wrap { padding: 72px 40px 140px; }
+  .section + .section { margin-top: 72px; }
+  .section { scroll-margin-top: 28px; }
+  .section-head {
+    display: flex; align-items: baseline; gap: 18px;
+    padding-bottom: 22px; margin-bottom: 30px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .section-head h2 {
+    font-family: var(--serif); font-weight: 500;
+    font-size: 30px; letter-spacing: -0.01em; margin: 0;
+  }
+  .section-head .count {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ---------- Vorbereitung / Setup ---------- */
+  .persona-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px 28px;
+    background: var(--paper);
+    border: 1px solid var(--hair); border-radius: 14px;
+    padding: 18px 24px 20px;
+    margin: 0 0 18px;
+  }
+  @media (max-width: 640px) { .persona-bar { grid-template-columns: 1fr; } }
+  .persona-bar .pb-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .persona-bar .pb-label {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .persona-bar .pb-desc { font-size: 14.5px; line-height: 1.45; color: var(--ink-3); max-width: 56ch; }
+  .persona-bar .pb-switch {
+    display: inline-flex; align-items: center; gap: 12px;
+    justify-self: end;
+  }
+  .persona-bar .rt-lbl {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .persona-bar .role-toggle {
+    flex: none;
+    display: inline-flex; align-items: stretch;
+    font-family: var(--mono);
+    background: var(--paper);
+    border: 1px solid var(--ink); border-radius: 999px; overflow: hidden;
+    box-shadow: 0 2px 0 rgba(21,17,12,0.16);
+    user-select: none;
+  }
+  .persona-bar .role-toggle button {
+    appearance: none; border: 0; cursor: pointer; background: transparent;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.06em; color: var(--ink-2);
+    padding: 8px 16px; transition: background .15s ease, color .15s ease;
+  }
+  .persona-bar .role-toggle button:hover { background: var(--bg-2, #ebe6db); }
+  .persona-bar .role-toggle button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
+  .persona-bar .pb-preview {
+    grid-column: 1 / -1;
+    display: flex; flex-direction: column; gap: 9px;
+    border-top: 1px solid var(--hair-2); padding-top: 14px;
+  }
+  .persona-bar .pb-pv-label {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+  .persona-bar .pb-pv-pair {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  @media (max-width: 700px) { .persona-bar .pb-pv-pair { grid-template-columns: 1fr; } }
+  .persona-bar .pb-pv-card {
+    display: flex; flex-direction: column; gap: 5px;
+    border: 1px solid var(--hair); border-radius: 10px;
+    padding: 11px 15px 12px;
+    transition: opacity .18s ease, border-color .18s ease;
+  }
+  .persona-bar .pv-chip {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .persona-bar .pv-text { font-size: 14.5px; line-height: 1.45; color: var(--ink-2); font-style: italic; }
+
+  .setup-card {
+    position: relative; display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: 0;
+    background: var(--paper); color: var(--ink);
+    border-radius: 18px; overflow: hidden;
+    border: 1px solid var(--hair);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .setup-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(21,17,12,0.30);
+    box-shadow: 0 18px 44px -22px rgba(21,17,12,0.45);
+  }
+  .setup-card .sc-body {
+    padding: 36px 40px 34px;
+    display: flex; flex-direction: column;
+  }
+  .setup-card .sc-kicker {
+    display: inline-flex; align-items: center; gap: 11px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .setup-card .sc-kicker::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); flex: none;
+  }
+  .setup-card .sc-title {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(30px, 3.4vw, 42px); line-height: 1.04;
+    letter-spacing: -0.015em; margin: 18px 0 0;
+  }
+  .setup-card .sc-desc {
+    font-size: 17px; line-height: 1.5; color: var(--ink-3);
+    margin: 14px 0 0; max-width: 46ch;
+  }
+  .setup-card .sc-meta {
+    margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px 10px;
+  }
+  .setup-card .sc-tag {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
+    color: var(--ink-2);
+    border: 1px solid var(--hair); border-radius: 999px;
+    padding: 5px 12px;
+  }
+  .setup-card .sc-go {
+    margin-top: auto; padding-top: 26px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em;
+    color: var(--ink-3); display: inline-flex; align-items: center; gap: 9px;
+    transition: color .18s ease, gap .18s ease;
+  }
+  .setup-card:hover .sc-go { color: var(--accent); gap: 15px; }
+  .setup-card .sc-aside {
+    position: relative;
+    border-left: 1px solid var(--hair-2);
+    background:
+      radial-gradient(130% 130% at 85% -10%, rgba(200,66,31,0.14) 0%, rgba(200,66,31,0) 58%),
+      var(--bg-2);
+    display: flex; align-items: center; justify-content: center;
+    padding: 28px;
+    overflow: hidden;
+  }
+  .setup-card .sc-aside .dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(21,17,12,0.10) 1px, transparent 1.5px);
+    background-size: 26px 26px;
+  }
+  .setup-card .sc-aside .sc-lm {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    width: 100%; max-width: 310px;
+    transition: transform .25s ease;
+  }
+  .setup-card:hover .sc-lm { transform: scale(1.03); }
+  .sc-lm .lm-sentence {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;
+    font-family: var(--mono); font-weight: 500;
+    font-size: 13.5px; letter-spacing: 0.01em; color: var(--ink-2);
+  }
+  .sc-lm .lm-tok {
+    padding: 5px 9px; border-radius: 7px;
+    background: var(--paper); border: 1px solid var(--hair);
+  }
+  .sc-lm .lm-tok:nth-child(even) { background: rgba(200,66,31,0.06); }
+  .sc-lm .lm-next { display: grid; }
+  .sc-lm .lm-next > span { grid-area: 1 / 1; }
+  .sc-lm .lm-slot {
+    min-width: 50px; padding: 5px 9px; border-radius: 7px;
+    border: 1px dashed rgba(21,17,12,0.35);
+    display: inline-flex; align-items: center; justify-content: center;
+    opacity: 0;
+  }
+  .sc-lm .lm-caret { width: 7px; height: 13px; background: var(--accent); }
+  .sc-lm .lm-answer {
+    padding: 5px 10px; border-radius: 7px; text-align: center;
+    background: var(--accent); border: 1px solid var(--accent);
+    color: var(--paper);
+  }
+  .sc-lm .lm-panel {
+    width: 100%; max-width: 230px;
+    display: flex; flex-direction: column; gap: 8px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--ink-2);
+  }
+  .sc-lm .lm-cand {
+    display: grid; grid-template-columns: 5.5ch 1fr 4ch;
+    gap: 9px; align-items: center;
+  }
+  .sc-lm .lm-cand .lm-p { text-align: right; color: var(--ink-3); }
+  .sc-lm .lm-track {
+    height: 6px; border-radius: 3px;
+    background: rgba(21,17,12,0.08); overflow: hidden;
+  }
+  .sc-lm .lm-fill {
+    display: block; height: 100%; border-radius: 3px;
+    background: rgba(21,17,12,0.32);
+    transform-origin: left center;
+  }
+  .sc-lm .lm-cand.k1 .lm-fill { width: 71%; background: var(--accent); }
+  .sc-lm .lm-cand.k2 .lm-fill { width: 24%; }
+  .sc-lm .lm-cand.k3 .lm-fill { width: 9%; }
+  .sc-lm .lm-phases {
+    display: flex; align-items: center; gap: 9px;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .sc-lm .lm-phases .pharr { opacity: 0.45; }
+
+  /* lm vignette timeline: 9s loop — tokenize (0-2.5s), predict (2.5-6.3s), sample (6.3-8.6s) */
+  @keyframes lmtok1 { 0%, 3% { opacity: 0; transform: translateY(8px) scale(0.7); } 7% { opacity: 1; transform: none; } 95% { opacity: 1; } 99%, 100% { opacity: 0; } }
+  @keyframes lmtok2 { 0%, 7% { opacity: 0; transform: translateY(8px) scale(0.7); } 11% { opacity: 1; transform: none; } 95% { opacity: 1; } 99%, 100% { opacity: 0; } }
+  @keyframes lmtok3 { 0%, 11% { opacity: 0; transform: translateY(8px) scale(0.7); } 15% { opacity: 1; transform: none; } 95% { opacity: 1; } 99%, 100% { opacity: 0; } }
+  @keyframes lmtok4 { 0%, 15% { opacity: 0; transform: translateY(8px) scale(0.7); } 19% { opacity: 1; transform: none; } 95% { opacity: 1; } 99%, 100% { opacity: 0; } }
+  @keyframes lmtok5 { 0%, 19% { opacity: 0; transform: translateY(8px) scale(0.7); } 23% { opacity: 1; transform: none; } 95% { opacity: 1; } 99%, 100% { opacity: 0; } }
+  @keyframes lmslot { 0%, 23% { opacity: 0; transform: scale(0.7); } 27% { opacity: 1; transform: none; } 71% { opacity: 1; } 74%, 100% { opacity: 0; } }
+  @keyframes lmcaret { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @keyframes lmans { 0%, 72% { opacity: 0; transform: scale(0.3); } 77% { opacity: 1; transform: scale(1.12); } 81% { transform: none; } 95% { opacity: 1; } 99%, 100% { opacity: 0; } }
+  @keyframes lmpanel { 0%, 29% { opacity: 0; transform: translateY(10px); } 34% { opacity: 1; transform: none; } 94% { opacity: 1; } 98%, 100% { opacity: 0; } }
+  @keyframes lmfill1 { 0%, 34% { transform: scaleX(0); } 43% { transform: scaleX(1.06); } 47%, 100% { transform: scaleX(1); } }
+  @keyframes lmfill2 { 0%, 36% { transform: scaleX(0); } 45% { transform: scaleX(1.06); } 49%, 100% { transform: scaleX(1); } }
+  @keyframes lmfill3 { 0%, 38% { transform: scaleX(0); } 47%, 100% { transform: scaleX(1); } }
+  @keyframes lmwin { 0%, 70% { color: var(--ink-2); transform: none; } 73% { color: var(--accent); transform: scale(1.05); } 76% { transform: none; } 95%, 100% { color: var(--accent); } }
+  @keyframes lmlose { 0%, 72% { opacity: 1; } 76%, 100% { opacity: 0.3; } }
+  @keyframes lmph1 { 0%, 2% { color: var(--ink-3); } 4%, 26% { color: var(--accent); } 30%, 100% { color: var(--ink-3); } }
+  @keyframes lmph2 { 0%, 29% { color: var(--ink-3); } 33%, 68% { color: var(--accent); } 72%, 100% { color: var(--ink-3); } }
+  @keyframes lmph3 { 0%, 71% { color: var(--ink-3); } 75%, 93% { color: var(--accent); } 97%, 100% { color: var(--ink-3); } }
+  @media (max-width: 760px) {
+    .setup-card { grid-template-columns: 1fr; }
+    .setup-card .sc-aside { border-left: none; border-top: 1px solid var(--hair-2); min-height: 120px; }
+  }
+
+  /* ---------- Kapitel & Vertiefung cards ---------- */
+  .chapter-stack { display: grid; gap: 18px; }
+  .chapter-card {
+    position: relative; display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    background: var(--paper); color: var(--ink);
+    border: 1px solid var(--hair); border-radius: 18px;
+    overflow: hidden; min-height: 240px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .chapter-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(21,17,12,0.30);
+    box-shadow: 0 18px 44px -22px rgba(21,17,12,0.45);
+  }
+  .cc-body { padding: 32px 36px 28px; display: flex; flex-direction: column; }
+  .cc-num {
+    display: inline-flex; align-items: center; gap: 11px;
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
+  }
+  .cc-num::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); flex: none;
+  }
+  .cc-title {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(27px, 3vw, 36px); line-height: 1.06;
+    letter-spacing: -0.015em; margin: 16px 0 0;
+  }
+  .cc-desc {
+    font-size: 16.5px; line-height: 1.5; color: var(--ink-3);
+    margin: 12px 0 0; max-width: 46ch;
+  }
+  .cc-meta { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px 10px; }
+  .cc-tag {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em;
+    color: var(--ink-2); border: 1px solid var(--hair); border-radius: 999px;
+    padding: 5px 12px;
+  }
+  .cc-go {
+    margin-top: auto; padding-top: 24px;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em;
+    color: var(--ink-3); display: inline-flex; align-items: center; gap: 9px;
+    transition: color .18s ease, gap .18s ease;
+  }
+  .chapter-card:hover .cc-go { color: var(--accent); gap: 15px; }
+
+  .cc-aside {
+    position: relative; overflow: hidden;
+    border-left: 1px solid var(--hair-2);
+    background:
+      radial-gradient(130% 130% at 85% -10%, rgba(200,66,31,0.14) 0%, rgba(200,66,31,0) 58%),
+      var(--bg-2);
+    display: flex; align-items: center; justify-content: center;
+    padding: 28px;
+  }
+  .cc-aside .dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(21,17,12,0.10) 1px, transparent 1.5px);
+    background-size: 26px 26px;
+  }
+  .cc-anim { position: relative; z-index: 1; transition: transform .25s ease; }
+  .chapter-card:hover .cc-anim { transform: scale(1.04); }
+
+  .cc-chip {
+    font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
+    color: var(--ink-2); background: var(--paper);
+    border: 1px solid var(--hair); border-radius: 9px;
+    padding: 8px 14px; line-height: 1; white-space: nowrap;
+  }
+
+  /* 01 · context window trace — Mini-Version der Contextanzeige aus der Connection-Graph-Übung */
+  .a-cw { width: min(300px, 100%); }
+  .a-cw .cw-panel {
+    background: var(--ink); border-radius: 13px;
+    padding: 15px 17px 14px;
+    box-shadow: 0 14px 34px -18px rgba(21,17,12,0.55);
+  }
+  .a-cw .cw-head {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #c8c2b6; margin-bottom: 9px;
+  }
+  .a-cw .cw-gauge {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px; margin-bottom: 6px;
+  }
+  .a-cw .cw-used { font-family: var(--mono); font-size: 15px; font-weight: 600; color: #f0ece3; }
+  .a-cw .cw-used .cw-n { color: var(--accent-soft); }
+  .a-cw .cw-pct { font-family: var(--mono); font-size: 10.5px; color: #b0aa9e; letter-spacing: 0.04em; }
+  .a-cw .cw-n { display: inline-grid; vertical-align: baseline; }
+  .a-cw .cw-n > span { grid-area: 1 / 1; opacity: 0; white-space: nowrap; }
+  .a-cw .cw-n > span.v4 { opacity: 1; }
+  .a-cw .cw-bar {
+    height: 5px; border-radius: 999px; background: rgba(255,255,255,0.08);
+    overflow: hidden; display: flex; margin-bottom: 10px;
+  }
+  .a-cw .cw-bar i { display: block; height: 100%; }
+  .a-cw .cwb-always { width: 18.3%; background: #8a8275; }
+  .a-cw .cwb-od { width: 25%; background: #e0562a; }
+  .a-cw .cw-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 2.5px; }
+  .a-cw .cw-c { aspect-ratio: 1 / 1; border-radius: 2px; background: rgba(255,255,255,0.06); }
+  .a-cw .cw-c.sys { --cwfill: #8a8275; background: var(--cwfill); }
+  .a-cw .cw-c.mem { --cwfill: #8a8275; background: var(--cwfill); }
+  .a-cw .cw-c.skh { --cwfill: #8a8275; background: var(--cwfill); }
+  .a-cw .cw-c.mcp { --cwfill: #8a8275; background: var(--cwfill); }
+  .a-cw .cw-c.od { --cwfill: #e0562a; background: var(--cwfill); }
+  .a-cw .cw-leg {
+    display: flex; gap: 14px; margin-top: 10px;
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #b0aa9e;
+  }
+  .a-cw .cw-leg span { display: inline-flex; align-items: center; gap: 6px; }
+  .a-cw .cw-leg i { width: 7px; height: 7px; border-radius: 2px; background: #8a8275; }
+  .a-cw .cw-leg .lod i { background: #e0562a; }
+
+  /* 02 · EPEC loop */
+  .a-loop {
+    position: relative; display: grid;
+    grid-template-columns: repeat(2, minmax(96px, auto));
+    gap: 26px 44px;
+  }
+  .a-loop .cc-chip { text-align: center; }
+  .a-loop .rotor {
+    position: absolute; inset: 0; margin: auto; width: 26px; height: 26px;
+    color: var(--accent); display: grid; place-items: center;
+  }
+  .a-loop .rotor svg { width: 100%; height: 100%; display: block; }
+
+  /* 03 · workflow path vs agent bridge */
+  .a-mcp { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 380px; }
+  .a-mcp .mtag {
+    display: block; margin-bottom: 7px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.13em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .a-mcp .mtrack { display: flex; align-items: center; width: 100%; }
+  .a-mcp .cc-chip { font-size: 12px; padding: 7px 11px; }
+  .a-mcp .mlink { position: relative; flex: 1 1 auto; min-width: 22px; height: 1px; background: rgba(21,17,12,0.25); }
+  .a-mcp .mlink.marrow::after {
+    content: ""; position: absolute; right: 0; top: 50%;
+    width: 5px; height: 5px; border-top: 1px solid rgba(21,17,12,0.45); border-right: 1px solid rgba(21,17,12,0.45);
+    transform: translateY(-50%) rotate(45deg);
+  }
+  .a-mcp .mfan { display: flex; align-items: center; justify-content: center; }
+  .a-mcp .mfan-svg { width: 56px; height: 104px; flex: none; }
+  .a-mcp .mfan-svg .fp { fill: none; stroke: rgba(21,17,12,0.25); stroke-width: 1.5; }
+  .a-mcp .mfan-svg .fp.hot {
+    stroke: var(--accent); stroke-width: 2;
+    stroke-dasharray: 100; stroke-dashoffset: 100; opacity: 0;
+  }
+  .a-mcp .mfan-targets { display: flex; flex-direction: column; gap: 8px; }
+  .a-mcp .mfan-targets .cc-chip { text-align: center; }
+
+  /* 04 · defense in depth: Bedrohung fällt durch vier Ebenen */
+  .a-guard { display: flex; flex-direction: column; align-items: center; width: min(272px, 100%); }
+  .a-guard .gthreat {
+    font-family: var(--mono); font-size: 11.5px; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--accent); background: var(--paper);
+    border: 1px solid rgba(200,66,31,0.45); border-radius: 999px;
+    padding: 6px 13px; line-height: 1; white-space: nowrap;
+  }
+  .a-guard .gdrop { width: 1px; height: 13px; background: rgba(200,66,31,0.55); }
+  .a-guard .glayers { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+  .a-guard .glayer {
+    display: flex; align-items: baseline; gap: 10px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 9px;
+    padding: 7px 12px;
+  }
+  .a-guard .gl-n { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--accent); flex: none; }
+  .a-guard .gl-t { font-family: var(--mono); font-size: 12.5px; font-weight: 500; letter-spacing: 0.02em; color: var(--ink-2); white-space: nowrap; }
+  .a-guard .gl-w { margin-left: auto; font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em; color: var(--ink-3); white-space: nowrap; }
+  .a-guard .gfoot { display: inline-flex; align-items: center; gap: 8px; margin-top: 13px; }
+  .a-guard svg.gshield { width: 19px; height: 19px; flex: none; }
+  .cc-aside .glabel {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- Vertiefung asides ---------- */
+  .cc-num.sub { color: var(--ink-3); }
+
+  /* V · Arbeitsweise: drei gleichwertige Modi */
+  .a-work .seg {
+    display: inline-flex; gap: 4px; padding: 5px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 999px;
+  }
+  .a-work .wchip {
+    font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
+    color: var(--ink-2); padding: 8px 16px; border-radius: 999px;
+    line-height: 1; white-space: nowrap;
+  }
+  .a-work .wchip.w1 { background: var(--accent); color: var(--paper); }
+
+  /* V · Context window */
+  .a-ctx { display: flex; flex-direction: column; gap: 12px; width: min(240px, 100%); }
+  .a-ctx .ctx-label, .a-ctx .ctx-cap {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .a-ctx .ctx-bar {
+    position: relative; height: 12px; border-radius: 999px;
+    background: var(--paper); border: 1px solid var(--hair); overflow: hidden;
+  }
+  .a-ctx .ctx-fill {
+    position: absolute; top: 1px; bottom: 1px; left: 1px; width: 58%;
+    border-radius: 999px; background: var(--accent);
+  }
+  .a-ctx .ctx-limit {
+    position: absolute; top: 0; bottom: 0; left: 86%; width: 0;
+    border-left: 2px dotted rgba(21,17,12,0.45);
+  }
+
+  /* V · cyclical loops — Agent im Zentrum, Reason → Act → Observe auf der Bahn */
+  .a-cycle { width: 188px; height: 144px; display: grid; place-items: center; }
+  .a-cycle .orbit {
+    position: relative; width: 92px; height: 92px;
+    border: 1.5px dashed rgba(21,17,12,0.32); border-radius: 50%;
+    display: grid; place-items: center;
+  }
+  .a-cycle .spin { position: absolute; inset: 0; }
+  .a-cycle .planet {
+    position: absolute; top: -5px; left: 50%; margin-left: -4.5px;
+    width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+  }
+  .a-cycle .core {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink);
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 999px; padding: 3px 9px;
+  }
+  .a-cycle .station {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-2);
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 999px; padding: 2px 8px; white-space: nowrap;
+  }
+  /* Stationen exakt auf der Bahn: 0° / 120° / 240° (r = 46px) */
+  .a-cycle .station.st1 { margin-top: -46px; }
+  .a-cycle .station.st2 { margin-left: 40px; margin-top: 23px; }
+  .a-cycle .station.st3 { margin-left: -40px; margin-top: 23px; }
+
+  /* V · effort dial + behaviour trace */
+  .a-dial { display: flex; align-items: center; gap: 30px; }
+  .a-dial .dial-col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .a-dial .dial { position: relative; width: 120px; }
+  .a-dial .dial svg { display: block; width: 120px; height: auto; }
+  .a-dial .needle {
+    position: absolute; left: 50%; bottom: 7px; width: 2px; height: 34px;
+    margin-left: -1px; background: var(--ink); border-radius: 2px;
+    transform-origin: 50% 100%;
+  }
+  .a-dial .dial-labels {
+    width: 120px; display: flex; justify-content: space-between;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .a-dial .dout { display: flex; flex-direction: column; gap: 7px; width: 110px; }
+  .a-dial .dout-cap {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .a-dial .dout-cap.ans { margin-top: 7px; }
+  .a-dial .dt, .a-dial .da { display: block; height: 6px; border-radius: 3px; }
+  .a-dial .dt { background: rgba(21,17,12,0.18); transform-origin: left center; }
+  .a-dial .dt.t1 { width: 92%; }
+  .a-dial .dt.t2 { width: 68%; }
+  .a-dial .dt.t3 { width: 82%; }
+  .a-dial .da { background: var(--accent); width: 88%; }
+  .a-dial .dout-mode {
+    margin-top: 9px; display: grid;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-2);
+  }
+  .a-dial .dout-mode span { grid-area: 1 / 1; white-space: nowrap; }
+  .a-dial .dout-mode .m1 { opacity: 0; }
+
+  /* V · glossary search */
+  .a-gloss { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .a-gloss .gsearch {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--paper); border: 1px solid var(--hair);
+    font-family: var(--mono); font-size: 13px; color: var(--ink-2);
+  }
+  .a-gloss .gsearch svg { width: 14px; height: 14px; color: var(--ink-3); flex: none; }
+  .a-gloss .gterms { position: relative; display: grid; width: 8ch; }
+  .a-gloss .gterms span { grid-area: 1 / 1; opacity: 0; }
+  .a-gloss .gterms span:first-child { opacity: 1; }
+
+  /* scroll-reveal: visibility lives in the class swap (base style = visible),
+     the .revealing transition only adds the slide-in. */
+  .chapter-card.pre { opacity: 0; transform: translateY(18px); }
+  .chapter-card.revealing {
+    transition:
+      opacity .6s cubic-bezier(.2,.7,.3,1),
+      transform .6s cubic-bezier(.2,.7,.3,1),
+      border-color .18s ease, box-shadow .18s ease;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sc-lm .lm-tok.c1 { animation: lmtok1 9s cubic-bezier(.3,1.3,.5,1) infinite; }
+    .sc-lm .lm-tok.c2 { animation: lmtok2 9s cubic-bezier(.3,1.3,.5,1) infinite; }
+    .sc-lm .lm-tok.c3 { animation: lmtok3 9s cubic-bezier(.3,1.3,.5,1) infinite; }
+    .sc-lm .lm-tok.c4 { animation: lmtok4 9s cubic-bezier(.3,1.3,.5,1) infinite; }
+    .sc-lm .lm-tok.c5 { animation: lmtok5 9s cubic-bezier(.3,1.3,.5,1) infinite; }
+    .sc-lm .lm-slot { animation: lmslot 9s ease infinite; }
+    .sc-lm .lm-caret { animation: lmcaret 0.9s linear infinite; }
+    .sc-lm .lm-answer { animation: lmans 9s cubic-bezier(.3,1.3,.5,1) infinite; }
+    .sc-lm .lm-panel { animation: lmpanel 9s ease infinite; }
+    .sc-lm .lm-cand.k1 .lm-fill { animation: lmfill1 9s ease infinite; }
+    .sc-lm .lm-cand.k2 .lm-fill { animation: lmfill2 9s ease infinite; }
+    .sc-lm .lm-cand.k3 .lm-fill { animation: lmfill3 9s ease infinite; }
+    .sc-lm .lm-cand.k1 { animation: lmwin 9s ease infinite; }
+    .sc-lm .lm-cand.k2, .sc-lm .lm-cand.k3 { animation: lmlose 9s ease infinite; }
+    .sc-lm .lm-ph.p1 { animation: lmph1 9s linear infinite; }
+    .sc-lm .lm-ph.p2 { animation: lmph2 9s linear infinite; }
+    .sc-lm .lm-ph.p3 { animation: lmph3 9s linear infinite; }
+
+    .a-cw .cw-c.od1 { animation: cwod1 10s cubic-bezier(.2,.9,.3,1.3) infinite; }
+    .a-cw .cw-c.od2 { animation: cwod2 10s cubic-bezier(.2,.9,.3,1.3) infinite; }
+    .a-cw .cw-c.od3 { animation: cwod3 10s cubic-bezier(.2,.9,.3,1.3) infinite; }
+    .a-cw .cwb-od { animation: cwbar 10s ease infinite; }
+    .a-cw .cw-n > span.v1 { animation: cwv1 10s ease infinite; }
+    .a-cw .cw-n > span.v2 { animation: cwv2 10s ease infinite; }
+    .a-cw .cw-n > span.v3 { animation: cwv3 10s ease infinite; }
+    .a-cw .cw-n > span.v4 { animation: cwv4 10s ease infinite; }
+
+    .a-loop .cc-chip { animation: lhot 5.6s linear infinite backwards; }
+    .a-loop .cc-chip.s2 { animation-delay: 1.4s; }
+    .a-loop .cc-chip.s3 { animation-delay: 2.8s; }
+    .a-loop .cc-chip.s4 { animation-delay: 4.2s; }
+    .a-loop .rotor { animation: lspin 9s linear infinite; }
+
+    .a-mcp .mtrack .cc-chip { animation: mfhot 9s ease infinite; }
+    .a-mcp .mtrack .cc-chip:nth-child(3) { animation-delay: 0.9s; }
+    .a-mcp .mtrack .cc-chip:nth-child(5) { animation-delay: 1.8s; }
+    .a-mcp .fp.hot { animation: mfdraw 9s ease-in-out infinite; }
+    .a-mcp .fp.hot.h2 { animation-delay: 3s; }
+    .a-mcp .fp.hot.h3 { animation-delay: 6s; }
+    .a-mcp .mfan-targets .ft { animation: mfhot 9s ease infinite; }
+    .a-mcp .mfan-targets .ft.t2 { animation-delay: 3s; }
+    .a-mcp .mfan-targets .ft.t3 { animation-delay: 6s; }
+    .a-mcp .magent { animation: mfthink 3s ease infinite; }
+
+    /* 7s-Umlauf: Bedrohung pulst, Sweep wandert Ebene für Ebene nach unten, Schild bestätigt */
+    .a-guard .gthreat { animation: gthot 7s linear infinite; }
+    .a-guard .glayer { animation: glhot 7s linear infinite backwards; }
+    .a-guard .glayer.gl2 { animation-delay: 0.7s; }
+    .a-guard .glayer.gl3 { animation-delay: 1.4s; }
+    .a-guard .glayer.gl4 { animation-delay: 2.1s; }
+    .a-guard .gfoot .gshield { animation: gcatch 7s ease infinite; }
+
+    .a-work .wchip { animation: whot 5.4s linear infinite backwards; }
+    .a-work .wchip.w2 { animation-delay: 1.8s; }
+    .a-work .wchip.w3 { animation-delay: 3.6s; }
+
+    .a-ctx .ctx-fill { animation: ctxfill 9s ease-in-out infinite; }
+
+    /* 6s-Umlauf, Stationen bei 0s / 2s / 4s — Highlight exakt beim Passieren des Punkts */
+    .a-cycle .spin { animation: lspin 6s linear infinite; }
+    .a-cycle .station { animation: cychot 6s linear infinite; }
+    .a-cycle .station.st2 { animation-delay: -4s; }
+    .a-cycle .station.st3 { animation-delay: -2s; }
+    .a-cycle .core { animation: corepulse 2s linear infinite; }
+
+    .a-dial .needle { animation: dswing 5.2s ease-in-out infinite alternate; }
+    .a-dial .dial-arc { animation: darc 5.2s ease-in-out infinite alternate; }
+    .a-dial .dt.t1 { animation: dthink1 5.2s ease-in-out infinite alternate; }
+    .a-dial .dt.t2 { animation: dthink2 5.2s ease-in-out infinite alternate; }
+    .a-dial .dt.t3 { animation: dthink3 5.2s ease-in-out infinite alternate; }
+    .a-dial .da { animation: dans 5.2s ease-in-out infinite alternate; }
+    .a-dial .dout-mode .m1 { animation: dmode1 5.2s ease-in-out infinite alternate; }
+    .a-dial .dout-mode .m2 { animation: dmode2 5.2s ease-in-out infinite alternate; }
+
+    .a-gloss .gterms span { animation: gterm 8s ease-in-out infinite backwards; }
+    .a-gloss .gterms span:nth-child(2) { animation-delay: 2s; }
+    .a-gloss .gterms span:nth-child(3) { animation-delay: 4s; }
+    .a-gloss .gterms span:nth-child(4) { animation-delay: 6s; }
+  }
+
+  /* context-window trace: „immer geladen“ steht von Anfang an, nur On-demand wandert ein */
+  @keyframes cwod1 {
+    0%, 30% { background: rgba(255,255,255,0.06); transform: none; }
+    35% { background: var(--cwfill); transform: scale(1.18); }
+    38% { transform: none; }
+    93% { background: var(--cwfill); }
+    97%, 100% { background: rgba(255,255,255,0.06); }
+  }
+  @keyframes cwod2 {
+    0%, 55% { background: rgba(255,255,255,0.06); transform: none; }
+    60% { background: var(--cwfill); transform: scale(1.18); }
+    63% { transform: none; }
+    93% { background: var(--cwfill); }
+    97%, 100% { background: rgba(255,255,255,0.06); }
+  }
+  @keyframes cwod3 {
+    0%, 70% { background: rgba(255,255,255,0.06); transform: none; }
+    75% { background: var(--cwfill); transform: scale(1.18); }
+    78% { transform: none; }
+    93% { background: var(--cwfill); }
+    97%, 100% { background: rgba(255,255,255,0.06); }
+  }
+  @keyframes cwbar { 0%, 32% { width: 0; } 38%, 56% { width: 3.3%; } 62%, 72% { width: 10%; } 78%, 94% { width: 25%; } 100% { width: 0; } }
+  @keyframes cwv1 { 0%, 31% { opacity: 1; } 34%, 96% { opacity: 0; } 99%, 100% { opacity: 1; } }
+  @keyframes cwv2 { 0%, 32% { opacity: 0; } 35%, 56% { opacity: 1; } 59%, 100% { opacity: 0; } }
+  @keyframes cwv3 { 0%, 57% { opacity: 0; } 60%, 72% { opacity: 1; } 75%, 100% { opacity: 0; } }
+  @keyframes cwv4 { 0%, 73% { opacity: 0; } 76%, 95% { opacity: 1; } 98%, 100% { opacity: 0; } }
+  @keyframes lhot {
+    0%, 21% { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+    29%, 100% { background: var(--paper); border-color: var(--hair); color: var(--ink-2); }
+  }
+  @keyframes lspin { to { transform: rotate(360deg); } }
+  @keyframes cychot {
+    0%, 6% { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+    13%, 95% { background: var(--paper); border-color: var(--hair); color: var(--ink-2); }
+    100% { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  }
+  @keyframes corepulse {
+    0% { box-shadow: 0 0 0 0 rgba(200,66,31,0.28); }
+    55%, 100% { box-shadow: 0 0 0 9px rgba(200,66,31,0); }
+  }
+  @keyframes whot {
+    0%, 26% { background: var(--accent); color: var(--paper); }
+    34%, 100% { background: rgba(200,66,31,0); color: var(--ink-2); }
+  }
+  /* fan-out: Agent überlegt (Puls), zieht einen der drei Pfade, Ziel leuchtet auf */
+  @keyframes mfthink {
+    0% { box-shadow: 0 0 0 0 rgba(200,66,31,0.22); }
+    20% { box-shadow: 0 0 0 7px rgba(200,66,31,0.13); }
+    45%, 100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  @keyframes mfdraw {
+    0% { stroke-dashoffset: 100; opacity: 0; }
+    3% { opacity: 1; }
+    11% { stroke-dashoffset: 0; opacity: 1; }
+    26% { stroke-dashoffset: 0; opacity: 1; }
+    32%, 100% { stroke-dashoffset: 0; opacity: 0; }
+  }
+  @keyframes mfhot {
+    0%, 9% { background: var(--paper); border-color: var(--hair); color: var(--ink-2); }
+    13%, 26% { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+    33%, 100% { background: var(--paper); border-color: var(--hair); color: var(--ink-2); }
+  }
+  @keyframes gthot {
+    0%, 2% { background: var(--paper); color: var(--accent); border-color: rgba(200,66,31,0.45); }
+    5%, 12% { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+    18%, 100% { background: var(--paper); color: var(--accent); border-color: rgba(200,66,31,0.45); }
+  }
+  @keyframes glhot {
+    0%, 8% { border-color: var(--hair); background: var(--paper); }
+    12%, 19% { border-color: var(--accent); background: rgba(200,66,31,0.07); }
+    26%, 100% { border-color: var(--hair); background: var(--paper); }
+  }
+  @keyframes gcatch {
+    0%, 48% { transform: none; }
+    54% { transform: scale(1.25); }
+    60%, 100% { transform: none; }
+  }
+  @keyframes ctxfill {
+    0% { width: 16%; }
+    38%, 46% { width: 84%; }
+    52% { width: 30%; }
+    86%, 93% { width: 84%; }
+    100% { width: 16%; }
+  }
+  /* dial dwells at min (0–12%) and max (88–100%) so both behaviours are readable */
+  @keyframes dswing { 0%, 12% { transform: rotate(-78deg); } 88%, 100% { transform: rotate(78deg); } }
+  @keyframes darc { 0%, 12% { stroke-dashoffset: 120; } 88%, 100% { stroke-dashoffset: 6; } }
+  @keyframes dthink1 { 0%, 20% { transform: scaleX(0); opacity: 0; } 38%, 100% { transform: scaleX(1); opacity: 1; } }
+  @keyframes dthink2 { 0%, 42% { transform: scaleX(0); opacity: 0; } 60%, 100% { transform: scaleX(1); opacity: 1; } }
+  @keyframes dthink3 { 0%, 64% { transform: scaleX(0); opacity: 0; } 82%, 100% { transform: scaleX(1); opacity: 1; } }
+  @keyframes dans { 0%, 12% { width: 36%; } 88%, 100% { width: 88%; } }
+  @keyframes dmode1 { 0%, 38% { opacity: 1; } 58%, 100% { opacity: 0; } }
+  @keyframes dmode2 { 0%, 42% { opacity: 0; } 62%, 100% { opacity: 1; } }
+  @keyframes gterm {
+    0% { opacity: 0; transform: translateY(6px); }
+    7%, 20% { opacity: 1; transform: none; }
+    27%, 100% { opacity: 0; transform: translateY(-6px); }
+  }
+
+  @media (max-width: 760px) {
+    .chapter-card { grid-template-columns: 1fr; min-height: 0; }
+    .cc-aside {
+      border-left: none;
+      border-top: 1px solid var(--hair-2); min-height: 170px;
+    }
+    .cc-body { padding: 26px 24px 24px; }
+  }
+
+  /* ---------- Agenda / Workshop-Ablauf ---------- */
+  .agenda-intro {
+    font-family: var(--serif); font-size: clamp(18px, 1.8vw, 21px);
+    line-height: 1.5; color: var(--ink-2);
+    max-width: none; margin: 0 0 28px; text-wrap: pretty;
+  }
+  .rhythm {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 34px;
+  }
+  .rhythm-step {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 18px 20px 16px;
+    display: flex; flex-direction: column; gap: 5px;
+    position: relative;
+  }
+  .rhythm-step .rs-time {
+    font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.06em;
+  }
+  .rhythm-step .rs-label {
+    font-family: var(--sans); font-weight: 600; font-size: 19px; letter-spacing: -0.01em;
+  }
+  .rhythm-step .rs-sub {
+    font-size: 14px; color: var(--ink-3); line-height: 1.35;
+  }
+  .rhythm-step:not(:last-child)::after {
+    content: "→"; position: absolute; right: -10px; top: 50%;
+    transform: translate(50%, -50%);
+    font-family: var(--mono); font-size: 16px; color: var(--ink-3);
+    z-index: 2; pointer-events: none;
+  }
+
+  .agenda-list {
+    list-style: none; margin: 0; padding: 0;
+    border-top: 1px solid var(--hair);
+  }
+  a.ag-row {
+    display: grid; grid-template-columns: 60px 1fr auto;
+    gap: 22px; align-items: center;
+    padding: 20px 8px;
+    border-bottom: 1px solid var(--hair);
+    transition: background .16s ease, padding .16s ease;
+  }
+  a.ag-row:hover { background: var(--paper); padding-left: 18px; padding-right: 18px; }
+  .ag-num {
+    font-family: var(--mono); font-size: 15px; font-weight: 500;
+    color: var(--accent); letter-spacing: 0.08em;
+  }
+  .ag-title {
+    font-family: var(--serif); font-weight: 500; font-size: 25px;
+    letter-spacing: -0.01em; line-height: 1.12;
+  }
+  .ag-focus {
+    font-size: 15.5px; color: var(--ink-3); margin-top: 4px;
+    line-height: 1.4; max-width: 66ch;
+  }
+  .ag-time {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3);
+    white-space: nowrap; display: flex; align-items: center; gap: 9px;
+    transition: color .16s ease, gap .16s ease;
+  }
+  .ag-time .arr { opacity: 0; transition: opacity .16s ease; }
+  a.ag-row:hover .ag-time { color: var(--accent); gap: 13px; }
+  a.ag-row:hover .ag-time .arr { opacity: 1; }
+
+  @media (max-width: 720px) {
+    .rhythm { grid-template-columns: repeat(2, 1fr); }
+    .rhythm-step:nth-child(2)::after { display: none; }
+    a.ag-row { grid-template-columns: 40px 1fr; }
+    a.ag-row .ag-time { grid-column: 2; }
+  }
+
+  footer {
+    border-top: 1px solid var(--hair);
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  footer .wrap {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 24px; padding-bottom: 40px; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 22px; }
+    .hero { padding: 44px 0 52px; }
+    main.wrap { padding: 52px 22px 96px; }
+  }
+</style>
+<style>
+  /* ---------- Kapitel 05 · eval aside (A vs B golden-set score) ---------- */
+  .a-eval { display: flex; flex-direction: column; gap: 12px; width: min(290px, 100%); }
+  .a-eval .ev-row { display: grid; grid-template-columns: 22px 1fr 40px; gap: 12px; align-items: center; }
+  .a-eval .ev-tag { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--ink-3); }
+  .a-eval .ev-row.b .ev-tag { color: var(--accent); }
+  .a-eval .ev-track { height: 9px; border-radius: 999px; background: var(--paper); border: 1px solid var(--hair); overflow: hidden; }
+  .a-eval .ev-fill { display: block; height: 100%; border-radius: 999px; background: rgba(21,17,12,0.30); transform-origin: left center; transform: scaleX(0.7); }
+  .a-eval .ev-row.b .ev-fill { background: var(--accent); transform: scaleX(0.9); }
+  .a-eval .ev-pct { font-family: var(--mono); font-size: 12px; color: var(--ink-3); text-align: right; }
+  .a-eval .ev-row.b .ev-pct { color: var(--accent); font-weight: 600; }
+  .a-eval .ev-foot {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 2px;
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--ink-3);
+  }
+  .a-eval .ev-win { color: var(--accent); }
+
+  /* ---------- Abschluss · checklist aside ---------- */
+  .a-finale { display: flex; flex-direction: column; gap: 9px; width: min(258px, 100%); }
+  .a-finale .fc-row { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+  .a-finale .fc-box {
+    width: 17px; height: 17px; flex: none;
+    border: 1.5px solid var(--ink-3); border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    color: transparent; font-size: 11px; font-weight: 700;
+  }
+  .a-finale .fc-bar { height: 6px; border-radius: 999px; background: var(--paper); border: 1px solid var(--hair); overflow: hidden; margin-top: 5px; }
+  .a-finale .fc-fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; width: 100%; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .a-eval .ev-row.b .ev-fill { animation: eval-b 5.2s ease infinite; }
+    .a-eval .ev-win { animation: eval-win 5.2s ease infinite; }
+    .a-finale .fc-row.r1 .fc-box { animation: fc-b1 6s ease infinite; }
+    .a-finale .fc-row.r2 .fc-box { animation: fc-b2 6s ease infinite; }
+    .a-finale .fc-row.r3 .fc-box { animation: fc-b3 6s ease infinite; }
+    .a-finale .fc-fill { animation: fc-fill 6s ease infinite; }
+  }
+  /* base (reduced-motion / no-anim): show the resolved end-state */
+  .a-finale .fc-box { background: var(--accent); border-color: var(--accent); color: #fff; }
+  @keyframes eval-b { 0%, 18% { transform: scaleX(0.7); } 48%, 90% { transform: scaleX(0.9); } 100% { transform: scaleX(0.7); } }
+  @keyframes eval-win { 0%, 42% { opacity: 0; transform: translateX(-4px); } 54%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+  @keyframes fc-b1 {
+    0%, 10% { background: transparent; border-color: var(--ink-3); color: transparent; }
+    12%, 90% { background: var(--accent); border-color: var(--accent); color: #fff; }
+    92%, 100% { background: transparent; border-color: var(--ink-3); color: transparent; }
+  }
+  @keyframes fc-b2 {
+    0%, 22% { background: transparent; border-color: var(--ink-3); color: transparent; }
+    24%, 90% { background: var(--accent); border-color: var(--accent); color: #fff; }
+    92%, 100% { background: transparent; border-color: var(--ink-3); color: transparent; }
+  }
+  @keyframes fc-b3 {
+    0%, 34% { background: transparent; border-color: var(--ink-3); color: transparent; }
+    36%, 90% { background: var(--accent); border-color: var(--accent); color: #fff; }
+    92%, 100% { background: transparent; border-color: var(--ink-3); color: transparent; }
+  }
+  @keyframes fc-fill { 0%, 12% { width: 0; } 14%, 24% { width: 33%; } 26%, 36% { width: 66%; } 38%, 90% { width: 100%; } 92%, 100% { width: 0; } }
+</style>
+</head>
+<body>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea" />
+    <circle cx="372" cy="300" r="34" fill="#c8421f" />
+    <text x="430" y="318" font-family="Georgia, serif" font-style="italic" font-size="78" fill="#15110c">AI</text>
+    <text x="430" y="430" font-family="Georgia, serif" font-style="italic" font-size="78" fill="#c8421f">Master Class</text>
+    <rect x="372" y="500" width="456" height="6" rx="3" fill="#15110c" opacity="0.16" />
+    <text x="372" y="560" font-family="monospace" font-size="30" letter-spacing="6" fill="#6b6357">01 — 05 · KAPITEL</text>
+  </svg>
+</template>
+
+<header>
+  <div class="dots"></div>
+  <div class="wrap">
+    <div class="topline">
+      <span class="mast"><span class="mast-mark">AI</span><span class="mast-name">Master Class</span></span>
+      <span class="mast-meta">Stand Juni 2026</span>
+    </div>
+    <div class="hero">
+      <h1>
+        <span class="hl-static">Von&nbsp;Tokens&nbsp;und</span>
+        <span class="hl-morph">
+          <canvas id="wordfield" aria-hidden="true"></canvas>
+          <span class="hl-fallback" aria-hidden="true">Agenten<span class="dot">.</span></span>
+        </span>
+        <span class="sr-only">Von Tokens und Agenten.</span>
+      </h1>
+      <p>Von den Grundlagen der Sprachmodelle bis zum produktiven Einsatz von Agenten.</p>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section" id="vorlauf">
+    <div class="section-head">
+      <h2>Vorbereitung</h2>
+      <span class="count">Setup &amp; Grundlagen</span>
+    </div>
+
+    <div class="persona-bar">
+      <div class="pb-text">
+        <span class="pb-label">Persona einstellen</span>
+        <span class="pb-desc">Gilt für alle Übungen in allen Kapiteln — einmal hier wählen, später auf jeder Übungsfolie jederzeit umschaltbar.</span>
+      </div>
+      <div class="pb-switch">
+        <span class="rt-lbl">Persona</span>
+        <div class="role-toggle" id="personaToggle">
+          <button type="button" data-role="dev" aria-pressed="true">Dev</button>
+          <button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button>
+        </div>
+      </div>
+      <div class="pb-preview" id="personaPreview">
+        <span class="pb-pv-label">So ändert sich z. B. eine Quiz-Frage — gleiche Übung, gleiche Lösung, andere Einkleidung:</span>
+        <div class="pb-pv-pair">
+          <div class="pb-pv-card" data-role="dev">
+            <span class="pv-chip">Dev</span>
+            <span class="pv-text">„Schreibe Tests für diese Funktion.“</span>
+          </div>
+          <div class="pb-pv-card" data-role="nondev">
+            <span class="pv-chip">Non-Dev</span>
+            <span class="pv-text">„Prüfe diese Auswertung Schritt für Schritt auf Fehler.“</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter-stack">
+
+    <a class="setup-card" href="01-lm-refresher.html">
+      <div class="sc-body">
+        <span class="sc-kicker">Vorbereitung · Grundlagen</span>
+        <span class="sc-title">Was ist ein LM?</span>
+        <span class="sc-desc">Wie ein Sprachmodell wirklich arbeitet — das gemeinsame mentale Modell.</span>
+        <span class="sc-go">Öffnen →</span>
+      </div>
+      <div class="sc-aside">
+        <div class="dots"></div>
+        <div class="sc-lm" aria-hidden="true">
+          <div class="lm-sentence">
+            <span class="lm-tok c1">Die</span>
+            <span class="lm-tok c2">KI</span>
+            <span class="lm-tok c3">rät</span>
+            <span class="lm-tok c4">das</span>
+            <span class="lm-tok c5">nächste</span>
+            <span class="lm-next">
+              <span class="lm-slot"><span class="lm-caret"></span></span>
+              <span class="lm-answer">Token</span>
+            </span>
+          </div>
+          <div class="lm-panel">
+            <div class="lm-cand k1"><span class="lm-w">Token</span><span class="lm-track"><span class="lm-fill"></span></span><span class="lm-p">71%</span></div>
+            <div class="lm-cand k2"><span class="lm-w">Wort</span><span class="lm-track"><span class="lm-fill"></span></span><span class="lm-p">24%</span></div>
+            <div class="lm-cand k3"><span class="lm-w">Mal</span><span class="lm-track"><span class="lm-fill"></span></span><span class="lm-p">5%</span></div>
+          </div>
+          <div class="lm-phases">
+            <span class="lm-ph p1">Tokenize</span>
+            <span class="pharr">→</span>
+            <span class="lm-ph p2">Predict</span>
+            <span class="pharr">→</span>
+            <span class="lm-ph p3">Sample</span>
+          </div>
+        </div>
+      </div>
+    </a>
+
+      <a class="chapter-card" href="arbeitsweise.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Mentales Modell</span>
+          <span class="cc-title">Arbeitsweise</span>
+          <span class="cc-desc">Befehl · Plan · Ziel — wie man mit einem Agenten zusammenarbeitet.</span>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-work" aria-hidden="true">
+            <span class="seg">
+              <span class="wchip w1">Befehl</span>
+              <span class="wchip w2">Plan</span>
+              <span class="wchip w3">Ziel</span>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="glossary.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Nachschlagen</span>
+          <span class="cc-title">Glossar</span>
+          <span class="cc-desc">Begriffe von A2A bis Workflow — kompakt erklärt.</span>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-gloss" aria-hidden="true">
+            <span class="gsearch">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"></circle><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+              <span class="gterms"><span>Token</span><span>MCP</span><span>Agent</span><span>Context</span></span>
+            </span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+  </section>
+
+  <section class="section" id="kapitel">
+    <div class="section-head">
+      <h2>Kapitel</h2>
+      <span class="count">01 — 04 · Hauptcurriculum · je 75 Min</span>
+    </div>
+    <p class="agenda-intro">
+      Jedes Kapitel ist ein eigenständiger <strong>75-Minuten-Workshop</strong> mit demselben Vorgehen<br>— erst die Theorie, ein Wissenscheck, dann Hands-on, am Ende ein Cheat-Sheet zum Mitnehmen.
+    </p>
+    <div class="rhythm">
+      <div class="rhythm-step">
+        <span class="rs-time">20 min</span>
+        <span class="rs-label">Theorie</span>
+        <span class="rs-sub">Konzept &amp; mentales Modell</span>
+      </div>
+      <div class="rhythm-step">
+        <span class="rs-time">15 min</span>
+        <span class="rs-label">Wissenscheck</span>
+        <span class="rs-sub">Interaktive Übungen</span>
+      </div>
+      <div class="rhythm-step">
+        <span class="rs-time">25 min</span>
+        <span class="rs-label">Praxis</span>
+        <span class="rs-sub">Pair-Refactoring</span>
+      </div>
+      <div class="rhythm-step">
+        <span class="rs-time">15 min</span>
+        <span class="rs-label">Mitnehmen</span>
+        <span class="rs-sub">Praxisbeispiel + Cheat-Sheet</span>
+      </div>
+    </div>
+    <div class="chapter-stack">
+
+      <a class="chapter-card" href="02-prompting-context.html">
+        <div class="cc-body">
+          <span class="cc-num">Kapitel 01</span>
+          <span class="cc-title">Prompting &amp; Context</span>
+          <span class="cc-desc">Von der vagen Anfrage zur verlässlichen Antwort mit Prompt-Anatomie, Mustern und Context Engineering.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Skills · AGENTS.md</span>
+            <span class="cc-tag">Token-Budget</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-cw" aria-hidden="true">
+            <div class="cw-panel">
+              <div class="cw-head">Context-Window</div>
+              <div class="cw-gauge">
+                <span class="cw-used"><span class="cw-n"><span class="v1">37k</span><span class="v2">43k</span><span class="v3">57k</span><span class="v4">87k</span></span>&nbsp;/ 200k</span>
+                <span class="cw-pct"><span class="cw-n"><span class="v1">18%</span><span class="v2">22%</span><span class="v3">28%</span><span class="v4">43%</span></span>&nbsp;belegt</span>
+              </div>
+              <div class="cw-bar"><i class="cwb-always"></i><i class="cwb-od"></i></div>
+              <div class="cw-grid">
+                <span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c mem"></span><span class="cw-c mem"></span><span class="cw-c skh"></span><span class="cw-c skh"></span><span class="cw-c mcp"></span><span class="cw-c mcp"></span><span class="cw-c mcp"></span><span class="cw-c od od1"></span><span class="cw-c od od1"></span><span class="cw-c od od2"></span><span class="cw-c od od2"></span><span class="cw-c od od2"></span><span class="cw-c od od2"></span><span class="cw-c od od3"></span><span class="cw-c od od3"></span><span class="cw-c od od3"></span>
+                <span class="cw-c od od3"></span><span class="cw-c od od3"></span><span class="cw-c od od3"></span><span class="cw-c od od3"></span><span class="cw-c od od3"></span><span class="cw-c od od3"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span>
+                <span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span>
+              </div>
+              <div class="cw-leg">
+                <span><i></i>Immer geladen</span>
+                <span class="lod"><i></i>On-demand</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="03-agentic-workflows.html">
+        <div class="cc-body">
+          <span class="cc-num">Kapitel 02</span>
+          <span class="cc-title">Agentic Workflows</span>
+          <span class="cc-desc">Explore → Plan → Execute → Commit — disziplinierte Schleifen statt Zufallstreffer.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">EPEC-Loop</span>
+            <span class="cc-tag">Reproduzierbar statt Zufall</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-loop" aria-hidden="true">
+            <span class="cc-chip s1">Explore</span>
+            <span class="cc-chip s2">Plan</span>
+            <span class="cc-chip s4">Commit</span>
+            <span class="cc-chip s3">Execute</span>
+            <span class="rotor"><svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.4-5.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M20 3.6v3.6h-3.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="04-workflows-agents-mcp.html">
+        <div class="cc-body">
+          <span class="cc-num">Kapitel 03</span>
+          <span class="cc-title">Workflows vs Agents · MCP</span>
+          <span class="cc-desc">Wer entscheidet? Augmented LLM, Workflow, Agent — plus Tool-Use und das MCP-Protokoll.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Augmented LLM → Agent</span>
+            <span class="cc-tag">Tool-Use · MCP</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-mcp" aria-hidden="true">
+            <div class="mrow">
+              <span class="mtag">Workflow · fester Pfad</span>
+              <div class="mtrack">
+                <span class="cc-chip">Step 1</span>
+                <span class="mlink marrow"></span>
+                <span class="cc-chip">Step 2</span>
+                <span class="mlink marrow"></span>
+                <span class="cc-chip">Step 3</span>
+              </div>
+            </div>
+            <div class="mrow">
+              <span class="mtag">Agent · entscheidet selbst</span>
+              <div class="mfan">
+                <span class="cc-chip magent">Agent</span>
+                <svg class="mfan-svg" viewBox="0 0 56 104" aria-hidden="true">
+                  <path class="fp" d="M0 52 C 22 52, 26 15, 56 15"></path>
+                  <path class="fp" d="M0 52 L 56 52"></path>
+                  <path class="fp" d="M0 52 C 22 52, 26 89, 56 89"></path>
+                  <path class="fp hot h1" pathLength="100" d="M0 52 C 22 52, 26 15, 56 15"></path>
+                  <path class="fp hot h2" pathLength="100" d="M0 52 L 56 52"></path>
+                  <path class="fp hot h3" pathLength="100" d="M0 52 C 22 52, 26 89, 56 89"></path>
+                </svg>
+                <div class="mfan-targets">
+                  <span class="cc-chip ft t1">Skill</span>
+                  <span class="cc-chip ft t2">MCP · Tool</span>
+                  <span class="cc-chip ft t3">Antwort</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="06-evaluation-trust.html">
+        <div class="cc-body">
+          <span class="cc-num">Kapitel 04</span>
+          <span class="cc-title">Evaluation &amp; Vertrauen</span>
+          <span class="cc-desc">Woher weißt du, dass es gut ist? Die Eval-Leiter, Scorer-Familien — und wann du vertraust, stichprobst oder verifizierst.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Eval-Leiter · Scorer</span>
+            <span class="cc-tag">Trust-Kalibrierung</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-eval" aria-hidden="true">
+            <div class="ev-row a"><span class="ev-tag">A</span><span class="ev-track"><span class="ev-fill"></span></span><span class="ev-pct">7/10</span></div>
+            <div class="ev-row b"><span class="ev-tag">B</span><span class="ev-track"><span class="ev-fill"></span></span><span class="ev-pct">9/10</span></div>
+            <div class="ev-foot"><span>Golden-Set · 10 Fälle</span><span class="ev-win">→ B gewinnt</span></div>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="section" id="vertiefung">
+    <div class="section-head">
+      <h2>Vertiefung</h2>
+      <span class="count">Einzelthemen &amp; Material</span>
+    </div>
+    <p class="agenda-intro">
+      Eigenständige Einheiten zu <strong>Einzelthemen</strong> — unabhängig vom Hauptcurriculum einsetzbar, zur Ergänzung zwischen den Kapiteln oder zur Nachbereitung.
+    </p>
+    <div class="chapter-stack">
+
+      <a class="chapter-card" href="context.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Deep-Dive</span>
+          <span class="cc-title">Context</span>
+          <span class="cc-desc">Das Arbeitsgedächtnis des Modells — und wie man es bewirtschaftet.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Arbeitsgedächtnis</span>
+            <span class="cc-tag">Kompaktieren &amp; Kuratieren</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-ctx" aria-hidden="true">
+            <span class="ctx-label">Context Window</span>
+            <span class="ctx-bar"><span class="ctx-fill"></span><span class="ctx-limit"></span></span>
+            <span class="ctx-cap">Füllen · Kompaktieren</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="cyclical-agentic-loops.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Deep-Dive</span>
+          <span class="cc-title">Cyclical Agentic Loops</span>
+          <span class="cc-desc">Loops selber entwerfen — von der einfachen Schleife zum robusten Agenten.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Loop-Design</span>
+            <span class="cc-tag">Vom Skript zum Agenten</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-cycle" aria-hidden="true">
+            <span class="orbit">
+              <span class="spin"><span class="planet"></span></span>
+              <span class="station st1">Reason</span>
+              <span class="station st2">Act</span>
+              <span class="station st3">Observe</span>
+              <span class="core">Agent</span>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="reasoning-effort.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Deep-Dive</span>
+          <span class="cc-title">Reasoning Effort</span>
+          <span class="cc-desc">Wie viel das Modell nachdenkt — und wie du Tempo gegen Tiefe abwägst.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Tempo vs Tiefe</span>
+            <span class="cc-tag">Effort kalibrieren</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-dial" aria-hidden="true">
+            <div class="dial-col">
+              <div class="dial">
+                <svg viewBox="0 0 100 56" fill="none"><path d="M10 50 A40 40 0 0 1 90 50" stroke="rgba(21,17,12,0.16)" stroke-width="6" stroke-linecap="round"></path><path class="dial-arc" d="M10 50 A40 40 0 0 1 90 50" stroke="#c8421f" stroke-width="6" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="60"></path></svg>
+                <span class="needle"></span>
+              </div>
+              <div class="dial-labels"><span>min</span><span>max</span></div>
+            </div>
+            <div class="dout">
+              <span class="dout-cap">denken</span>
+              <span class="dt t1"></span>
+              <span class="dt t2"></span>
+              <span class="dt t3"></span>
+              <span class="dout-cap ans">antwort</span>
+              <span class="da"></span>
+              <span class="dout-mode"><span class="m1">schnell · knapp</span><span class="m2">gründlich · tief</span></span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a class="chapter-card" href="05-ai-sdlc-guardrails.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Deep-Dive</span>
+          <span class="cc-title">AI im SDLC + Guardrails</span>
+          <span class="cc-desc">Andockpunkte in der Pipeline, vier Bedrohungen, vier Verteidigungsebenen.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Bedrohungsmodell</span>
+            <span class="cc-tag">Defense-in-Depth</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-guard" aria-hidden="true">
+            <span class="gthreat">Prompt Injection</span>
+            <span class="gdrop"></span>
+            <div class="glayers">
+              <div class="glayer gl1"><span class="gl-n">01</span><span class="gl-t">Input</span><span class="gl-w">vor dem Modell</span></div>
+              <div class="glayer gl2"><span class="gl-n">02</span><span class="gl-t">Output</span><span class="gl-w">nach dem Modell</span></div>
+              <div class="glayer gl3"><span class="gl-n">03</span><span class="gl-t">Runtime</span><span class="gl-w">um den Tool-Loop</span></div>
+              <div class="glayer gl4"><span class="gl-n">04</span><span class="gl-t">Org · Policy</span><span class="gl-w">über dem System</span></div>
+            </div>
+            <div class="gfoot">
+              <svg class="gshield" viewBox="0 0 24 24" fill="none"><path d="M12 2.2 19.6 5.4v5.3c0 4.8-3.2 8.4-7.6 10.9C7.6 19.1 4.4 15.5 4.4 10.7V5.4L12 2.2Z" fill="#faf7f1" stroke="#15110c" stroke-width="1.4" stroke-linejoin="round"></path><path d="m8.6 11.8 2.4 2.4 4.4-4.6" stroke="#c8421f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              <span class="glabel">Defense in Depth</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="section" id="abschluss">
+    <div class="section-head">
+      <h2>Abschluss</h2>
+      <span class="count">Lernziele · Selbst-Check · Capstone</span>
+    </div>
+    <p class="agenda-intro">
+      Zum Abschluss zwei Dinge: <strong>ehrlich einordnen</strong>, was beherrscht wird — und an einer echten Aufgabe <strong>nachweisen</strong>, dass die Kette von Prompt bis Guardrail hält.
+    </p>
+    <div class="chapter-stack">
+      <a class="chapter-card" href="abschluss.html">
+        <div class="cc-body">
+          <span class="cc-num">Abschluss</span>
+          <span class="cc-title">Lernziele, Selbst-Check &amp; Capstone</span>
+          <span class="cc-desc">Alle Lernziele zum Abhaken — der Fortschritt wird lokal gespeichert — plus ein Capstone, der den gesamten Stoff zusammenführt.</span>
+          <div class="cc-meta">
+            <span class="cc-tag">Selbst-Check · Lernziele</span>
+            <span class="cc-tag">Capstone · Gesamter Stoff</span>
+          </div>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-finale" aria-hidden="true">
+            <div class="fc-row r1"><span class="fc-box">✓</span>Prompt &amp; Context</div>
+            <div class="fc-row r2"><span class="fc-box">✓</span>Vorgehen · Guardrails</div>
+            <div class="fc-row r3"><span class="fc-box">✓</span>Eval · Trust</div>
+            <div class="fc-bar"><span class="fc-fill"></span></div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Franz Emmerlich</span>
+    <span>Tastatur: ← / → blättert in den Decks</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var WORDS = ["Agenten.", "MCPs.", "Tools.", "Workflows.", "Context."];
+  var INK = { r: 21, g: 17, b: 12 };      // letters
+  var PAPER = { r: 250, g: 247, b: 241 }; // trailing period
+
+  var canvas = document.getElementById("wordfield");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var h1 = canvas.closest("h1");
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  var FONT = "", LS = "0px", fs = 80;
+  var offW = 0, offH = 0, baseline = 0, PAD = 0, CW = 0, CH = 0;
+  var off = document.createElement("canvas");
+  var octx = off.getContext("2d");
+  var measure = document.createElement("canvas").getContext("2d");
+
+  var wordPoints = [];   // per word: [{x, y, col}]
+  var N = 0;             // particle pool size = max word point count
+  var particles = [];
+  var wordIdx = 0;
+  var running = false;
+  var lsSupported = ("letterSpacing" in octx);
+
+  function setupMetrics() {
+    var cs = getComputedStyle(h1);
+    fs = parseFloat(cs.fontSize);
+    FONT = cs.fontWeight + " " + fs + "px " + cs.fontFamily;
+    LS = (-0.04 * fs) + "px";
+
+    // size the offscreen + visible canvas to the widest word
+    measure.font = FONT;
+    if (lsSupported) measure.letterSpacing = LS;
+    var widest = 0;
+    WORDS.forEach(function (w) { widest = Math.max(widest, measure.measureText(w).width); });
+
+    // breathing room so dissolve-burst particles aren't clipped by the
+    // canvas edge (esp. on the left). negative margins keep the word in place.
+    PAD = Math.round(fs * 0.55);
+    offW = Math.ceil(widest + fs * 0.12);
+    offH = Math.ceil(fs * 1.18);
+    CW = offW + PAD * 2;
+    CH = offH + PAD * 2;
+    baseline = Math.round(fs * 0.92) + PAD;
+
+    off.width = CW; off.height = CH;
+
+    canvas.style.width = CW + "px";
+    canvas.style.height = CH + "px";
+    canvas.style.marginTop = (-fs * 0.07 - PAD) + "px";
+    canvas.style.marginLeft = (-PAD) + "px";
+    canvas.style.marginBottom = (-PAD) + "px";
+    canvas.width = Math.round(CW * dpr);
+    canvas.height = Math.round(CH * dpr);
+  }
+
+  function sampleSegment(text, x0, col, gap, out) {
+    octx.setTransform(1, 0, 0, 1, 0, 0);
+    octx.clearRect(0, 0, CW, CH);
+    octx.fillStyle = "#000";
+    octx.textBaseline = "alphabetic";
+    octx.font = FONT;
+    if (lsSupported) octx.letterSpacing = LS;
+    octx.fillText(text, x0 + PAD, baseline);
+    var data = octx.getImageData(0, 0, CW, CH).data;
+    for (var y = 0; y < CH; y += gap) {
+      for (var x = 0; x < CW; x += gap) {
+        if (data[(y * CW + x) * 4 + 3] > 135) {
+          out.push({
+            x: x + (Math.random() - 0.5) * gap * 0.7,
+            y: y + (Math.random() - 0.5) * gap * 0.7,
+            col: col
+          });
+        }
+      }
+    }
+  }
+
+  function sampleWord(word) {
+    var stem = word.slice(0, -1);
+    var gap = fs > 96 ? 4 : (fs > 60 ? 4 : 3);
+    measure.font = FONT;
+    if (lsSupported) measure.letterSpacing = LS;
+    var stemW = measure.measureText(stem).width;
+    var pts = [];
+    sampleSegment(stem, 0, INK, gap, pts);
+    sampleSegment(word.slice(-1), stemW, PAPER, gap, pts);
+    return pts;
+  }
+
+  function buildPoints() {
+    setupMetrics();
+    wordPoints = WORDS.map(sampleWord);
+    N = wordPoints.reduce(function (m, a) { return Math.max(m, a.length); }, 0);
+
+    particles = [];
+    for (var i = 0; i < N; i++) {
+      particles.push({
+        x: CW * 0.5 + (Math.random() - 0.5) * offW,
+        y: CH * 0.5 + (Math.random() - 0.5) * offH,
+        vx: 0, vy: 0, tx: 0, ty: 0,
+        col: INK, alive: false, fade: 0,
+        size: 1.25 + Math.random() * 0.85,
+        ph: Math.random() * Math.PI * 2,
+        delay: Math.random() * 30
+      });
+    }
+    introT = 0;
+    assign(wordIdx, false);
+  }
+
+  // assign new targets. On a transition we restagger the spring delays and
+  // fire a dissolve burst so particles scatter, then re-condense into the word.
+  function assign(idx, isTransition) {
+    var pts = wordPoints[idx];
+    var M = pts.length;
+    if (!M) return;
+    for (var i = 0; i < N; i++) {
+      var p = particles[i];
+      if (i < M) { p.tx = pts[i].x; p.ty = pts[i].y; p.col = pts[i].col; p.alive = true; }
+      else { var r = pts[i % M]; p.tx = r.x; p.ty = r.y; p.col = r.col; p.alive = false; }
+      if (isTransition) {
+        // staggered re-form: some particles hang in the dissolved cloud longer
+        p.delay = introT + 4 + Math.random() * 26;
+      }
+    }
+    if (isTransition) dissolving = 16;
+  }
+
+  var introT = 0;
+  var dissolving = 0;     // frames of scatter burst remaining
+  function frame() {
+    introT++;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, CW, CH);
+    // soft, floaty spring (low stiffness + light damping = it drifts home)
+    var k = 0.05, fr = 0.9;
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      if (introT > p.delay) {
+        p.vx += (p.tx - p.x) * k;
+        p.vy += (p.ty - p.y) * k;
+      }
+      // dissolve burst: random impulses blow the cloud apart briefly
+      if (dissolving > 0) {
+        p.vx += (Math.random() - 0.5) * 2.6;
+        p.vy += (Math.random() - 0.5) * 2.6;
+      }
+      p.vx *= fr; p.vy *= fr;
+      p.x += p.vx; p.y += p.vy;
+
+      // smoothly fade ghosts out / live particles in (no popping)
+      p.fade += ((p.alive ? 1 : 0) - p.fade) * 0.12;
+      if (p.fade < 0.02) continue;
+
+      p.ph += 0.05;
+      var settled = Math.abs(p.tx - p.x) < 1.4 && Math.abs(p.ty - p.y) < 1.4;
+      var a = (settled ? 0.74 + Math.sin(p.ph) * 0.16 : 0.5) * p.fade;
+      var sz = p.size * (settled ? 1 : 1.28);
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(" + p.col.r + "," + p.col.g + "," + p.col.b + "," + a.toFixed(3) + ")";
+      ctx.arc(p.x, p.y, sz, 0, 6.283);
+      ctx.fill();
+    }
+    if (dissolving > 0) dissolving--;
+    if (document.hidden) { running = false; return; }
+    requestAnimationFrame(frame);
+  }
+
+  function drawStatic() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, CW, CH);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      if (!p.alive) continue;
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(" + p.col.r + "," + p.col.g + "," + p.col.b + ",0.82)";
+      ctx.arc(p.tx, p.ty, p.size, 0, 6.283);
+      ctx.fill();
+    }
+  }
+
+  function ensureRunning() {
+    if (!running && !document.hidden) { running = true; requestAnimationFrame(frame); }
+  }
+
+  function nextWord() {
+    wordIdx = (wordIdx + 1) % WORDS.length;
+    assign(wordIdx, true);
+    if (document.hidden) drawStatic(); else ensureRunning();
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) drawStatic(); else ensureRunning();
+  });
+
+  var rt;
+  window.addEventListener("resize", function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () { buildPoints(); if (document.hidden) drawStatic(); }, 200);
+  });
+
+  function start() {
+    buildPoints();
+    if (document.hidden) drawStatic();
+    else { running = true; requestAnimationFrame(frame); }
+    setInterval(nextWord, 3600);
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    Promise.race([
+      document.fonts.load("600 80px 'IBM Plex Sans'"),
+      new Promise(function (r) { setTimeout(r, 1500); })
+    ]).then(start, start);
+  } else {
+    start();
+  }
+})();
+</script>
+
+<script>
+(function () {
+  // scroll-reveal for the Kapitel cards — visible by default; only hidden
+  // once we know IntersectionObserver actually delivers entries.
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!("IntersectionObserver" in window)) return;
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".chapter-card"));
+  if (!cards.length) return;
+
+  function reveal(card) {
+    if (card.classList.contains("in")) return;
+    card.classList.add("in");
+    if (card.classList.contains("pre")) {
+      card.classList.add("revealing");
+      void card.offsetWidth; // flush so the removal below transitions
+      card.classList.remove("pre");
+      setTimeout(function () { card.classList.remove("revealing"); }, 750);
+    }
+  }
+
+  var ioWorks = false;
+  var io = new IntersectionObserver(function (entries) {
+    ioWorks = true;
+    entries.forEach(function (e) {
+      if (e.isIntersecting) {
+        reveal(e.target);
+        io.unobserve(e.target);
+      } else if (!e.target.classList.contains("in")) {
+        // first callback: card is off-screen, safe to hide for later reveal
+        e.target.classList.add("pre");
+      }
+    });
+  }, { threshold: 0.12 });
+  cards.forEach(function (c) { io.observe(c); });
+
+  // safety net: if IO never reports back, show everything
+  setTimeout(function () {
+    if (!ioWorks) {
+      io.disconnect();
+      cards.forEach(reveal);
+    }
+  }, 1200);
+})();
+</script>
+
+<script>
+/* Persona-Vorwahl — schreibt denselben localStorage-Key, den role-switch.js
+   auf allen Übungsseiten liest. Einmal hier setzen, alle Kapitel folgen. */
+(function () {
+  var KEY = "amc-persona";
+  var tog = document.getElementById("personaToggle");
+  if (!tog) return;
+  function read() {
+    try {
+      var v = localStorage.getItem(KEY);
+      return v === "nondev" ? "nondev" : "dev";
+    } catch (e) { return "dev"; }
+  }
+  // In-place attribute mutations don't reliably restyle [aria-pressed]
+  // selectors in the preview — rebuild the buttons as FRESH nodes with the
+  // active state baked in as inline styles (same workaround as role-switch.js).
+  function paint(role) {
+    tog.querySelectorAll("button[data-role]").forEach(function (old) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.dataset.role = old.dataset.role;
+      b.textContent = old.textContent;
+      var active = (b.dataset.role === role);
+      b.setAttribute("aria-pressed", String(active));
+      if (active) { b.style.background = "var(--accent)"; b.style.color = "#fff"; }
+      b.addEventListener("click", function () {
+        try { localStorage.setItem(KEY, b.dataset.role); } catch (e) {}
+        paint(b.dataset.role);
+      });
+      old.parentNode.replaceChild(b, old);
+    });
+    paintPreview(role);
+  }
+  // Highlight the matching example card (fresh clones, styles baked inline —
+  // same repaint workaround as above).
+  function paintPreview(role) {
+    var pv = document.getElementById("personaPreview");
+    if (!pv) return;
+    pv.querySelectorAll(".pb-pv-card").forEach(function (old) {
+      var c = old.cloneNode(true);
+      var active = (c.dataset.role === role);
+      c.style.opacity = active ? "1" : "0.42";
+      c.style.borderColor = active ? "var(--ink)" : "var(--hair)";
+      c.style.boxShadow = active ? "0 2px 0 rgba(21,17,12,0.16)" : "none";
+      var chip = c.querySelector(".pv-chip");
+      if (chip) chip.style.color = active ? "var(--accent)" : "var(--ink-3)";
+      old.parentNode.replaceChild(c, old);
+    });
+  }
+  // live-sync, falls die Persona auf einer Übungsfolie umgestellt wurde
+  window.addEventListener("storage", function (e) {
+    if (e.key === KEY) paint(read());
+  });
+  paint(read());
+})();
+</script>
+
+</body>
+</html>

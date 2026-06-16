@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Evaluation & Vertrauen — Kapitel 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <text x="600" y="210" text-anchor="middle" font-family="serif" font-size="52" fill="#15110c" font-weight="500">Evaluation</text>
+    <text x="600" y="272" text-anchor="middle" font-family="serif" font-size="36" fill="#c8421f" font-style="italic">&amp; Vertrauen</text>
+    <g font-family="monospace" font-size="20">
+      <rect x="300" y="380" width="600" height="54" rx="8" fill="#faf7f1" stroke="#15110c" stroke-width="2"/>
+      <text x="320" y="414" fill="#6b6357">output</text>
+      <text x="640" y="414" fill="#15110c">→ scorer →</text>
+      <rect x="820" y="392" width="60" height="30" rx="6" fill="#c8421f"/>
+      <text x="850" y="414" text-anchor="middle" fill="#fff">0.9</text>
+    </g>
+    <text x="600" y="540" text-anchor="middle" font-family="serif" font-style="italic" font-size="24" fill="#c8421f">klingt richtig ≠ ist richtig</text>
+  </svg>
+</template>
+
+<link rel="stylesheet" href="exercises/exercises.css" />
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --warn: #a83020;
+    --ok: #3d8a4a;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --pad-top: 56px;
+    --pad-x: 80px;
+  }
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg); color: var(--ink);
+    position: relative; overflow: hidden;
+    font-family: var(--sans); font-feature-settings: "ss01", "cv11";
+  }
+  .chrome {
+    position: absolute; inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 18px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin: 44px 0 26px;
+  }
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: 64px; line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1700px;
+  }
+  h3.subtitle {
+    font-size: 40px; line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede { font-size: 28px; line-height: 1.4; color: var(--ink-2); max-width: 1600px; }
+  p.body { font-size: 22px; line-height: 1.5; color: var(--ink-2); max-width: 1500px; }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+  .card { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 28px 32px; }
+  .card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .callout {
+    margin-top: 24px; padding: 20px 28px; min-height: 76px;
+    box-sizing: border-box; display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent); background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto; font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+
+  /* ===== Plausibility-trap (slide 02) ===== */
+  .trap-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+  .trap-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 24px 28px;
+    display: flex; flex-direction: column; border-top: 3px solid var(--warn);
+  }
+  .trap-card .tc-n {
+    font-family: var(--mono); font-size: 13px; color: var(--warn);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .trap-card .tc-name {
+    font-family: var(--serif); font-size: 30px; font-weight: 500;
+    margin-top: 6px; line-height: 1.08;
+  }
+  .trap-card .tc-sep { height: 1px; background: var(--hair); margin: 16px 0; }
+  .trap-card .tc-body { font-size: 19px; line-height: 1.5; color: var(--ink-2); }
+  .trap-card .tc-body strong { color: var(--ink); }
+  .trap-card .tc-foot {
+    margin-top: auto; padding-top: 16px;
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3); line-height: 1.45;
+  }
+
+  /* ===== Eval ladder (slide 03) ===== */
+  .ladder-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 22px; }
+  .rung {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 20px 20px;
+    display: flex; flex-direction: column;
+  }
+  .rung.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .rung .rg-lvl {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .rung.dark .rg-lvl { color: var(--accent-soft); }
+  .rung .rg-name {
+    font-family: var(--serif); font-size: 26px; font-weight: 500;
+    margin-top: 4px; line-height: 1.06;
+  }
+  .rung .rg-sep { height: 1px; background: var(--hair); margin: 13px 0; }
+  .rung.dark .rg-sep { background: rgba(255,255,255,0.14); }
+  .rung .rg-block { margin-bottom: 10px; }
+  .rung .rg-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .rung.dark .rg-label { color: #c8c2b6; }
+  .rung .rg-val { font-size: 14.5px; line-height: 1.4; color: var(--ink-2); margin-top: 2px; }
+  .rung.dark .rg-val { color: #d8d2c5; }
+  .rung .rg-cost {
+    margin-top: auto; padding-top: 12px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--accent);
+  }
+  .rung.dark .rg-cost { color: var(--accent-soft); }
+
+  /* ===== Eval anatomy (slide 04) ===== */
+  .anat-flow {
+    display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    gap: 16px; align-items: stretch; margin-top: 22px;
+  }
+  .anat-node {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+    padding: 18px 20px; display: flex; flex-direction: column; justify-content: center;
+  }
+  .anat-node.accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .anat-node.dark { background: var(--ink); border-color: var(--ink); color: #f0ece3; }
+  .anat-node .an-tag {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .anat-node.accent .an-tag { color: rgba(255,255,255,0.78); }
+  .anat-node.dark .an-tag { color: var(--accent-soft); }
+  .anat-node .an-name { font-family: var(--serif); font-size: 25px; font-weight: 500; margin-top: 4px; line-height: 1.08; }
+  .anat-node .an-sub { font-size: 14px; color: var(--ink-3); margin-top: 5px; line-height: 1.4; }
+  .anat-node.accent .an-sub, .anat-node.dark .an-sub { color: rgba(255,255,255,0.82); }
+  .anat-arrow { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 26px; color: var(--ink-3); }
+
+  .scorer-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .scorer {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column;
+    border-left: 3px solid var(--accent);
+  }
+  .scorer .sc-name { font-family: var(--serif); font-size: 23px; font-weight: 500; line-height: 1.1; }
+  .scorer .sc-kind { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+  .scorer .sc-sep { height: 1px; background: var(--hair); margin: 11px 0; }
+  .scorer .sc-when { font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
+  .scorer .sc-eg { margin-top: auto; padding-top: 11px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); line-height: 1.4; }
+
+  /* ===== Trust 2x2 (slide 05) ===== */
+  .tq-wrap { display: grid; grid-template-columns: 64px 1fr; gap: 14px; margin-top: 20px; flex: 1; min-height: 0; }
+  .tq-yaxis {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .tq-grid { display: grid; grid-template-rows: 1fr 1fr auto; gap: 14px; min-height: 0; }
+  .tq-cells { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tq-cell {
+    border-radius: 14px; padding: 22px 26px; display: flex; flex-direction: column;
+    border: 1px solid var(--hair); background: var(--paper);
+  }
+  .tq-cell.verify { border-left: 4px solid var(--warn); }
+  .tq-cell.spot   { border-left: 4px solid var(--accent); }
+  .tq-cell.spot2  { border-left: 4px solid var(--accent); }
+  .tq-cell.trust  { border-left: 4px solid var(--ok); }
+  .tq-cell .tq-act { font-family: var(--serif); font-size: 30px; font-weight: 500; line-height: 1.05; }
+  .tq-cell .tq-q { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+  .tq-cell .tq-desc { font-size: 16px; line-height: 1.45; color: var(--ink-2); margin-top: 9px; }
+  .tq-xaxis {
+    grid-column: 1; text-align: center;
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex; justify-content: space-between; padding: 0 8px;
+  }
+
+  /* ===== Praxis recipe (slide 07) ===== */
+  .recipe-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .recipe-step {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;
+    padding: 20px 22px; display: flex; flex-direction: column; position: relative;
+  }
+  .recipe-step .rs-n {
+    font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em;
+  }
+  .recipe-step .rs-name { font-family: var(--serif); font-size: 25px; font-weight: 500; margin-top: 4px; line-height: 1.08; }
+  .recipe-step .rs-body { font-size: 15.5px; line-height: 1.45; color: var(--ink-2); margin-top: 10px; }
+  .recipe-step .rs-eg {
+    margin-top: auto; padding-top: 12px;
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3); line-height: 1.45;
+  }
+  .recipe-step:not(:last-child)::after {
+    content: "→"; position: absolute; right: -11px; top: 38px;
+    transform: translateX(50%); font-family: var(--mono); font-size: 18px;
+    color: var(--ink-3); z-index: 2;
+  }
+
+  /* ===== Cheat sheet (slide 08) ===== */
+  .cs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .cs-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 22px 24px; display: flex; flex-direction: column;
+  }
+  .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cs-card .cs-num { font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; }
+  .cs-card.dark .cs-num { color: var(--accent-soft); }
+  .cs-card .cs-name {
+    font-family: var(--serif); font-size: 30px; font-weight: 500; margin-top: 4px;
+    letter-spacing: -0.01em; line-height: 1.05;
+  }
+  .cs-card .cs-row { margin-top: 13px; }
+  .cs-card .cs-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .cs-card.dark .cs-label { color: #c8c2b6; }
+  .cs-card .cs-val { font-size: 15px; color: var(--ink-2); line-height: 1.4; margin-top: 3px; }
+  .cs-card.dark .cs-val { color: #d8d2c5; }
+  .cs-card .cs-val.mono { font-family: var(--mono); font-size: 13.5px; color: var(--ink); }
+  .cs-card.dark .cs-val.mono { color: #f0ece3; }
+  .cs-rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+  .cs-rule { background: transparent; border: 1px dashed var(--hair); border-radius: 10px; padding: 12px 16px; }
+
+  /* Mitnehmen: statisches Echo der Übersichtskachel-Animation (.a-eval auf index.html) */
+  .cs-head-row { display: flex; align-items: center; gap: 48px; }
+  .cs-head-row .cs-head-main { flex: 1; min-width: 0; }
+  .cs-emblem {
+    flex: 0 0 auto; width: 380px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 20px 24px 22px; display: flex; flex-direction: column; gap: 13px;
+    box-shadow: 0 14px 32px -26px rgba(21,17,12,0.5);
+  }
+  .cs-emblem .em-cap { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .cs-emblem .ev-row { display: grid; grid-template-columns: 26px 1fr 54px; gap: 14px; align-items: center; }
+  .cs-emblem .ev-tag { font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--ink-3); }
+  .cs-emblem .ev-row.b .ev-tag { color: var(--accent); }
+  .cs-emblem .ev-track { height: 12px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--hair); overflow: hidden; }
+  .cs-emblem .ev-fill { display: block; height: 100%; border-radius: 999px; background: rgba(21,17,12,0.30); transform-origin: left center; transform: scaleX(0.7); }
+  .cs-emblem .ev-row.b .ev-fill { background: var(--accent); transform: scaleX(0.9); }
+  .cs-emblem .ev-pct { font-family: var(--mono); font-size: 15px; color: var(--ink-3); text-align: right; }
+  .cs-emblem .ev-row.b .ev-pct { color: var(--accent); font-weight: 600; }
+  .cs-emblem .ev-foot { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--ink-3); }
+  .cs-emblem .ev-win { color: var(--accent); }
+  .cs-rule .r-when {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cs-rule .r-then { font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+  .cs-rule .r-then strong { color: var(--ink); }
+
+  /* ===== Trust-Kalibrierung exercise (left board; side reuses .matrix-side*) ===== */
+  .trust-ex { display: grid; grid-template-columns: 1fr 380px; gap: 22px; flex: 1; min-height: 0; }
+  .trust-board {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 18px 20px;
+    display: flex; flex-direction: column; min-height: 0; overflow-y: auto;
+  }
+  .trust-list { display: flex; flex-direction: column; gap: 10px; }
+  .trust-item {
+    background: var(--bg); border: 1px solid var(--hair); border-radius: 10px;
+    padding: 12px 16px;
+    display: grid; grid-template-columns: 1fr auto; gap: 12px 18px; align-items: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .trust-item .ti-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 3px;
+  }
+  .trust-item .ti-text { font-family: var(--serif); font-size: 17.5px; line-height: 1.3; color: var(--ink); }
+  .trust-seg { display: inline-flex; background: var(--paper); border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; }
+  .trust-seg button {
+    appearance: none; border: 0; cursor: pointer; background: transparent;
+    font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--ink-2); padding: 9px 14px; white-space: nowrap;
+    border-right: 1px solid var(--hair);
+    transition: background 0.14s, color 0.14s;
+  }
+  .trust-seg button:last-child { border-right: 0; }
+  .trust-seg button:hover { background: var(--bg-2); }
+  .trust-seg button.sel-trust  { background: var(--ok);     color: #fff; }
+  .trust-seg button.sel-spot   { background: var(--accent); color: #fff; }
+  .trust-seg button.sel-verify { background: var(--warn);   color: #fff; }
+  .trust-item.revealed.match { border-color: var(--ok); background: rgba(61,138,74,0.10); }
+  .trust-item.revealed.miss  { border-color: var(--warn); background: rgba(168,48,32,0.08); }
+  .trust-item .ti-verdict {
+    grid-column: 1 / -1; display: none;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+    padding-top: 9px; border-top: 1px dashed var(--hair); margin-top: 2px;
+  }
+  .trust-item.revealed .ti-verdict { display: block; }
+  .trust-item.revealed.match .ti-verdict { color: var(--ok); }
+  .trust-item.revealed.miss  .ti-verdict { color: var(--warn); }
+</style>
+<style id="breadcrumb-nav">
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+
+<body>
+<deck-stage>
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span></span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — Vertrauen verdienen, nicht annehmen</div>
+      <h1 class="title" style="margin-top: 32px;">Evaluation.<br/>Und <span class="accent">Vertrauen</span>.</h1>
+
+      <h3 class="subtitle" style="margin-top: 28px;">
+        Die Frage, die jedes andere Kapitel zusammenhält: <em>Woher weißt du, dass es gut ist?</em> — Outputs messbar machen, statt sie zu erfühlen. Vertrauen kalibrieren, statt blind zu glauben oder alles zu prüfen.
+      </h3>
+
+      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Klingt-richtig ≠ ist-richtig</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Die Eval-Leiter</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Anatomie einer Eval</span>
+        <span class="pill accent" style="font-size: 24px; padding: 10px 20px;">Vertrauen oder verifizieren?</span>
+      </div>
+
+      <div style="margin-top: auto; padding-bottom: 24px;">
+        <div style="font-family: var(--mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 14px;">
+          <span style="display: inline-block; width: 28px; height: 1px; background: var(--accent);"></span>
+          Zwei Hälften
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 28px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">01 · MESSEN</div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin-top: 6px; line-height: 1.1;">Evaluation</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 6px; line-height: 1.4;">Vom Bauchgefühl zur Zahl: Golden-Set, Scorer, LLM-as-Judge — Qualität, die man vergleichen kann.</div>
+          </div>
+          <div style="background: var(--accent); border: 1px solid var(--accent); border-radius: 12px; padding: 22px 28px; color: #fff;">
+            <div class="mono" style="font-size: 18px; color: rgba(255,255,255,0.75); letter-spacing: 0.1em;">02 · VERTRAUEN</div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin-top: 6px; line-height: 1.1;">Kalibrierung</div>
+            <div style="font-size: 18px; color: rgba(255,255,255,0.9); margin-top: 6px; line-height: 1.4;">Wann vertrauen, wann stichproben, wann verifizieren — abhängig von Schaden und Prüfbarkeit.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 02 PLAUSIBILITÄTS-FALLE ===================== -->
+  <section data-screen-label="02 Plausibilitaetsfalle">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Theorie</span>
+      </div>
+
+      <div class="eyebrow">Warum Augenmaß nicht skaliert</div>
+      <h2 class="title" style="font-size: 60px;">„Klingt richtig" ist <span class="accent">kein</span> Qualitätsmaß.</h2>
+
+      <p class="body" style="margin: 0 0 6px; max-width: 1700px;">
+        Modelle sind darauf optimiert, <strong>überzeugend</strong> zu klingen — nicht, <em>richtig</em> zu sein. Das ist die gefährlichste Eigenschaft im ganzen Workshop: ein falscher Output sieht genauso souverän aus wie ein korrekter. Drei Gründe, warum die schnelle Sichtprüfung als Qualitätssicherung versagt:
+      </p>
+
+      <div class="trap-row">
+        <div class="trap-card">
+          <div class="tc-n">Falle 01</div>
+          <div class="tc-name">Souverän &amp; falsch</div>
+          <div class="tc-sep"></div>
+          <div class="tc-body">
+            Der Output erfindet eine API, einen Paragraphen, eine Zahl — <strong>flüssig formuliert, mit Begründung</strong>. Wir lesen „klingt plausibel" als „ist geprüft" — es ist keins von beidem.
+          </div>
+          <div class="tc-foot">→ Plausibilität ≠ Korrektheit.<br/>Gerade die guten Outputs wiegen in Sicherheit.</div>
+        </div>
+        <div class="trap-card">
+          <div class="tc-n">Falle 02</div>
+          <div class="tc-name">Kein Vergleichsmaß</div>
+          <div class="tc-sep"></div>
+          <div class="tc-body">
+            Du änderst den Prompt und es „fühlt sich besser an". <strong>Besser als was?</strong> Ohne festen Maßstab ist jede Änderung ein Münzwurf — du merkst Regressionen erst, wenn ein Nutzer sie meldet.
+          </div>
+          <div class="tc-foot">→ Ohne Baseline kein Fortschritt,<br/>nur Bewegung.</div>
+        </div>
+        <div class="trap-card">
+          <div class="tc-n">Falle 03</div>
+          <div class="tc-name">Skaliert nicht</div>
+          <div class="tc-sep"></div>
+          <div class="tc-body">
+            Einen Output prüfst du in 30&nbsp;Sekunden. <strong>Tausend pro Tag</strong> nicht. Augenmaß funktioniert in der Demo und bricht im Betrieb — genau dann, wenn Fehler teuer werden.
+          </div>
+          <div class="tc-foot">→ Was du nicht automatisch misst,<br/>misst du im Zweifel gar nicht.</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 22px;">
+        <div class="callout-label">Kerngedanke</div>
+        <div class="callout-body">
+          Evaluation verwandelt „<em>ich glaube, das ist gut</em>" in „<strong>auf diesen 40 Fällen erreicht es 92 %, gestern waren es 88 %</strong>". Erst eine <strong>Zahl auf festen Fällen</strong> macht Qualität vergleichbar — und damit verbesserbar.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 DIE EVAL-LEITER ===================== -->
+  <section data-screen-label="03 Eval-Leiter">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Theorie</span>
+      </div>
+
+      <div class="eyebrow">Fünf Stufen, von schnell-grob zu langsam-streng</div>
+      <h2 class="title" style="font-size: 56px;">Die <span class="accent">Eval-Leiter</span>.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1700px;">
+        Mehr Strenge kostet mehr Aufwand — aber nicht jede Aufgabe braucht die oberste Stufe. <strong>Steig so hoch wie nötig, nicht so hoch wie möglich.</strong> Lies von links (billig, ungefähr) nach rechts (teuer, belastbar).
+      </p>
+
+      <div class="ladder-row">
+        <div class="rung">
+          <div class="rg-lvl">STUFE 01</div>
+          <div class="rg-name">Vibe-Check</div>
+          <div class="rg-sep"></div>
+          <div class="rg-block"><div class="rg-label">Was</div><div class="rg-val">Ein paar Outputs ansehen, „passt"/„passt nicht".</div></div>
+          <div class="rg-block"><div class="rg-label">Wann</div><div class="rg-val">Prototyp, erste Idee, Wegwerf-Skript.</div></div>
+          <div class="rg-cost">Aufwand: Minuten</div>
+        </div>
+        <div class="rung">
+          <div class="rg-lvl">STUFE 02</div>
+          <div class="rg-name">Golden-Set</div>
+          <div class="rg-sep"></div>
+          <div class="rg-block"><div class="rg-label">Was</div><div class="rg-val">5–50 feste Fälle mit erwartetem Ergebnis, wiederholbar.</div></div>
+          <div class="rg-block"><div class="rg-label">Wann</div><div class="rg-val">Sobald du einen Prompt zum zweiten Mal änderst.</div></div>
+          <div class="rg-cost">Aufwand: Stunden</div>
+        </div>
+        <div class="rung">
+          <div class="rg-lvl">STUFE 03</div>
+          <div class="rg-name">Auto-Scorer</div>
+          <div class="rg-sep"></div>
+          <div class="rg-block"><div class="rg-label">Was</div><div class="rg-val">Regel/Code prüft den Output (Match, Schema, Test).</div></div>
+          <div class="rg-block"><div class="rg-label">Wann</div><div class="rg-val">„Richtig" ist eindeutig definierbar.</div></div>
+          <div class="rg-cost">Aufwand: einmalig, dann gratis</div>
+        </div>
+        <div class="rung">
+          <div class="rg-lvl">STUFE 04</div>
+          <div class="rg-name">LLM-as-Judge</div>
+          <div class="rg-sep"></div>
+          <div class="rg-block"><div class="rg-label">Was</div><div class="rg-val">Ein Modell bewertet den Output gegen eine Rubrik.</div></div>
+          <div class="rg-block"><div class="rg-label">Wann</div><div class="rg-val">„Gut" ist Geschmack/Ton — nicht binär prüfbar.</div></div>
+          <div class="rg-cost">Aufwand: skaliert, aber kostet Tokens</div>
+        </div>
+        <div class="rung dark">
+          <div class="rg-lvl">STUFE 05</div>
+          <div class="rg-name">Production-Signal</div>
+          <div class="rg-sep"></div>
+          <div class="rg-block"><div class="rg-label">Was</div><div class="rg-val">Echte Nutzung misst Qualität: Daumen, Edits, Rückläufer.</div></div>
+          <div class="rg-block"><div class="rg-label">Wann</div><div class="rg-val">Im Betrieb — die einzige Wahrheit, die zählt.</div></div>
+          <div class="rg-cost">Aufwand: laufend, Tooling nötig</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 22px;">
+        <div class="callout-label">Daumenregel</div>
+        <div class="callout-body">
+          Die meisten Teams überspringen Stufe&nbsp;2 — und das ist der teuerste Fehler. <strong>Ein Golden-Set von 20 Fällen</strong> ist die mit Abstand höchste Rendite pro investierter Stunde. Es macht aus „gefühlt besser" ein <em>„+4 Punkte"</em>.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 ANATOMIE EINER EVAL ===================== -->
+  <section data-screen-label="04 Anatomie">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Theorie</span>
+      </div>
+
+      <div class="eyebrow">Woraus eine Eval besteht — und wer den Score vergibt</div>
+      <h2 class="title" style="font-size: 52px;">Vier Teile, ein <span class="accent">Score</span>.</h2>
+
+      <div class="anat-flow">
+        <div class="anat-node">
+          <div class="an-tag">Input</div>
+          <div class="an-name">Der Fall</div>
+          <div class="an-sub">eine echte Eingabe aus deinem Golden-Set</div>
+        </div>
+        <div class="anat-arrow">→</div>
+        <div class="anat-node accent">
+          <div class="an-tag">System</div>
+          <div class="an-name">Das Ding</div>
+          <div class="an-sub">Prompt · Workflow · Agent — was du testest</div>
+        </div>
+        <div class="anat-arrow">→</div>
+        <div class="anat-node">
+          <div class="an-tag">Output</div>
+          <div class="an-name">Die Antwort</div>
+          <div class="an-sub">was tatsächlich herauskommt</div>
+        </div>
+        <div class="anat-arrow">→</div>
+        <div class="anat-node dark">
+          <div class="an-tag">Scorer</div>
+          <div class="an-name">Das Urteil</div>
+          <div class="an-sub">vergleicht Output mit „erwartet" → Zahl</div>
+        </div>
+      </div>
+
+      <p class="body" style="margin: 22px 0 0; max-width: 1700px;">
+        Das Herz ist der <strong>Scorer</strong>: er entscheidet, was „gut" heißt. Vier Familien — von hart-deterministisch bis menschlich. Die Kunst ist, die <em>billigste Familie zu wählen, die noch aussagekräftig ist</em>.
+      </p>
+
+      <div class="scorer-row">
+        <div class="scorer">
+          <div class="sc-kind">deterministisch</div>
+          <div class="sc-name">Exact / Match</div>
+          <div class="sc-sep"></div>
+          <div class="sc-when">Output muss exakt (oder per Regex/Enthält) einem Sollwert entsprechen.</div>
+          <div class="sc-eg">z. B. Klassifikation, Extraktion, „ja/nein"</div>
+        </div>
+        <div class="scorer">
+          <div class="sc-kind">deterministisch</div>
+          <div class="sc-name">Schema / Test</div>
+          <div class="sc-sep"></div>
+          <div class="sc-when">Struktur stimmt? Valides JSON, Code kompiliert, Test grün.</div>
+          <div class="sc-eg">z. B. JSON-Schema, Unit-Test, Linter</div>
+        </div>
+        <div class="scorer">
+          <div class="sc-kind">modellbasiert</div>
+          <div class="sc-name">Rubrik · LLM-Judge</div>
+          <div class="sc-sep"></div>
+          <div class="sc-when">Ein Modell bewertet gegen klare Kriterien (Ton, Vollständigkeit, Hilfreichkeit).</div>
+          <div class="sc-eg">z. B. „1–5: ist die Antwort höflich &amp; korrekt?"</div>
+        </div>
+        <div class="scorer">
+          <div class="sc-kind">menschlich</div>
+          <div class="sc-name">Mensch · Signal</div>
+          <div class="sc-sep"></div>
+          <div class="sc-when">Expert:in urteilt, oder echte Nutzung misst (Daumen, Edits).</div>
+          <div class="sc-eg">z. B. Review-Stichprobe, 👍/👎-Rate</div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 20px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Falle beim Judge</div>
+        <div class="callout-body" style="font-size: 20px;">
+          Ein LLM-as-Judge ist nur so gut wie seine <strong>Rubrik</strong>. „Bewerte die Qualität" liefert Rauschen. „Vergib 0, wenn eine Quelle fehlt; 1, wenn jede Aussage belegt ist" liefert Signal. <em>Und: prüfe den Judge gegen einige menschliche Urteile.</em>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 TRUST KALIBRIEREN ===================== -->
+  <section data-screen-label="05 Trust kalibrieren">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Theorie</span>
+      </div>
+
+      <div class="eyebrow">Die zweite Hälfte — wann ist Prüfen Pflicht?</div>
+      <h2 class="title" style="font-size: 52px;">Vertrauen ist eine <span class="accent">Entscheidung</span>, kein Gefühl.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1700px; font-size: 20px;">
+        Alles selbst nachzuprüfen verbraucht den Produktivitätsgewinn. Blindes Vertrauen untergräbt irgendwann die Organisation. Die Lösung liegt dazwischen — und hängt an zwei Achsen: <strong class="accent">wie groß ist der Schaden, wenn es falsch ist</strong>, und <strong>wie leicht merke &amp; behebe ich es</strong>.
+      </p>
+
+      <div class="tq-wrap">
+        <div class="tq-yaxis">Schaden hoch ←&nbsp;&nbsp;→ Schaden niedrig</div>
+        <div class="tq-grid">
+          <div class="tq-cells">
+            <div class="tq-cell verify">
+              <div class="tq-q">Schaden hoch · schwer prüfbar</div>
+              <div class="tq-act">Verifizieren</div>
+              <div class="tq-desc">Approval-Gate vor der Aktion. Jeder Output wird geprüft, bevor er wirkt. <em>Irreversibel + teuer = kein Vertrauensvorschuss.</em></div>
+            </div>
+            <div class="tq-cell spot">
+              <div class="tq-q">Schaden hoch · leicht prüfbar</div>
+              <div class="tq-act">Stichprobe&nbsp;+</div>
+              <div class="tq-desc">Automatischer Scorer fängt das meiste, Mensch prüft Stichproben &amp; Ausreißer. Sicherheitsnetz statt Vollkontrolle.</div>
+            </div>
+            <div class="tq-cell trust">
+              <div class="tq-q">Schaden niedrig · leicht prüfbar</div>
+              <div class="tq-act">Vertrauen</div>
+              <div class="tq-desc">Laufen lassen. Fehler sind billig und sofort sichtbar — Kontrolle würde mehr kosten als der Schaden.</div>
+            </div>
+            <div class="tq-cell spot2">
+              <div class="tq-q">Schaden niedrig · schwer prüfbar</div>
+              <div class="tq-act">Stichprobe</div>
+              <div class="tq-desc">Gelegentliche Stichproben genügen. Kein Gate, aber auch kein vollständiges Wegsehen — sonst bleibt der Drift unsichtbar.</div>
+            </div>
+          </div>
+          <div class="tq-xaxis"><span>← schwer prüfbar / irreversibel</span><span>leicht prüfbar / reversibel →</span></div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Die eine Frage</div>
+        <div class="callout-body" style="font-size: 20px;">
+          „Wenn die AI hier einen Fehler macht — <strong>wie schnell merke ich es, und wie mache ich es rückgängig?</strong>" Fällt die Antwort leicht → vertrauen. Fällt sie schwer → Gate. <em>Das ist dieselbe Frage wie bei den Guardrails — hier auf Output-Ebene.</em>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06 ÜBUNG TRUST-KALIBRIERUNG ===================== -->
+  <section data-screen-label="06 Übung Trust-Kalibrierung" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Trust-Kalibrierung — vertrauen, stichproben oder verifizieren?</div>
+      <h2 class="title">Wie viel Prüfung braucht <span class="accent">dieser</span> Output?</h2>
+      <p class="ex-instructions" style="margin-top: 8px;">
+        Sechs Fälle. Wähle pro Fall die Strategie — <strong style="color: var(--ok);">Vertrauen</strong>, <strong style="color: var(--accent);">Stichprobe</strong> oder <strong style="color: var(--warn);">Verifizieren</strong>. Denk an die zwei Achsen: <em>Schaden × Prüfbarkeit</em>.
+      </p>
+
+      <div class="ex-stage trust-ex" id="ex-trust">
+        <div class="trust-board">
+          <div class="trust-list" id="trust-list"></div>
+        </div>
+        <div class="matrix-side">
+          <div class="matrix-side-head">Begründung — hover über einen Fall</div>
+          <div class="matrix-explain" id="trust-explain">
+            <div class="matrix-explain-empty">Wähle &amp; hover die Fälle — hier erscheint die Begründung des Experten.</div>
+          </div>
+          <div class="matrix-score" id="trust-score">
+            <div class="ms-label">Match mit Experten-Wahl</div>
+            <div class="ms-val" id="trust-score-val">— / 6</div>
+            <div class="ms-bar"><div id="trust-score-bar" style="width: 0%;"></div></div>
+          </div>
+          <div class="matrix-actions">
+            <button class="btn accent" id="trust-reveal">Vergleich zeigen</button>
+            <button class="btn ghost" id="trust-reset" style="color: #f0ece3; border-color: rgba(255,255,255,0.2);">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 PRAXIS: BAUE DEINE ERSTE EVAL ===================== -->
+  <section data-screen-label="07 Praxis Eval bauen">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Praxis</span>
+      </div>
+
+      <div class="eyebrow">Hands-on — in Paaren, 25 Minuten</div>
+      <h2 class="title" style="font-size: 52px;">Baue deine erste Eval — in <span class="accent">vier Schritten</span>.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1700px; font-size: 20px;">
+        Nehmt eine echte Aufgabe aus eurem Alltag (Dev: z.&nbsp;B. Commit&nbsp;→&nbsp;Changelog · Non-Dev: z.&nbsp;B. Mail&nbsp;→&nbsp;Action-Items). Ziel ist kein Tool, sondern ein <strong>Maßstab</strong>, mit dem ihr zwei Prompt-Varianten ehrlich vergleichen könnt.
+      </p>
+
+      <div class="recipe-row">
+        <div class="recipe-step">
+          <div class="rs-n">SCHRITT 01</div>
+          <div class="rs-name">Fälle sammeln</div>
+          <div class="rs-body">Sucht <strong>5–10 echte Eingaben</strong> — keine ausgedachten. Genau die, die im Alltag vorkommen, inklusive der unbequemen Randfälle.</div>
+          <div class="rs-eg">→ das ist euer Golden-Set</div>
+        </div>
+        <div class="recipe-step">
+          <div class="rs-n">SCHRITT 02</div>
+          <div class="rs-name">„Gut" definieren</div>
+          <div class="rs-body">Schreibt pro Fall (oder als Rubrik) auf, was eine <strong>gute Antwort</strong> ausmacht. Konkret: „nennt die Ticket-Nr.", „keine erfundenen Fakten", „max. 3 Sätze".</div>
+          <div class="rs-eg">→ messbar, nicht „schön"</div>
+        </div>
+        <div class="recipe-step">
+          <div class="rs-n">SCHRITT 03</div>
+          <div class="rs-name">Scorer wählen</div>
+          <div class="rs-body">Eindeutig prüfbar → <strong>Regel/Match</strong>. Geschmack/Ton → <strong>Rubrik</strong> (ihr selbst oder ein LLM-Judge). Nehmt den billigsten, der noch trägt.</div>
+          <div class="rs-eg">→ siehe Scorer-Familien, Folie 04</div>
+        </div>
+        <div class="recipe-step">
+          <div class="rs-n">SCHRITT 04</div>
+          <div class="rs-name">Vergleichen</div>
+          <div class="rs-body">Lasst <strong>zwei Prompt-Varianten</strong> über alle Fälle laufen, scort beide. Die Zahl entscheidet — nicht das Bauchgefühl. Gewinner wird Baseline.</div>
+          <div class="rs-eg">→ A: 7/10 · B: 9/10 → B</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 20px;">
+        <div class="card" style="padding: 18px 24px; border-left: 3px solid var(--ok);">
+          <div class="mono" style="font-size: 12px; color: var(--ok); letter-spacing: 0.12em; text-transform: uppercase;">Ziel der Übung</div>
+          <div style="font-size: 18px; color: var(--ink-2); margin-top: 6px; line-height: 1.45;">
+            Am Ende habt ihr <strong>eine Zahl pro Variante</strong> und könnt den Satz sagen: „Variante&nbsp;B ist um X&nbsp;Punkte besser, <em>weil</em>…". Genau das fehlt den meisten Teams.
+          </div>
+        </div>
+        <div class="card" style="padding: 18px 24px; border-left: 3px solid var(--accent);">
+          <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">Moderations-Hinweis</div>
+          <div style="font-size: 18px; color: var(--ink-2); margin-top: 6px; line-height: 1.45;">
+            Timebox: 10&nbsp;min Schritt&nbsp;1–2, 10&nbsp;min Schritt&nbsp;3–4, 5&nbsp;min Vorstellen. <strong>Ein Paar stellt sein Golden-Set vor</strong> — die Randfälle sind meist die spannendste Diskussion.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08 CHEAT-SHEET ===================== -->
+  <section data-screen-label="08 Cheat Sheet">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 04 · Evaluation &amp; Vertrauen</span><span class="bc-sep">›</span>Mitnehmen</span>
+      </div>
+
+      <div class="cs-head-row">
+        <div class="cs-head-main">
+          <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
+          <h2 class="title" style="font-size: 56px; margin-bottom: 14px;">Evaluation &amp; Vertrauen auf <span class="accent">einer Seite</span>.</h2>
+          <p class="body" style="margin: 0; max-width: 1150px; font-size: 19px;">
+            Vier Scorer-Familien — wann, womit, Failure-Mode, Daumenregel. Plus drei Heuristiken für den Alltag.
+          </p>
+        </div>
+        <div class="cs-emblem" aria-hidden="true">
+          <span class="em-cap">Golden-Set · A vs B</span>
+          <div class="ev-row a"><span class="ev-tag">A</span><span class="ev-track"><span class="ev-fill"></span></span><span class="ev-pct">7/10</span></div>
+          <div class="ev-row b"><span class="ev-tag">B</span><span class="ev-track"><span class="ev-fill"></span></span><span class="ev-pct">9/10</span></div>
+          <div class="ev-foot"><span>10 Fälle · gemessen</span><span class="ev-win">→ B gewinnt</span></div>
+        </div>
+      </div>
+
+      <div class="cs-grid">
+        <div class="cs-card">
+          <div class="cs-num">SCORER 01</div>
+          <div class="cs-name">Exact / Match</div>
+          <div class="cs-row"><div class="cs-label">Wann</div><div class="cs-val">„Richtig" ist eindeutig</div></div>
+          <div class="cs-row"><div class="cs-label">Womit</div><div class="cs-val mono">==, Regex, contains</div></div>
+          <div class="cs-row"><div class="cs-label">Failure-Mode</div><div class="cs-val">straft korrekte Synonyme/Formate ab</div></div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;"><div class="cs-label" style="color: var(--accent);">Daumenregel</div><div class="cs-val"><strong>Erst hier suchen — am billigsten.</strong></div></div>
+        </div>
+        <div class="cs-card">
+          <div class="cs-num">SCORER 02</div>
+          <div class="cs-name">Schema / Test</div>
+          <div class="cs-row"><div class="cs-label">Wann</div><div class="cs-val">Struktur/Verhalten zählt</div></div>
+          <div class="cs-row"><div class="cs-label">Womit</div><div class="cs-val mono">JSON-Schema · Unit-Test</div></div>
+          <div class="cs-row"><div class="cs-label">Failure-Mode</div><div class="cs-val">grün ≠ richtig — prüft Form, nicht Sinn</div></div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;"><div class="cs-label" style="color: var(--accent);">Daumenregel</div><div class="cs-val"><strong>Form automatisch, Sinn separat.</strong></div></div>
+        </div>
+        <div class="cs-card">
+          <div class="cs-num">SCORER 03</div>
+          <div class="cs-name">Rubrik · Judge</div>
+          <div class="cs-row"><div class="cs-label">Wann</div><div class="cs-val">„Gut" = Ton, Vollständigkeit</div></div>
+          <div class="cs-row"><div class="cs-label">Womit</div><div class="cs-val mono">LLM + klare Rubrik</div></div>
+          <div class="cs-row"><div class="cs-label">Failure-Mode</div><div class="cs-val">vage Rubrik → Rauschen; Judge irrt</div></div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;"><div class="cs-label" style="color: var(--accent);">Daumenregel</div><div class="cs-val"><strong>Rubrik schärfen, Judge gegenprüfen.</strong></div></div>
+        </div>
+        <div class="cs-card dark">
+          <div class="cs-num">SCORER 04</div>
+          <div class="cs-name">Mensch · Signal</div>
+          <div class="cs-row"><div class="cs-label">Wann</div><div class="cs-val">Hoher Einsatz / echte Nutzung</div></div>
+          <div class="cs-row"><div class="cs-label">Womit</div><div class="cs-val mono">Review · 👍/👎 · Edit-Rate</div></div>
+          <div class="cs-row"><div class="cs-label">Failure-Mode</div><div class="cs-val">teuer, langsam, skaliert nicht allein</div></div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;"><div class="cs-label" style="color: var(--accent-soft);">Daumenregel</div><div class="cs-val"><strong>Sparsam — als Eichmaß für die anderen.</strong></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 22px;">
+        <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Wenn / Dann · drei Heuristiken</div>
+        <div class="cs-rules">
+          <div class="cs-rule">
+            <div class="r-when">Wenn du einen Prompt zum 2. Mal änderst</div>
+            <div class="r-then"><strong>Bau ein Golden-Set.</strong> 20 Fälle reichen. Ab jetzt entscheidet die Zahl, nicht das Gefühl.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn ein Output irreversibel wirkt</div>
+            <div class="r-then"><strong>Verifizieren, nicht vertrauen.</strong> Gate davor — Vertrauen gibt es nur, wo Fehler billig &amp; sichtbar sind.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn „es fühlt sich besser an"</div>
+            <div class="r-then"><strong>Frag: besser als was, gemessen woran?</strong> Ohne Baseline ist es Bewegung, kein Fortschritt.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Take-away</div>
+        <div class="callout-body" style="font-size: 19px;">
+          Evaluation macht Qualität <strong>vergleichbar</strong>; Trust-Kalibrierung macht sie <strong>handhabbar</strong>. Zusammen verwandeln sie „ich hoffe, es klappt" in „<em>ich weiß, wie gut es ist — und was passiert, wenn nicht</em>".
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- Exercise scripts -->
+<script src="exercises/trust-calibration.js"></script>
+<script src="exercises/role-switch.js"></script>
+</body>
+</html>

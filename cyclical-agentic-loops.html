@@ -1,0 +1,1705 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Cyclical Agentic Loops — Loops selber entwerfen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <!-- linear (top) -->
+    <g opacity="0.35">
+      <rect x="200" y="200" width="160" height="90" rx="10" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+      <rect x="420" y="200" width="160" height="90" rx="10" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+      <rect x="640" y="200" width="160" height="90" rx="10" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+      <rect x="860" y="200" width="160" height="90" rx="10" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+      <line x1="360" y1="245" x2="420" y2="245" stroke="#15110c" stroke-width="3"/>
+      <line x1="580" y1="245" x2="640" y2="245" stroke="#15110c" stroke-width="3"/>
+      <line x1="800" y1="245" x2="860" y2="245" stroke="#15110c" stroke-width="3"/>
+      <text x="600" y="170" text-anchor="middle" font-family="monospace" font-size="22" fill="#15110c">CHAIN — linear</text>
+    </g>
+    <!-- cyclical (bottom) -->
+    <g>
+      <circle cx="400" cy="540" r="70" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+      <text x="400" y="548" text-anchor="middle" font-family="serif" font-size="22" fill="#15110c">Reason</text>
+      <circle cx="700" cy="430" r="70" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+      <text x="700" y="438" text-anchor="middle" font-family="serif" font-size="22" fill="#15110c">Act</text>
+      <circle cx="1000" cy="540" r="70" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
+      <text x="1000" y="548" text-anchor="middle" font-family="serif" font-size="22" fill="#fff">Observe</text>
+      <path d="M 470 540 Q 550 400 630 430" stroke="#15110c" stroke-width="3" fill="none" marker-end="url(#a)"/>
+      <path d="M 770 430 Q 850 400 930 540" stroke="#15110c" stroke-width="3" fill="none" marker-end="url(#a)"/>
+      <path d="M 985 612 Q 700 750 415 612" stroke="#c8421f" stroke-width="3" fill="none" stroke-dasharray="6 4" marker-end="url(#b)"/>
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#15110c"/></marker>
+        <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#c8421f"/></marker>
+      </defs>
+      <text x="700" y="370" text-anchor="middle" font-family="monospace" font-size="22" fill="#c8421f">LOOP — cyclical</text>
+    </g>
+    <text x="600" y="100" text-anchor="middle" font-family="serif" font-size="48" fill="#15110c" font-weight="500">Cyclical Agentic Loops</text>
+  </svg>
+</template>
+
+<link rel="stylesheet" href="exercises/exercises.css" />
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --quiz-ok: #3d8a4a;
+    --quiz-no: #a83020;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    /* projection-appropriate type scale (1920×1080) */
+    --type-title: 88px;
+    --type-h2: 64px;
+    --type-subtitle: 42px;
+    --type-lede: 30px;
+    --type-body: 26px;
+    --type-small: 19px;
+    --type-mono: 23px;
+    --type-eyebrow: 18px;
+    --pad-top: 56px;
+    --pad-bottom: 56px;
+    --pad-x: 80px;
+    --gap-title: 36px;
+    --gap-item: 22px;
+  }
+
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* shared chrome */
+  .chrome {
+    position: absolute;
+    inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 44px 0 26px;
+  }
+
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: var(--type-h2); line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1600px;
+  }
+  h3.subtitle {
+    font-size: var(--type-subtitle); line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede {
+    font-size: var(--type-lede); line-height: 1.4; color: var(--ink-2);
+    max-width: 1500px;
+  }
+  p.body {
+    font-size: var(--type-body); line-height: 1.5; color: var(--ink-2);
+    max-width: 1100px;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* card primitives */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+  .card.dark {
+    background: var(--ink); color: #f0ece3;
+    border-color: var(--ink);
+  }
+
+  /* Mitnehmen: statisches Echo der Übersichtskachel-Animation (.a-cycle auf index.html) */
+  .cs-head-row { display: flex; align-items: center; gap: 44px; }
+  .cs-head-row .cs-head-main { flex: 1; min-width: 0; }
+  .cs-emblem {
+    flex: 0 0 auto; width: 320px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 18px 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    box-shadow: 0 14px 32px -26px rgba(21,17,12,0.5);
+  }
+  .cs-emblem .em-cap { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); align-self: flex-start; }
+  .cs-emblem .orbit-wrap { height: 200px; display: grid; place-items: center; width: 100%; }
+  .cs-emblem .orbit {
+    position: relative; width: 130px; height: 130px;
+    border: 1.5px dashed rgba(21,17,12,0.32); border-radius: 50%;
+    display: grid; place-items: center;
+  }
+  .cs-emblem .planet { position: absolute; top: -6px; left: 50%; margin-left: -6px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+  .cs-emblem .core {
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink);
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 999px; padding: 4px 12px;
+  }
+  .cs-emblem .station {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2);
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 999px; padding: 3px 10px; white-space: nowrap;
+  }
+  .cs-emblem .station.st1 { margin-top: -65px; }
+  .cs-emblem .station.st2 { margin-left: 56px; margin-top: 33px; }
+  .cs-emblem .station.st3 { margin-left: -56px; margin-top: 33px; }
+
+  /* Merksatz callout */
+  .callout {
+    margin-top: 24px;
+    padding: 20px 28px;
+    min-height: 76px;
+    box-sizing: border-box;
+    display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+
+  /* ===== Übungs-Slides ===== */
+  .qrow {
+    display: grid; grid-template-columns: 48px 1fr; gap: 18px;
+    align-items: start;
+  }
+  .qrow + .qrow { margin-top: 14px; }
+  .qrow .letter {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 20px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0;
+  }
+  .qrow .qtext { font-size: 21px; line-height: 1.45; color: var(--ink-2); padding-top: 8px; }
+  .qrow .qtext em { color: var(--ink); font-style: italic; }
+  .qrow .qtext .blank {
+    display: inline-block; min-width: 140px;
+    border-bottom: 1.5px dashed var(--ink-3); margin: 0 6px;
+    color: transparent;
+  }
+
+  .solution-row {
+    display: grid; grid-template-columns: 48px 1fr 1fr; gap: 16px;
+    align-items: center;
+    padding: 10px 0;
+  }
+  .solution-row + .solution-row { border-top: 1px solid rgba(255,255,255,0.10); }
+  .solution-row .letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 17px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .solution-row .stext { font-size: 17px; line-height: 1.35; color: #d8d2c5; }
+  .solution-row .schoice {
+    font-family: var(--mono); font-size: 17px; color: #f0ece3;
+    font-weight: 500; letter-spacing: 0.02em;
+  }
+  .solution-row .schoice small {
+    display: block; font-family: var(--sans); font-size: 14px;
+    font-weight: 400; color: #c8c2b6; margin-top: 2px; letter-spacing: 0;
+  }
+
+  .options-rail {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    margin-top: 14px;
+  }
+  .options-rail .opt {
+    background: var(--bg-2); border: 1px solid var(--hair);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .options-rail .opt .opt-name {
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    color: var(--ink);
+  }
+  .options-rail .opt .opt-tag {
+    font-size: 13px; line-height: 1.35; color: var(--ink-3); margin-top: 4px;
+  }
+
+  /* ===== Interaktive Quiz-Mechanik ===== */
+  .quiz { display: flex; flex-direction: column; gap: 10px; }
+
+  .qitem {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(380px, 1.15fr);
+    column-gap: 26px;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+  }
+  .qitem .qbody { grid-column: 1; grid-row: 1; font-size: 19px; line-height: 1.4; color: var(--ink-2); }
+  .qitem .qbody em { color: var(--ink); font-style: italic; }
+  /* Buttons und Auflösung teilen dieselbe Zelle (Spalte 2): die Antwort ersetzt
+     die Buttons an Ort und Stelle. Beide liegen übereinander, das versteckte
+     Element reserviert seine Höhe — die Zeile springt beim Antworten nicht. */
+  .qitem .qchoices {
+    grid-column: 2; grid-row: 1;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qchoices { opacity: 0; visibility: hidden; pointer-events: none; }
+  .qitem .qfb {
+    grid-column: 2; grid-row: 1;
+    align-self: center;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--ink-3); line-height: 1.4;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.25s ease;
+  }
+  .qitem.answered .qfb { opacity: 1; visibility: visible; }
+  .qitem .qfb .qfb-tag { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em; }
+  .qitem .qfb .qfb-tag.ok { color: var(--quiz-ok); font-weight: 600; }
+  .qitem .qfb .qfb-tag.no { color: var(--quiz-no); font-weight: 600; }
+  .qitem .qfb b, .qitem .qfb em { color: var(--ink); }
+  .qitem.answered .qfb .ok { color: var(--quiz-ok); font-weight: 600; }
+  .qitem.answered .qfb .no { color: var(--quiz-no); font-weight: 600; }
+
+  .qchoice {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    padding: 7px 12px; border-radius: 8px;
+    background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+    white-space: nowrap;
+  }
+  .qchoice:hover { background: var(--ink); color: var(--bg); }
+  .qchoice:active { transform: translateY(1px); }
+  .qchoice.picked-ok { background: var(--quiz-ok); color: #fff; border-color: var(--quiz-ok); }
+  .qchoice.picked-no { background: var(--quiz-no); color: #fff; border-color: var(--quiz-no); }
+  .qchoice.show-ok { border-color: var(--quiz-ok); color: var(--quiz-ok); background: transparent; border-style: dashed; }
+  .qitem.answered .qchoice { pointer-events: none; opacity: 0.85; }
+  .qitem.answered .qchoice.picked-ok,
+  .qitem.answered .qchoice.picked-no,
+  .qitem.answered .qchoice.show-ok { opacity: 1; }
+
+  /* Multiple-Choice-Karten für A2A / MCP */
+  .mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mcq {
+    text-align: left; cursor: pointer; appearance: none;
+    background: var(--paper); border: 1.5px solid var(--hair);
+    border-radius: 14px; padding: 20px 24px;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.05s;
+  }
+  .mcq:hover { border-color: var(--ink); }
+  .mcq:active { transform: translateY(1px); }
+  .mcq .mcq-head { display: flex; gap: 14px; align-items: baseline; }
+  .mcq .mcq-letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mcq .mcq-title { font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.25; color: var(--ink); text-align: left; }
+  .mcq .mcq-note { font-size: 17px; color: var(--ink-2); margin: 8px 0 0 54px; line-height: 1.4; }
+  .mcq.picked-ok { border-color: var(--quiz-ok); background: color-mix(in oklab, var(--quiz-ok) 8%, var(--paper)); }
+  .mcq.picked-no { border-color: var(--quiz-no); background: color-mix(in oklab, var(--quiz-no) 6%, var(--paper)); }
+  .mcq.show-ok { border-color: var(--quiz-ok); border-style: dashed; }
+  .mcq.picked-ok .mcq-letter, .mcq.show-ok .mcq-letter { background: var(--quiz-ok); }
+  .mcq.picked-no .mcq-letter { background: var(--quiz-no); }
+  .mcq-grid.answered .mcq { pointer-events: none; }
+
+  /* Reveal-Button */
+  .reveal-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 14px; gap: 16px;
+  }
+  .reveal-status {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .reveal-status .score { color: var(--ink); font-weight: 600; }
+  .qbutton {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--bg); border: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .qbutton:hover { background: var(--accent); }
+  .qbutton:active { transform: translateY(1px); }
+  .qbutton.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .qbutton.ghost:hover { background: var(--ink); color: var(--bg); }
+  /* invite-interaction pulse — same expanding accent ring used across the course's sliders & buttons.
+     Primary (non-ghost) quiz buttons pulse until hovered / disabled. */
+  .qbutton:not(.ghost):not(:disabled) { animation: qbtn-attention-pulse 2.2s ease-out infinite; }
+  @keyframes qbtn-attention-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,66,31,0.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(200,66,31,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  .qbutton:not(.ghost):hover { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .qbutton:not(.ghost) { animation: none; }
+  }
+
+  /* ===== Workshop-Agenda ===== */
+  .agenda-row {
+    display: grid; grid-template-columns: 72px 1fr 92px;
+    gap: 20px; align-items: center;
+    padding: 14px 20px;
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px;
+  }
+  .agenda-row.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .agenda-row .a-num {
+    font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.08em;
+  }
+  .agenda-row.dark .a-num { color: var(--accent-soft); }
+  .agenda-row .a-title {
+    font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15;
+  }
+  .agenda-row .a-desc {
+    font-size: 16px; color: var(--ink-3); margin-top: 3px; line-height: 1.35;
+  }
+  .agenda-row.dark .a-desc { color: #c8c2b6; }
+  .agenda-row .a-time {
+    font-family: var(--mono); font-size: 17px; text-align: right;
+    color: var(--accent);
+  }
+  .agenda-row.dark .a-time { color: var(--accent-soft); }
+
+  .goal {
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 18px; color: var(--ink-2); line-height: 1.4;
+  }
+  .goal strong { color: var(--ink); }
+
+  /* ===== Cheat-Sheet ===== */
+  .cs-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .cs-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cs-card .cs-num {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em;
+  }
+  .cs-card.dark .cs-num { color: var(--accent-soft); }
+  .cs-card .cs-name {
+    font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .cs-card .cs-row { margin-top: 14px; }
+  .cs-card .cs-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .cs-card.dark .cs-label { color: #c8c2b6; }
+  .cs-card .cs-val {
+    font-size: 15.5px; color: var(--ink-2); line-height: 1.4; margin-top: 3px;
+  }
+  .cs-card.dark .cs-val { color: #d8d2c5; }
+  .cs-card .cs-val.mono { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+  .cs-card.dark .cs-val.mono { color: #f0ece3; }
+
+  .cs-rules {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-top: 14px;
+  }
+  .cs-rule {
+    background: transparent; border: 1px dashed var(--hair);
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .cs-rule .r-when {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cs-rule .r-then {
+    font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;
+  }
+  .cs-rule .r-then strong { color: var(--ink); }
+
+  /* ===== Echte Praxis · Pair-Programming ===== */
+  .role-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; flex-direction: column;
+  }
+  .role-card .r-tag {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .role-card .r-name {
+    font-family: var(--serif); font-size: 30px; font-weight: 500;
+    line-height: 1; margin-top: 4px;
+  }
+  .role-card .r-sub {
+    font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .role-card .r-body {
+    font-size: 16px; color: var(--ink-2); line-height: 1.45; margin-top: 10px;
+  }
+
+  .gate-list { display: flex; flex-direction: column; gap: 10px; }
+  .gate-list .gate-item {
+    display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+    padding: 8px 0;
+  }
+  .gate-list .gate-item + .gate-item { border-top: 1px solid rgba(255,255,255,0.10); }
+  .gate-list .g-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gate-list .g-body { font-size: 16px; line-height: 1.35; color: #d8d2c5; padding-top: 5px; }
+  .gate-list .g-body strong { color: #f0ece3; }
+  .gate-list .g-body em {
+    display: block; font-family: var(--mono); font-style: normal;
+    font-size: 14px; color: var(--accent-soft); margin-top: 3px;
+  }
+
+  .task-row {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 14px; align-items: start;
+    padding: 9px 0;
+  }
+  .task-row + .task-row { border-top: 1px solid var(--hair); }
+  .task-row .t-letter {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-row .t-body { font-size: 16px; line-height: 1.4; color: var(--ink-2); padding-top: 4px; }
+  .task-row .t-body strong { color: var(--ink); }
+
+  /* Aufklapp-Erklärung nach Auflösung (für Übung 3 + 4) */
+  .explain {
+    margin-top: 16px;
+    background: var(--ink); color: #d8d2c5;
+    border-radius: 14px; padding: 18px 26px;
+    display: none;
+  }
+  .explain.open { display: block; }
+  .explain strong { color: #f0ece3; }
+  .explain .explain-accent { color: var(--accent-soft); font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* ===== Audience-Switcher (role-switch.js) ===== */
+  /* unter die Kopfzeilen-Linie, rechtsbündig zur Inhaltskante */
+  section[data-screen-label] > .role-toggle {
+    top: 132px; right: var(--pad-x);
+  }
+</style>
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+
+<body>
+<deck-stage>
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — Vom Chain zum Loop</div>
+      <h1 class="title" style="margin-top: 18px;">Cyclical<br/>Agentic <span class="accent">Loops</span>.</h1>
+
+      <h3 class="subtitle" style="margin-top: 18px;">
+        Lineare KI-Pipelines fallen beim ersten Fehler um. Zyklische Loops denken nochmal.<br/>
+        Heute zerlegen wir sie — und entwerfen welche.
+      </h3>
+
+      <div style="display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 22px; padding: 8px 18px;">Reason → Act → Observe</span>
+        <span class="pill outline" style="font-size: 22px; padding: 8px 18px;">State statt Amnesie</span>
+        <span class="pill outline" style="font-size: 22px; padding: 8px 18px;">Notausgang &amp; Max-Iter</span>
+        <span class="pill accent" style="font-size: 22px; padding: 8px 18px;">4 Übungen zum selber entwerfen</span>
+      </div>
+
+      <div style="margin-top: auto; padding-bottom: 8px;">
+        <div style="font-family: var(--mono); font-size: 20px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 14px;">
+          <span style="display: inline-block; width: 28px; height: 1px; background: var(--accent);"></span>
+          Quelle · dev.to / Programming Central
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 60px 1fr; gap: 20px; align-items: center;">
+          <!-- Linear chain -->
+          <div style="background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 16px 26px;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Gestern</div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin: 6px 0 14px;">Linear Chain</div>
+            <div style="display: flex; gap: 8px; align-items: center; font-family: var(--mono); font-size: 16px;">
+              <span style="background: var(--bg-2); padding: 8px 12px; border-radius: 8px;">A</span>
+              <span class="mono" style="color: var(--ink-3);">→</span>
+              <span style="background: var(--bg-2); padding: 8px 12px; border-radius: 8px;">B</span>
+              <span class="mono" style="color: var(--ink-3);">→</span>
+              <span style="background: var(--bg-2); padding: 8px 12px; border-radius: 8px;">C</span>
+              <span class="mono" style="color: var(--quiz-no);">✗ crash</span>
+            </div>
+            <div style="font-size: 16px; color: var(--ink-3); margin-top: 10px; line-height: 1.4;">
+              Ein Fehler in Schritt B — die ganze Kette fällt um.
+            </div>
+          </div>
+
+          <div class="mono accent" style="font-size: 36px; text-align: center;">vs.</div>
+
+          <!-- Cyclical loop -->
+          <div style="background: var(--ink); border: 1px solid var(--ink); border-radius: 14px; padding: 16px 26px; color: #f0ece3;">
+            <div class="mono" style="font-size: 14px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Heute</div>
+            <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin: 6px 0 14px; color: #f0ece3;">Cyclical Loop</div>
+            <div style="display: flex; gap: 8px; align-items: center; font-family: var(--mono); font-size: 16px;">
+              <span style="background: rgba(255,255,255,0.10); padding: 8px 12px; border-radius: 8px;">Reason</span>
+              <span style="color: var(--accent-soft);">→</span>
+              <span style="background: rgba(255,255,255,0.10); padding: 8px 12px; border-radius: 8px;">Act</span>
+              <span style="color: var(--accent-soft);">→</span>
+              <span style="background: rgba(255,255,255,0.10); padding: 8px 12px; border-radius: 8px;">Observe</span>
+              <span style="color: var(--accent-soft);">↺</span>
+            </div>
+            <div style="font-size: 16px; color: #c8c2b6; margin-top: 10px; line-height: 1.4;">
+              Fehler beobachten, umplanen, nochmal — bis Stopp-Kriterium erreicht.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 02 ARTIKEL-KERN ===================== -->
+  <section data-screen-label="02 Artikel Kern" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">„Why Linear AI Chains Are Dead"</div>
+      <h2 class="title" style="font-size: 60px;">Der Loop ist die <span class="accent">Recovery-Strategie</span>, die Chains nie hatten.</h2>
+
+      <p class="lede" style="margin-top: 4px; max-width: 1600px;">
+        Beispiel aus dem Artikel: <em>„Hol den Apple-Aktienkurs, fasse die News zusammen, schreib einen Tweet."</em> Drei Schritte, eine Frage — was passiert, wenn Schritt 2 ein Rate-Limit fängt?
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; flex: 1; min-height: 0;">
+
+        <!-- Chain failure -->
+        <div class="card" style="display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 13px; color: var(--quiz-no); letter-spacing: 0.12em; text-transform: uppercase;">Chain · was passiert</div>
+          <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin: 6px 0 14px;">„Sorry, das hat nicht geklappt."</div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--ink-3); font-size: 14px; min-width: 28px;">01</span>
+              <span style="font-size: 18px; color: var(--ink-2);">Kurs holen → ok</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--quiz-no); font-size: 14px; min-width: 28px;">02</span>
+              <span style="font-size: 18px; color: var(--ink-2);" data-nd='News-API → <span class="mono" style="color: var(--quiz-no);">gesperrt</span>'>News-API → <span class="mono" style="color: var(--quiz-no);">429 rate-limited</span></span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--ink-3); font-size: 14px; min-width: 28px;">03</span>
+              <span style="font-size: 18px; color: var(--ink-3); text-decoration: line-through;">Tweet schreiben</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline; margin-top: 6px;">
+              <span class="mono" style="color: var(--quiz-no); font-size: 14px; min-width: 28px;">→</span>
+              <span style="font-size: 18px; color: var(--ink); font-weight: 500;">Pipeline crasht. User bekommt einen Error.</span>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top: auto; border-left-color: var(--quiz-no);">
+            <div class="callout-label" style="color: var(--quiz-no);">Brittle</div>
+            <div class="callout-body">Linear ist gut für <strong>deterministische Transformationen</strong> — und schlecht für alles, was schiefgehen kann.</div>
+          </div>
+        </div>
+
+        <!-- Loop recovery -->
+        <div class="card dark" style="display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 13px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Loop · was passiert</div>
+          <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin: 6px 0 14px; color: #f0ece3;">„Rate-Limit — ich versuch's mit Cache."</div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--accent-soft); font-size: 14px; min-width: 28px;">act</span>
+              <span style="font-size: 18px; color: #d8d2c5;">News-API aufrufen</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--accent-soft); font-size: 14px; min-width: 28px;">obs</span>
+              <span style="font-size: 18px; color: #d8d2c5;"><span class="mono" style="color: var(--accent-soft);">429</span> — Tool-Fehler im State protokollieren</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--accent-soft); font-size: 14px; min-width: 28px;">reason</span>
+              <span style="font-size: 18px; color: #d8d2c5;">„API blockiert — nimm Cache + warne im Tweet."</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--accent-soft); font-size: 14px; min-width: 28px;">act</span>
+              <span style="font-size: 18px; color: #d8d2c5;">cachedNews(7d) aufrufen → ok</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: baseline;">
+              <span class="mono" style="color: var(--accent-soft); font-size: 14px; min-width: 28px;">→</span>
+              <span style="font-size: 18px; color: #f0ece3; font-weight: 500;">Tweet gepostet. Nutzer merkt nichts.</span>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top: auto; background: rgba(255,255,255,0.06); border-left-color: var(--accent-soft); color: #d8d2c5;">
+            <div class="callout-label" style="color: var(--accent-soft);">Resilient</div>
+            <div class="callout-body" style="color: #d8d2c5;">Der Loop sieht den Fehler im <strong style="color: #f0ece3;">State</strong> und reagiert — wie ein Mensch beim zweiten Versuch.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 ANATOMIE ===================== -->
+  <section data-screen-label="03 Anatomie ReAct" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Was steckt im Loop?</div>
+      <h2 class="title" style="font-size: 56px;">Drei Phasen, vier Bauteile — <span class="accent">mehr nicht</span>.</h2>
+
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 21px;">
+        ReAct (<em>Reason + Act</em>) ist nicht nur ein Prompt-Trick. Es ist eine <strong data-nd='feste Denk-Schleife'>Zustandsmaschine</strong>: das Modell denkt, ruft ein Tool, sieht das Ergebnis, denkt nochmal — bis ein Stopp-Kriterium hält.
+      </p>
+
+      <!-- ReAct-Diagramm: 3 Phasen -->
+      <div style="display: grid; grid-template-columns: 1fr 36px 1fr 36px 1fr; gap: 12px; align-items: stretch; margin-top: 22px;">
+        <div style="background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px; padding: 18px 22px;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Phase 01 · Thought</div>
+          <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin-top: 4px;">Reason</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 6px; line-height: 1.4;">
+            Modell liest den State, formuliert den nächsten Schritt.
+          </div>
+        </div>
+        <div class="mono accent" style="font-size: 28px; align-self: center; text-align: center;">→</div>
+        <div style="background: var(--paper); border: 1.5px solid var(--ink); border-radius: 14px; padding: 18px 22px;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Phase 02 · Action</div>
+          <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin-top: 4px;">Act</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 6px; line-height: 1.4;">
+            Tool-Aufruf — eine deterministische, isolierte Funktion.
+          </div>
+        </div>
+        <div class="mono accent" style="font-size: 28px; align-self: center; text-align: center;">→</div>
+        <div style="background: var(--accent); border: 1.5px solid var(--accent); border-radius: 14px; padding: 18px 22px; color: #fff; position: relative;">
+          <div class="mono" style="font-size: 12px; color: rgba(255,255,255,0.85); letter-spacing: 0.12em; text-transform: uppercase;">Phase 03 · Observation</div>
+          <div style="font-family: var(--serif); font-size: 30px; font-weight: 500; margin-top: 4px;">Observe</div>
+          <div style="font-size: 16px; color: rgba(255,255,255,0.92); margin-top: 6px; line-height: 1.4;">
+            Ergebnis (oder Fehler) landet im State — und triggert Reason neu.
+          </div>
+          <div style="position: absolute; right: -8px; top: -10px; font-family: var(--mono); font-size: 13px; color: var(--accent); background: var(--bg); padding: 2px 8px; border-radius: 999px; border: 1.5px solid var(--accent);">↺ back to Reason</div>
+        </div>
+      </div>
+
+      <!-- 4 Bauteile -->
+      <div style="margin-top: 28px;">
+        <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Die 4 Bauteile · Microservice-Analogie aus dem Artikel</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+
+          <div class="card" style="padding: 18px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Bauteil 01</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px;">Model</div>
+            <div style="font-size: 14px; color: var(--ink-3); font-style: italic; margin-top: 2px;" data-nd='das Gehirn · trifft Entscheidungen'>das Gehirn · API-Gateway</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+              Interpretiert Intent, routet Aufrufe. Hält selbst <strong>keine Daten</strong>.
+            </div>
+          </div>
+
+          <div class="card" style="padding: 18px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Bauteil 02</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px;">Tools</div>
+            <div style="font-size: 14px; color: var(--ink-3); font-style: italic; margin-top: 2px;" data-nd='die Werkzeuge'>die Microservices</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+              Zustandslose Funktionen — fetchen, rechnen, schreiben. Wissen nichts vom Workflow.
+            </div>
+          </div>
+
+          <div class="card" style="padding: 18px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Bauteil 03</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px;">Memory</div>
+            <div style="font-size: 14px; color: var(--ink-3); font-style: italic; margin-top: 2px;" data-nd='der gemeinsame Speicher'>der Shared State</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+              Mutables Objekt, das den Loop überlebt. Ohne State → Agent mit <strong>Amnesie</strong>.
+            </div>
+          </div>
+
+          <div class="card dark" style="padding: 18px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">Bauteil 04</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; color: #f0ece3;">Orchestration</div>
+            <div style="font-size: 14px; color: #c8c2b6; font-style: italic; margin-top: 2px;" data-nd='der Dirigent'>der Event-Bus</div>
+            <div style="font-size: 15px; color: #d8d2c5; margin-top: 10px; line-height: 1.4;">
+              Definiert die <strong style="color: #f0ece3;">Edges</strong> — wann gehst du wohin? Wann zurück? Wann raus?
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">Wenn du einen Loop entwirfst, beantwortest du <strong>vier Fragen</strong>: Was ist der State? Was sind die Nodes? Wann loopst du zurück? Und wann brichst du ab?</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 ÜBUNG 1 — CHAIN ODER LOOP ===================== -->
+  <section data-screen-label="04 Übung 1 Chain oder Loop">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Warm-up · die richtige Topologie</div>
+      <h2 class="title" style="font-size: 42px; margin-bottom: 6px;">Linear oder zyklisch — was passt zur <span class="accent">Aufgabe</span>?</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
+        Faustregel: deterministisch &amp; einmalig → <strong>Chain</strong>. Adaptiv, fehleranfällig, mit Re-Plan → <strong>Loop</strong>.
+      </p>
+
+      <!-- Legende -->
+      <div class="options-rail" style="grid-template-columns: repeat(2, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Chain</div><div class="opt-tag">A → B → C · ein Durchlauf, fertig</div></div>
+        <div class="opt"><div class="opt-name">Loop</div><div class="opt-tag">Reason ↔ Act ↔ Observe · iterieren bis Stopp</div></div>
+      </div>
+
+      <div class="quiz" data-quiz="chain-or-loop" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="chain">
+          <div class="qbody"><em>„Übersetze diesen deutschen Absatz ins Englische."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chain">Chain</button>
+            <button class="qchoice" data-key="loop">Loop</button>
+          </div>
+          <div class="qfb" data-why="ein Schritt, ein Ergebnis, kein Re-Plan nötig."></div>
+        </div>
+
+        <div class="qitem" data-correct="loop">
+          <div class="qbody"><em>„Hol den Apple-Aktienkurs, fasse die News zusammen, schreib einen Tweet."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chain">Chain</button>
+            <button class="qchoice" data-key="loop">Loop</button>
+          </div>
+          <div class="qfb" data-why="drei Tool-Aufrufe, jeder kann scheitern (Rate-Limit, leere News). Recovery nur per Loop."></div>
+        </div>
+
+        <div class="qitem" data-correct="chain">
+          <div class="qbody" data-nd='<em>„Bring diese Tabelle ins Format der Partner-Schnittstelle.“</em>'><em>„Wandle diese CSV-Datei in JSON um."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chain">Chain</button>
+            <button class="qchoice" data-key="loop">Loop</button>
+          </div>
+          <div class="qfb" data-why="deterministische Transformation. Loop wäre Overkill."></div>
+        </div>
+
+        <div class="qitem" data-correct="loop">
+          <div class="qbody" data-nd='<em>„Überarbeite diesen Bericht, bis er die Freigabe-Checkliste erfüllt — du darfst die Prüfung wiederholen.“</em>'><em>„Debugge diesen failing Test, bis er grün ist — du darfst Tests laufen lassen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chain">Chain</button>
+            <button class="qchoice" data-key="loop">Loop</button>
+          </div>
+          <div class="qfb" data-why="Test-Output ist die Observation, die den nächsten Edit triggert. Inner Loop par excellence." data-why-nd="das Prüf-Ergebnis ist die Beobachtung, die die nächste Überarbeitung auslöst. Klassischer Korrektur-Loop."></div>
+        </div>
+
+        <div class="qitem" data-correct="chain">
+          <div class="qbody"><em>„Klassifiziere dieses Support-Ticket in Low / Medium / High / Urgent."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chain">Chain</button>
+            <button class="qchoice" data-key="loop">Loop</button>
+          </div>
+          <div class="qfb" data-why="Single-Shot Klassifikation. <em>Erst</em> wenn du eine Reflexions-Regel dazunimmst („Urgent nur wenn 'outage'&quot;) wird's ein Loop."></div>
+        </div>
+
+        <div class="qitem" data-correct="loop">
+          <div class="qbody"><em>„Plane mir eine Reise mit Budget 1.500 € — wenn das Wunsch-Hotel ausgebucht ist, such eine Alternative."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="chain">Chain</button>
+            <button class="qchoice" data-key="loop">Loop</button>
+          </div>
+          <div class="qfb" data-why="„wenn ausgebucht, such Alternative&quot; <em>ist</em> die Loop-Bedingung. Plus Budget-Check als Exit."></div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · <em>Frag dich: kann hier etwas schiefgehen, was Re-Plan erfordert?</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 ÜBUNG 2 — REACT-PHASE ===================== -->
+  <section data-screen-label="05 Übung 2 ReAct Phase">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Loop-Innenleben · Phasen erkennen</div>
+      <h2 class="title" style="font-size: 42px; margin-bottom: 6px;">Sortiere die Aussagen in <span class="accent">Thought · Action · Observation · Exit</span>.</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
+        Sätze aus echten Agent-Traces. Wer die Phasen sauber trennt, baut weniger Loop-Bugs.
+      </p>
+
+      <div class="options-rail" style="grid-template-columns: repeat(4, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Thought</div><div class="opt-tag">denken · planen · re-planen</div></div>
+        <div class="opt"><div class="opt-name">Action</div><div class="opt-tag">Tool aufrufen</div></div>
+        <div class="opt"><div class="opt-name">Observation</div><div class="opt-tag">Ergebnis / Fehler im State</div></div>
+        <div class="opt"><div class="opt-name">Exit</div><div class="opt-tag">terminieren · Loop verlassen</div></div>
+      </div>
+
+      <div class="quiz" data-quiz="react-phase" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="thought">
+          <div class="qbody"><em>„Plan: zuerst Kurs holen, dann News holen, dann den Tweet formulieren."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="thought">Thought</button>
+            <button class="qchoice" data-key="action">Action</button>
+            <button class="qchoice" data-key="observation">Observation</button>
+            <button class="qchoice" data-key="exit">Exit</button>
+          </div>
+          <div class="qfb" data-why="Plan vor Action, klassischer Reason-Schritt."></div>
+        </div>
+
+        <div class="qitem" data-correct="action">
+          <div class="qbody" data-nd='<em>„Aufruf: Aktienkurs für Apple abfragen.“</em>'><em>„Aufruf: <span class="mono">getStockPrice('AAPL')</span>"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="thought">Thought</button>
+            <button class="qchoice" data-key="action">Action</button>
+            <button class="qchoice" data-key="observation">Observation</button>
+            <button class="qchoice" data-key="exit">Exit</button>
+          </div>
+          <div class="qfb" data-why="Tool-Aufruf mit konkreten Parametern."></div>
+        </div>
+
+        <div class="qitem" data-correct="observation">
+          <div class="qbody"><em>„Antwort: <span class="mono">187.53 USD</span>, aktualisiert vor 30 Sekunden."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="thought">Thought</button>
+            <button class="qchoice" data-key="action">Action</button>
+            <button class="qchoice" data-key="observation">Observation</button>
+            <button class="qchoice" data-key="exit">Exit</button>
+          </div>
+          <div class="qfb" data-why="Tool-Ergebnis landet im State, triggert das nächste Reason."></div>
+        </div>
+
+        <div class="qitem" data-correct="observation">
+          <div class="qbody" data-nd='<em>„Die Nachrichten-Quelle meldet: zu viele Anfragen — bitte in 60 Sekunden erneut versuchen.“</em>'><em>„News-API antwortet <span class="mono">429 Too Many Requests</span> — Header sagt: retry-after 60s."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="thought">Thought</button>
+            <button class="qchoice" data-key="action">Action</button>
+            <button class="qchoice" data-key="observation">Observation</button>
+            <button class="qchoice" data-key="exit">Exit</button>
+          </div>
+          <div class="qfb" data-why="auch ein Fehler ist eine Beobachtung. <em>Genau die</em> macht den Loop wertvoll."></div>
+        </div>
+
+        <div class="qitem" data-correct="thought">
+          <div class="qbody"><em>„Rate-Limit gesehen. Ich nehme stattdessen den 7-Tage-Cache und kennzeichne den Tweet als 'Stand gestern'."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="thought">Thought</button>
+            <button class="qchoice" data-key="action">Action</button>
+            <button class="qchoice" data-key="observation">Observation</button>
+            <button class="qchoice" data-key="exit">Exit</button>
+          </div>
+          <div class="qfb" data-why="Re-Plan <em>nach</em> Observation. Ohne diesen Schritt wäre der Loop nur ein dummer Retry."></div>
+        </div>
+
+        <div class="qitem" data-correct="exit">
+          <div class="qbody" data-nd='<em>„3 Runden erreicht — Abbruch, gib die Teilantwort zurück.“</em>'><em>„<span class="mono">iterationCount = 3</span> erreicht — Abbruch, gebe Teilantwort zurück."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="thought">Thought</button>
+            <button class="qchoice" data-key="action">Action</button>
+            <button class="qchoice" data-key="observation">Observation</button>
+            <button class="qchoice" data-key="exit">Exit</button>
+          </div>
+          <div class="qfb" data-why="Max-Iteration-Guardrail greift. Das ist <em>kein Fehler</em>, das ist Design."></div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · <em>Wichtig: ein Fehler ist eine Observation, nicht ein Crash.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06 ÜBUNG 3 — GUARDRAIL ===================== -->
+  <section data-screen-label="06 Übung 3 Guardrail">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Wenn der Loop nicht stoppt</div>
+      <h2 class="title" style="font-size: 42px; margin-bottom: 6px;">Dein Agent dreht im Kreis. Was <span class="accent">baust du ein</span>?</h2>
+
+      <!-- Szenario -->
+      <div class="card" style="margin-top: 14px; padding: 22px 28px; background: var(--ink); color: #f0ece3; border-color: var(--ink);">
+        <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Szenario</div>
+        <div style="font-family: var(--serif); font-size: 24px; line-height: 1.4; color: #f0ece3; margin-top: 8px;">
+          Dein <strong>Ticket-Klassifizierer</strong> hat einen <span class="mono" style="color: var(--accent-soft);" data-nd='Nochmal-prüfen'>reflectOnPriority</span>-Node, der bei unscharfen Tickets immer wieder „nochmal analysieren" sagt.
+          Bei einem mehrdeutigen Ticket pendelt er <em>endlos</em> zwischen <span class="mono" style="color: var(--accent-soft);">High</span> und <span class="mono" style="color: var(--accent-soft);">Urgent</span>.
+          <span data-nd='Die Plattform stoppt deinen Dienst nach 10 Sekunden.'>Vercel killt deine Function nach 10 Sekunden.</span> Was tust du?
+        </div>
+      </div>
+
+      <div class="mcq-grid" data-correct="b" style="margin-top: 18px;">
+        <button class="mcq" data-key="a">
+          <div class="mcq-head">
+            <div class="mcq-letter">A</div>
+            <div class="mcq-title">Mehr Klassifikations-Beispiele in den System-Prompt einbauen.</div>
+          </div>
+          <div class="mcq-note">Verbessert die <em>Qualität</em> einzelner Entscheidungen, ändert aber nichts an der Möglichkeit, dass der Reflexions-Node erneut „nochmal" sagt.</div>
+        </button>
+
+        <button class="mcq" data-key="b">
+          <div class="mcq-head">
+            <div class="mcq-letter">B</div>
+            <div class="mcq-title">Max-Iteration-Policy: <span class="mono" style="font-size: 18px;" data-nd='nach 3 Runden → Stopp'>iterationCount &gt;= 3 → __end__</span>.</div>
+          </div>
+          <div class="mcq-note">Conditional Edge mit Counter im State. Nach 3 Loops zwingst du Terminierung mit der bisher besten Entscheidung — der Tipp aus dem Artikel.</div>
+        </button>
+
+        <button class="mcq" data-key="c">
+          <div class="mcq-head">
+            <div class="mcq-letter">C</div>
+            <div class="mcq-title">Den Loop ganz entfernen — zurück zur linearen Chain.</div>
+          </div>
+          <div class="mcq-note">Du verlierst die <em>Selbstkorrektur</em>, die der Loop überhaupt erst rechtfertigt hat. Wirf nicht das Kind mit dem Bade aus.</div>
+        </button>
+
+        <button class="mcq" data-key="d">
+          <div class="mcq-head">
+            <div class="mcq-letter">D</div>
+            <div class="mcq-title">Auf ein stärkeres Modell upgraden.</div>
+          </div>
+          <div class="mcq-note">Teurer, vielleicht etwas zuverlässiger — aber die Endlosschleife bleibt strukturell möglich. Guardrails sind kein Modell-Problem.</div>
+        </button>
+      </div>
+
+      <div class="explain" data-explain>
+        <div class="explain-accent">Auflösung · der Drei-Schichten-Notausgang</div>
+        <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin: 6px 0 10px;">Ein guter Loop hat <em>immer</em> mehrere Stoppgründe.</div>
+        <div style="font-size: 17px; line-height: 1.5;">
+          Der Artikel nennt das die <strong>Max Iteration Policy</strong>: ein Zähler im State, eine Conditional Edge, ein <span class="mono" style="color: var(--accent-soft);">__end__</span> bei Überschreitung. In Produktion kommen meist noch zwei weitere Schichten dazu: <strong>Timeout</strong> (Wall-Clock, gerade bei Vercel/Lambda kritisch) und <strong>Token/Cost-Cap</strong>. Drei Notausgänge — gerne alle drei gleichzeitig.
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px;">
+          <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">SCHICHT 01</div>
+            <div style="font-size: 16px; margin-top: 4px;"><strong style="color: #f0ece3;">Max-Iter</strong> · Counter im State, Cap z.B. 3–10</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">SCHICHT 02</div>
+            <div style="font-size: 16px; margin-top: 4px;"><strong style="color: #f0ece3;">Timeout</strong> · Wall-Clock, kürzer als die Function-Timeout</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 12px 16px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">SCHICHT 03</div>
+            <div style="font-size: 16px; margin-top: 4px;"><strong style="color: #f0ece3;">Cost-Cap</strong> · Tokens/€ pro Run, harter Stopp</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal-row" style="margin-top: 18px;">
+        <div class="reveal-status"><em>Wähle die Karte — Auflösung erscheint darunter.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06A ÜBUNG LOOP-SIMULATOR (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="06a Übung Loop-Simulator" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Loop laufen lassen — mit Guardrails sauber stoppen</div>
+      <h2 class="title">Schalte Guardrails an. Jeder hat eine <span class="accent">Nebenwirkung</span>. Finde die Pareto-Front.</h2>
+      <p class="ex-instructions" style="margin-top: 8px;" data-nd="Aufgabe: <em>„Finde den Fehler im <span class='mono'>Monatsreport</span>.&quot;</em> Drücke <strong>Start</strong> — der Agent iteriert. <em>Ohne</em> Guardrails dreht er sich tot. <em>Mit</em> falsch eingestellten Guardrails stoppt er zu früh — oder schließt nie ab.">
+        Aufgabe: <em>„Finde den Bug in <span class="mono">tokenStore.ts</span>."</em> Drücke <strong>Start</strong> — der Agent iteriert. <em>Ohne</em> Guardrails dreht er sich tot. <em>Mit</em> falsch eingestellten Guardrails stoppt er zu früh — oder committed nie.
+      </p>
+
+      <div class="ex-stage loop" id="ex-loop">
+        <div class="loop-trace">
+          <div class="loop-trace-head">
+            <span class="lth-title">Iterations-Trace</span>
+            <span class="lth-task" data-nd="Task: Fehler im Monatsreport finden &amp; beheben">Task: Find &amp; fix refresh-token bug</span>
+          </div>
+          <div class="loop-status">
+            <div class="loop-status-card"><div class="lsc-label">Iterationen</div><div class="lsc-val" id="loop-iter-count">0</div></div>
+            <div class="loop-status-card"><div class="lsc-label">Tokens</div><div class="lsc-val" id="loop-token-count">0</div></div>
+            <div class="loop-status-card"><div class="lsc-label">Confidence<span class="lsc-info" tabindex="0">i<span class="lsc-tip"><strong>Confidence (0–1)</strong> = wie sicher sich der Agent selbst einschätzt, die Aufgabe gelöst zu haben. Sie <strong>steigt</strong>, wenn ein Schritt <em>neue</em> Evidenz liefert (Δ&nbsp;rechts in jeder Zeile). Wiederholt der Agent dieselbe Aktion, gibt es keine neue Info → <span class="tip-flat">Δ&nbsp;±0.00, die Confidence stagniert</span>. Die Guardrail „Confidence-Schwelle" committed, sobald der Wert die Schwelle übersteigt.</span></span></div><div class="lsc-val" id="loop-conf">—</div></div>
+            <div class="loop-status-card"><div class="lsc-label">Status</div><div class="lsc-val" id="loop-status">idle</div></div>
+          </div>
+          <div class="loop-iters" id="loop-iters">
+            <div class="loop-empty" id="loop-empty">Drücke „Start" — ohne Guardrails dreht's bis zum Token-Crash.</div>
+          </div>
+        </div>
+
+        <div class="loop-controls">
+          <div class="loop-controls-head">
+            <h4>Guardrails</h4>
+            <span class="mono" style="font-size: 11px; color: #c8c2b6; letter-spacing: 0.08em;" id="loop-active-count">0 / 4 aktiv</span>
+          </div>
+          <div id="loop-guards"></div>
+          <div class="loop-actions">
+            <button class="btn accent" id="loop-start">▶ Start</button>
+            <button class="btn ghost" id="loop-reset" style="color: #f0ece3; border-color: rgba(255,255,255,0.2);">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 ÜBUNG 4 — ENTWIRF DEINEN LOOP (merged) ===================== -->
+  <section data-screen-label="07 Übung 4 Entwirf deinen Loop">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 36px 0 18px;">Pair-Work · vom Szenario zum eigenen Alltag</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Wähl ein Szenario — oder <span class="accent">deinen eigenen Loop</span>. Füll die fünf Felder.</h2>
+      <p class="body" style="margin: 0; max-width: 1640px; font-size: 18px;">
+        Diskutiert zu zweit, schreibt auf Papier oder Whiteboard. Es geht <em>nicht</em> um Code — nur um die Topologie: <strong>State · Nodes · Loop-Edge · Exit · Guardrail</strong>.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 0.82fr 1.18fr; gap: 22px; margin-top: 18px; flex: 1; min-height: 0;">
+
+        <!-- LEFT: scenario chooser -->
+        <div style="display: flex; flex-direction: column; gap: 11px; min-height: 0;">
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Pick one · Startpunkt</div>
+
+          <div class="card" style="padding: 14px 18px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Szenario A</div>
+            <div style="font-family: var(--serif); font-size: 21px; font-weight: 500; line-height: 1.1; margin-top: 2px;">PR-Reviewer-Agent</div>
+            <div style="font-size: 13.5px; color: var(--ink-3); margin-top: 4px; line-height: 1.35;">Reviewt einen PR, schlägt Fixes vor, prüft erneut — bis „clean" oder Mut alle.</div>
+          </div>
+
+          <div class="card" style="padding: 14px 18px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Szenario B</div>
+            <div style="font-family: var(--serif); font-size: 21px; font-weight: 500; line-height: 1.1; margin-top: 2px;">Reise-Planer mit Budget</div>
+            <div style="font-size: 13.5px; color: var(--ink-3); margin-top: 4px; line-height: 1.35;">Flug + Hotel + Mietwagen, 1.500 €. Ausgebucht → Alternative. Budget gesprengt → günstiger.</div>
+          </div>
+
+          <div class="card" style="padding: 14px 18px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Szenario C</div>
+            <div style="font-family: var(--serif); font-size: 21px; font-weight: 500; line-height: 1.1; margin-top: 2px;">Bug-Reproducer</div>
+            <div style="font-size: 13.5px; color: var(--ink-3); margin-top: 4px; line-height: 1.35;">Liest einen Bug-Report, schreibt einen Test — iteriert, bis der Test wie beschrieben fehlschlägt.</div>
+          </div>
+
+          <div class="card" style="padding: 14px 18px; background: var(--accent-pale); border-color: var(--accent-soft); border-style: dashed;">
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Oder · Szenario D</div>
+            <div style="font-family: var(--serif); font-size: 21px; font-weight: 500; line-height: 1.1; margin-top: 2px;">Dein eigener Alltag</div>
+            <div style="font-size: 13.5px; color: var(--ink-2); margin-top: 4px; line-height: 1.35;">Welche deiner Aufgaben macht <strong>2–5 Anläufe</strong>, bis sie sitzt? Wo entscheidet das Ergebnis über den nächsten Schritt?</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: 5-field design frame -->
+        <div class="card dark" style="padding: 20px 26px; display: flex; flex-direction: column; min-height: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Dein Loop-Entwurf</div>
+            <div class="mono" style="font-size: 12px; color: #c8c2b6; letter-spacing: 0.06em;">5 Felder · kein Code</div>
+          </div>
+
+          <div style="margin-top: 12px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent-soft); letter-spacing: 0.1em;">AUFGABE</div>
+            <div style="font-size: 13px; color: #c8c2b6; font-style: italic; margin-top: 1px;">das Szenario in einem Satz</div>
+            <div style="border-bottom: 1.5px dashed #6b6357; height: 22px; margin-top: 4px;"></div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; margin-top: 14px;">
+            <div>
+              <div class="mono" style="font-size: 11px; color: var(--accent-soft); letter-spacing: 0.1em;">STATE</div>
+              <div style="font-size: 13px; color: #c8c2b6; font-style: italic; margin-top: 1px;">was bleibt zwischen Runden erhalten?</div>
+              <div style="border-bottom: 1.5px dashed #6b6357; height: 22px; margin-top: 4px;"></div>
+              <div style="border-bottom: 1.5px dashed #6b6357; height: 22px;"></div>
+            </div>
+            <div>
+              <div class="mono" style="font-size: 11px; color: var(--accent-soft); letter-spacing: 0.1em;">NODES</div>
+              <div style="font-size: 13px; color: #c8c2b6; font-style: italic; margin-top: 1px;">3–4 Schritte, Reason/Act getrennt</div>
+              <div style="border-bottom: 1.5px dashed #6b6357; height: 22px; margin-top: 4px;"></div>
+              <div style="border-bottom: 1.5px dashed #6b6357; height: 22px;"></div>
+            </div>
+            <div>
+              <div class="mono" style="font-size: 11px; color: var(--accent-soft); letter-spacing: 0.1em;">LOOP-EDGE</div>
+              <div style="font-size: 13px; color: #c8c2b6; font-style: italic; margin-top: 1px;">„Wenn ___, dann zurück zu ___"</div>
+              <div style="border-bottom: 1.5px dashed #6b6357; height: 22px; margin-top: 4px;"></div>
+            </div>
+            <div>
+              <div class="mono" style="font-size: 11px; color: var(--accent-soft); letter-spacing: 0.1em;">EXIT · ERFOLG</div>
+              <div style="font-size: 13px; color: #c8c2b6; font-style: italic; margin-top: 1px;">wann ist der Loop fertig?</div>
+              <div style="border-bottom: 1.5px dashed #6b6357; height: 22px; margin-top: 4px;"></div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <div class="mono" style="font-size: 11px; color: var(--accent-soft); letter-spacing: 0.1em;">GUARDRAIL · NOTAUSGANG</div>
+            <div style="font-size: 13px; color: #c8c2b6; font-style: italic; margin-top: 1px;">welche der drei Schichten? (Max-Iter · Timeout · Cost-Cap)</div>
+            <div style="border-bottom: 1.5px dashed #6b6357; height: 22px; margin-top: 4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 14px;">
+        <div class="callout-label">Debrief · 5 min</div>
+        <div class="callout-body">Eine Gruppe stellt vor, der Rest fragt: <strong>Wo könnte dieser Loop hängen bleiben?</strong> Welcher der drei Notausgänge fehlt — und macht dasselbe danach für <em>eine eigene</em> Aufgabe.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 09 LOOPS IM TEAM — TOPOLOGIEN & A2A ===================== -->
+  <section data-screen-label="08 Loops im Team Topologien A2A">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 28px 0 18px;">Vom einzelnen Loop zum Team</div>
+      <h2 class="title" style="font-size: 58px; margin-bottom: 14px;">Aus einem Loop wird ein <span class="accent">Team</span>.</h2>
+
+      <p class="lede" style="margin-top: 4px; max-width: 1640px; font-size: 24px; line-height: 1.4;">
+        Ein Loop ist <strong>ein Agent, der denkt</strong>. Doch ein einzelner Loop stößt an Grenzen: begrenzter Context, breites Spezialwissen schwer, alles seriell. Die Antwort ist <strong>Spezialisierung</strong> — mehrere Loops mit eigener Rolle, eigenen Tools, oft eigenem Modell. Wer die <span class="mono accent">Orchestration</span> aus dem Anatomie-Kapitel eine Ebene höher zieht, landet hier: bei Topologien und dem Protokoll <strong>A2A</strong>.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; flex: 1; min-height: 0;">
+
+        <!-- LEFT: topologies -->
+        <div class="card" style="padding: 24px 28px; display: flex; flex-direction: column;">
+          <div>
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;">Topologien</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 2px;">Drei Wege, Loops zu einem Team zu verschalten</div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 18px;">
+
+            <!-- Supervisor -->
+            <div id="topoSupervisor" data-topo="supervisor" class="topo-card topo-active" style="padding: 12px 12px 14px; background: var(--bg-2); border-radius: 10px; cursor: pointer;">
+              <svg viewBox="0 0 140 110" style="width: 100%; height: 88px;">
+                <circle cx="70" cy="22" r="14" fill="#c8421f"/>
+                <text x="70" y="26" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#fff" font-weight="700">S</text>
+                <circle cx="28" cy="78" r="12" fill="#15110c"/>
+                <circle cx="70" cy="78" r="12" fill="#15110c"/>
+                <circle cx="112" cy="78" r="12" fill="#15110c"/>
+                <line x1="70" y1="36" x2="28" y2="66" stroke="#15110c" stroke-width="1.5"/>
+                <line x1="70" y1="36" x2="70" y2="66" stroke="#15110c" stroke-width="1.5"/>
+                <line x1="70" y1="36" x2="112" y2="66" stroke="#15110c" stroke-width="1.5"/>
+              </svg>
+              <div class="mono" style="font-size: 13px; color: var(--accent); margin-top: 4px; letter-spacing: 0.04em;">SUPERVISOR</div>
+              <div style="font-size: 14px; line-height: 1.4; color: var(--ink-2); margin-top: 4px;">Orchestrator zerlegt &amp; delegiert, sammelt Ergebnisse ein.</div>
+            </div>
+
+            <!-- Pipeline -->
+            <div id="topoPipeline" data-topo="pipeline" class="topo-card" style="padding: 12px 12px 14px; background: var(--bg-2); border-radius: 10px; cursor: pointer;">
+              <svg viewBox="0 0 140 110" style="width: 100%; height: 88px;">
+                <circle cx="22" cy="55" r="12" fill="#15110c"/>
+                <circle cx="70" cy="55" r="12" fill="#15110c"/>
+                <circle cx="118" cy="55" r="12" fill="#15110c"/>
+                <line x1="34" y1="55" x2="58" y2="55" stroke="#c8421f" stroke-width="2" marker-end="url(#arrPipeCal)"/>
+                <line x1="82" y1="55" x2="106" y2="55" stroke="#c8421f" stroke-width="2" marker-end="url(#arrPipeCal)"/>
+                <defs>
+                  <marker id="arrPipeCal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 z" fill="#c8421f"/>
+                  </marker>
+                </defs>
+              </svg>
+              <div class="mono" style="font-size: 13px; color: var(--accent); margin-top: 4px; letter-spacing: 0.04em;">PIPELINE</div>
+              <div style="font-size: 14px; line-height: 1.4; color: var(--ink-2); margin-top: 4px;">Reihenschaltung — Output von A ist Input von B.</div>
+            </div>
+
+            <!-- Swarm -->
+            <div id="topoSchwarm" data-topo="schwarm" class="topo-card" style="padding: 12px 12px 14px; background: var(--bg-2); border-radius: 10px; cursor: pointer;">
+              <svg viewBox="0 0 140 110" style="width: 100%; height: 88px;">
+                <circle cx="40" cy="35" r="11" fill="#15110c"/>
+                <circle cx="100" cy="35" r="11" fill="#15110c"/>
+                <circle cx="40" cy="80" r="11" fill="#15110c"/>
+                <circle cx="100" cy="80" r="11" fill="#15110c"/>
+                <line x1="40" y1="35" x2="100" y2="35" stroke="#c8421f" stroke-width="1.3"/>
+                <line x1="40" y1="80" x2="100" y2="80" stroke="#c8421f" stroke-width="1.3"/>
+                <line x1="40" y1="35" x2="40" y2="80" stroke="#c8421f" stroke-width="1.3"/>
+                <line x1="100" y1="35" x2="100" y2="80" stroke="#c8421f" stroke-width="1.3"/>
+                <line x1="40" y1="35" x2="100" y2="80" stroke="#c8421f" stroke-width="1.3"/>
+                <line x1="100" y1="35" x2="40" y2="80" stroke="#c8421f" stroke-width="1.3"/>
+              </svg>
+              <div class="mono" style="font-size: 13px; color: var(--accent); margin-top: 4px; letter-spacing: 0.04em;">SCHWARM</div>
+              <div style="font-size: 14px; line-height: 1.4; color: var(--ink-2); margin-top: 4px;">Peer-to-Peer — jeder kann jeden ansprechen, kein Chef.</div>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; padding: 16px 18px; background: var(--paper); border: 1px solid var(--hair); border-radius: 10px;">
+            <div id="topoExLabel" class="mono" style="font-size: 12px; letter-spacing: 0.06em; color: var(--ink-3); text-transform: uppercase;">Beispiel · Recherchebericht</div>
+            <div id="topoExText" style="font-size: 16px; line-height: 1.5; color: var(--ink-2); margin-top: 6px;">
+              <span class="mono accent">Supervisor</span> teilt auf in:
+              <span class="mono">Recherche-Agent</span> (Web + PDFs) →
+              <span class="mono">Analyse-Agent</span> (Zahlen, Code) →
+              <span class="mono">Schreib-Agent</span> (Bericht) → zurück.
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: A2A protocol -->
+        <div class="card dark" style="padding: 24px 28px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div>
+              <div class="mono" style="font-size: 14px; color: #c8c2b6; letter-spacing: 0.08em; text-transform: uppercase;">Protokoll</div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; color: #f0ece3; line-height: 1.15;">A2A — Loops <span class="accent">finden sich</span></div>
+            </div>
+            <span class="pill accent" style="font-size: 12px;">offen · 2025</span>
+          </div>
+
+          <p style="font-size: 17px; line-height: 1.45; color: #d8d2c5; margin: 12px 0 0;">
+            <strong>Agent-to-Agent</strong> ist das, was MCP für Tools ist — nur eine Ebene höher: ein Standard, mit dem Loops von <em>verschiedenen Anbietern</em> sich gegenseitig Aufgaben stellen, Status verfolgen, Ergebnisse austauschen. Jeder Loop bleibt für die anderen eine Black Box.
+          </p>
+
+          <svg viewBox="0 0 660 280" style="width: 100%; height: 210px; margin-top: 12px; display: block;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrA2Cal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#e89379"/>
+              </marker>
+            </defs>
+
+            <!-- Agent A -->
+            <g>
+              <rect x="30" y="60" width="170" height="160" rx="10" fill="#1f1a13" stroke="#e89379" stroke-width="1.5"/>
+              <text x="115" y="86" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#e89379" letter-spacing="1">CLIENT-LOOP</text>
+              <text x="115" y="112" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" fill="#f0ece3" font-weight="500">Reise-Planer</text>
+              <text x="115" y="138" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" fill="#c8c2b6" font-style="italic">Modell A · Anbieter X</text>
+              <line x1="50" y1="155" x2="180" y2="155" stroke="#3a342a" stroke-width="1"/>
+              <text x="115" y="178" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#c8c2b6">braucht: Flug + Hotel</text>
+              <text x="115" y="200" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#c8c2b6">sucht passende Loops</text>
+            </g>
+
+            <!-- A2A bar -->
+            <rect x="245" y="80" width="160" height="120" rx="10" fill="#c8421f"/>
+            <text x="325" y="130" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#fff" letter-spacing="3">A 2 A</text>
+            <text x="325" y="152" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" fill="#fff" font-style="italic">tasks · messages</text>
+            <text x="325" y="170" text-anchor="middle" font-family="IBM Plex Sans" font-size="12" fill="#fff" font-style="italic">artifacts · streaming</text>
+
+            <!-- Agent B + C (remote) -->
+            <g>
+              <rect x="450" y="30" width="180" height="100" rx="10" fill="#1f1a13" stroke="#e89379" stroke-width="1.5"/>
+              <text x="540" y="56" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#e89379" letter-spacing="1">REMOTE-LOOP</text>
+              <text x="540" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="16" fill="#f0ece3" font-weight="500">Flug-Agent</text>
+              <text x="540" y="104" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#c8c2b6" font-style="italic">Modell B · Anbieter Y</text>
+            </g>
+            <g>
+              <rect x="450" y="150" width="180" height="100" rx="10" fill="#1f1a13" stroke="#e89379" stroke-width="1.5"/>
+              <text x="540" y="176" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#e89379" letter-spacing="1">REMOTE-LOOP</text>
+              <text x="540" y="202" text-anchor="middle" font-family="IBM Plex Sans" font-size="16" fill="#f0ece3" font-weight="500">Hotel-Agent</text>
+              <text x="540" y="224" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" fill="#c8c2b6" font-style="italic">Modell C · Anbieter Z</text>
+            </g>
+
+            <!-- arrows -->
+            <line x1="200" y1="130" x2="243" y2="130" stroke="#e89379" stroke-width="1.6" marker-end="url(#arrA2Cal)"/>
+            <line x1="405" y1="115" x2="448" y2="80" stroke="#e89379" stroke-width="1.6" marker-end="url(#arrA2Cal)"/>
+            <line x1="405" y1="170" x2="448" y2="200" stroke="#e89379" stroke-width="1.6" marker-end="url(#arrA2Cal)"/>
+
+            <!-- agent card hint -->
+            <text x="540" y="20" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#c8c2b6" letter-spacing="1">jeweils via "AGENT CARD" auffindbar</text>
+          </svg>
+
+          <div style="margin-top: auto; padding-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; line-height: 1.4; color: #c8c2b6;">
+            <div><span class="mono accent">Agent Card</span> — öffentliches Profil: was kann ich, wo erreichbar.</div>
+            <div><span class="mono accent">Task</span> — strukturierte Anfrage mit Zustand &amp; Artefakten.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body"><strong>MCP vs A2A — komplementär:</strong>&nbsp;
+        <span class="mono">MCP</span> verbindet Loop ↔ <em>Werkzeug</em>.&nbsp;&nbsp;·&nbsp;&nbsp;
+        <span class="mono">A2A</span> verbindet Loop ↔ <em>Loop</em>.&nbsp;&nbsp;Ein produktives System nutzt meist beides.</div>
+      </div>
+
+    </div>
+
+    <style>
+      .topo-card { transition: outline 120ms, background 120ms; outline: 2px solid transparent; }
+      .topo-card:hover { outline-color: var(--accent); }
+      .topo-card.topo-active { outline-color: var(--accent); background: var(--paper) !important; }
+    </style>
+    <script>
+    (function() {
+      const examples = {
+        supervisor: {
+          label: "Beispiel · Recherchebericht",
+          html: '<span class="mono accent">Supervisor</span> teilt auf in: <span class="mono">Recherche-Agent</span> (Web + PDFs) → <span class="mono">Analyse-Agent</span> (Zahlen, Code) → <span class="mono">Schreib-Agent</span> (Bericht) → zurück.'
+        },
+        pipeline: {
+          label: "Beispiel · E-Mail-Bearbeitung",
+          html: 'Kundenmail eingehend → <span class="mono">Klassifikations-Agent</span> erkennt Kategorie → <span class="mono">Antwort-Agent</span> formuliert Text → <span class="mono">QA-Agent</span> prüft Ton &amp; Korrektheit → Versand.'
+        },
+        schwarm: {
+          label: "Beispiel · Marktanalyse",
+          html: '<span class="mono">Zahlen-Agent</span>, <span class="mono">Risiko-Agent</span> und <span class="mono">Trend-Agent</span> analysieren denselben Bericht <em>gleichzeitig</em> — kein Chef, bestes Argument nach Abstimmung gewinnt.'
+        }
+      };
+      document.querySelectorAll('.topo-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          document.querySelectorAll('.topo-card').forEach(function(c) { c.classList.remove('topo-active'); });
+          card.classList.add('topo-active');
+          var key = card.dataset.topo;
+          var ex = examples[key];
+          document.getElementById('topoExLabel').textContent = ex.label;
+          document.getElementById('topoExText').innerHTML = ex.html;
+        });
+      });
+    })();
+    </script>
+  </section>
+
+
+  <!-- ===================== 10 CHEAT-SHEET ===================== -->
+  <section data-screen-label="09 Cheat Sheet" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Cyclical Agentic Loops</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="cs-head-row">
+        <div class="cs-head-main">
+          <div class="eyebrow">Mitnehmen</div>
+          <h2 class="title" style="font-size: 52px;">Sechs Fragen, ein <span class="accent">solider Loop</span>.</h2>
+          <p class="body" style="margin: 0; max-width: 1150px; font-size: 20px;">
+            Stelle sie in dieser Reihenfolge. Wer die ersten zwei nicht beantworten kann, baut keinen Loop — baut eine Endlosschleife.
+          </p>
+        </div>
+        <div class="cs-emblem" aria-hidden="true">
+          <span class="em-cap">Der Loop</span>
+          <div class="orbit-wrap">
+            <span class="orbit">
+              <span class="planet"></span>
+              <span class="station st1">Reason</span>
+              <span class="station st2">Act</span>
+              <span class="station st3">Observe</span>
+              <span class="core">Agent</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px;">
+
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--accent); letter-spacing: 0.12em;">FRAGE 01</div>
+          <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Lohnt sich der Loop?</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+            Adaptiv? Fehler-Recovery? Re-Plan nötig? → <strong>Loop</strong>.<br/>Deterministisch &amp; einmalig? → <strong>Chain</strong>.
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--accent); letter-spacing: 0.12em;">FRAGE 02</div>
+          <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Was ist der State?</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+            Was <em>muss</em> zwischen Iterationen erhalten bleiben? History, Counter, Zwischenergebnisse — <span data-nd='klar benannte Felder'>typisierte Felder, kein <span class="mono">any</span></span>.
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--accent); letter-spacing: 0.12em;">FRAGE 03</div>
+          <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Was sind die Nodes?</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+            Reason / Act / Observe sauber trennen. Ein Node = eine Verantwortung. Nicht „LLM denkt UND ruft Tool" im selben Schritt.
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--accent); letter-spacing: 0.12em;">FRAGE 04</div>
+          <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Wann loopst du zurück?</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+            <span data-nd='Eine klare Wenn-Dann-Regel, klar'>Conditional Edge, klar</span> formulierbar in einem Satz: <em>„Wenn ___, dann zurück zu ___"</em>.
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--accent); letter-spacing: 0.12em;">FRAGE 05</div>
+          <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Wann hörst du auf?</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
+            Erfolgs-Kriterium <em>vor</em> dem Bau definieren. Sonst weißt du nie, ob der Loop fertig ist oder nur müde.
+          </div>
+        </div>
+
+        <div class="card dark" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--accent-soft); letter-spacing: 0.12em;">FRAGE 06</div>
+          <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1; color: #f0ece3;">Wo ist der Notausgang?</div>
+          <div style="font-size: 16px; color: #d8d2c5; margin-top: 10px; line-height: 1.4;">
+            Drei Schichten: <strong style="color: #f0ece3;">Max-Iter</strong> · <strong style="color: #f0ece3;">Timeout</strong> · <strong style="color: #f0ece3;">Cost-Cap</strong>. Lieber zwei zu viel als einen zu wenig.
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 18px; border-left-color: var(--ink);">
+        <div class="callout-label" style="color: var(--ink);">Und wenn ein Loop nicht reicht?</div>
+        <div class="callout-body">Dann <strong>spezialisieren</strong>: mehrere Loops als Team — <span class="mono">Supervisor</span> · <span class="mono">Pipeline</span> · <span class="mono">Schwarm</span>, verbunden über <span class="mono accent">A2A</span> (siehe Kapitel 08). Erst nehmen, wenn Spezialisierung den Mehraufwand schlägt.</div>
+      </div>
+
+      <div class="callout" style="margin-top: 12px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">Ein Loop ist kein Hack — er ist die <strong>Architektur der Selbstkorrektur</strong>. Wer Chains baut, baut Hoffnung. Wer Loops baut, baut Recovery.</div>
+      </div>
+
+      <div style="margin-top: 14px; font-family: var(--mono); font-size: 15px; color: var(--ink-3); letter-spacing: 0.02em;">Quelle · „Why Linear AI Chains Are Dead" · dev.to/programmingcentral</div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+
+<script>
+  // ============ Interaktiver Wissenscheck ============
+  (function() {
+    // Auflösung im einheitlichen Format rendern (wie Slide "Welche Stufe?"):
+    //   Richtig · Label — Begründung   /   Daneben · richtig wäre Label — …   /   Lösung · Label — …
+    function renderQfb(item, pickedKey) {
+      var fb = item.querySelector('.qfb');
+      if (!fb) return;
+      var correct = item.getAttribute('data-correct');
+      var okBtn = item.querySelector('.qchoice[data-key="' + correct + '"]');
+      var label = okBtn ? okBtn.textContent.trim() : correct;
+      var section = item.closest('section');
+      var role = (section && section.dataset.role) || 'dev';
+      var why = (role === 'nondev' && fb.dataset.whyNd) ? fb.dataset.whyNd : (fb.dataset.why || '');
+      var tag;
+      if (pickedKey === null) {
+        tag = '<span class="qfb-tag ok">Lösung · ' + label + '</span>';
+      } else if (pickedKey === correct) {
+        tag = '<span class="qfb-tag ok">Richtig · ' + label + '</span>';
+      } else {
+        tag = '<span class="qfb-tag no">Daneben · richtig wäre ' + label + '</span>';
+      }
+      fb.innerHTML = tag + (why ? ' — ' + why : '');
+    }
+
+    // ---- Übung 1 + 2: Quiz mit mehreren Fragen pro Folie ----
+    document.querySelectorAll('.quiz').forEach(function(quiz) {
+      var items = quiz.querySelectorAll('.qitem');
+      var slide = quiz.closest('section');
+      var statusEl = slide && slide.querySelector('.reveal-status .score');
+
+      function updateScore() {
+        if (!statusEl) return;
+        var answered = quiz.querySelectorAll('.qitem.answered').length;
+        statusEl.textContent = answered;
+      }
+
+      items.forEach(function(item) {
+        var correct = item.getAttribute('data-correct');
+        item.querySelectorAll('.qchoice').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (item.classList.contains('answered')) return;
+            var key = btn.getAttribute('data-key');
+            if (key === correct) {
+              btn.classList.add('picked-ok');
+            } else {
+              btn.classList.add('picked-no');
+              // markiere die richtige zur Aufklärung
+              var ok = item.querySelector('.qchoice[data-key="' + correct + '"]');
+              if (ok) ok.classList.add('show-ok');
+            }
+            item.classList.add('answered');
+            renderQfb(item, key);
+            updateScore();
+          });
+        });
+      });
+    });
+
+    // ---- Übung 3 + 4: Single-Choice mit Karten ----
+    document.querySelectorAll('.mcq-grid').forEach(function(grid) {
+      var correct = grid.getAttribute('data-correct');
+      var slide = grid.closest('section');
+      var explain = slide && slide.querySelector('[data-explain]');
+
+      grid.querySelectorAll('.mcq').forEach(function(card) {
+        card.addEventListener('click', function() {
+          if (grid.classList.contains('answered')) return;
+          var key = card.getAttribute('data-key');
+          if (key === correct) {
+            card.classList.add('picked-ok');
+          } else {
+            card.classList.add('picked-no');
+            var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+            if (ok) ok.classList.add('show-ok');
+          }
+          grid.classList.add('answered');
+          if (explain) explain.classList.add('open');
+        });
+      });
+    });
+
+    // ---- Reveal-Buttons: alle Antworten auf der Folie aufdecken ----
+    document.querySelectorAll('[data-action="reveal"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        // Übung 1 + 2
+        slide.querySelectorAll('.qitem:not(.answered)').forEach(function(item) {
+          var correct = item.getAttribute('data-correct');
+          var ok = item.querySelector('.qchoice[data-key="' + correct + '"]');
+          if (ok) ok.classList.add('show-ok');
+          item.classList.add('answered');
+          renderQfb(item, null);
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) {
+          statusEl.textContent = slide.querySelectorAll('.qitem.answered').length;
+        }
+
+        // Übung 3 + 4
+        slide.querySelectorAll('.mcq-grid:not(.answered)').forEach(function(grid) {
+          var correct = grid.getAttribute('data-correct');
+          var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+          if (ok) ok.classList.add('show-ok');
+          grid.classList.add('answered');
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.add('open');
+      });
+    });
+
+    // ---- Reset-Buttons: alles auf Folie zurücksetzen ----
+    document.querySelectorAll('[data-action="reset"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        slide.querySelectorAll('.qitem').forEach(function(item) {
+          item.classList.remove('answered');
+          var fb = item.querySelector('.qfb'); if (fb) fb.innerHTML = '';
+          item.querySelectorAll('.qchoice').forEach(function(b) {
+            b.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) statusEl.textContent = '0';
+
+        slide.querySelectorAll('.mcq-grid').forEach(function(grid) {
+          grid.classList.remove('answered');
+          grid.querySelectorAll('.mcq').forEach(function(c) {
+            c.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.remove('open');
+      });
+    });
+
+    // ---- Pfeil-/Tastatur-Nav nicht abfangen, wenn auf Button geklickt wird ----
+    // (die Buttons absorbieren Klicks bereits — kein Fokus-Loop nötig)
+
+  })();
+</script>
+<script src="exercises/loop.js"></script>
+<script src="exercises/role-switch.js"></script>
+</body>
+</html>

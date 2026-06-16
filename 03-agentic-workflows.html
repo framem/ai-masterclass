@@ -1,0 +1,2213 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Agentic Workflows — Explore → Plan → Execute → Commit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <rect x="180" y="320" width="180" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="400" y="320" width="180" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="620" y="320" width="180" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="840" y="320" width="180" height="160" rx="14" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
+    <text x="270" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#15110c">Explore</text>
+    <text x="490" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#15110c">Plan</text>
+    <text x="710" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#15110c">Execute</text>
+    <text x="930" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#fff">Commit</text>
+    <text x="600" y="240" text-anchor="middle" font-family="serif" font-size="48" fill="#15110c" font-weight="500">Agentic Workflows</text>
+  </svg>
+</template>
+
+<link rel="stylesheet" href="exercises/exercises.css" />
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --quiz-ok: #3d8a4a;
+    --quiz-no: #a83020;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    /* projection-appropriate type scale (1920×1080) */
+    --type-title: 88px;
+    --type-h2: 64px;
+    --type-subtitle: 42px;
+    --type-lede: 30px;
+    --type-body: 26px;
+    --type-small: 19px;
+    --type-mono: 23px;
+    --type-eyebrow: 18px;
+    --pad-top: 56px;
+    --pad-bottom: 56px;
+    --pad-x: 80px;
+    --gap-title: 36px;
+    --gap-item: 22px;
+  }
+
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* shared chrome */
+  .chrome {
+    position: absolute;
+    inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+  /* Audience-Switcher unter die Kopfzeilen-Linie, rechtsbündig zur Inhaltskante */
+  section[data-screen-label] > .role-toggle {
+    top: 132px; right: var(--pad-x);
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 44px 0 26px;
+  }
+
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: var(--type-h2); line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1600px;
+  }
+  h3.subtitle {
+    font-size: var(--type-subtitle); line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede {
+    font-size: var(--type-lede); line-height: 1.4; color: var(--ink-2);
+    max-width: 1500px;
+  }
+  p.body {
+    font-size: var(--type-body); line-height: 1.5; color: var(--ink-2);
+    max-width: 1100px;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* card primitives */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+  .card.dark {
+    background: var(--ink); color: #f0ece3;
+    border-color: var(--ink);
+  }
+
+  /* Merksatz callout */
+  .callout {
+    margin-top: 24px;
+    padding: 20px 28px;
+    min-height: 76px;
+    box-sizing: border-box;
+    display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+
+  /* ===== Übungs-Slides ===== */
+  .qrow {
+    display: grid; grid-template-columns: 48px 1fr; gap: 18px;
+    align-items: start;
+  }
+  .qrow + .qrow { margin-top: 14px; }
+  .qrow .letter {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 20px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0;
+  }
+  .qrow .qtext { font-size: 21px; line-height: 1.45; color: var(--ink-2); padding-top: 8px; }
+  .qrow .qtext em { color: var(--ink); font-style: italic; }
+  .qrow .qtext .blank {
+    display: inline-block; min-width: 140px;
+    border-bottom: 1.5px dashed var(--ink-3); margin: 0 6px;
+    color: transparent;
+  }
+
+  .solution-row {
+    display: grid; grid-template-columns: 48px 1fr 1fr; gap: 16px;
+    align-items: center;
+    padding: 10px 0;
+  }
+  .solution-row + .solution-row { border-top: 1px solid rgba(255,255,255,0.10); }
+  .solution-row .letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 17px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .solution-row .stext { font-size: 17px; line-height: 1.35; color: #d8d2c5; }
+  .solution-row .schoice {
+    font-family: var(--mono); font-size: 17px; color: #f0ece3;
+    font-weight: 500; letter-spacing: 0.02em;
+  }
+  .solution-row .schoice small {
+    display: block; font-family: var(--sans); font-size: 14px;
+    font-weight: 400; color: #c8c2b6; margin-top: 2px; letter-spacing: 0;
+  }
+
+  .options-rail {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    margin-top: 14px;
+  }
+  .options-rail .opt {
+    background: var(--bg-2); border: 1px solid var(--hair);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .options-rail .opt .opt-name {
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    color: var(--ink);
+  }
+  .options-rail .opt .opt-tag {
+    font-size: 13px; line-height: 1.35; color: var(--ink-3); margin-top: 4px;
+  }
+
+  /* ===== Interaktive Quiz-Mechanik ===== */
+  .quiz { display: flex; flex-direction: column; gap: 10px; }
+  /* AWL-Wissenscheck nutzt die volle Folienbreite: zwei Spalten statt Stapel. */
+  .quiz[data-quiz="awl"] { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; align-items: start; }
+
+  .qitem {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 7px;
+    padding: 10px 16px;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+  }
+  .qitem .qbody { font-size: 19px; line-height: 1.4; color: var(--ink-2); }
+  .qitem .qbody em { color: var(--ink); font-style: italic; }
+  /* Antworten stehen unter der Frage. Buttons und Begründung teilen dieselbe
+     zweite Zeile — die Buttons blenden aus, die Begründung ein, ohne Sprung. */
+  .qitem .qchoices {
+    grid-column: 1; grid-row: 2;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qchoices { opacity: 0; pointer-events: none; }
+  .qitem .qfb {
+    grid-column: 1; grid-row: 2;
+    justify-self: start; align-self: center;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--ink-3); line-height: 1.4;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qfb { opacity: 1; }
+  .qitem.answered .qfb .ok { color: var(--quiz-ok); font-weight: 600; }
+  .qitem.answered .qfb .no { color: var(--quiz-no); font-weight: 600; }
+
+  .qchoice {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    padding: 7px 12px; border-radius: 8px;
+    background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+    white-space: nowrap;
+  }
+  .qchoice:hover { background: var(--ink); color: var(--bg); }
+  .qchoice:active { transform: translateY(1px); }
+  .qchoice.picked-ok { background: var(--quiz-ok); color: #fff; border-color: var(--quiz-ok); }
+  .qchoice.picked-no { background: var(--quiz-no); color: #fff; border-color: var(--quiz-no); }
+  .qchoice.show-ok { border-color: var(--quiz-ok); color: var(--quiz-ok); background: transparent; border-style: dashed; }
+  .qitem.answered .qchoice { pointer-events: none; opacity: 0.85; }
+  .qitem.answered .qchoice.picked-ok,
+  .qitem.answered .qchoice.picked-no,
+  .qitem.answered .qchoice.show-ok { opacity: 1; }
+
+  /* Multiple-Choice-Karten für A2A / MCP */
+  .mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mcq {
+    text-align: left; cursor: pointer; appearance: none;
+    background: var(--paper); border: 1.5px solid var(--hair);
+    border-radius: 14px; padding: 20px 24px;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.05s;
+  }
+  .mcq:hover { border-color: var(--ink); }
+  .mcq:active { transform: translateY(1px); }
+  .mcq .mcq-head { display: flex; gap: 14px; align-items: baseline; }
+  .mcq .mcq-letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mcq .mcq-title { font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.25; color: var(--ink); text-align: left; }
+  .mcq .mcq-note { font-size: 17px; color: var(--ink-2); margin: 8px 0 0 54px; line-height: 1.4; }
+  .mcq.picked-ok { border-color: var(--quiz-ok); background: color-mix(in oklab, var(--quiz-ok) 8%, var(--paper)); }
+  .mcq.picked-no { border-color: var(--quiz-no); background: color-mix(in oklab, var(--quiz-no) 6%, var(--paper)); }
+  .mcq.show-ok { border-color: var(--quiz-ok); border-style: dashed; }
+  .mcq.picked-ok .mcq-letter, .mcq.show-ok .mcq-letter { background: var(--quiz-ok); }
+  .mcq.picked-no .mcq-letter { background: var(--quiz-no); }
+  .mcq-grid.answered .mcq { pointer-events: none; }
+
+  /* Reveal-Button */
+  .reveal-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 14px; gap: 16px;
+  }
+  .reveal-status {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .reveal-status .score { color: var(--ink); font-weight: 600; }
+  .qbutton {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--bg); border: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .qbutton:hover { background: var(--accent); }
+  .qbutton:active { transform: translateY(1px); }
+  .qbutton.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .qbutton.ghost:hover { background: var(--ink); color: var(--bg); }
+  /* invite-interaction pulse — same expanding accent ring used across the course's sliders & buttons. */
+  .qbutton:not(.ghost):not(:disabled) { animation: qbtn-attention-pulse 2.2s ease-out infinite; }
+  @keyframes qbtn-attention-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,66,31,0.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(200,66,31,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  .qbutton:not(.ghost):hover { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .qbutton:not(.ghost) { animation: none; }
+  }
+
+  /* ===== Interaktiver Praxis-Timer (Pair-Programming-Folie) ===== */
+  .timer { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; }
+  .timer .t-display {
+    font-size: 19px; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums; min-width: 62px; letter-spacing: 0.02em;
+  }
+  .timer .t-display.running { color: var(--accent); }
+  .timer .t-display.done { color: var(--quiz-no); animation: timer-blink 0.9s steps(1) infinite; }
+  @keyframes timer-blink { 50% { opacity: 0.25; } }
+  .timer .t-btn {
+    appearance: none; cursor: pointer; font-family: var(--mono);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 999px;
+    border: 1px solid var(--ink); background: var(--paper); color: var(--ink-2);
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .timer .t-btn:hover { background: var(--bg-2); }
+  .timer .t-toggle[data-running="true"] {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+
+  /* ===== Workshop-Agenda ===== */
+  .agenda-row {
+    display: grid; grid-template-columns: 72px 1fr 92px;
+    gap: 20px; align-items: center;
+    padding: 14px 20px;
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px;
+  }
+  .agenda-row.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .agenda-row .a-num {
+    font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.08em;
+  }
+  .agenda-row.dark .a-num { color: var(--accent-soft); }
+  .agenda-row .a-title {
+    font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15;
+  }
+  .agenda-row .a-desc {
+    font-size: 16px; color: var(--ink-3); margin-top: 3px; line-height: 1.35;
+  }
+  .agenda-row.dark .a-desc { color: #c8c2b6; }
+  .agenda-row .a-time {
+    font-family: var(--mono); font-size: 17px; text-align: right;
+    color: var(--accent);
+  }
+  .agenda-row.dark .a-time { color: var(--accent-soft); }
+
+  .goal {
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 18px; color: var(--ink-2); line-height: 1.4;
+  }
+  .goal strong { color: var(--ink); }
+
+  /* ===== Cheat-Sheet ===== */
+  .cs-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .cs-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cs-card .cs-num {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em;
+  }
+  .cs-card.dark .cs-num { color: var(--accent-soft); }
+  .cs-card .cs-name {
+    font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .cs-card .cs-row { margin-top: 14px; }
+  .cs-card .cs-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .cs-card.dark .cs-label { color: #c8c2b6; }
+  .cs-card .cs-val {
+    font-size: 15.5px; color: var(--ink-2); line-height: 1.4; margin-top: 3px;
+  }
+  .cs-card.dark .cs-val { color: #d8d2c5; }
+  .cs-card .cs-val.mono { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+  .cs-card.dark .cs-val.mono { color: #f0ece3; }
+
+  .cs-rules {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-top: 14px;
+  }
+  .cs-rule {
+    background: transparent; border: 1px dashed var(--hair);
+    border-radius: 10px; padding: 12px 16px;
+  }
+
+  /* Mitnehmen: statisches Echo der Übersichtskachel-Animation (.a-loop auf index.html) */
+  .cs-head-row { display: flex; align-items: center; gap: 44px; }
+  .cs-head-row .cs-head-main { flex: 1; min-width: 0; }
+  .cs-emblem {
+    flex: 0 0 auto; width: 320px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 18px 24px 22px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+    box-shadow: 0 14px 32px -26px rgba(21,17,12,0.5);
+  }
+  .cs-emblem .em-cap { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); align-self: flex-start; }
+  .cs-emblem .epec { position: relative; display: grid; grid-template-columns: repeat(2, auto); gap: 20px 48px; place-items: center; }
+  .cs-emblem .epec .ep { font-family: var(--mono); font-size: 14px; font-weight: 600; padding: 9px 16px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--hair); color: var(--ink-2); text-align: center; }
+  .cs-emblem .epec .ep.on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  .cs-emblem .epec .rotor { position: absolute; inset: 0; margin: auto; width: 30px; height: 30px; color: var(--accent); display: grid; place-items: center; }
+  .cs-emblem .epec .rotor svg { width: 100%; height: 100%; display: block; }
+  .cs-rule .r-when {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cs-rule .r-then {
+    font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;
+  }
+  .cs-rule .r-then strong { color: var(--ink); }
+
+  /* ===== Echte Praxis · Pair-Programming ===== */
+  .role-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; flex-direction: column;
+  }
+  .role-card .r-tag {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .role-card .r-name {
+    font-family: var(--serif); font-size: 30px; font-weight: 500;
+    line-height: 1; margin-top: 4px;
+  }
+  .role-card .r-sub {
+    font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .role-card .r-body {
+    font-size: 16px; color: var(--ink-2); line-height: 1.45; margin-top: 10px;
+  }
+
+  .gate-list { display: flex; flex-direction: column; gap: 10px; }
+  .gate-list .gate-item {
+    display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+    padding: 8px 0;
+  }
+  .gate-list .gate-item + .gate-item { border-top: 1px solid rgba(255,255,255,0.10); }
+  .gate-list .g-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gate-list .g-body { font-size: 16px; line-height: 1.35; color: #d8d2c5; padding-top: 5px; }
+  .gate-list .g-body strong { color: #f0ece3; }
+  .gate-list .g-body em {
+    display: block; font-family: var(--mono); font-style: normal;
+    font-size: 14px; color: var(--accent-soft); margin-top: 3px;
+  }
+
+  .task-row {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 14px; align-items: start;
+    padding: 9px 0;
+  }
+  .task-row + .task-row { border-top: 1px solid var(--hair); }
+  .task-row .t-letter {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-row .t-body { font-size: 16px; line-height: 1.4; color: var(--ink-2); padding-top: 4px; }
+  .task-row .t-body strong { color: var(--ink); }
+
+  /* Aufklapp-Erklärung nach Auflösung (für Übung 3 + 4) */
+  .explain {
+    margin-top: 16px;
+    background: var(--ink); color: #d8d2c5;
+    border-radius: 14px; padding: 18px 26px;
+    display: none;
+  }
+  .explain.open { display: block; }
+  .explain strong { color: #f0ece3; }
+  .explain .explain-accent { color: var(--accent-soft); font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+
+<body>
+<deck-stage>
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span></span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — Wie Agenten wirklich arbeiten</div>
+      <h1 class="title" style="margin-top: 32px;">Agentic<br/>Work&nbsp;&amp;&nbsp;<span class="accent">Workflows</span>.</h1>
+
+      <h3 class="subtitle" style="margin-top: 28px;">
+        Vom einzelnen Prompt zur strukturierten Zusammenarbeit mit einem autonomen Modell.
+      </h3>
+
+      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Loop statt One-Shot</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Tools statt Text</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Phasen statt Improvisation</span>
+        <span class="pill accent" style="font-size: 24px; padding: 10px 20px;">Explore → Plan → Execute → Commit</span>
+      </div>
+
+      <!-- decorative pipeline at bottom -->
+      <div style="margin-top: auto; padding-bottom: 24px;">
+        <div style="font-family: var(--mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 14px;">
+          <span style="display: inline-block; width: 28px; height: 1px; background: var(--accent);"></span>
+          Der Arbeitsfluss in 4 Phasen
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 14px; align-items: center;">
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">01</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Explore</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">verstehen, was schon da ist</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">→</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">02</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Plan</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">vorher denken, dann tippen</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">→</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">03</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Execute</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">Plan ausführen, klein iterieren</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">→</div>
+          <div style="background: var(--accent); border: 1px solid var(--accent); border-radius: 12px; padding: 22px 24px; color: #fff;">
+            <div class="mono" style="font-size: 18px; color: rgba(255,255,255,0.7); letter-spacing: 0.1em;">04</div>
+            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Commit</div>
+            <div style="font-size: 18px; color: rgba(255,255,255,0.85); margin-top: 4px;">festschreiben, was funktioniert</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 WARUM AGENTIC ===================== -->
+  <section data-screen-label="02 Warum Agentic">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Warum überhaupt ein Workflow?</div>
+      <h2 class="title" style="font-size: 56px;">Ein Prompt erzeugt Text.<br/>Ein <span class="accent">Workflow</span> erzeugt Ergebnisse.</h2>
+
+      <p class="lede" style="margin-top: 4px;">
+        Sobald ein Modell <em>handeln</em> soll — Dateien lesen, Code ändern, Tests laufen lassen — reicht der einzelne Prompt nicht mehr.
+        Es braucht eine wiederholbare Choreografie: <strong>was geschieht in welcher Phase, mit welcher Information, unter welcher Kontrolle.</strong>
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 28px;">
+
+        <!-- Naiv -->
+        <div class="card" style="padding: 24px 28px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div>
+              <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;">Naiv · One-Shot</div>
+              <div style="font-size: 28px; font-weight: 500; margin-top: 6px;">„Mach das halt."</div>
+            </div>
+            <span class="pill outline">unstrukturiert</span>
+          </div>
+
+          <div style="margin-top: 16px; padding: 14px 18px; background: var(--bg-2); border-radius: 10px; font-family: var(--mono); font-size: 17px; line-height: 1.5;">
+            <span style="color: var(--ink-3);">user</span> &nbsp;„Bau mir Feature X."<br/>
+            <span style="color: var(--ink-3);">agent</span> &nbsp;<em>schreibt sofort Code, ohne den Rest zu kennen</em>
+          </div>
+
+          <ul style="font-size: 20px; line-height: 1.45; padding-left: 24px; color: var(--ink-2); margin-top: 14px; margin-bottom: 0;">
+            <li>erfindet Konventionen, statt sie zu lesen</li>
+            <li>duplikate Funktionen, Stilbrüche</li>
+            <li>kein Punkt, an dem ein Mensch eingreifen kann</li>
+          </ul>
+        </div>
+
+        <!-- Strukturiert -->
+        <div class="card dark" style="padding: 24px 28px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div>
+              <div class="mono" style="font-size: 15px; color: #c8c2b6; letter-spacing: 0.08em; text-transform: uppercase;">Strukturiert · Workflow</div>
+              <div style="font-size: 28px; font-weight: 500; margin-top: 6px;">Erst verstehen,<br/>dann handeln.</div>
+            </div>
+            <span class="pill accent">phasiert</span>
+          </div>
+
+          <div style="margin-top: 16px; padding: 14px 18px; background: rgba(255,255,255,0.06); border-radius: 10px; font-family: var(--mono); font-size: 17px; line-height: 1.5; color: #f0ece3;">
+            <span style="color: var(--accent-soft);">01</span> &nbsp;Code &amp; Kontext lesen<br/>
+            <span style="color: var(--accent-soft);">02</span> &nbsp;Plan vorschlagen, freigeben lassen<br/>
+            <span style="color: var(--accent-soft);">03</span> &nbsp;klein implementieren, prüfen<br/>
+            <span style="color: var(--accent-soft);">04</span> &nbsp;sauber committen
+          </div>
+
+          <ul style="font-size: 20px; line-height: 1.45; padding-left: 24px; color: #d8d2c5; margin-top: 14px; margin-bottom: 0;">
+            <li>jede Phase erzeugt etwas Prüfbares</li>
+            <li>Mensch greift gezielt an Übergängen ein</li>
+            <li>wiederholbar über Teams und Aufgaben hinweg</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 20px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">Agentisch arbeiten heißt nicht „Agent macht alles allein". Es heißt: <strong>klare Phasen, klare Übergaben</strong> — der Agent füllt die Phasen, der Mensch öffnet die Tore.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 EPEC HAUPTFOLIE ===================== -->
+  <section data-screen-label="03 Explore Plan Execute Commit">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Hauptfolie — Vier Phasen, eine Reihenfolge</div>
+      <h2 class="title" style="font-size: 60px; margin-bottom: 4px;">Explore → Plan → Execute → <span class="accent">Commit</span></h2>
+      <p class="lede" style="margin-top: 8px; max-width: 1600px;">
+        Der Standard-Loop für agentisches Arbeiten am Code. Jede Phase hat ein klares Artefakt, ein klares Tool-Set und eine klare Übergabe an die nächste.
+      </p>
+
+      <!-- 4-column phase grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; margin-top: 14px;">
+
+        <!-- ===== EXPLORE ===== -->
+        <div class="card" style="padding: 16px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">PHASE 01</div>
+            <span class="pill outline" style="font-size: 11px;">lesend</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 44px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Explore</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">verstehen, was schon da ist</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 11px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was passiert</div>
+          <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>Repo-Struktur lesen</li>
+            <li>verwandte Dateien öffnen</li>
+            <li>Konventionen &amp; Style erfassen</li>
+            <li>Tests &amp; Docs sichten</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Werkzeuge</div>
+          <div class="mono" style="font-size: 14px; line-height: 1.6; color: var(--ink-2); margin-top: 6px;">
+            read · grep · ls · search
+          </div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Artefakt</div>
+          <div style="font-size: 16px; line-height: 1.4; color: var(--ink-2); margin-top: 6px; font-style: italic;">
+            mentales Modell des Codes — noch keine Änderungen
+          </div>
+
+          <div style="margin-top: auto; padding-top: 10px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↓ Übergabe</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">Zusammenfassung dessen, was relevant ist.</div>
+          </div>
+        </div>
+
+        <!-- ===== PLAN ===== -->
+        <div class="card" style="padding: 16px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">PHASE 02</div>
+            <span class="pill outline" style="font-size: 11px;">denkend</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 44px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Plan</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">vorher denken, dann tippen</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 11px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was passiert</div>
+          <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>Schritte vorschlagen</li>
+            <li>Risiken &amp; Annahmen nennen</li>
+            <li>Alternativen abwägen</li>
+            <li><strong>Mensch gibt frei</strong></li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Werkzeuge</div>
+          <div class="mono" style="font-size: 14px; line-height: 1.6; color: var(--ink-2); margin-top: 6px;">
+            todo-list · extended thinking
+          </div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Artefakt</div>
+          <div style="font-size: 16px; line-height: 1.4; color: var(--ink-2); margin-top: 6px; font-style: italic;">
+            nummerierte To-Do-Liste — vom Menschen abgesegnet
+          </div>
+
+          <div style="margin-top: auto; padding-top: 10px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↓ Gate · Mensch</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">„Ja, so machen." — oder Plan überarbeiten.</div>
+          </div>
+        </div>
+
+        <!-- ===== CODE ===== -->
+        <div class="card" style="padding: 16px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">PHASE 03</div>
+            <span class="pill outline" style="font-size: 11px;">schreibend</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 44px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Execute</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">Plan ausführen, klein iterieren</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 11px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was passiert</div>
+          <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>Schritt für Schritt umsetzen</li>
+            <li>Tests laufen lassen</li>
+            <li>Output prüfen, korrigieren</li>
+            <li>To-Dos abhaken</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Werkzeuge</div>
+          <div class="mono" style="font-size: 14px; line-height: 1.6; color: var(--ink-2); margin-top: 6px;">
+            edit · write · bash · test
+          </div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Artefakt</div>
+          <div style="font-size: 16px; line-height: 1.4; color: var(--ink-2); margin-top: 6px; font-style: italic;">
+            grüne Tests, laufende Implementierung — uncommitted
+          </div>
+
+          <div style="margin-top: auto; padding-top: 10px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↺ Inner Loop</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">edit → run → observe → edit, bis grün.</div>
+          </div>
+        </div>
+
+        <!-- ===== COMMIT ===== -->
+        <div class="card dark" style="padding: 16px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--accent-soft); letter-spacing: 0.08em;">PHASE 04</div>
+            <span class="pill accent" style="font-size: 11px;">abschließend</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 44px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em; color: #f0ece3;">Commit</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: #c8c2b6; margin-top: 2px;">festschreiben, was funktioniert</div>
+
+          <div style="height: 1px; background: rgba(255,255,255,0.14); margin: 16px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: #c8c2b6; letter-spacing: 0.06em; text-transform: uppercase;">Was passiert</div>
+          <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: #d8d2c5; margin: 8px 0 0;">
+            <li>Diff durchgehen</li>
+            <li>aussagekräftige Commit-Message</li>
+            <li>PR-Beschreibung erzeugen</li>
+            <li>Branch sauber halten</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: #c8c2b6; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Werkzeuge</div>
+          <div class="mono" style="font-size: 14px; line-height: 1.6; color: #d8d2c5; margin-top: 6px;">
+            git diff · commit · push · pr
+          </div>
+
+          <div class="mono" style="font-size: 12px; color: #c8c2b6; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 10px;">Artefakt</div>
+          <div style="font-size: 16px; line-height: 1.4; color: #d8d2c5; margin-top: 6px; font-style: italic;">
+            sauberer Commit / PR — review-fähig
+          </div>
+
+          <div style="margin-top: auto; padding-top: 10px;">
+            <div class="mono" style="color: var(--accent-soft); font-size: 13px; letter-spacing: 0.06em;">✓ Übergabe an Review</div>
+            <div style="font-size: 15px; color: #d8d2c5; margin-top: 4px;">Code-Review, CI, Merge — wieder Menschensache.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 22px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">
+          Die Reihenfolge ist <strong>nicht verhandelbar</strong>: ohne <em>Explore</em> erfindet der Agent den Code, ohne <em>Plan</em> baut er das Falsche, ohne <em>Execute</em> bleibt der Plan Theorie, ohne <em>Commit</em> ist die Arbeit nicht reproduzierbar.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 WARUM DIE REIHENFOLGE ===================== -->
+  <section data-screen-label="04 Warum die Reihenfolge">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Warum gerade diese vier Phasen?</div>
+      <h2 class="title" style="font-size: 52px;">Jede Phase schützt vor einem<br/>konkreten <span class="accent">Failure-Mode</span>.</h2>
+
+      <p class="lede" style="margin-top: 6px; max-width: 1600px;">
+        Wer eine Phase überspringt, bekommt zuverlässig den dazugehörigen Fehler. Deshalb ist die Reihenfolge selbst die wichtigste Schutzmaßnahme.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 22px;">
+
+        <!-- Explore protects -->
+        <div class="card" style="padding: 22px 26px;">
+          <div style="display: flex; align-items: baseline; gap: 16px;">
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500;">Explore</div>
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.06em;">schützt vor →</div>
+            <div class="mono accent" style="font-size: 18px;">Halluzinierten Konventionen</div>
+          </div>
+          <p style="font-size: 19px; line-height: 1.45; color: var(--ink-2); margin: 10px 0 0;">
+            Ohne Lesen erfindet der Agent Pfade, Namen und Patterns, die im Repo gar nicht existieren — Code, der lokal nach Lehrbuch aussieht und im Projekt komplett aus dem Rahmen fällt.
+          </p>
+          <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-2); border-radius: 8px; font-family: var(--mono); font-size: 15px; color: var(--ink-2);">
+            <span style="color: var(--ink-3);">// Anti-Pattern:</span><br/>
+            „Ich nehme an, ihr habt einen <span class="accent">UserService</span>…"
+          </div>
+        </div>
+
+        <!-- Plan protects -->
+        <div class="card" style="padding: 22px 26px;">
+          <div style="display: flex; align-items: baseline; gap: 16px;">
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500;">Plan</div>
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.06em;">schützt vor →</div>
+            <div class="mono accent" style="font-size: 18px;">Falsche Aufgabe gelöst</div>
+          </div>
+          <p style="font-size: 19px; line-height: 1.45; color: var(--ink-2); margin: 10px 0 0;">
+            Ohne expliziten Plan wird der erste Aspekt der Frage gelöst, der dem Modell ins Auge sticht — selten der wichtigste. Der Plan macht Annahmen sichtbar, <em>bevor</em> Code sie zementiert.
+          </p>
+          <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-2); border-radius: 8px; font-family: var(--mono); font-size: 15px; color: var(--ink-2);">
+            <span style="color: var(--ink-3);">// Anti-Pattern:</span><br/>
+            500 Zeilen Code zur Frage, ob es überhaupt der richtige Ort ist.
+          </div>
+        </div>
+
+        <!-- Code protects -->
+        <div class="card" style="padding: 22px 26px;">
+          <div style="display: flex; align-items: baseline; gap: 16px;">
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500;">Execute</div>
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.06em;">schützt vor →</div>
+            <div class="mono accent" style="font-size: 18px;">Theorie ohne Realität</div>
+          </div>
+          <p style="font-size: 19px; line-height: 1.45; color: var(--ink-2); margin: 10px 0 0;">
+            Pläne, die nie laufen, sind nie falsifizierbar. Erst die Ausführung — Schritt für Schritt, mit Tests dazwischen — zeigt, was wirklich greift. Kleine Iterationen schlagen den großen Wurf.
+          </p>
+          <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-2); border-radius: 8px; font-family: var(--mono); font-size: 15px; color: var(--ink-2);">
+            <span style="color: var(--ink-3);">// Anti-Pattern:</span><br/>
+            „Im Prinzip funktioniert das so…" — ohne <span class="accent">npm test</span>.
+          </div>
+        </div>
+
+        <!-- Commit protects -->
+        <div class="card" style="padding: 22px 26px;">
+          <div style="display: flex; align-items: baseline; gap: 16px;">
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500;">Commit</div>
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.06em;">schützt vor →</div>
+            <div class="mono accent" style="font-size: 18px;">Verlorener Arbeit</div>
+          </div>
+          <p style="font-size: 19px; line-height: 1.45; color: var(--ink-2); margin: 10px 0 0;">
+            Ohne Commit ist nichts reproduzierbar, nichts review-fähig, nichts wieder einzuspielen, wenn der nächste Versuch schiefgeht. Der Commit gibt dem Menschen den natürlichen Stop-and-Check-Punkt.
+          </p>
+          <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-2); border-radius: 8px; font-family: var(--mono); font-size: 15px; color: var(--ink-2);">
+            <span style="color: var(--ink-3);">// Anti-Pattern:</span><br/>
+            Drei Sessions später: <span class="accent">„was hat das Modell eigentlich geändert?"</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 ANTI-PATTERN & MERKSATZ ===================== -->
+  <section data-screen-label="05 In der Praxis">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Was den Workflow am Leben hält</div>
+      <h2 class="title" style="font-size: 60px;">Drei Hebel, drei <span class="accent">Stolperfallen</span>.</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px; flex: 1;">
+
+        <!-- DO -->
+        <div class="card" style="padding: 32px 36px;">
+          <div class="mono" style="font-size: 15px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">+ Hebel</div>
+          <div style="font-size: 38px; font-weight: 500; margin-top: 6px;">Was den Workflow trägt</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 22px 0;"></div>
+
+          <div style="display: flex; flex-direction: column; gap: 22px;">
+            <div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Aufgaben klein schneiden</div>
+              <p style="font-size: 19px; line-height: 1.5; color: var(--ink-2); margin: 6px 0 0;">
+                Ein Workflow pro Outcome, nicht pro Feature-Epic. Lieber zehn kleine Loops als ein heroischer.
+              </p>
+            </div>
+            <div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Plan explizit absegnen</div>
+              <p style="font-size: 19px; line-height: 1.5; color: var(--ink-2); margin: 6px 0 0;">
+                Das Gate zwischen Plan und Code ist der billigste Punkt, um eine falsche Richtung zu stoppen.
+              </p>
+            </div>
+            <div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Häufig committen</div>
+              <p style="font-size: 19px; line-height: 1.5; color: var(--ink-2); margin: 6px 0 0;">
+                Jeder grüne Zwischenstand ist ein Speicherpunkt. Ein Commit alle 20 Minuten ist normal, kein Overhead.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- DON'T -->
+        <div class="card dark" style="padding: 32px 36px;">
+          <div class="mono" style="font-size: 15px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">− Stolperfallen</div>
+          <div style="font-size: 38px; font-weight: 500; margin-top: 6px; color: #f0ece3;">Was den Workflow zerbricht</div>
+
+          <div style="height: 1px; background: rgba(255,255,255,0.14); margin: 22px 0;"></div>
+
+          <div style="display: flex; flex-direction: column; gap: 22px;">
+            <div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3;">Plan im Kopf des Modells lassen</div>
+              <p style="font-size: 19px; line-height: 1.5; color: #d8d2c5; margin: 6px 0 0;">
+                Ein Plan, der nicht aufgeschrieben ist, ist kein Plan. Er kann nicht geprüft, nicht verbessert, nicht erinnert werden.
+              </p>
+            </div>
+            <div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3;">Mitten in <em>Execute</em> die Aufgabe ändern</div>
+              <p style="font-size: 19px; line-height: 1.5; color: #d8d2c5; margin: 6px 0 0;">
+                Neue Anforderung = zurück zu <span class="mono">Plan</span>. Nicht im laufenden Loop draufsatteln — der Context wird sonst zur Suppe.
+              </p>
+            </div>
+            <div>
+              <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3;">Den Agent „einfach machen" lassen</div>
+              <p style="font-size: 19px; line-height: 1.5; color: #d8d2c5; margin: 6px 0 0;">
+                Ohne Gate kein Workflow — nur ein langer Monolog mit Schreibrechten.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 28px;">
+        <div class="callout-label">Take-away</div>
+        <div class="callout-body">
+          <strong>Explore → Plan → Execute → Commit</strong> ist kein Prozess-Overhead, sondern ein Vertrag:
+          der Agent verspricht, in dieser Reihenfolge zu arbeiten — der Mensch verspricht, an den richtigen Stellen einzugreifen.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05A VARIANTEN DES LOOPS ===================== -->
+  <section data-screen-label="05a Varianten des Loops">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">EPEC an die Aufgabe anpassen</div>
+      <h2 class="title" style="font-size: 56px;">Ein Grundmuster, drei <span class="accent">Spielarten</span>.</h2>
+      <p class="lede" style="margin-top: 4px; max-width: 1600px;">
+        Das Skelett bleibt gleich. Was sich ändert, ist das <strong>Artefakt, das den Inner-Loop steuert</strong>:
+        ein roter Test, ein Zielbild — oder der Plan selbst.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 22px; flex: 1; min-height: 0;">
+
+        <!-- TDD-Loop -->
+        <div class="card" style="padding: 22px 26px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">VARIANTE 01</div>
+            <span class="pill outline" style="font-size: 11px;">verifizierbar</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 6px;">TDD-Loop</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">der Test ist das Ziel</div>
+
+          <div style="margin-top: 14px; padding: 12px 16px; background: var(--bg-2); border-radius: 10px; font-family: var(--mono); font-size: 14.5px; line-height: 1.7; color: var(--ink-2);">
+            Explore → Plan →<br/>
+            <span class="accent">Tests schreiben (rot) → Commit</span> →<br/>
+            Code, bis grün → Commit
+          </div>
+
+          <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 14px 0 0;">
+            Erst Tests schreiben, die bewusst fehlschlagen — und committen. Dann implementieren, bis alles grün ist.
+            Der Agent jagt ein <strong>hartes, prüfbares Ziel</strong> statt einer vagen Beschreibung.
+          </p>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Wann</div>
+            <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.45;">Logik mit klaren Erwartungen · Bugfixes (Regression!) · Refactorings</div>
+          </div>
+        </div>
+
+        <!-- Visual-Loop -->
+        <div class="card" style="padding: 22px 26px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">VARIANTE 02</div>
+            <span class="pill outline" style="font-size: 11px;">sichtbar</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 6px;">Visual-Loop</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">das Zielbild ist das Ziel</div>
+
+          <div style="margin-top: 14px; padding: 12px 16px; background: var(--bg-2); border-radius: 10px; font-family: var(--mono); font-size: 14.5px; line-height: 1.7; color: var(--ink-2);">
+            Explore → Plan →<br/>
+            Code → <span class="accent">Screenshot → vergleichen</span> →<br/>
+            Code → … → Commit
+          </div>
+
+          <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 14px 0 0;">
+            Mock oder Screenshot als Zielbild mitgeben. Der Agent baut, macht selbst einen Screenshot, vergleicht — und iteriert.
+            <strong>2–3 Runden sind normal</strong>, die erste Version ist selten die beste.
+          </p>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">Wann</div>
+            <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.45;">Frontends · Reports · Diagramme — alles mit sichtbarem Output</div>
+          </div>
+        </div>
+
+        <!-- Plan-only -->
+        <div class="card dark" style="padding: 22px 26px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 14px; color: var(--accent-soft); letter-spacing: 0.08em;">VARIANTE 03</div>
+            <span class="pill accent" style="font-size: 11px;">volle Kontrolle</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 6px; color: #f0ece3;">Plan-only</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: #c8c2b6; margin-top: 2px;">der Mensch übernimmt Execute</div>
+
+          <div style="margin-top: 14px; padding: 12px 16px; background: rgba(255,255,255,0.06); border-radius: 10px; font-family: var(--mono); font-size: 14.5px; line-height: 1.7; color: #f0ece3;">
+            Explore → Plan →<br/>
+            <span style="color: var(--accent-soft);">✋ Übergabe an den Menschen</span> →<br/>
+            selbst implementieren
+          </div>
+
+          <p style="font-size: 18px; line-height: 1.45; color: #d8d2c5; margin: 14px 0 0;">
+            Der Agent liest und plant — getippt wird selbst. Die <strong>billigste Variante</strong>, fremden Code zu verstehen,
+            und die sicherste, wenn jede Zeile zählt.
+          </p>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">Wann</div>
+            <div style="font-size: 16px; color: #d8d2c5; margin-top: 4px; line-height: 1.45;">Security-kritischer Code · Onboarding in fremde Codebases · Architektur-Fragen</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 20px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">
+          Die Reihenfolge ist nie verhandelbar — <strong>das Artefakt schon.</strong>
+          Gib dem Agenten das härteste Ziel, das die Aufgabe hergibt: Test &gt; Zielbild &gt; Beschreibung.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05B KURSKORREKTUR ===================== -->
+  <section data-screen-label="05b Kurskorrektur">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Wenn der Loop entgleist</div>
+      <h2 class="title" style="font-size: 56px;">Vier Stufen der <span class="accent">Kurskorrektur</span>.</h2>
+      <p class="lede" style="margin-top: 4px; max-width: 1600px;">
+        Agenten laufen nicht fehlerfrei — das ist eingeplant. Entscheidend ist, <strong>früh und billig</strong> zu korrigieren,
+        statt zuzuschauen. Von sanft nach hart:
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 22px; flex: 1; min-height: 0;">
+
+        <div style="display: grid; grid-template-columns: 64px 1.1fr 1.5fr 230px; gap: 22px; align-items: center; padding: 16px 24px; background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;">
+          <div class="mono" style="font-size: 17px; color: var(--ink-3); letter-spacing: 0.08em;">01</div>
+          <div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Unterbrechen</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 2px; line-height: 1.35;">Signal: falsche Richtung, aber nah dran</div>
+          </div>
+          <div style="font-size: 17px; line-height: 1.4; color: var(--ink-2);">Stoppen (<span class="mono" style="font-size: 15px;">Esc</span>), Anweisung nachschärfen, weiterlaufen lassen — der Kontext bleibt erhalten.</div>
+          <div class="mono" style="font-size: 14px; color: var(--accent); text-align: right; letter-spacing: 0.04em;">kostet: Sekunden</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 64px 1.1fr 1.5fr 230px; gap: 22px; align-items: center; padding: 16px 24px; background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;">
+          <div class="mono" style="font-size: 17px; color: var(--ink-3); letter-spacing: 0.08em;">02</div>
+          <div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Zurückspulen</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 2px; line-height: 1.35;">Signal: der Prompt selbst war das Problem</div>
+          </div>
+          <div style="font-size: 17px; line-height: 1.4; color: var(--ink-2);">Zum letzten Checkpoint zurück, Prompt präziser formulieren, neu ansetzen — statt auf einer schiefen Antwort weiterzubauen.</div>
+          <div class="mono" style="font-size: 14px; color: var(--accent); text-align: right; letter-spacing: 0.04em;">kostet: Minuten</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 64px 1.1fr 1.5fr 230px; gap: 22px; align-items: center; padding: 16px 24px; background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;">
+          <div class="mono" style="font-size: 17px; color: var(--ink-3); letter-spacing: 0.08em;">03</div>
+          <div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Kontext leeren</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 2px; line-height: 1.35;">Signal: die Session ist zur Suppe geworden</div>
+          </div>
+          <div style="font-size: 17px; line-height: 1.4; color: var(--ink-2);">Stand kurz zusammenfassen lassen → <span class="mono" style="font-size: 15px;">/clear</span> → mit der Zusammenfassung frisch starten. Alte Irrwege vergiften sonst jede neue Antwort.</div>
+          <div class="mono" style="font-size: 14px; color: var(--accent); text-align: right; letter-spacing: 0.04em;">kostet: einen Neustart</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 64px 1.1fr 1.5fr 230px; gap: 22px; align-items: center; padding: 16px 24px; background: var(--paper); border: 1px solid var(--hair); border-radius: 12px;">
+          <div class="mono" style="font-size: 17px; color: var(--ink-3); letter-spacing: 0.08em;">04</div>
+          <div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500;">Hard Reset</div>
+            <div style="font-size: 15px; color: var(--ink-3); margin-top: 2px; line-height: 1.35;">Signal: der Code selbst ist verbaut</div>
+          </div>
+          <div style="font-size: 17px; line-height: 1.4; color: var(--ink-2);"><span class="mono" style="font-size: 15px; color: var(--accent);">git checkout</span> zum letzten grünen Commit, neuen Loop bei <em>Plan</em> beginnen — nicht im Trümmerfeld weiterflicken.</div>
+          <div class="mono" style="font-size: 14px; color: var(--accent); text-align: right; letter-spacing: 0.04em;">kostet: einen Loop</div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 20px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Heuristik</div>
+        <div class="callout-body" style="font-size: 20px;">
+          <strong>Zweimal nachgebessert und immer noch falsch? Eine Stufe eskalieren.</strong>
+          Sunk-Cost gilt auch für Prompts — und häufige Commits sind der Grund, warum Stufe 4 billig ist.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 ÜBUNG 0 — PHASE ERKENNEN ===================== -->
+  <section data-screen-label="06 Übung 0 Phase erkennen">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Warm-up · Phase erkennen</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Ordne jedes Zitat der <span class="accent">richtigen EPEC-Phase</span> zu.</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
+        Klick die Phase, die du erkennst — grün = richtig, rot = daneben.
+      </p>
+
+      <!-- Phasen-Legende -->
+      <div class="options-rail" style="grid-template-columns: repeat(4, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Explore</div><div class="opt-tag">lesen · verstehen, was da ist</div></div>
+        <div class="opt"><div class="opt-name">Plan</div><div class="opt-tag">denken · Schritte vorschlagen</div></div>
+        <div class="opt"><div class="opt-name">Execute</div><div class="opt-tag">schreiben · klein iterieren</div></div>
+        <div class="opt"><div class="opt-name">Commit</div><div class="opt-tag">festschreiben · Review</div></div>
+      </div>
+
+      <!-- Interaktive Zitate -->
+      <div class="quiz" data-quiz="epcc-phase" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="explore">
+          <div class="qbody" data-nd='<em>„Bevor ich was vorschlage — wie ist euer <strong>Quartalsbericht</strong> bisher aufgebaut? Lass mich erst die letzten zwei Reports und die Datenquelle sichten."</em>'><em>„Bevor ich was anfasse — wie sieht eure <strong>Fehler-Klasse</strong> aus? Lass mich erst <span class="mono">errors.ts</span> und ein paar Aufrufer lesen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="explore">Explore</button>
+            <button class="qchoice" data-key="plan">Plan</button>
+            <button class="qchoice" data-key="code">Execute</button>
+            <button class="qchoice" data-key="commit">Commit</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Explore</span> — Lesen + Konventionen aufnehmen, noch nichts ändern.</div>
+        </div>
+
+        <div class="qitem" data-correct="plan">
+          <div class="qbody" data-nd='<em>„Mein Vorschlag: 1) Datenquellen zusammenführen, 2) Kennzahlen berechnen, 3) Auffälligkeiten markieren, 4) Management-Summary schreiben. <strong>OK so?</strong>"</em>'><em>„Mein Vorschlag: 1) Migration für <span class="mono">audit_log</span>, 2) Service-Methode, 3) Middleware, 4) Tests. <strong>OK so?</strong>"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="explore">Explore</button>
+            <button class="qchoice" data-key="plan">Plan</button>
+            <button class="qchoice" data-key="code">Execute</button>
+            <button class="qchoice" data-key="commit">Commit</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Plan</span> — nummerierte Schritte + ausdrücklich Freigabe einholen.</div>
+        </div>
+
+        <div class="qitem" data-correct="code">
+          <div class="qbody" data-nd='<em>„Abschnitt 3 überarbeitet, zwei Zahlen korrigiert, Gegencheck mit der Quelle stimmt jetzt — alle 17 Positionen sauber."</em>'><em>„<span class="mono">service.ts</span> +47 / −2, <span class="mono">pnpm test</span> grün, ein Snapshot war stale — neu gebaut, jetzt 17 passed."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="explore">Explore</button>
+            <button class="qchoice" data-key="plan">Plan</button>
+            <button class="qchoice" data-key="code">Execute</button>
+            <button class="qchoice" data-key="commit">Commit</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Execute</span> — Inner Loop: anpassen → prüfen → beobachten → anpassen.'><span class="ok">✓ Execute</span> — Inner Loop: edit → run → observe → edit.</div>
+        </div>
+
+        <div class="qitem" data-correct="commit">
+          <div class="qbody" data-nd='<em>„Bericht final, alle Änderungen nachvollziehbar dokumentiert — Entwurf liegt zur Freigabe bei dir, verknüpft mit Vorgang PROJ-1247."</em>'><em>„<span class="mono">feat(audit): record auth events with retention TTL</span> — PR ist offen, Closes PROJ-1247, bitte mal reviewen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="explore">Explore</button>
+            <button class="qchoice" data-key="plan">Plan</button>
+            <button class="qchoice" data-key="code">Execute</button>
+            <button class="qchoice" data-key="commit">Commit</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Commit</span> — sauberer Abschluss + Freigabe-Entwurf + Vorgangs-Link = Übergabe an Review.'><span class="ok">✓ Commit</span> — saubere Message + PR + Ticket-Link = Übergabe an Review.</div>
+        </div>
+
+        <div class="qitem" data-correct="plan">
+          <div class="qbody" data-nd='<em>„Annahme: Zahlen aus Q3, einmalige Auswertung. Risiko: zwei Quellen widersprechen sich. Sollen wir vorher eine <strong>verbindliche Quelle</strong> festlegen?"</em>'><em>„Annahme: TTL 7 Tage, single-use. Risiko: Race auf <span class="mono">consumed_at</span>. Brauchen wir <strong>SELECT FOR UPDATE</strong>?"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="explore">Explore</button>
+            <button class="qchoice" data-key="plan">Plan</button>
+            <button class="qchoice" data-key="code">Execute</button>
+            <button class="qchoice" data-key="commit">Commit</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Plan</span> — Annahmen + Risiken explizit machen, <em>bevor</em> Code sie zementiert.</div>
+        </div>
+
+        <div class="qitem" data-correct="explore">
+          <div class="qbody" data-nd='<em>„Stichwortsuche „Versandprozess" → 3 Treffer, alle im Ops-Handbuch. Ihr habt also schon einen definierten Ablauf. Gut zu wissen."</em>'><em>„<span class="mono">grep -r &quot;sendTransactional&quot;</span> → 3 Treffer, alle in <span class="mono">src/email/</span>. Ihr habt also schon einen E-Mail-Layer. Gut zu wissen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="explore">Explore</button>
+            <button class="qchoice" data-key="plan">Plan</button>
+            <button class="qchoice" data-key="code">Execute</button>
+            <button class="qchoice" data-key="commit">Commit</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Explore</span> — suchen + lesen → mentales Modell vom Ablauf.'><span class="ok">✓ Explore</span> — grep + lesen → mentales Modell vom Code.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · <em>Kernfrage: Was passiert hier — lesen, denken, schreiben oder festschreiben?</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06A ÜBUNG EPCC-SABOTEUR (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="06a Übung EPCC-Saboteur" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Disziplin spüren, indem man sie verletzt</div>
+      <h2 class="title">Fünf Turns. Jeder <span class="accent">Phase-Skip</span> kostet — Bugs und Tokens.</h2>
+      <p class="ex-instructions" style="margin-top: 8px;">
+        Aufgabe: <em>„Refactor authMiddleware.ts auf Refresh-Tokens."</em> Pro Turn drei Optionen — bei <em>Continue</em> bleibst du in der Phase, bei <em>Advance</em> gehst du zur nächsten, bei <em>Skip</em> überspringst du eine. Drei Bugs = kaputter Build.
+      </p>
+
+      <div class="ex-stage epcc" id="ex-epcc">
+        <div class="epcc-game">
+          <div class="epcc-phases" id="epcc-phases"></div>
+          <div class="epcc-state" id="epcc-state"></div>
+          <div class="epcc-choices" id="epcc-choices"></div>
+          <div class="epcc-feedback" id="epcc-feedback">
+            <div class="ef-label">Nächster Schritt</div>
+            <div class="ef-text">Wähle eine Option. Es gibt nicht <em>die</em> richtige — aber Konsequenzen.</div>
+          </div>
+        </div>
+
+        <div class="epcc-meters">
+          <div class="epcc-meter-block">
+            <div class="emb-label">Turn</div>
+            <div class="emb-val" id="epcc-turn-val">1 / 5</div>
+          </div>
+          <div class="epcc-meter-block">
+            <div class="emb-label">Bug-Marker</div>
+            <div class="epcc-bugs" id="epcc-bugs">
+              <div class="epcc-bug-dot">○</div>
+              <div class="epcc-bug-dot">○</div>
+              <div class="epcc-bug-dot">○</div>
+            </div>
+          </div>
+          <div class="epcc-meter-block">
+            <div class="emb-label">Token-Verbrauch</div>
+            <div class="emb-val" id="epcc-tokens-val">0 / 60k</div>
+            <div class="epcc-tokenbar" id="epcc-tokenbar"><div style="width: 0%;"></div></div>
+          </div>
+          <div class="epcc-finale" id="epcc-finale">
+            <div class="ef-banner" id="epcc-finale-banner"></div>
+            <div class="ef-msg" id="epcc-finale-msg"></div>
+            <button class="btn" id="epcc-reset" style="margin-top: 12px; background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.24); color: #f0ece3;">↺ Nochmal</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06B ÜBUNG — AGENT ODER SELBST ===================== -->
+  <section data-screen-label="06b Übung Agent oder selbst">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Übung · Aufgaben-Triage</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Dem Agenten geben — <span class="accent">oder selbst machen?</span></h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
+        Entscheide pro Aufgabe: voller Agenten-Loop, nur planen lassen — oder gar nicht delegieren.
+      </p>
+
+      <!-- Triage-Legende -->
+      <div class="options-rail" style="grid-template-columns: repeat(3, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Agent · voller Loop</div><div class="opt-tag">klar geschnitten · prüfbares Ziel · Muster vorhanden</div></div>
+        <div class="opt"><div class="opt-name">Plan-only</div><div class="opt-tag">Agent liest &amp; plant · Mensch führt aus</div></div>
+        <div class="opt"><div class="opt-name">Selbst machen</div><div class="opt-tag">Urteil &amp; Verantwortung · oder schlicht schneller</div></div>
+      </div>
+
+      <!-- Interaktive Aufgaben -->
+      <div class="quiz" data-quiz="task-triage" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody" data-nd='<em>„Monatsreport aus drei Excel-Quellen nach festem Template bauen — Vorlage und der Report vom Vormonat liegen vor."</em>'><em>„Flaky Test reparieren: <span class="mono">OrderService.test</span> schlägt jeden 5. CI-Run fehl — Repro-Schritte sind dokumentiert."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent · voller Loop</button>
+            <button class="qchoice" data-key="planonly">Plan-only</button>
+            <button class="qchoice" data-key="selbst">Selbst machen</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Agent</span> — klar geschnitten, Vorlage als Muster, Ergebnis gegen den Vormonat prüfbar.'><span class="ok">✓ Agent</span> — klar geschnitten, Repro vorhanden, Erfolg prüfbar: Test läuft 20× grün.</div>
+        </div>
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody" data-nd='<em>„20 Meeting-Protokolle nach demselben Schema zusammenfassen — zwei fertige Beispiele gibt es schon."</em>'><em>„<span class="mono">GET /invoices</span> um Pagination erweitern — das Muster existiert bereits in <span class="mono">GET /orders</span>."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent · voller Loop</button>
+            <button class="qchoice" data-key="planonly">Plan-only</button>
+            <button class="qchoice" data-key="selbst">Selbst machen</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Agent</span> — repetitiv + Beispiele als Zielbild. Genau dafür ist der Loop gebaut.'><span class="ok">✓ Agent</span> — Vorbild im Code ist das halbe Briefing. Explore findet es, Execute kopiert das Muster.</div>
+        </div>
+
+        <div class="qitem" data-correct="planonly">
+          <div class="qbody" data-nd='<em>„Neu im Projekt: 80 Seiten Vertragsunterlagen verstehen, bevor du dem Kunden inhaltlich antwortest."</em>'><em>„Codebase geerbt: verstehen, wie der Checkout-Flow funktioniert — bevor ihr ihn anfasst."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent · voller Loop</button>
+            <button class="qchoice" data-key="planonly">Plan-only</button>
+            <button class="qchoice" data-key="selbst">Selbst machen</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Plan-only</span> — der Agent liest und erklärt, die Antwort formulierst du. Verstehen lässt sich delegieren, Verantworten nicht.'><span class="ok">✓ Plan-only</span> — Explore + Erklärung sind Gold, aber noch nichts ändern lassen. Onboarding ist Lese-Arbeit.</div>
+        </div>
+
+        <div class="qitem" data-correct="planonly">
+          <div class="qbody" data-nd='<em>„Pressemitteilung zu einem Sicherheitsvorfall aufsetzen — jedes Wort kann zitiert werden."</em>'><em>„Token-Handling im Auth-Service umbauen — security-kritisch, jede Zeile muss verstanden sein."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent · voller Loop</button>
+            <button class="qchoice" data-key="planonly">Plan-only</button>
+            <button class="qchoice" data-key="selbst">Selbst machen</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Plan-only</span> — Struktur und Faktenlage vom Agenten, der finale Text von dir. Hohes Risiko heißt: Mensch tippt.'><span class="ok">✓ Plan-only</span> — Analyse und Plan vom Agenten, getippt wird selbst. Hohes Risiko heißt: Mensch schreibt jede Zeile.</div>
+        </div>
+
+        <div class="qitem" data-correct="selbst">
+          <div class="qbody" data-nd='<em>„Gehaltsgespräch mit einer Mitarbeiterin vorbereiten und führen."</em>'><em>„Entscheiden, ob das Team auf Microservices migriert — strategisch, bindet zwei Quartale."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent · voller Loop</button>
+            <button class="qchoice" data-key="planonly">Plan-only</button>
+            <button class="qchoice" data-key="selbst">Selbst machen</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Selbst</span> — Urteils- und Vertrauensfrage. Ein Agent kann Argumente sortieren, aber nicht die Beziehung tragen.'><span class="ok">✓ Selbst</span> — kein prüfbares Ziel, volle Verantwortung. Input sammeln lassen ist ok — die Entscheidung ist deine.</div>
+        </div>
+
+        <div class="qitem" data-correct="selbst">
+          <div class="qbody" data-nd='<em>„Zwei Zahlen in der morgigen Vorstandsfolie korrigieren — du weißt genau, welche und wo."</em>'><em>„Hotfix: eine Zeile in Prod ändern, du kennst die Stelle exakt — jede Minute Downtime kostet."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="agent">Agent · voller Loop</button>
+            <button class="qchoice" data-key="planonly">Plan-only</button>
+            <button class="qchoice" data-key="selbst">Selbst machen</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Selbst</span> — wenn du die Lösung schon im Kopf hast, ist Tippen schneller als Briefen. Delegation hat Overhead.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · <em>Kernfrage: Gibt es ein prüfbares Ziel — und wer trägt das Risiko?</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 ÜBUNG 1 — MODELLWAHL ===================== -->
+  <section data-screen-label="08 Übung 1 Modellwahl">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Aufgabe</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Ordne jedem Szenario das <span class="accent">passende Modell</span> zu.</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 20px;">Klick die Modell-Buttons an — grün = richtig, rot = daneben. Manchmal gilt <strong>mehr als ein Modell</strong> — alle gestrichelten zählen auch.</p>
+
+      <!-- Modell-Legende -->
+      <div class="options-rail" style="margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Haiku 4.5</div><div class="opt-tag">schnell · günstig · Volumen</div></div>
+        <div class="opt"><div class="opt-name">Sonnet 4.6</div><div class="opt-tag" data-nd='agentische Aufgaben · balanced'>agentisches Coding · balanced</div></div>
+        <div class="opt"><div class="opt-name">Opus 4.8</div><div class="opt-tag">tiefstes Reasoning</div></div>
+        <div class="opt"><div class="opt-name">GPT-5.5</div><div class="opt-tag">multimodal · generalistisch</div></div>
+        <div class="opt"><div class="opt-name">GPT-Codex</div><div class="opt-tag">Coding-Agent · OpenAIs Pendant zu Sonnet</div></div>
+      </div>
+
+      <!-- Interaktive Szenarien -->
+      <div class="quiz" data-quiz="modelle" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="haiku">
+          <div class="qbody"><strong>80.000 Support-Mails / Tag</strong> in <em>Spam / Werbung / Wichtig</em> klassifizieren — günstig, &lt; 1 s.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="haiku">Haiku</button>
+            <button class="qchoice" data-key="sonnet">Sonnet</button>
+            <button class="qchoice" data-key="opus">Opus</button>
+            <button class="qchoice" data-key="gpt5">GPT-5.5</button>
+            <button class="qchoice" data-key="gptcodex">GPT-Codex</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Haiku 4.5</span> — billig pro Chat-Nachricht, schnell, gut genug für einfache Klassen.</div>
+        </div>
+
+        <div class="qitem" data-correct="sonnet">
+          <div class="qbody" data-nd='Modell arbeitet <strong>mehrere Tage</strong> agentisch an einer großen Marktanalyse: recherchieren, planen, Tools nutzen, Bericht finalisieren.'>Modell arbeitet <strong>mehrere Tage</strong> agentisch an einer Auth-Migration: lesen, planen, Tools, committen.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="haiku">Haiku</button>
+            <button class="qchoice" data-key="sonnet">Sonnet</button>
+            <button class="qchoice" data-key="opus">Opus</button>
+            <button class="qchoice" data-key="gpt5">GPT-5.5</button>
+            <button class="qchoice" data-key="gptcodex">GPT-Codex</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Sonnet 4.6</span> — balanciert, der Standard für agentische Aufgaben.'><span class="ok">✓ Sonnet 4.6</span> — balanciert, der Standard für agentisches Coding.</div>
+        </div>
+
+        <div class="qitem" data-correct="opus">
+          <div class="qbody" data-nd='Strategie-Review eines <strong>200-seitigen Vertragswerks</strong>: tiefe Verflechtungen, lange Argumentationsketten, Alternativen abwägen.'>Architektur-Review eines <strong>50.000-Zeilen-Monolithen</strong>: tiefe Abhängigkeiten, lange Pläne, Alternativen abwägen.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="haiku">Haiku</button>
+            <button class="qchoice" data-key="sonnet">Sonnet</button>
+            <button class="qchoice" data-key="opus">Opus</button>
+            <button class="qchoice" data-key="gpt5">GPT-5.5</button>
+            <button class="qchoice" data-key="gptcodex">GPT-Codex</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Opus 4.8</span> — wenn Denkqualität wichtiger ist als Kosten.</div>
+        </div>
+
+        <div class="qitem" data-correct="sonnet gptcodex">
+          <div class="qbody" data-nd='Ein Agent soll <strong>selbstständig Auswertungs-Skripte bauen und pflegen</strong> — anlegen, testen, dokumentieren, bei Fehlern nachbessern.'>Ein Coding-Agent soll <strong>selbstständig PRs aus GitHub-Issues bauen</strong> — Issue lesen, fixen, testen, PR aufmachen.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="haiku">Haiku</button>
+            <button class="qchoice" data-key="sonnet">Sonnet</button>
+            <button class="qchoice" data-key="opus">Opus</button>
+            <button class="qchoice" data-key="gpt5">GPT-5.5</button>
+            <button class="qchoice" data-key="gptcodex">GPT-Codex</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Sonnet oder GPT-Codex</span> — beide sind für agentisches Arbeiten gebaut. Welcher, ist Stack- und Geschmacksfrage — kein Prinzip.'><span class="ok">✓ Sonnet oder GPT-Codex</span> — beide sind für agentisches Coding gebaut. Welcher, ist Stack- und Geschmacksfrage — kein Prinzip.</div>
+        </div>
+
+        <div class="qitem" data-correct="gpt5 sonnet">
+          <div class="qbody">Allzweck-Assistent für gemischte Office-Belegschaft: Texte, Tabellen, Bilder lesen — <em>ein</em> Modell für alles.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="haiku">Haiku</button>
+            <button class="qchoice" data-key="sonnet">Sonnet</button>
+            <button class="qchoice" data-key="opus">Opus</button>
+            <button class="qchoice" data-key="gpt5">GPT-5.5</button>
+            <button class="qchoice" data-key="gptcodex">GPT-Codex</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ GPT-5.5 oder Sonnet 4.6</span> — beide breit aufgestellt &amp; multimodal. Für „ein Modell für alles" zählt der Generalist, nicht der Anbieter.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 5 beantwortet</div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08 ÜBUNG 2 — AGENT vs WORKFLOW vs LM ===================== -->
+  <section data-screen-label="09 Übung 2 Agent Workflow LM">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Aufgabe</div>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 8px;">Was steckt jeweils dahinter — <span class="accent">LM, Workflow oder Agent</span>?</h2>
+
+      <!-- Definitions-Rail -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px;">
+        <div class="opt" style="background: var(--bg-2); border: 1px solid var(--hair); border-radius: 10px; padding: 14px 18px;">
+          <div class="mono" style="font-size: 14px; font-weight: 600; color: var(--ink);">LM <span style="color: var(--ink-3); font-weight: 400;">— Sprachmodell</span></div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">Ein Prompt rein, eine Antwort raus. <em>Keine</em> Tools, <em>kein</em> Loop.</div>
+        </div>
+        <div class="opt" style="background: var(--bg-2); border: 1px solid var(--hair); border-radius: 10px; padding: 14px 18px;">
+          <div class="mono" style="font-size: 14px; font-weight: 600; color: var(--ink);">Workflow</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">Feste, vom Code orchestrierte Abfolge von LLM-Aufrufen. <strong>Deterministisch.</strong></div>
+        </div>
+        <div class="opt" style="background: var(--bg-2); border: 1px solid var(--hair); border-radius: 10px; padding: 14px 18px;">
+          <div class="mono" style="font-size: 14px; font-weight: 600; color: var(--ink);">Agent</div>
+          <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">LLM entscheidet <em>selbst</em> in einem Loop, welches Tool wann genutzt wird, bis das Ziel erreicht ist.</div>
+        </div>
+      </div>
+
+      <!-- Interaktive Szenarien -->
+      <div class="quiz" data-quiz="awl" style="margin-top: 18px;">
+
+        <div class="qitem" data-correct="lm">
+          <div class="qbody">Mitarbeiter fragt im Firmenchat: <em>„Was sagt DSGVO Art. 15?"</em> Modell antwortet einmalig, fertig.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ LM</span> — ein Prompt rein, eine Antwort raus. Kein Tool, kein Loop.</div>
+        </div>
+
+        <div class="qitem" data-correct="workflow">
+          <div class="qbody" data-nd='Automatischer Lauf jeden Morgen: <em>Zahlen holen → Modell fasst zusammen → in den Team-Chat posten → archivieren.</em> Immer dieselbe Reihenfolge.'>Cron-Job jeden Morgen: <em>Zahlen holen → Modell fasst zusammen → Slack-Post → archivieren.</em> Immer dieselbe Reihenfolge.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Workflow</span> — der Code entscheidet die Schritte, das Modell füllt nur die Stellen.</div>
+        </div>
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody" data-nd='Der Agent bekommt: <em>„Erstelle eine vollständige Wettbewerbsanalyse."</em> Recherchiert, plant, schreibt, prüft, überarbeitet — entscheidet jeden Schritt selbst.'>Der Agent bekommt: <em>„Bau ein Login-Feature."</em> Liest, plant, schreibt, testet, fixt — entscheidet jeden Schritt selbst.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Agent</span> — LLM wählt im Loop selbst die nächsten Tools, bis das Ziel steht.</div>
+        </div>
+
+        <div class="qitem" data-correct="workflow">
+          <div class="qbody">Reklamationspipeline: <em>Klassifizieren</em> (LLM-Aufruf 1) → <em>Antwortentwurf</em> (LLM-Aufruf 2) → Routing ins Team. Reihenfolge im Code festgelegt.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Workflow</span> — mehrere LLM-Aufrufe, aber fest verdrahtete Reihenfolge.</div>
+        </div>
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody">Support-Bot bekommt ein Ticket: <em>liest die Historie, durchsucht die Wissensdatenbank, probiert eine Lösung, fragt nach wenn nötig</em> — bis das Problem gelöst ist.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Agent</span> — kein fester Pfad: das Modell entscheidet im Loop, welcher Schritt als nächstes nötig ist.</div>
+        </div>
+
+        <div class="qitem" data-correct="lm">
+          <div class="qbody">Marketing tippt: <em>„Schreib mir drei Betreffzeilen für diese E-Mail.“</em> Modell liefert die Vorschläge, fertig.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ LM</span> — ein Prompt rein, eine Antwort raus. Kein Tool, kein Loop — auch wenn die Ausgabe länger ist.</div>
+        </div>
+
+        <div class="qitem" data-correct="agent">
+          <div class="qbody">Coding-Agent bekommt: <em>„Finde heraus, warum die Tests rot sind, und repariere es.“</em> Er sucht, liest Logs, ändert Code, testet erneut — bis grün.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="lm">LM</button>
+            <button class="qchoice" data-key="workflow">Workflow</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Agent</span> — das Ziel steht fest, der Weg nicht: das Modell wählt jeden Schritt selbst, bis die Tests grün sind.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 7 beantwortet · Kernfrage: <em>Wer entscheidet den nächsten Schritt — Code oder Modell?</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08 ECHTE PRAXIS · PAIR MIT CODING-AGENT ===================== -->
+  <section data-screen-label="10 Praxis Pair Programming" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Echte Praxis — Laptops auf, Disziplin an</div>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 6px;">Macht <span class="accent">einen EPEC-Loop</span> — zu zweit, mit echter Disziplin.</h2>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 28px; margin: 0;">
+        <p class="body" style="margin: 0; max-width: 1300px; font-size: 19px;">
+          15 Min Coden · 5 Min Debrief. Einer schreibt, einer hält das Brett — und schiebt den Agenten zurück, wenn er ein Tor überspringen will.
+        </p>
+        <button class="ex-eg-btn" type="button" data-eg-open="eg-epec" style="flex: none;">Beispiel-Runde ansehen</button>
+      </div>
+
+      <!-- Setup + Rollen -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 18px;">
+        <div class="role-card">
+          <div class="r-tag">Rolle · Driver</div>
+          <div class="r-name">Driver</div>
+          <div class="r-sub">am Laptop · tippt</div>
+          <div class="r-body">
+            Öffnet ein Repo + Coding-Agent in der IDE. Sagt laut, was passiert. Hat <strong>kein</strong> Recht, eigenmächtig Phasen zu überspringen.
+          </div>
+        </div>
+        <div class="role-card" style="border-color: var(--accent); border-width: 1.5px;">
+          <div class="r-tag" style="color: var(--accent);">Rolle · Navigator</div>
+          <div class="r-name">Navigator</div>
+          <div class="r-sub">EPEC-Polizei · hält das Brett</div>
+          <div class="r-body">
+            Beobachtet, fragt, blockt. Darf <em>nicht</em> selbst tippen. Setzt die <strong>4 Tore</strong> rechts durch — ist die wichtigste Person im Pair.
+          </div>
+        </div>
+        <div class="role-card">
+          <div class="r-tag">Setup · 2 min</div>
+          <div class="r-name">Vor dem Start</div>
+          <div class="r-sub">in dieser Reihenfolge</div>
+          <div class="r-body">
+            <strong>1.</strong> Paarbildung &nbsp;·&nbsp; <strong>2.</strong> Task aus der Liste unten links wählen &nbsp;·&nbsp; <strong>3.</strong> Timer starten &nbsp;·&nbsp; <strong>4.</strong> Driver tippt den ersten Prompt.
+          </div>
+          <div class="timer" data-seconds="900">
+            <span class="t-display mono">15:00</span>
+            <button class="t-btn t-toggle" type="button">Start</button>
+            <button class="t-btn t-reset" type="button">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hauptzeile: Tore (dark, prominent) + Tasks -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; flex: 1; min-height: 0;">
+
+        <!-- 4 Gates -->
+        <div class="card dark" style="padding: 18px 24px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Spielregel · die 4 Tore des Navigators</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px; margin-bottom: 10px;">Diese vier Sätze fallen <em>laut</em>.</div>
+          <div class="gate-list">
+            <div class="gate-item">
+              <div class="g-num">01</div>
+              <div class="g-body">
+                <strong>Vor jedem Plan:</strong> „Was hast du gelesen?"
+                <em>→ Verlange eine kurze Explore-Zusammenfassung.</em>
+              </div>
+            </div>
+            <div class="gate-item">
+              <div class="g-num">02</div>
+              <div class="g-body">
+                <strong>Vor jedem Code:</strong> „Zeig mir den Plan, schriftlich."
+                <em>→ Keine Implementierung ohne nummerierte To-Dos.</em>
+              </div>
+            </div>
+            <div class="gate-item">
+              <div class="g-num">03</div>
+              <div class="g-body">
+                <strong>Im Code:</strong> „Lauf die Tests — nicht raten."
+                <em>→ „Im Prinzip funktioniert das" zählt nicht.</em>
+              </div>
+            </div>
+            <div class="gate-item">
+              <div class="g-num">04</div>
+              <div class="g-body">
+                <strong>Am Ende:</strong> „Commit jetzt — mit guter Message."
+                <em>→ <span class="mono">type(scope):</span> Warum, nicht nur Was.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rechts: Tasks + Debrief -->
+        <div style="display: grid; grid-template-rows: auto auto; gap: 14px; min-height: 0;">
+
+          <div class="card" style="padding: 18px 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <div>
+                <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Tasks · pickt einen</div>
+                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500;">In 15 Minuten realistisch</div>
+              </div>
+              <span class="pill outline" style="font-size: 11px;">eigenes Repo</span>
+            </div>
+            <div style="margin-top: 10px;">
+              <div class="task-row">
+                <div class="t-letter">A</div>
+                <div class="t-body"><strong>Logging-Middleware:</strong> HTTP-Logger mit Method · Path · Status · Latency. Test auf 500er.</div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">B</div>
+                <div class="t-body"><strong>README „Quickstart in 60s":</strong> drei klar-getrennte Schritte für ein bestehendes Repo, copy-pastable.</div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">C</div>
+                <div class="t-body"><strong>ENV-Validation beim Boot:</strong> Pflicht-Vars prüfen, hartes Fail mit klarer Fehlermeldung.</div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">D</div>
+                <div class="t-body"><strong>Test-Lücke schließen:</strong> einen offensichtlich ungetesteten Edge-Case mit gutem Test absichern.</div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">E</div>
+                <div class="t-body"><strong>Eigener Mini-Task</strong> aus dem aktuellen Repo, der in 15 Min realistisch erledigt ist.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 14px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Debrief · 5 min in der Runde</div>
+            <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; margin-top: 2px;">Drei Fragen</div>
+            <ul style="font-size: 16px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 0; padding-left: 22px;">
+              <li>Welche Phase war am <strong>schwersten durchzuhalten</strong>?</li>
+              <li>Wo wart ihr versucht, ein <strong>Tor zu skippen</strong>?</li>
+              <li>Hat eure Aufgabe wirklich <strong>in einen Loop</strong> gepasst?</li>
+            </ul>
+                    </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Beispielaufgabe · gespielte Runde (wer sagt was · Learning) -->
+    <div class="ex-eg-backdrop" id="eg-epec">
+      <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel-Runde">
+        <div class="ex-eg-head">
+          <div>
+            <div class="eg-eyebrow">Beispiel-Runde · so klingt eine disziplinierte Session</div>
+            <div class="eg-title" data-nd="Beispiel-Runde: <span class='accent'>Onboarding-Einseiter</span> im EPEC-Loop">Beispiel-Runde: <span class="accent">Logging-Middleware</span> im EPEC-Loop</div>
+          </div>
+          <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
+        </div>
+        <div class="ex-eg-body">
+          <div class="eg-script">
+            <div class="eg-line nav"><div class="eg-who">Navigator<span class="eg-gate">Tor 1 · Explore</span></div><div class="eg-say" data-nd="„Bevor du lostippst — was weiß der Assistent schon? Lass ihn erst zusammenfassen, was im alten Onboarding-Dokument steht.“">„Bevor du tippst — was hast du gelesen? Zeig mir, wie Logging hier heute schon läuft.“</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="<em>liest</em> … Es gibt schon eine Checkliste, aber keinen roten Faden für Tag 1.">Stimmt. <em>liest</em> … Es gibt schon einen <span class="eg-code">logger</span> in <span class="eg-code">lib/log.ts</span>, aber keine Request-Middleware.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Navigator<span class="eg-gate">Tor 2 · Plan</span></div><div class="eg-say" data-nd="„Erst der Plan, schwarz auf weiß. Welche drei Abschnitte — in welcher Reihenfolge?“">„Plan zuerst, schriftlich. Drei To-Dos, bevor eine Zeile Code fällt.“</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="„1) Vor dem ersten Tag · 2) Tag 1 — wen treffen · 3) erste Woche — woran arbeiten.“">„1) Middleware in <span class="eg-code">app.ts</span> einhängen · 2) Method · Path · Status · Latency loggen · 3) Test für 500er.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Navigator<span class="eg-gate">Tor 3 · Execute</span></div><div class="eg-say" data-nd="„Nicht einfach glauben — gegenprüfen. Stimmen die genannten Ansprechpartner wirklich?“">„Schreib den Test zuerst — und lass ihn laufen. Nicht raten.“</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="„Zwei Ansprechpartner waren veraltet. Korrigiert.“">„Test rot … Middleware rein … Test grün. Die Latency wird gemessen.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Navigator<span class="eg-gate">Tor 4 · Commit</span></div><div class="eg-say" data-nd="„Festhalten — und sauber benennen, damit man es wiederfindet.“">„Commit jetzt — mit guter Message. Warum, nicht nur Was.“</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="„Gespeichert als ‚Onboarding · Tag 1 + erste Woche (v1)‘.“"><span class="eg-code">feat(http): request-logging-middleware + 500-test</span></div></div>
+          </div>
+          <div class="eg-aside">
+            <div class="eg-setup">
+              <div class="eg-setup-label">Die Aufgabe</div>
+              <div class="eg-setup-task" data-nd="<strong>Onboarding-Einseiter</strong> — aus dem alten Dokument einen klaren Tag-1-Leitfaden machen. In 15 Minuten machbar."><strong>Aufgabe A</strong> — Logging-Middleware: HTTP-Logger mit Method · Path · Status · Latency, plus Test auf 500er. In 15 Minuten machbar.</div>
+            </div>
+            <div class="eg-learning">
+              <div class="eg-learning-label">Das Learning</div>
+              <div class="eg-learning-text" data-nd="Der Navigator hat nichts selbst geschrieben — und trotzdem die Qualität bestimmt. Jedes der <strong>4 Tore</strong> hat eine Abkürzung verhindert: kein Drauflos, kein Plan nur im Kopf, kein ungeprüftes <em>„wird schon stimmen“</em>, kein verlorenes Ergebnis. Das ist Pairing mit dem Assistenten: <strong>Der Mensch hält die Tore, das Modell rennt.</strong>">Der Navigator hat keine Zeile getippt — und trotzdem die Qualität bestimmt. Jedes der <strong>4 Tore</strong> hat eine Abkürzung verhindert: kein Blind-Code, kein Plan nur im Kopf, kein <em>„läuft schon“</em>, kein verlorener Stand. Das ist Pairing mit dem Agenten: <strong>Der Mensch hält die Tore, das Modell rennt.</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== 14 CHEAT SHEET ===================== -->
+  <section data-screen-label="11 Cheat Sheet">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="cs-head-row">
+        <div class="cs-head-main">
+          <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
+          <h2 class="title" style="font-size: 56px; margin-bottom: 6px;">EPEC auf <span class="accent">einer Seite</span>.</h2>
+          <p class="body" style="margin: 0; max-width: 1150px; font-size: 19px;">
+            Hier sind die vier Phasen mit Tool-Set, Artefakt, Failure-Mode und einer Daumenregel — abfotografieren oder ausdrucken.
+          </p>
+        </div>
+        <div class="cs-emblem" aria-hidden="true">
+          <span class="em-cap">Der EPEC-Loop</span>
+          <div class="epec">
+            <span class="ep on">Explore</span>
+            <span class="ep">Plan</span>
+            <span class="ep">Commit</span>
+            <span class="ep">Execute</span>
+            <span class="rotor"><svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.4-5.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M20 3.6v3.6h-3.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase-Karten -->
+      <div class="cs-grid">
+        <div class="cs-card">
+          <div class="cs-num">01</div>
+          <div class="cs-name">Explore</div>
+          <div class="cs-row">
+            <div class="cs-label">Tools</div>
+            <div class="cs-val mono">read · grep · ls · search</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Artefakt</div>
+            <div class="cs-val">mentales Modell — was ist da, was nicht</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">halluzinierte Konventionen, „erfundener" Code</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Erst lesen, was schon da ist.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">02</div>
+          <div class="cs-name">Plan</div>
+          <div class="cs-row">
+            <div class="cs-label">Tools</div>
+            <div class="cs-val mono">todo-list · extended thinking</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Artefakt</div>
+            <div class="cs-val">nummerierte To-Dos — vom Menschen freigegeben</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">falsche Aufgabe gelöst, Annahmen versteckt</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Plan schriftlich. Sonst kein Code.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">03</div>
+          <div class="cs-name">Execute</div>
+          <div class="cs-row">
+            <div class="cs-label">Tools</div>
+            <div class="cs-val mono">edit · write · bash · test</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Artefakt</div>
+            <div class="cs-val">grüne Tests, Implementierung — noch uncommitted</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">Theorie ohne Realität — Plan nie ausgeführt</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Klein iterieren — edit, run, observe.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card dark">
+          <div class="cs-num">04</div>
+          <div class="cs-name">Commit</div>
+          <div class="cs-row">
+            <div class="cs-label">Tools</div>
+            <div class="cs-val mono">git diff · commit · push · pr</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Artefakt</div>
+            <div class="cs-val">sauberer Commit + PR — review-fähig</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">verlorene Arbeit, nichts reproduzierbar</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent-soft);">Daumenregel</div>
+            <div class="cs-val"><strong>Häufig committen, jeder grüne Stand zählt.</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heuristiken-Zeile -->
+      <div style="margin-top: 22px;">
+        <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Wenn / Dann · drei Workshop-Heuristiken</div>
+        <div class="cs-rules">
+          <div class="cs-rule">
+            <div class="r-when">Wenn der Agent direkt schreibt</div>
+            <div class="r-then"><strong>Stopp.</strong> Zurück zu <em>Explore</em>. Frag nach dem mentalen Modell.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn mitten in Execute neue Anforderung kommt</div>
+            <div class="r-then"><strong>Nicht draufsatteln.</strong> Loop schließen, dann neuen Loop bei <em>Plan</em> aufmachen.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn der Loop schon 30 Min läuft</div>
+            <div class="r-then"><strong>Zu groß.</strong> Aufgabe halbieren — lieber zwei kleine als ein heroischer Loop.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Take-away</div>
+        <div class="callout-body" style="font-size: 19px;">
+          <strong>EPEC ist ein Vertrag</strong> — der Agent verspricht die Reihenfolge, der Mensch verspricht die Tore an den richtigen Stellen offen-zu-machen. Beide Seiten zählen.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+<script>
+  // ============ Interaktiver Wissenscheck ============
+  (function() {
+    // Begründungs-Tag einheitlich: Richtig · LABEL / Daneben · richtig wäre LABEL / Lösung · LABEL
+    function labelOfCorrect(item) {
+      var keys = item.getAttribute('data-correct').split(/\s+/);
+      return keys.map(function(k) {
+        var b = item.querySelector('.qchoice[data-key="' + k + '"]');
+        return b ? b.textContent.trim() : k;
+      }).join(' / ');
+    }
+    function setFb(item, mode) {
+      var fb = item.querySelector('.qfb');
+      if (!fb) return;
+      var span = fb.querySelector('span');
+      if (!span) return;
+      var label = labelOfCorrect(item);
+      if (mode === 'no') {
+        span.className = 'no';
+        span.textContent = 'Daneben · richtig wäre ' + label;
+      } else if (mode === 'reveal') {
+        span.className = 'ok';
+        span.textContent = 'Lösung · ' + label;
+      } else {
+        span.className = 'ok';
+        span.textContent = 'Richtig · ' + label;
+      }
+    }
+
+    // ---- Übung 1 + 2: Quiz mit mehreren Fragen pro Folie ----
+    document.querySelectorAll('.quiz').forEach(function(quiz) {
+      var items = quiz.querySelectorAll('.qitem');
+      var slide = quiz.closest('section');
+      var statusEl = slide && slide.querySelector('.reveal-status .score');
+
+      function updateScore() {
+        if (!statusEl) return;
+        var answered = quiz.querySelectorAll('.qitem.answered').length;
+        statusEl.textContent = answered;
+      }
+
+      items.forEach(function(item) {
+        item.querySelectorAll('.qchoice').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (item.classList.contains('answered')) return;
+            // data-correct darf mehrere Keys enthalten (leerzeichen-getrennt)
+            var corrects = item.getAttribute('data-correct').split(/\s+/);
+            var key = btn.getAttribute('data-key');
+            if (corrects.indexOf(key) !== -1) {
+              btn.classList.add('picked-ok');
+              setFb(item, 'ok');
+            } else {
+              btn.classList.add('picked-no');
+              setFb(item, 'no');
+            }
+            // alle (weiteren) gültigen Antworten zur Aufklärung markieren
+            corrects.forEach(function(c) {
+              var ok = item.querySelector('.qchoice[data-key="' + c + '"]');
+              if (ok && ok !== btn) ok.classList.add('show-ok');
+            });
+            item.classList.add('answered');
+            updateScore();
+          });
+        });
+      });
+    });
+
+    // ---- Übung 3 + 4: Single-Choice mit Karten ----
+    document.querySelectorAll('.mcq-grid').forEach(function(grid) {
+      var correct = grid.getAttribute('data-correct');
+      var slide = grid.closest('section');
+      var explain = slide && slide.querySelector('[data-explain]');
+
+      grid.querySelectorAll('.mcq').forEach(function(card) {
+        card.addEventListener('click', function() {
+          if (grid.classList.contains('answered')) return;
+          var key = card.getAttribute('data-key');
+          if (key === correct) {
+            card.classList.add('picked-ok');
+          } else {
+            card.classList.add('picked-no');
+            var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+            if (ok) ok.classList.add('show-ok');
+          }
+          grid.classList.add('answered');
+          if (explain) explain.classList.add('open');
+        });
+      });
+    });
+
+    // ---- Reveal-Buttons: alle Antworten auf der Folie aufdecken ----
+    document.querySelectorAll('[data-action="reveal"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        // Übung 1 + 2
+        slide.querySelectorAll('.qitem:not(.answered)').forEach(function(item) {
+          item.getAttribute('data-correct').split(/\s+/).forEach(function(c) {
+            var ok = item.querySelector('.qchoice[data-key="' + c + '"]');
+            if (ok) ok.classList.add('show-ok');
+          });
+          setFb(item, 'reveal');
+          item.classList.add('answered');
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) {
+          statusEl.textContent = slide.querySelectorAll('.qitem.answered').length;
+        }
+
+        // Übung 3 + 4
+        slide.querySelectorAll('.mcq-grid:not(.answered)').forEach(function(grid) {
+          var correct = grid.getAttribute('data-correct');
+          var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+          if (ok) ok.classList.add('show-ok');
+          grid.classList.add('answered');
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.add('open');
+      });
+    });
+
+    // ---- Reset-Buttons: alles auf Folie zurücksetzen ----
+    document.querySelectorAll('[data-action="reset"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        slide.querySelectorAll('.qitem').forEach(function(item) {
+          item.classList.remove('answered');
+          item.querySelectorAll('.qchoice').forEach(function(b) {
+            b.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) statusEl.textContent = '0';
+
+        slide.querySelectorAll('.mcq-grid').forEach(function(grid) {
+          grid.classList.remove('answered');
+          grid.querySelectorAll('.mcq').forEach(function(c) {
+            c.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.remove('open');
+      });
+    });
+
+    // ---- Pfeil-/Tastatur-Nav nicht abfangen, wenn auf Button geklickt wird ----
+    // (die Buttons absorbieren Klicks bereits — kein Fokus-Loop nötig)
+
+  })();
+</script>
+<script>
+  // ---- Interaktiver Praxis-Timer (Pair-Programming-Folie) ----
+  (function () {
+    document.querySelectorAll('.timer').forEach(function (timer) {
+      var total = parseInt(timer.getAttribute('data-seconds'), 10) || 900;
+      var remaining = total;
+      var tick = null;
+      var display = timer.querySelector('.t-display');
+      var toggle = timer.querySelector('.t-toggle');
+      var reset = timer.querySelector('.t-reset');
+
+      function fmt(s) {
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+      function render() { display.textContent = fmt(remaining); }
+      function stop() {
+        if (tick) { clearInterval(tick); tick = null; }
+        toggle.textContent = 'Start';
+        toggle.setAttribute('data-running', 'false');
+        display.classList.remove('running');
+      }
+      function start() {
+        if (tick || remaining <= 0) return;
+        toggle.textContent = 'Stop';
+        toggle.setAttribute('data-running', 'true');
+        display.classList.add('running');
+        display.classList.remove('done');
+        tick = setInterval(function () {
+          remaining -= 1;
+          if (remaining <= 0) {
+            remaining = 0;
+            render();
+            stop();
+            display.classList.add('done');
+            return;
+          }
+          render();
+        }, 1000);
+      }
+
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (tick) stop(); else start();
+      });
+      reset.addEventListener('click', function (e) {
+        e.stopPropagation();
+        stop();
+        remaining = total;
+        display.classList.remove('done');
+        render();
+      });
+      render();
+    });
+  })();
+</script>
+<script src="exercises/epcc.js"></script>
+<script src="exercises/role-switch.js"></script>
+<script src="exercises/example-task.js"></script>
+</body>
+</html>

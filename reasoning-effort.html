@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Reasoning Effort — Theorie &amp; Übung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>deck-stage:not(:defined){visibility:hidden}</style>
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <g transform="translate(250 300)">
+      <rect x="0"   y="120" width="130" height="80"  rx="10" fill="#f6dccf" stroke="#15110c" stroke-width="3"/>
+      <rect x="180" y="60"  width="130" height="140" rx="10" fill="#e89379"/>
+      <rect x="360" y="0"   width="130" height="200" rx="10" fill="#c8421f"/>
+    </g>
+    <text x="600" y="220" text-anchor="middle" font-family="serif" font-size="58" fill="#15110c" font-weight="500">Reasoning Effort</text>
+    <text x="600" y="640" text-anchor="middle" font-family="monospace" font-size="20" fill="#6b6357" letter-spacing="4">NIEDRIG · MITTEL · HOCH</text>
+  </svg>
+</template>
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --ok: #3d8a4a;
+    --warn: #b8841f;
+    --bad: #a83020;
+
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --type-eyebrow: 18px;
+    --pad-top: 56px; --pad-x: 80px;
+  }
+
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* ---------- shared chrome ---------- */
+  .chrome {
+    position: absolute;
+    inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 44px 0 26px;
+  }
+  h1.title { font-size: 120px; line-height: 0.96; letter-spacing: -0.025em; font-weight: 500; margin: 0 0 24px; max-width: 1500px; }
+  h2.title { font-size: 64px; line-height: 0.98; letter-spacing: -0.02em; font-weight: 500; margin: 0 0 26px; max-width: 1650px; }
+  h3.subtitle { font-size: 40px; line-height: 1.2; font-weight: 400; color: var(--ink-2); margin: 0 0 28px; max-width: 1400px; font-family: var(--serif); font-style: italic; }
+  p.lede { font-size: 28px; line-height: 1.4; color: var(--ink-2); max-width: 1500px; }
+  p.body { font-size: 24px; line-height: 1.5; color: var(--ink-2); max-width: 1100px; }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  .card { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 28px 32px; }
+  .card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+
+  .callout {
+    margin-top: 24px; padding: 20px 28px; min-height: 76px; box-sizing: border-box;
+    display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent); background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label { flex: 0 0 auto; font-family: var(--mono); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--ink); color: var(--bg); letter-spacing: 0.06em; text-transform: uppercase; }
+  .pill.accent { background: var(--accent); color: #fff; }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+
+  /* level chip */
+  .lvl { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.04em; }
+  .lvl::before { content: ""; width: 12px; height: 12px; border-radius: 3px; background: var(--lvl-c, var(--ink-3)); }
+  .lvl.low  { --lvl-c: #c9b89a; }
+  .lvl.med  { --lvl-c: var(--accent-soft); }
+  .lvl.high { --lvl-c: var(--accent); }
+
+  /* ===== Slide 1 — three deliberation panels ===== */
+  .delib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .delib { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 24px 26px; display: flex; flex-direction: column; }
+  .delib .d-top { display: flex; justify-content: space-between; align-items: baseline; }
+  .delib .d-name { font-family: var(--serif); font-size: 30px; font-weight: 500; }
+  .delib .d-band { width: 100%; height: 8px; border-radius: 4px; margin: 16px 0 18px; background: var(--bg-2); position: relative; overflow: hidden; }
+  .delib .d-band > div { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+  .delib .d-dots { display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; }
+  .delib .d-dots span { width: 13px; height: 13px; border-radius: 50%; background: var(--accent); opacity: 0.9; }
+  .delib .d-dots span.ghost { background: var(--bg-2); }
+  .delib .d-tok { margin-top: 10px; font-family: var(--mono); font-size: 14px; color: var(--ink-3); line-height: 1.5; }
+  .delib .d-meta { margin-top: 22px; font-family: var(--mono); font-size: 14px; color: var(--ink-3); line-height: 1.5; }
+  .delib .d-meta b { color: var(--ink); }
+  .delib .d-use { margin-top: 12px; font-size: 17px; line-height: 1.4; color: var(--ink-2); }
+
+  /* ===== Slide 01 — Was ist Reasoning ===== */
+  .rsn-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 18px; flex: 1; min-height: 0; }
+  .rsn-panel { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 22px 26px; display: flex; flex-direction: column; }
+  .rsn-panel.think { border-color: var(--accent-soft); box-shadow: 0 12px 28px -20px rgba(200,66,31,0.45); }
+  .rsn-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .rsn-name { font-family: var(--serif); font-size: 28px; font-weight: 500; }
+  .rsn-flow { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .rsn-q { background: var(--bg-2); border-radius: 10px; padding: 13px 17px; font-size: 19px; line-height: 1.4; color: var(--ink); }
+  .rsn-q code { font-family: var(--mono); font-size: 17px; background: rgba(21,17,12,0.07); padding: 1px 6px; border-radius: 5px; }
+  .rsn-step-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .rsn-q .rsn-step-label { display: block; margin-bottom: 6px; }
+  .rsn-think-box { border: 1.5px dashed rgba(200,66,31,0.45); background: rgba(246,220,207,0.3); border-radius: 10px; padding: 12px 17px; }
+  .rsn-think-box .rsn-step-label { color: var(--accent); margin-bottom: 7px; }
+  .rsn-think-box ol { margin: 0; padding-left: 22px; font-family: var(--serif); font-style: italic; font-size: 18px; line-height: 1.45; color: var(--ink-2); display: flex; flex-direction: column; gap: 5px; }
+  .rsn-skip { font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.04em; padding: 4px 0 4px 17px; }
+  .rsn-ans { display: flex; align-items: baseline; gap: 12px; border-radius: 10px; padding: 12px 17px; margin-top: auto; }
+  .rsn-ans.bad { background: rgba(168,48,32,0.08); }
+  .rsn-ans.good { background: rgba(61,138,74,0.1); }
+  .rsn-ans .ra-mark { font-size: 22px; font-weight: 700; }
+  .rsn-ans.bad .ra-mark { color: var(--bad); }
+  .rsn-ans.good .ra-mark { color: var(--ok); }
+  .rsn-ans .ra-val { font-size: 21px; font-weight: 600; color: var(--ink); }
+  .rsn-ans .ra-note { font-size: 15px; line-height: 1.3; color: var(--ink-3); margin-left: auto; text-align: right; max-width: 55%; }
+
+  /* Merksatz immer unten: Callout direkt über dem Footer verankern */
+  section[data-screen-label="03 Was ist Reasoning Effort"] .callout { margin-top: auto; }
+  section[data-screen-label="03 Was ist Reasoning Effort"]
+  /* ===== Slide 2 — trade-off chart ===== */
+  .tradeoff { display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center; flex: 1; min-height: 0; }
+  .chart-wrap { background: var(--paper); border: 1px solid var(--hair); border-radius: 16px; padding: 26px 30px 18px; }
+  .chart-legend { display: flex; gap: 28px; margin-top: 6px; }
+  .chart-legend .cl { display: flex; align-items: center; gap: 10px; font-size: 17px; color: var(--ink-2); }
+  .chart-legend .cl .sw { width: 26px; height: 4px; border-radius: 2px; }
+  .to-points { display: flex; flex-direction: column; gap: 16px; }
+  .to-point { display: grid; grid-template-columns: 40px 1fr; gap: 16px; align-items: start; }
+  .to-point .tp-ic { font-family: var(--serif); font-size: 30px; font-weight: 600; color: var(--accent); line-height: 1; }
+  .to-point .tp-h { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--ink); }
+  .to-point .tp-b { font-size: 18px; line-height: 1.4; color: var(--ink-2); margin-top: 3px; }
+
+  /* ===== Slide 3 — when which level ===== */
+  .when-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; flex: 1; min-height: 0; }
+  .when-col { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 24px 26px; display: flex; flex-direction: column; border-top: 5px solid var(--wc, var(--ink-3)); }
+  .when-col.low  { --wc: #c9b89a; }
+  .when-col.med  { --wc: var(--accent-soft); }
+  .when-col.high { --wc: var(--accent); }
+  .when-col .w-name { font-family: var(--serif); font-size: 34px; font-weight: 500; }
+  .when-col .w-tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin-top: 2px; }
+  .when-col .w-list { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+  .when-col .w-list li { font-size: 19px; line-height: 1.35; color: var(--ink-2); padding-left: 22px; position: relative; }
+  .when-col .w-list li::before { content: "›"; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+  .when-col .w-cost { margin-top: auto; padding-top: 16px; font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.04em; }
+
+  /* ===== Exercise generic ===== */
+  .ex-instructions { font-size: 18px; color: var(--ink-2); margin: 2px 0 14px; max-width: 1700px; }
+  .ex-instructions strong { color: var(--ink); }
+  .ex-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+  /* ===== Exercise A — Effort-Dial ===== */
+  .dial { display: grid; grid-template-columns: 460px 1fr; gap: 24px; flex: 1; min-height: 0; }
+  .dial-left { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+  .dial-tasklabel { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .dial-tasks { display: flex; flex-direction: column; gap: 10px; }
+  .dial-task {
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 11px;
+    padding: 14px 16px; cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .dial-task:hover { border-color: var(--ink); }
+  .dial-task.active { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .dial-task .dt-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+  .dial-task.active .dt-tag { color: var(--accent-soft); }
+  .dial-task .dt-text { font-family: var(--serif); font-size: 18px; line-height: 1.3; }
+
+  .dial-control { background: var(--ink); color: #f0ece3; border-radius: 14px; padding: 20px 22px; margin-top: auto; }
+  .dial-control .dc-head { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #c8c2b6; margin-bottom: 14px; }
+  .dial-control .dc-head .dc-val { font-size: 18px; color: #f0ece3; letter-spacing: 0; font-weight: 600; }
+  .dial-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; outline: none; }
+  .dial-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--ink); transition: transform .14s ease; animation: dial-thumb-pulse 2.2s ease-out infinite; }
+  .dial-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--ink); transition: transform .14s ease; animation: dial-thumb-pulse 2.2s ease-out infinite; }
+  /* invite-interaction pulse — same expanding ring used across the course's sliders. Stops once touched. */
+  @keyframes dial-thumb-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,66,31,0.55); }
+    70%  { box-shadow: 0 0 0 13px rgba(200,66,31,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  .dial-slider:hover::-webkit-slider-thumb, .dial-slider:active::-webkit-slider-thumb { transform: scale(1.18); }
+  .dial-slider:hover::-moz-range-thumb, .dial-slider:active::-moz-range-thumb { transform: scale(1.18); }
+  .dial-slider.touched::-webkit-slider-thumb { animation: none; }
+  .dial-slider.touched::-moz-range-thumb { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .dial-slider::-webkit-slider-thumb, .dial-slider::-moz-range-thumb { animation: none; }
+  }
+  .dial-ticks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: #c8c2b6; letter-spacing: 0.04em; margin-top: 10px; }
+  .dial-ticks span { cursor: pointer; transition: color .15s; }
+  .dial-ticks span.on { color: #f0ece3; font-weight: 600; }
+
+  .dial-right { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 22px 26px; display: flex; flex-direction: column; min-height: 0; }
+  .dial-meters { display: flex; flex-direction: column; gap: 16px; }
+  .dm { }
+  .dm .dm-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
+  .dm .dm-label { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+  .dm .dm-val { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--ink); }
+  .dm .dm-bar { height: 14px; background: var(--bg-2); border-radius: 7px; overflow: hidden; position: relative; }
+  .dm .dm-bar > div { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; transition: width .4s ease, background .3s ease; }
+  .dm.quality .dm-bar > div { background: var(--ok); }
+  .dm.cost .dm-bar > div    { background: var(--warn); }
+  .dm.latency .dm-bar > div { background: var(--accent); }
+  .dm .dm-val.q-bad { color: var(--bad); }
+  .dm .dm-val.q-mid { color: var(--warn); }
+  .dm .dm-val.q-ok  { color: var(--ok); }
+
+  .dial-verdict { margin-top: auto; padding-top: 18px; }
+  .dial-verdict-inner { border-radius: 12px; padding: 16px 20px; background: var(--bg-2); border-left: 4px solid var(--ink-3); transition: background .2s, border-color .2s; }
+  .dial-verdict-inner.ok      { background: rgba(61,138,74,0.12);  border-left-color: var(--ok); }
+  .dial-verdict-inner.over    { background: rgba(184,132,31,0.14); border-left-color: var(--warn); }
+  .dial-verdict-inner.under   { background: rgba(168,48,32,0.12);  border-left-color: var(--bad); }
+  .dial-verdict-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+  .dial-verdict-text { font-family: var(--serif); font-size: 22px; line-height: 1.35; color: var(--ink); }
+  .dial-verdict-text strong { color: var(--accent); }
+  .dial-verdict-inner.ok .dial-verdict-text strong { color: var(--ok); }
+
+  /* ===== Exercise B — Effort-Match ===== */
+  .ematch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; align-content: start; }
+  .ematch-item { background: var(--paper); border: 1px solid var(--hair); border-radius: 12px; padding: 16px 18px; display: grid; grid-template-columns: 100%; grid-template-rows: 1fr auto; }
+  .ematch-item .em-scn { font-family: var(--serif); font-size: 20px; line-height: 1.3; color: var(--ink); }
+  .ematch-item .em-scn .em-meta { font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .ematch-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; grid-area: 2 / 1; align-self: end; }
+  .em-btns { display: flex; gap: 8px; }
+  .em-btn {
+    appearance: none; cursor: pointer; font-family: var(--mono); font-size: 14px; font-weight: 600;
+    padding: 8px 16px; border-radius: 8px; background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent; letter-spacing: 0.03em; transition: transform .05s;
+  }
+  .em-btn:hover { background: var(--ink); color: var(--bg); }
+  .em-btn:active { transform: translateY(1px); }
+  .em-btn.picked-ok { background: var(--ok); color: #fff; border-color: var(--ok); }
+  .em-btn.picked-no { background: var(--bad); color: #fff; border-color: var(--bad); }
+  .em-btn.show-ok { background: transparent; color: var(--ok); border-color: var(--ok); border-style: dashed; }
+  .ematch-item.answered .em-btn { pointer-events: none; }
+  /* Buttons und Antwort teilen sich dieselbe Grid-Zelle; ein unsichtbarer Sizer
+     reserviert die Höhe der längsten Begründung — die Karte behält immer dieselbe Höhe. */
+  .em-fb, .em-fb-sizer { grid-area: 2 / 1; align-self: end; margin-top: 12px; font-size: 17px; line-height: 1.4; color: var(--ink-3); }
+  .em-fb-sizer { visibility: hidden; }
+  .em-fb { visibility: hidden; opacity: 0; transition: opacity .25s ease; }
+  .ematch-item.answered .em-fb { visibility: visible; opacity: 1; }
+  .ematch-item.answered .ematch-row { visibility: hidden; }
+  .em-fb b { color: var(--ink); }
+  .em-fb .em-fb-tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+  .em-fb .em-fb-tag.ok { color: var(--ok); }
+  .em-fb .em-fb-tag.no { color: var(--bad); }
+
+  .reveal-row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 16px; }
+  .reveal-status { font-family: var(--mono); font-size: 15px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .reveal-status .score { color: var(--ink); font-weight: 600; }
+  .qbutton { appearance: none; cursor: pointer; font-family: var(--mono); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--bg); border: none; transition: background .15s, transform .05s; }
+  .qbutton:hover { background: var(--accent); }
+  .qbutton:active { transform: translateY(1px); }
+  .qbutton.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .qbutton.ghost:hover { background: var(--ink); color: var(--bg); }
+  /* invite-interaction pulse — same expanding accent ring used across the course's sliders & buttons.
+     Primary (non-ghost) quiz buttons pulse until hovered / disabled. */
+  .qbutton:not(.ghost):not(:disabled) { animation: qbtn-attention-pulse 2.2s ease-out infinite; }
+  @keyframes qbtn-attention-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,66,31,0.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(200,66,31,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  .qbutton:not(.ghost):hover { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .qbutton:not(.ghost) { animation: none; }
+  }
+
+  /* ===== Audience-Switcher (role-switch.js) ===== */
+  section[data-screen-label] > .role-toggle { top: 44px; right: var(--pad-x); }
+  /* Overthinking has only 4 cards — center them in the tall stage */
+  #overthink-grid { align-content: center; gap: 16px 14px; }
+  #overthink-grid .ematch-item { min-height: 132px; }
+  #overthink-grid .em-scn { align-self: center; }
+
+  /* Effort-Match now has 10 cards (5 rows) — compress so revealed feedback still fits */
+  section[data-screen-label*="Effort-Match"] #ematch-grid { gap: 10px 14px; }
+  section[data-screen-label*="Effort-Match"] #ematch-grid .ematch-item { padding: 12px 16px; }
+  section[data-screen-label*="Effort-Match"] #ematch-grid .em-scn { font-size: 18px; }
+  section[data-screen-label*="Effort-Match"] #ematch-grid .ematch-row,
+  section[data-screen-label*="Effort-Match"] #ematch-grid .em-fb,
+  section[data-screen-label*="Effort-Match"] #ematch-grid .em-fb-sizer { margin-top: 9px; }
+  section[data-screen-label*="Effort-Match"] #ematch-grid .em-fb,
+  section[data-screen-label*="Effort-Match"] #ematch-grid .em-fb-sizer { font-size: 16px; }
+
+  /* ===== Exercise C — Eskalations-Leiter ===== */
+  .escalate { display: grid; grid-template-columns: 420px 1fr 460px; gap: 24px; flex: 1; min-height: 0; }
+  .esc-left { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+  .esc-mid { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+  .esc-status { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-family: var(--mono); font-size: 14px; color: var(--ink-3); letter-spacing: 0.04em; }
+  .esc-status strong { color: var(--ink); font-weight: 600; }
+  .esc-status .qbutton { padding: 8px 14px; font-size: 12px; }
+  .escalate .dial-task { position: relative; padding-right: 44px; }
+  .dial-task .dt-chip { position: absolute; top: 12px; right: 14px; font-family: var(--mono); font-size: 17px; font-weight: 600; }
+  .dt-chip.ok { color: var(--ok); } .dt-chip.over { color: var(--warn); } .dt-chip.under { color: var(--bad); }
+  .dial-task.active .dt-chip.ok { color: #8fd49a; }
+  .dial-task.active .dt-chip.over { color: #e6c47a; }
+  .dial-task.active .dt-chip.under { color: #f0a08e; }
+  .esc-panel { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 24px 28px; display: flex; flex-direction: column; min-height: 0; }
+  .esc-ladder { display: flex; flex-direction: column; gap: 12px; }
+  .esc-rung { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; border-radius: 12px; border: 1px solid var(--hair); background: var(--bg-2); transition: background .2s, border-color .2s, opacity .2s, box-shadow .2s; }
+  .esc-rung .er-name { font-family: var(--serif); font-size: 26px; font-weight: 500; color: var(--ink); }
+  .esc-rung .er-tok { font-family: var(--mono); font-size: 14px; color: var(--ink-3); }
+  .esc-rung.ahead { opacity: 0.42; }
+  .esc-rung.ahead .er-name { color: var(--ink-3); }
+  .esc-rung.climbed { background: rgba(21,17,12,0.05); }
+  .esc-rung.climbed .er-name { color: var(--ink-3); text-decoration: line-through; }
+  .esc-rung.current { background: var(--ink); border-color: var(--ink); box-shadow: 0 8px 22px -12px rgba(21,17,12,0.65); }
+  .esc-rung.current .er-name { color: #f0ece3; }
+  .esc-rung.current .er-tok { color: var(--accent-soft); }
+
+  .esc-sample { flex: 1; min-height: 0; background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 26px 30px; display: flex; flex-direction: column; }
+  .esc-sample-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-family: var(--mono); font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 14px; border-bottom: 1px solid var(--hair); margin-bottom: 20px; }
+  .esc-sample-head .esc-sample-cost { color: var(--accent); font-weight: 600; letter-spacing: 0.04em; text-transform: none; white-space: nowrap; }
+  .esc-sample-body { flex: 1; font-family: var(--serif); font-size: 25px; line-height: 1.5; color: var(--ink); }
+  .esc-sample-hint { font-family: var(--mono); font-size: 14px; color: var(--ink-3); letter-spacing: 0.04em; padding-top: 14px; border-top: 1px dashed var(--hair); }
+  .esc-curve { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .esc-curve[hidden] { display: none; }
+  .esc-curve .ec-chip { font-family: var(--mono); font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--hair); background: var(--paper); color: var(--ink-2); }
+  .esc-curve .ec-chip.q-ok { border-color: var(--ok); color: var(--ok); }
+  .esc-curve .ec-chip.q-mid { border-color: var(--warn); color: var(--warn); }
+  .esc-curve .ec-chip.q-bad { border-color: var(--bad); color: var(--bad); }
+  .esc-curve .ec-chip.sweet { background: var(--ok); border-color: var(--ok); color: #fff; }
+
+  .esc-account { margin-top: auto; background: var(--ink); color: #f0ece3; border-radius: 12px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: baseline; }
+  .esc-account .ea-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #c8c2b6; }
+  .esc-account .ea-val { font-family: var(--mono); font-size: 24px; font-weight: 600; color: #f0ece3; }
+
+  .esc-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .esc-actions .qbutton { flex: 1; padding: 12px; }
+  .esc-actions .qbutton[data-esc="context"] { flex-basis: 100%; }
+  .esc-actions .qbutton:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .esc-verdict-slot { flex: 0 0 auto; }
+  .esc-verdict { border-radius: 12px; padding: 16px 20px; background: var(--bg-2); border-left: 4px solid var(--ink-3); transition: background .2s, border-color .2s; }
+  .esc-verdict.ok    { background: rgba(61,138,74,0.12);  border-left-color: var(--ok); }
+  .esc-verdict.over  { background: rgba(184,132,31,0.14); border-left-color: var(--warn); }
+  .esc-verdict.under { background: rgba(168,48,32,0.12);  border-left-color: var(--bad); }
+  .esc-verdict-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; }
+  .esc-verdict-text { font-family: var(--serif); font-size: 21px; line-height: 1.35; color: var(--ink); }
+  .esc-verdict-text strong { color: var(--accent); }
+  .esc-verdict.ok .esc-verdict-text strong { color: var(--ok); }
+
+  /* ===== Slide 08 — Eskalations-Rechnung ===== */
+  .calc { display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; flex: 1; min-height: 0; align-items: center; }
+  .calc-left { display: flex; flex-direction: column; gap: 14px; }
+  .calc-setup { font-family: var(--mono); font-size: 15px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); border-radius: 10px; padding: 12px 18px; letter-spacing: 0.01em; }
+  .calc-setup b { color: var(--ink); }
+  .strat { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 20px 26px; }
+  .strat.win { border-color: var(--ok); box-shadow: 0 12px 28px -20px rgba(61,138,74,0.5); }
+  .strat-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+  .strat-name { font-family: var(--serif); font-size: 26px; font-weight: 500; }
+  .strat-total { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .strat.win .strat-total { color: var(--ok); }
+  .strat-math { font-family: var(--mono); font-size: 15px; color: var(--ink-3); margin: 6px 0 14px; }
+  .strat-bar { height: 20px; background: var(--bg-2); border-radius: 10px; }
+  .strat-bar .sb-fill { height: 100%; border-radius: 10px; overflow: hidden; display: flex; }
+  .strat-bar .sb-seg { height: 100%; }
+  .sb-seg.input { background: #c9b89a; }
+  .sb-seg.double { background: var(--warn); }
+  .sb-seg.reason { background: var(--accent); }
+  .calc-legend { display: flex; gap: 22px; flex-wrap: wrap; }
+  .calc-legend .cl { display: flex; align-items: center; gap: 8px; font-size: 15px; color: var(--ink-2); }
+  .calc-legend .cl .sw { width: 16px; height: 16px; border-radius: 4px; }
+  .calc-verdict { font-family: var(--serif); font-size: 22px; line-height: 1.35; color: var(--ink); }
+  .calc-verdict strong { color: var(--ok); }
+
+  /* ===== Cheat-sheet final ===== */
+  .cs-rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 30px; flex: 1; min-height: 0; }
+  .cs-rule { background: var(--paper); border: 1px solid var(--hair); border-radius: 12px; padding: 24px 28px 22px; display: flex; flex-direction: column; }
+  /* statische Variante der Übersichtskachel-Animation (a-dial auf index.html) */
+  .cs-anim { flex: 1; display: flex; align-items: center; justify-content: center; gap: 44px; padding-bottom: 18px; }
+  .cs-dial-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .cs-dial { position: relative; width: 190px; }
+  .cs-dial svg { display: block; width: 190px; height: auto; }
+  .cs-dial .needle { position: absolute; left: 50%; bottom: 11px; width: 3.5px; height: 54px; margin-left: -1.75px; background: var(--ink); border-radius: 2px; transform-origin: 50% 100%; }
+  .cs-dial-labels { width: 190px; display: flex; justify-content: space-between; font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .cs-dout { display: flex; flex-direction: column; gap: 9px; width: 158px; }
+  .cs-dout .ct-cap { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+  .cs-dout .ct-cap.ans { margin-top: 9px; }
+  .cs-dout .ct { display: block; height: 8px; border-radius: 4px; background: rgba(21,17,12,0.18); }
+  .cs-dout .ct.ghost { background: rgba(21,17,12,0.06); }
+  .cs-dout .ct.a { background: var(--accent); width: 88%; }
+  .cs-dout .cs-mode { margin-top: 11px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; }
+  .cs-rule .r-when { font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 18px; border-top: 1px dashed var(--hair); }
+  .cs-rule .r-then { font-size: 20px; color: var(--ink-2); margin-top: 8px; line-height: 1.4; }
+  .cs-rule .r-then strong { color: var(--ink); }
+  .takeaways { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+  .takeaway { display: grid; grid-template-columns: 52px 1fr; gap: 18px; align-items: center; }
+  .takeaway .tk-n { width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: var(--bg); font-family: var(--mono); font-size: 22px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .takeaway .tk-t { font-size: 24px; line-height: 1.35; color: var(--ink-2); }
+  .takeaway .tk-t strong { color: var(--ink); }
+</style>
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+
+<body>
+<deck-stage width="1920" height="1080" data-om-id="621d70a3:17" style="--deck-rail-w: 266px;">
+
+  <!-- ===================== 00 TITLE ===================== -->
+  <section data-screen-label="01 Titel Reasoning Effort" data-om-id="621d70a3:18" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="0">
+    <div class="chrome" data-om-id="621d70a3:19">
+      <div class="topbar" data-om-id="621d70a3:20">
+        <span data-om-id="621d70a3:21"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:22"><span class="pip" data-om-id="621d70a3:23"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:24">›</span><span class="bc-chapter" data-om-id="621d70a3:25">Reasoning Effort</span></span>
+      </div>
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;" data-om-id="621d70a3:26">
+        <div class="eyebrow" style="margin: 0 0 26px;" data-om-id="621d70a3:27">Theorie &amp; vier interaktive Übungen</div>
+        <h1 class="title" data-om-id="621d70a3:28">Reasoning<br data-om-id="621d70a3:29"><span class="accent" data-om-id="621d70a3:30">Effort</span>.</h1>
+        <h3 class="subtitle" style="margin-top: 18px;" data-om-id="621d70a3:31">Wie viel das Modell <em data-om-id="621d70a3:32">nachdenkt</em>, bevor es antwortet — und warum „mehr" nicht immer „besser" heißt.</h3>
+        <div style="display: flex; gap: 12px; margin-top: 18px;" data-om-id="621d70a3:33">
+          <span class="pill outline" data-om-id="621d70a3:34">Niedrig</span>
+          <span class="pill outline" data-om-id="621d70a3:35">Mittel</span>
+          <span class="pill accent" data-om-id="621d70a3:36">Hoch</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 01 WAS IST REASONING ===================== -->
+  <section data-screen-label="02 Was ist Reasoning" data-roleswitch="" data-om-id="621d70a3:40" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="1" data-role="dev">
+    <div class="chrome" data-om-id="621d70a3:41">
+      <div class="topbar" data-om-id="621d70a3:42">
+        <span data-om-id="621d70a3:43"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:44"><span class="pip" data-om-id="621d70a3:45"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:46">›</span><span class="bc-chapter" data-om-id="621d70a3:47">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:48">›</span>Theorie</span>
+        <span data-om-id="621d70a3:49"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+      </div>
+
+      <div class="eyebrow" data-om-id="621d70a3:50">Erst denken, dann antworten</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 12px;" data-om-id="621d70a3:51">Reasoning heißt: Das Modell <span class="accent" data-om-id="621d70a3:52">schreibt sich Zwischenschritte</span>, bevor es antwortet.</h2>
+      <p class="body" style="max-width: 1640px; margin: 0 0 22px;" data-nd="Wie beim Kopfrechnen mit großen Zahlen: Ab einer gewissen Schwierigkeit schreibt man Zwischenergebnisse auf einen &lt;strong&gt;Schmierzettel&lt;/strong&gt;, statt alles im Kopf zu halten. Genau das macht das Modell beim Reasoning — es notiert erst Gedankenschritte, die du normalerweise nicht siehst, und formuliert dann die eigentliche Antwort." data-om-id="621d70a3:53">
+        Ein Sprachmodell erzeugt Text Token für Token — und jedes erzeugte Token wird sofort Teil des eigenen Kontexts. Reasoning nutzt genau das: Vor der finalen Antwort generiert das Modell <strong data-om-id="621d70a3:54">interne Zwischenschritte</strong> und baut die Antwort darauf auf. Es denkt, indem es schreibt.
+      </p>
+
+      <div class="rsn-grid" data-om-id="621d70a3:55">
+        <div class="rsn-panel" data-om-id="621d70a3:56">
+          <div class="rsn-head" data-om-id="621d70a3:57"><span class="rsn-name" data-om-id="621d70a3:58">Ohne Reasoning</span><span class="pill outline" data-om-id="621d70a3:59">Reflex</span></div>
+          <div class="rsn-flow" data-nd="&lt;div class=&quot;rsn-q&quot;&gt;&lt;span class=&quot;rsn-step-label&quot;&gt;Frage&lt;/span&gt;Schläger und Ball kosten zusammen &lt;b&gt;1,10&nbsp;€&lt;/b&gt;. Der Schläger kostet &lt;b&gt;1&nbsp;€ mehr&lt;/b&gt; als der Ball. Was kostet der Ball?&lt;/div&gt;&lt;div class=&quot;rsn-skip&quot;&gt;↓ &nbsp;keine Zwischenschritte — das Bauchgefühl antwortet&lt;/div&gt;&lt;div class=&quot;rsn-ans bad&quot;&gt;&lt;span class=&quot;ra-mark&quot;&gt;✗&lt;/span&gt;&lt;span class=&quot;ra-val&quot;&gt;„10 Cent“&lt;/span&gt;&lt;span class=&quot;ra-note&quot;&gt;dann kostet der Schläger 1,10&nbsp;€ — zusammen wären das 1,20&nbsp;€&lt;/span&gt;&lt;/div&gt;" data-om-id="621d70a3:60">
+            <div class="rsn-q" data-om-id="621d70a3:61"><span class="rsn-step-label" data-om-id="621d70a3:62">Frage</span>Was liefert <code data-om-id="621d70a3:63">[1,2,3].map(parseInt)</code>?</div>
+            <div class="rsn-skip" data-om-id="621d70a3:64">↓ &nbsp;keine Zwischenschritte — Antwort aus dem Reflex</div>
+            <div class="rsn-ans bad" data-om-id="621d70a3:65"><span class="ra-mark" data-om-id="621d70a3:66">✗</span><span class="ra-val mono" data-om-id="621d70a3:67">[1, 2, 3]</span><span class="ra-note" data-om-id="621d70a3:68">plausibel — aber falsch</span></div>
+          </div>
+        </div>
+
+        <div class="rsn-panel think" data-om-id="621d70a3:69">
+          <div class="rsn-head" data-om-id="621d70a3:70"><span class="rsn-name" data-om-id="621d70a3:71">Mit Reasoning</span><span class="pill accent" data-om-id="621d70a3:72">Denkschritte</span></div>
+          <div class="rsn-flow" data-nd="&lt;div class=&quot;rsn-q&quot;&gt;&lt;span class=&quot;rsn-step-label&quot;&gt;Frage&lt;/span&gt;Schläger und Ball kosten zusammen &lt;b&gt;1,10&nbsp;€&lt;/b&gt;. Der Schläger kostet &lt;b&gt;1&nbsp;€ mehr&lt;/b&gt; als der Ball. Was kostet der Ball?&lt;/div&gt;&lt;div class=&quot;rsn-think-box&quot;&gt;&lt;div class=&quot;rsn-step-label&quot;&gt;Schmierzettel · normalerweise unsichtbar&lt;/div&gt;&lt;ol&gt;&lt;li&gt;Ball = x. Schläger = x + 1,00&nbsp;€.&lt;/li&gt;&lt;li&gt;x + (x + 1,00) = 1,10 → 2x = 0,10 → x = 0,05.&lt;/li&gt;&lt;li&gt;Probe: 0,05&nbsp;€ + 1,05&nbsp;€ = 1,10&nbsp;€ — und der Schläger ist genau 1&nbsp;€ teurer. Passt.&lt;/li&gt;&lt;/ol&gt;&lt;/div&gt;&lt;div class=&quot;rsn-ans good&quot;&gt;&lt;span class=&quot;ra-mark&quot;&gt;✓&lt;/span&gt;&lt;span class=&quot;ra-val&quot;&gt;„5 Cent“&lt;/span&gt;&lt;span class=&quot;ra-note&quot;&gt;erst Zwischenschritte, dann Antwort&lt;/span&gt;&lt;/div&gt;" data-om-id="621d70a3:73">
+            <div class="rsn-q" data-om-id="621d70a3:74"><span class="rsn-step-label" data-om-id="621d70a3:75">Frage</span>Was liefert <code data-om-id="621d70a3:76">[1,2,3].map(parseInt)</code>?</div>
+            <div class="rsn-think-box" data-om-id="621d70a3:77">
+              <div class="rsn-step-label" data-om-id="621d70a3:78">Interne Reasoning-Tokens · meist verborgen</div>
+              <ol data-om-id="621d70a3:79">
+                <li data-om-id="621d70a3:80">map übergibt nicht nur den Wert, sondern auch den <b data-om-id="621d70a3:81">Index</b> — und parseInt liest den als Zahlenbasis.</li>
+                <li data-om-id="621d70a3:82">parseInt(„1“, 0) → 1 · parseInt(„2“, 1) → NaN · parseInt(„3“, 2) → NaN, denn „3“ ist keine Ziffer zur Basis 2.</li>
+                <li data-om-id="621d70a3:83">Kurz prüfen: Basis 0 heißt „automatisch erkennen“ → 1 bleibt 1. Passt.</li>
+              </ol>
+            </div>
+            <div class="rsn-ans good" data-om-id="621d70a3:84"><span class="ra-mark" data-om-id="621d70a3:85">✓</span><span class="ra-val mono" data-om-id="621d70a3:86">[1, NaN, NaN]</span><span class="ra-note" data-om-id="621d70a3:87">erst Zwischenschritte, dann Antwort</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" data-om-id="621d70a3:88">
+        <div class="callout-label" data-om-id="621d70a3:89">Warum das funktioniert</div>
+        <div class="callout-body" data-nd="Laut gedacht ist halb gelöst: Wer Zwischenschritte &lt;strong&gt;aufschreibt&lt;/strong&gt;, kann sie prüfen und korrigieren, bevor er antwortet. &lt;strong&gt;Reasoning Effort&lt;/strong&gt; — nächste Folie — bestimmt nur noch, wie groß dieser Schmierzettel sein darf." data-om-id="621d70a3:90">
+          Jedes Reasoning-Token wird Kontext für das nächste: So kann das Modell zerlegen, prüfen und verwerfen, statt sofort die statistisch naheliegendste Antwort zu tippen. <strong data-om-id="621d70a3:91">Reasoning Effort</strong> — nächste Folie — regelt nur noch, wie groß dieses Denk-Budget ist.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 02 WAS IST REASONING EFFORT ===================== -->
+  <section data-screen-label="03 Was ist Reasoning Effort" data-om-id="621d70a3:95" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="2">
+    <div class="chrome" data-om-id="621d70a3:96">
+      <div class="topbar" data-om-id="621d70a3:97">
+        <span data-om-id="621d70a3:98"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:99"><span class="pip" data-om-id="621d70a3:100"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:101">›</span><span class="bc-chapter" data-om-id="621d70a3:102">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:103">›</span>Theorie</span>
+        <span data-om-id="621d70a3:104"></span>
+      </div>
+
+      <div class="eyebrow" data-om-id="621d70a3:105">Der Regler fürs Nachdenken</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 12px;" data-om-id="621d70a3:106">Ein Regler dafür, <span class="accent" data-om-id="621d70a3:107">wie viel das Modell intern überlegt</span>, bevor es antwortet.</h2>
+      <p class="body" style="max-width: 1640px; margin: 0 0 24px;" data-om-id="621d70a3:108">
+        Moderne Modelle können vor der eigentlichen Antwort still „nachdenken" — sie erzeugen interne Reasoning-Schritte, von denen du meist höchstens eine Kurzfassung zu sehen bekommst. <strong data-om-id="621d70a3:109">Reasoning Effort</strong> ist der Regler, der bestimmt, <em data-om-id="621d70a3:110">wie viel</em> davon passiert: von fast keinem bis zu ausgiebigem Durchdenken.
+      </p>
+
+      <div class="delib-grid" data-om-id="621d70a3:111">
+        <div class="delib" data-om-id="621d70a3:112">
+          <div class="d-top" data-om-id="621d70a3:113"><span class="d-name" data-om-id="621d70a3:114">Niedrig</span><span class="lvl low" data-om-id="621d70a3:115">low</span></div>
+          <div class="d-band" data-om-id="621d70a3:116"><div style="width: 12%; background: #c9b89a;" data-om-id="621d70a3:117"></div></div>
+          <div class="d-dots" data-om-id="621d70a3:118">
+            <span data-om-id="621d70a3:119"></span>
+            <span class="ghost" data-om-id="621d70a3:120"></span><span class="ghost" data-om-id="621d70a3:121"></span><span class="ghost" data-om-id="621d70a3:122"></span><span class="ghost" data-om-id="621d70a3:123"></span><span class="ghost" data-om-id="621d70a3:124"></span><span class="ghost" data-om-id="621d70a3:125"></span><span class="ghost" data-om-id="621d70a3:126"></span><span class="ghost" data-om-id="621d70a3:127"></span><span class="ghost" data-om-id="621d70a3:128"></span><span class="ghost" data-om-id="621d70a3:129"></span><span class="ghost" data-om-id="621d70a3:130"></span>
+          </div>
+          <div class="d-tok">~60 Reasoning-Tokens</div>
+          <div class="d-meta" data-om-id="621d70a3:131"><b data-om-id="621d70a3:133">Antwort fast sofort</b></div>
+          <div class="d-use" data-om-id="621d70a3:134">Reflex: Das Modell antwortet praktisch direkt aus dem Stand.</div>
+        </div>
+        <div class="delib" data-om-id="621d70a3:135">
+          <div class="d-top" data-om-id="621d70a3:136"><span class="d-name" data-om-id="621d70a3:137">Mittel</span><span class="lvl med" data-om-id="621d70a3:138">medium</span></div>
+          <div class="d-band" data-om-id="621d70a3:139"><div style="width: 42%; background: var(--accent-soft);" data-om-id="621d70a3:140"></div></div>
+          <div class="d-dots" data-om-id="621d70a3:141">
+            <span data-om-id="621d70a3:142"></span><span data-om-id="621d70a3:143"></span><span data-om-id="621d70a3:144"></span><span data-om-id="621d70a3:145"></span>
+            <span class="ghost" data-om-id="621d70a3:146"></span><span class="ghost" data-om-id="621d70a3:147"></span><span class="ghost" data-om-id="621d70a3:148"></span><span class="ghost" data-om-id="621d70a3:149"></span><span class="ghost" data-om-id="621d70a3:150"></span><span class="ghost" data-om-id="621d70a3:151"></span><span class="ghost" data-om-id="621d70a3:152"></span><span class="ghost" data-om-id="621d70a3:153"></span>
+          </div>
+          <div class="d-tok">~450 Reasoning-Tokens</div>
+          <div class="d-meta" data-om-id="621d70a3:154"><b data-om-id="621d70a3:156">Kurzes Durchdenken</b></div>
+          <div class="d-use" data-om-id="621d70a3:157">Ein paar Zwischenschritte: abwägen, gliedern, prüfen.</div>
+        </div>
+        <div class="delib" data-om-id="621d70a3:158">
+          <div class="d-top" data-om-id="621d70a3:159"><span class="d-name" data-om-id="621d70a3:160">Hoch</span><span class="lvl high" data-om-id="621d70a3:161">high</span></div>
+          <div class="d-band" data-om-id="621d70a3:162"><div style="width: 100%; background: var(--accent);" data-om-id="621d70a3:163"></div></div>
+          <div class="d-dots" data-om-id="621d70a3:164">
+            <span data-om-id="621d70a3:165"></span><span data-om-id="621d70a3:166"></span><span data-om-id="621d70a3:167"></span><span data-om-id="621d70a3:168"></span><span data-om-id="621d70a3:169"></span><span data-om-id="621d70a3:170"></span><span data-om-id="621d70a3:171"></span><span data-om-id="621d70a3:172"></span><span data-om-id="621d70a3:173"></span><span data-om-id="621d70a3:174"></span><span data-om-id="621d70a3:175"></span><span data-om-id="621d70a3:176"></span>
+          </div>
+          <div class="d-tok">~2000 Reasoning-Tokens</div>
+          <div class="d-meta" data-om-id="621d70a3:177"><b data-om-id="621d70a3:179">Ausgiebiges Durchdenken</b></div>
+          <div class="d-use" data-om-id="621d70a3:180">Hypothesen bilden, durchspielen, verwerfen — bevor ein Wort steht.</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 12px; font-family: var(--mono); font-size: 15px; color: var(--ink-3); letter-spacing: 0.02em;">Token-Zahlen: illustrative Größenordnung.</div>
+
+      <div class="callout" data-om-id="621d70a3:181">
+        <div class="callout-label" data-om-id="621d70a3:182">Nicht verwechseln</div>
+        <div class="callout-body" data-om-id="621d70a3:183">
+          Effort ist <strong data-om-id="621d70a3:184">nicht Temperatur</strong> (Zufall beim Wort-Würfeln), <strong data-om-id="621d70a3:185">nicht die Modellgröße</strong> — und <strong data-om-id="621d70a3:186">nicht die Antwortlänge</strong>: Das Nachdenken passiert <em data-om-id="621d70a3:187">vor</em> dem Text. Gleiches Modell, gleiche Frage — nur mehr oder weniger <strong data-om-id="621d70a3:188">Nachdenkzeit</strong>.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 03 TRADE-OFFS ===================== -->
+  <section data-screen-label="04 Trade-offs" data-om-id="621d70a3:192" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="3">
+    <div class="chrome" data-om-id="621d70a3:193">
+      <div class="topbar" data-om-id="621d70a3:194">
+        <span data-om-id="621d70a3:195"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:196"><span class="pip" data-om-id="621d70a3:197"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:198">›</span><span class="bc-chapter" data-om-id="621d70a3:199">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:200">›</span>Theorie</span>
+        <span data-om-id="621d70a3:201"></span>
+      </div>
+
+      <div class="eyebrow" data-om-id="621d70a3:202">Was mehr Effort kostet — und wann er sich lohnt</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 8px;" data-om-id="621d70a3:203">Mehr Nachdenken hilft nur, solange die Aufgabe <span class="accent" data-om-id="621d70a3:204">schwer genug</span> ist.</h2>
+
+      <div class="tradeoff" data-om-id="621d70a3:205">
+        <div class="chart-wrap" data-om-id="621d70a3:206">
+          <svg viewBox="0 0 900 470" width="100%" style="display:block;" font-family="JetBrains Mono, monospace" data-om-id="621d70a3:207">
+            <!-- axes -->
+            <line x1="90" y1="40" x2="90" y2="390" stroke="#15110c" stroke-opacity="0.28" stroke-width="2" data-om-id="621d70a3:208"></line>
+            <line x1="90" y1="390" x2="850" y2="390" stroke="#15110c" stroke-opacity="0.28" stroke-width="2" data-om-id="621d70a3:209"></line>
+            <!-- y axis label -->
+            <text x="30" y="220" fill="#6b6357" font-size="17" transform="rotate(-90 30 220)" text-anchor="middle" data-om-id="621d70a3:210">Antwort-Qualität →</text>
+            <!-- x ticks -->
+            <text x="170" y="420" fill="#6b6357" font-size="17" text-anchor="middle" data-om-id="621d70a3:211">Niedrig</text>
+            <text x="470" y="420" fill="#6b6357" font-size="17" text-anchor="middle" data-om-id="621d70a3:212">Mittel</text>
+            <text x="770" y="420" fill="#6b6357" font-size="17" text-anchor="middle" data-om-id="621d70a3:213">Hoch</text>
+            <text x="470" y="452" fill="#15110c" font-size="16" text-anchor="middle" opacity="0.6" data-om-id="621d70a3:214">Reasoning Effort →</text>
+
+            <text x="848" y="30" fill="#9a8f7d" font-size="14" text-anchor="end" data-om-id="621d70a3:215">schematische Darstellung</text>
+
+            <!-- gridlines -->
+            <line x1="170" y1="40" x2="170" y2="390" stroke="#15110c" stroke-opacity="0.07" data-om-id="621d70a3:216"></line>
+            <line x1="470" y1="40" x2="470" y2="390" stroke="#15110c" stroke-opacity="0.07" data-om-id="621d70a3:217"></line>
+            <line x1="770" y1="40" x2="770" y2="390" stroke="#15110c" stroke-opacity="0.07" data-om-id="621d70a3:218"></line>
+
+            <!-- EASY task: plateaus immediately, near top -->
+            <polyline points="170,95 470,86 770,84" fill="none" stroke="#c9b89a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" data-om-id="621d70a3:219"></polyline>
+            <circle cx="170" cy="95" r="7" fill="#c9b89a" data-om-id="621d70a3:220"></circle><circle cx="470" cy="86" r="7" fill="#c9b89a" data-om-id="621d70a3:221"></circle><circle cx="770" cy="84" r="7" fill="#c9b89a" data-om-id="621d70a3:222"></circle>
+
+            <!-- HARD task: climbs steeply -->
+            <polyline points="170,348 470,238 770,108" fill="none" stroke="#c8421f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" data-om-id="621d70a3:223"></polyline>
+            <circle cx="170" cy="348" r="7" fill="#c8421f" data-om-id="621d70a3:224"></circle><circle cx="470" cy="238" r="7" fill="#c8421f" data-om-id="621d70a3:225"></circle><circle cx="770" cy="108" r="7" fill="#c8421f" data-om-id="621d70a3:226"></circle>
+
+            <!-- "wasted" zone marker on easy curve -->
+            <text x="770" y="68" fill="#9a8f7d" font-size="15" text-anchor="end" data-om-id="621d70a3:227">leichte Aufgabe</text>
+            <text x="190" y="338" fill="#c8421f" font-size="15" text-anchor="start" data-om-id="621d70a3:228">schwere Aufgabe</text>
+          </svg>
+          <div class="chart-legend" data-om-id="621d70a3:229">
+            <div class="cl" data-om-id="621d70a3:230"><span class="sw" style="background:#c9b89a;" data-om-id="621d70a3:231"></span>Leichte Aufgabe — sofort am Limit</div>
+            <div class="cl" data-om-id="621d70a3:232"><span class="sw" style="background:#c8421f;" data-om-id="621d70a3:233"></span>Schwere Aufgabe — profitiert weiter</div>
+          </div>
+        </div>
+
+        <div class="to-points" data-om-id="621d70a3:234">
+          <div class="to-point" data-om-id="621d70a3:235">
+            <div class="tp-ic" data-om-id="621d70a3:236">↑</div>
+            <div data-om-id="621d70a3:237"><div class="tp-h" data-om-id="621d70a3:238">Mehr Effort = mehr Tokens</div><div class="tp-b" data-om-id="621d70a3:239">Reasoning-Schritte sind echte, bezahlte Tokens. Hoch kann gut das 30-fache von Niedrig kosten.</div></div>
+          </div>
+          <div class="to-point" data-om-id="621d70a3:240">
+            <div class="tp-ic" data-om-id="621d70a3:241">⏱</div>
+            <div data-om-id="621d70a3:242"><div class="tp-h" data-om-id="621d70a3:243">Mehr Effort = mehr Latenz</div><div class="tp-b" data-om-id="621d70a3:244">Erst denken, dann tippen. Hoch kann Sekunden bis zig Sekunden warten lassen — schlecht für interaktive UX.</div></div>
+          </div>
+          <div class="to-point" data-om-id="621d70a3:245">
+            <div class="tp-ic" data-om-id="621d70a3:246">↘</div>
+            <div data-om-id="621d70a3:247"><div class="tp-h" data-om-id="621d70a3:248">Diminishing Returns</div><div class="tp-b" data-om-id="621d70a3:249">Auf leichten Aufgaben bringt mehr Nachdenken nichts — und führt durch <em data-om-id="621d70a3:250">Overthinking</em> manchmal sogar zu schlechteren Antworten.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 04 WANN WELCHE STUFE ===================== -->
+  <section data-screen-label="05 Wann welche Stufe" data-om-id="621d70a3:254" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="4">
+    <div class="chrome" data-om-id="621d70a3:255">
+      <div class="topbar" data-om-id="621d70a3:256">
+        <span data-om-id="621d70a3:257"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:258"><span class="pip" data-om-id="621d70a3:259"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:260">›</span><span class="bc-chapter" data-om-id="621d70a3:261">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:262">›</span>Theorie</span>
+        <span data-om-id="621d70a3:263"></span>
+      </div>
+
+      <div class="eyebrow" data-om-id="621d70a3:264">Effort an die Schwierigkeit koppeln</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 22px;" data-om-id="621d70a3:265">Drei Stufen, drei Aufgaben-Profile.</h2>
+
+      <div class="when-grid" data-om-id="621d70a3:266">
+        <div class="when-col low" data-om-id="621d70a3:267">
+          <div class="w-name" data-om-id="621d70a3:268">Niedrig</div>
+          <div class="w-tag" data-om-id="621d70a3:269">Reflex · Volumen · Latenz</div>
+          <ul class="w-list" data-om-id="621d70a3:270">
+            <li data-om-id="621d70a3:271">Extraktion, Klassifikation, Formatierung</li>
+            <li data-om-id="621d70a3:272">Kurze Faktenantworten, Lookups</li>
+            <li data-om-id="621d70a3:273">Übersetzen, Umformulieren</li>
+            <li data-om-id="621d70a3:274">Massen-Verarbeitung, latenzkritische UX</li>
+          </ul>
+          <div class="w-cost" data-om-id="621d70a3:275">Günstig · schnell · vorhersagbar</div>
+        </div>
+        <div class="when-col med" data-om-id="621d70a3:276">
+          <div class="w-name" data-om-id="621d70a3:277">Mittel</div>
+          <div class="w-tag" data-om-id="621d70a3:278">Urteilsvermögen · Standard</div>
+          <ul class="w-list" data-om-id="621d70a3:279">
+            <li data-om-id="621d70a3:280">Zusammenfassen mit Gewichtung</li>
+            <li data-om-id="621d70a3:281">Entwürfe, E-Mails, moderate Texte</li>
+            <li data-om-id="621d70a3:282">Überschaubares Coding, Reviews</li>
+            <li data-om-id="621d70a3:283">Typische „nachdenken, aber nicht grübeln"-Fälle</li>
+          </ul>
+          <div class="w-cost" data-om-id="621d70a3:284">Der vernünftige Default</div>
+        </div>
+        <div class="when-col high" data-om-id="621d70a3:285">
+          <div class="w-name" data-om-id="621d70a3:286">Hoch</div>
+          <div class="w-tag" data-om-id="621d70a3:287">Tiefes, mehrstufiges Reasoning</div>
+          <ul class="w-list" data-om-id="621d70a3:288">
+            <li data-om-id="621d70a3:289">Komplexe Mathematik, Beweise, Logik</li>
+            <li data-om-id="621d70a3:290">Debugging über mehrere Dateien</li>
+            <li data-om-id="621d70a3:291">Architektur &amp; Planung, mehrdeutige Specs</li>
+            <li data-om-id="621d70a3:292">Agentische Aufgaben, wo Fehler teuer sind</li>
+          </ul>
+          <div class="w-cost" data-om-id="621d70a3:293">Teuer &amp; langsam — gezielt einsetzen</div>
+        </div>
+      </div>
+
+      <div class="callout" data-om-id="621d70a3:294">
+        <div class="callout-label" data-om-id="621d70a3:295">Daumenregel</div>
+        <div class="callout-body" data-om-id="621d70a3:296">
+          Koppele Reasoning an die <strong data-om-id="621d70a3:297">Schwierigkeit</strong> der Aufgabe, nicht an ihre Wichtigkeit. <strong data-om-id="621d70a3:298">Niedrig starten, eskalieren wenn's scheitert</strong> — nicht umgekehrt.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 05 ÜBUNG A — EFFORT-DIAL ===================== -->
+  <section data-screen-label="09 Eskalations-Rechnung" data-om-id="621d70a3:438" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="8" data-deck-active="">
+    <div class="chrome" data-om-id="621d70a3:439">
+      <div class="topbar" data-om-id="621d70a3:440">
+        <span data-om-id="621d70a3:441"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:442"><span class="pip" data-om-id="621d70a3:443"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:444">›</span><span class="bc-chapter" data-om-id="621d70a3:445">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:446">›</span>Theorie</span>
+        <span data-om-id="621d70a3:447"></span>
+      </div>
+
+      <div class="eyebrow" data-om-id="621d70a3:448">Die häufigste Rückfrage zur Daumenregel</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 14px;" data-om-id="621d70a3:449">„Zahle ich den Input dann nicht doppelt?“ — <span class="accent" data-om-id="621d70a3:450">Doch.</span> Und es rechnet sich trotzdem.</h2>
+
+      <div class="calc" data-om-id="621d70a3:451">
+        <div class="calc-left" data-om-id="621d70a3:452">
+          <div class="calc-setup" data-om-id="621d70a3:453">Annahme: <b data-om-id="621d70a3:454">100 Aufgaben</b> · Input je <b data-om-id="621d70a3:455">2.000 tok</b> · Reasoning: Niedrig ≈ <b data-om-id="621d70a3:456">60</b> / Hoch ≈ <b data-om-id="621d70a3:457">2.000 tok</b> · Niedrig löst <b data-om-id="621d70a3:458">80 von 100</b></div>
+
+          <div class="strat" data-om-id="621d70a3:459">
+            <div class="strat-head" data-om-id="621d70a3:460"><span class="strat-name" data-om-id="621d70a3:461">Immer Hoch</span><span class="strat-total" data-om-id="621d70a3:462">400.000 tok</span></div>
+            <div class="strat-math" data-om-id="621d70a3:463">100 × (2.000 Input + 2.000 Reasoning)</div>
+            <div class="strat-bar" data-om-id="621d70a3:464"><div class="sb-fill" style="width: 100%;" data-om-id="621d70a3:465"><div class="sb-seg input" style="width: 50%;" data-om-id="621d70a3:466"></div><div class="sb-seg reason" style="width: 50%;" data-om-id="621d70a3:467"></div></div></div>
+          </div>
+
+          <div class="strat win" data-om-id="621d70a3:468">
+            <div class="strat-head" data-om-id="621d70a3:469"><span class="strat-name" data-om-id="621d70a3:470">Niedrig starten, 20 eskalieren</span><span class="strat-total" data-om-id="621d70a3:471">286.000 tok</span></div>
+            <div class="strat-math" data-om-id="621d70a3:472">100 × (2.000 + 60) &nbsp;+&nbsp; 20 × (2.000 Input <em data-om-id="621d70a3:473">nochmal</em> + 2.000 Reasoning)</div>
+            <div class="strat-bar" data-om-id="621d70a3:474"><div class="sb-fill" style="width: 71.5%;" data-om-id="621d70a3:475"><div class="sb-seg input" style="width: 70%;" data-om-id="621d70a3:476"></div><div class="sb-seg double" style="width: 14%;" data-om-id="621d70a3:477"></div><div class="sb-seg reason" style="width: 16%;" data-om-id="621d70a3:478"></div></div></div>
+          </div>
+
+          <div class="calc-legend" data-om-id="621d70a3:479">
+            <div class="cl" data-om-id="621d70a3:480"><span class="sw" style="background: #c9b89a;" data-om-id="621d70a3:481"></span>Input</div>
+            <div class="cl" data-om-id="621d70a3:482"><span class="sw" style="background: var(--warn);" data-om-id="621d70a3:483"></span>Input doppelt bezahlt</div>
+            <div class="cl" data-om-id="621d70a3:484"><span class="sw" style="background: var(--accent);" data-om-id="621d70a3:485"></span>Reasoning</div>
+          </div>
+
+          <div class="calc-verdict" data-om-id="621d70a3:486"><strong data-om-id="621d70a3:487">−114.000 Tokens (−29 %)</strong> — obwohl 20 Inputs doppelt bezahlt wurden.</div>
+        </div>
+
+        <div class="to-points" data-om-id="621d70a3:488">
+          <div class="to-point" data-om-id="621d70a3:489">
+            <div class="tp-ic" data-om-id="621d70a3:490">1</div>
+            <div data-om-id="621d70a3:491"><div class="tp-h" data-om-id="621d70a3:492">Nur die Fehlschläge zahlen doppelt</div><div class="tp-b" data-om-id="621d70a3:493">80 von 100 Aufgaben kommen nie über Niedrig hinaus — deren gespartes High-Reasoning finanziert die 20 zweiten Anläufe locker.</div></div>
+          </div>
+          <div class="to-point" data-om-id="621d70a3:494">
+            <div class="tp-ic" data-om-id="621d70a3:495">2</div>
+            <div data-om-id="621d70a3:496"><div class="tp-h" data-om-id="621d70a3:497">Reasoning ist die teure Währung</div><div class="tp-b" data-om-id="621d70a3:498">Reasoning-Tokens werden wie Output abgerechnet — typischerweise 3–5× teurer als Input. Der doppelte Input wiegt weniger, als er aussieht.</div></div>
+          </div>
+          <div class="to-point" data-om-id="621d70a3:499">
+            <div class="tp-ic" data-om-id="621d70a3:500">3</div>
+            <div data-om-id="621d70a3:501"><div class="tp-h" data-om-id="621d70a3:502">Prompt Caching</div><div class="tp-b" data-om-id="621d70a3:503">Der identische Input kommt beim zweiten Anlauf aus dem Cache — bei den großen Anbietern kostet er dann nur noch einen Bruchteil (~10&nbsp;%).</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" data-om-id="621d70a3:504">
+        <div class="callout-label" data-om-id="621d70a3:505">Wann kippt die Rechnung?</div>
+        <div class="callout-body" data-om-id="621d70a3:506">
+          Bei <strong data-om-id="621d70a3:507">riesigem Input</strong> (z.&nbsp;B. 100k Tokens Kontext) und <strong data-om-id="621d70a3:508">niedriger Erfolgsquote auf Niedrig</strong> wird Eskalieren teuer — dann direkt höher einsteigen. Genau das meint „Reasoning an die Schwierigkeit koppeln“: Weißt du <em data-om-id="621d70a3:509">vorher</em>, dass es schwer ist, startest du gar nicht erst auf Niedrig.
+        </div>
+      </div>
+
+    </div>
+  </section><section data-screen-label="06 Übung A Effort-Dial" data-roleswitch="" data-om-id="621d70a3:302" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="5" data-role="dev">
+    <div class="chrome" data-om-id="621d70a3:303">
+      <div class="topbar" data-om-id="621d70a3:304">
+        <span data-om-id="621d70a3:305"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:306"><span class="pip" data-om-id="621d70a3:307"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:308">›</span><span class="bc-chapter" data-om-id="621d70a3:309">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:310">›</span>Wissenscheck</span>
+        <span data-om-id="621d70a3:311"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 28px 0 12px;" data-om-id="621d70a3:312">Trade-off fühlen</div>
+      <p class="ex-instructions" data-om-id="621d70a3:313">
+        Wähle eine Aufgabe, dann dreh am <strong data-om-id="621d70a3:314">Effort-Regler</strong>. Beobachte, wie sich <strong data-om-id="621d70a3:315">Qualität</strong>, <strong data-om-id="621d70a3:316">Kosten</strong> und <strong data-om-id="621d70a3:317">Latenz</strong> bewegen — und finde die <strong data-om-id="621d70a3:318">niedrigste Stufe, die noch gute Qualität liefert</strong>. Das ist der Sweet-Spot. <strong data-om-id="621d70a3:319">Vorsicht:</strong> Eine der vier Aufgaben verträgt gar keinen hohen Effort.
+      </p>
+
+      <div class="ex-stage" data-om-id="621d70a3:320">
+        <div class="dial" data-om-id="621d70a3:321">
+          <div class="dial-left" data-om-id="621d70a3:322">
+            <div class="dial-tasklabel" data-om-id="621d70a3:323">Aufgabe wählen</div>
+            <div class="dial-tasks" id="dial-tasks" data-om-id="621d70a3:324"><div class="dial-task active"><div class="dt-tag">Einfach</div><div class="dt-text">Extrahiere alle TODO-Kommentare aus dieser Datei und liste sie als Tabelle.</div></div><div class="dial-task"><div class="dt-tag">Mittel</div><div class="dt-text">Schreibe eine aussagekräftige Commit-Message für dieses Diff.</div></div><div class="dial-task"><div class="dt-tag">Schwer</div><div class="dt-text">Finde den Off-by-one-Bug, der nur bei leeren Eingaben auftritt — über 4 Dateien.</div></div><div class="dial-task"><div class="dt-tag">Falle</div><div class="dt-text">Welcher HTTP-Status passt für „Ressource nicht gefunden“?</div></div></div>
+            <div class="dial-control" data-om-id="621d70a3:325">
+              <div class="dc-head" data-om-id="621d70a3:326"><span data-om-id="621d70a3:327">Reasoning Effort</span><span class="dc-val" id="dial-level-name" data-om-id="621d70a3:328">Mittel</span></div>
+              <input type="range" min="0" max="2" step="1" value="1" class="dial-slider" id="dial-slider" data-om-id="621d70a3:329">
+              <div class="dial-ticks" id="dial-ticks" data-om-id="621d70a3:330">
+                <span data-lvl="0" data-om-id="621d70a3:331">Niedrig</span><span data-lvl="1" class="on" data-om-id="621d70a3:332">Mittel</span><span data-lvl="2" data-om-id="621d70a3:333">Hoch</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dial-right" data-om-id="621d70a3:334">
+            <div class="dial-meters" data-om-id="621d70a3:335">
+              <div class="dm quality" data-om-id="621d70a3:336">
+                <div class="dm-top" data-om-id="621d70a3:337"><span class="dm-label" data-om-id="621d70a3:338">Antwort-Qualität</span><span class="dm-val q-ok" id="m-quality" data-om-id="621d70a3:339">98 %</span></div>
+                <div class="dm-bar" data-om-id="621d70a3:340"><div id="m-quality-bar" style="width: 98%;" data-om-id="621d70a3:341"></div></div>
+              </div>
+              <div class="dm cost" data-om-id="621d70a3:342">
+                <div class="dm-top" data-om-id="621d70a3:343"><span class="dm-label" data-om-id="621d70a3:344">Kosten · Reasoning-Tokens</span><span class="dm-val" id="m-cost" data-om-id="621d70a3:345">450 tok</span></div>
+                <div class="dm-bar" data-om-id="621d70a3:346"><div id="m-cost-bar" style="width: 22.5%;" data-om-id="621d70a3:347"></div></div>
+              </div>
+              <div class="dm latency" data-om-id="621d70a3:348">
+                <div class="dm-top" data-om-id="621d70a3:349"><span class="dm-label" data-om-id="621d70a3:350">Latenz · Wartezeit</span><span class="dm-val" id="m-latency" data-om-id="621d70a3:351">3,5 s</span></div>
+                <div class="dm-bar" data-om-id="621d70a3:352"><div id="m-latency-bar" style="width: 25%;" data-om-id="621d70a3:353"></div></div>
+              </div>
+            </div>
+
+            <div class="dial-verdict" data-om-id="621d70a3:354">
+              <div class="dial-verdict-inner over" id="dial-verdict" data-om-id="621d70a3:355">
+                <div class="dial-verdict-label" id="dial-verdict-label" data-om-id="621d70a3:356">Overkill</div>
+                <div class="dial-verdict-text" id="dial-verdict-text" data-om-id="621d70a3:357"><strong>Verschwendung.</strong> Nur <strong>+1 Punkte</strong> Qualität, aber rund <strong>7,5×</strong> Tokens und <strong>4,4×</strong> Latenz. „Niedrig" hätte gereicht.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 06 ÜBUNG B — EFFORT-MATCH ===================== -->
+  <section data-screen-label="07 Übung B Effort-Match" data-roleswitch="" data-om-id="621d70a3:361" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="6" data-role="dev">
+    <div class="chrome" data-om-id="621d70a3:362">
+      <div class="topbar" data-om-id="621d70a3:363">
+        <span data-om-id="621d70a3:364"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:365"><span class="pip" data-om-id="621d70a3:366"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:367">›</span><span class="bc-chapter" data-om-id="621d70a3:368">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:369">›</span>Wissenscheck</span>
+        <span data-om-id="621d70a3:370"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 28px 0 10px;" data-om-id="621d70a3:371">Urteilsvermögen trainieren</div>
+      <p class="ex-instructions" data-om-id="621d70a3:372">
+        Ordne jeder Aufgabe die <strong data-om-id="621d70a3:373">passende Effort-Stufe</strong> zu — <strong data-om-id="621d70a3:374">Niedrig</strong>, <strong data-om-id="621d70a3:375">Mittel</strong> oder <strong data-om-id="621d70a3:376">Hoch</strong>.
+      </p>
+
+      <div class="ex-stage" data-om-id="621d70a3:377">
+        <div class="ematch-grid" id="ematch-grid" data-om-id="621d70a3:378"><div class="ematch-item"><div class="em-scn">Sortiere 200 Server-Logs nach Fehler-Schweregrad. <span class="em-meta">· Stapel-Job · Kosten ×200</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="0" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="0" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="0" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Beweise, dass ein verteilter Sperr-Algorithmus deadlock-frei ist. <span class="em-meta">· formale Logik</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="1" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="1" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="1" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Generiere Docstrings für 12 triviale Getter-Methoden. <span class="em-meta">· Routine · Volumen</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="2" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="2" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="2" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Plane ein Migrations-Skript für ein Schema mit 30 Tabellen und Fremdschlüsseln. <span class="em-meta">· Abhängigkeiten · Reihenfolge</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="3" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="3" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="3" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Fasse einen PR-Diff in 5 Review-Bullet-Points zusammen. <span class="em-meta">· Gewichtung nötig</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="4" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="4" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="4" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Debugge, warum ein Test nur in CI fehlschlägt, lokal aber grün ist. <span class="em-meta">· Hypothesen bilden</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="5" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="5" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="5" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Wähle passende HTTP-Statuscodes für sechs neue API-Endpunkte. <span class="em-meta">· Urteil pro Fall</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="6" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="6" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="6" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Konvertiere 500 CSV-Zeilen ins JSON-Format. <span class="em-meta">· Massen-Transform</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="7" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="7" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="7" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Finde die Ursache einer sporadischen Race-Condition in nebenläufigem Code. <span class="em-meta">· nebenläufig · selten reproduzierbar</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="8" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="8" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="8" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Schreibe sinnvolle Unit-Test-Fälle für eine überschaubare reine Funktion. <span class="em-meta">· Abdeckung abwägen</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="9" data-lvl="low">Niedrig</button><button class="em-btn" type="button" data-i="9" data-lvl="med">Mittel</button><button class="em-btn" type="button" data-i="9" data-lvl="high">Hoch</button></div></div><div class="em-fb"></div></div></div>
+
+        <div class="reveal-row" data-om-id="621d70a3:379">
+          <div class="reveal-status" id="ematch-status" data-om-id="621d70a3:380">Noch nichts beantwortet.</div>
+          <div style="display: flex; gap: 10px;" data-om-id="621d70a3:381">
+            <button class="qbutton ghost" data-ematch-action="reset" data-om-id="621d70a3:382">Zurücksetzen</button>
+            <button class="qbutton" data-ematch-action="reveal" data-om-id="621d70a3:383">Alles auflösen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">
+          Die <strong>Schwierigkeit</strong> der Aufgabe bestimmt die Stufe — <strong>nicht das Bauchgefühl</strong> und nicht ihre Wichtigkeit.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 07 ÜBUNG C — ESKALATIONS-LEITER ===================== -->
+  <section data-screen-label="08 Übung C Eskalations-Leiter" data-roleswitch="" data-om-id="621d70a3:387" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="7" data-role="dev">
+    <div class="chrome" data-om-id="621d70a3:388">
+      <div class="topbar" data-om-id="621d70a3:389">
+        <span data-om-id="621d70a3:390"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:391"><span class="pip" data-om-id="621d70a3:392"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:393">›</span><span class="bc-chapter" data-om-id="621d70a3:394">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:395">›</span>Wissenscheck</span>
+        <span data-om-id="621d70a3:396"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 28px 0 12px;" data-om-id="621d70a3:397">Die Daumenregel üben</div>
+      <p class="ex-instructions" data-om-id="621d70a3:398">
+        Jede Aufgabe startet auf <strong data-om-id="621d70a3:399">Niedrig</strong>. Lies die <strong data-om-id="621d70a3:400">Antwort des Modells</strong> und urteile selbst — die Qualitäts-Prozente siehst du erst <strong data-om-id="621d70a3:401">nach</strong> deiner Entscheidung. Drei Hebel: <strong data-om-id="621d70a3:402">akzeptieren</strong>, <strong data-om-id="621d70a3:403">eskalieren</strong> (kostet kumulativ Tokens) — oder erkennen, dass <strong data-om-id="621d70a3:404">fehlender Kontext</strong> das Problem ist, nicht der Effort.
+      </p>
+
+      <div class="ex-stage" data-om-id="621d70a3:405">
+        <div class="escalate" data-om-id="621d70a3:406">
+          <div class="esc-left" data-om-id="621d70a3:407">
+            <div class="dial-tasklabel" data-om-id="621d70a3:408">Aufgabe wählen</div>
+            <div class="dial-tasks" id="esc-tasks" data-om-id="621d70a3:409"><div class="dial-task active"><div class="dt-tag">Refactoring</div><div class="dt-text">Refactore eine 200-Zeilen-Funktion in kleinere, getestete Einheiten.</div></div><div class="dial-task"><div class="dt-tag">Aufräumen</div><div class="dt-text">Benenne diese 8 Variablen aussagekräftiger um.</div></div><div class="dial-task"><div class="dt-tag">Tests</div><div class="dt-text">Schreibe Unit-Tests für ein Modul mit verschachtelter async-Logik.</div></div><div class="dial-task"><div class="dt-tag">Bug-Jagd</div><div class="dt-text">Der Report zeigt seit Dienstag falsche Summen. Finde die Ursache.</div></div></div>
+            <div class="esc-status" data-om-id="621d70a3:410">
+              <span id="esc-score" data-om-id="621d70a3:411">0/4 entschieden</span>
+              <button class="qbutton ghost" data-esc="reset-all" data-om-id="621d70a3:412">Zurücksetzen</button>
+            </div>
+          </div>
+
+          <div class="esc-mid" data-om-id="621d70a3:413">
+            <div class="esc-sample" data-om-id="621d70a3:414">
+              <div class="esc-sample-head" data-om-id="621d70a3:415">
+                <span id="esc-sample-level" data-om-id="621d70a3:416">Modell-Antwort · Stufe „Niedrig“</span>
+                <span class="esc-sample-cost" id="esc-sample-cost" data-om-id="621d70a3:417">+60 tok</span>
+              </div>
+              <div class="esc-sample-body" id="esc-sample-body" data-om-id="621d70a3:418">„Fertig! Ich habe die Funktion in fünf Hilfsfunktionen aufgeteilt. Zwei davon teilen sich eine modulweite Statusvariable, und die Fehlerbehandlung habe ich der Übersichtlichkeit halber entfernt. Die Tests habe ich nicht ausgeführt — sollte aber passen.“</div>
+              <div class="esc-sample-hint" data-om-id="621d70a3:419">Schwelle: „gut genug“ = mind. 85&nbsp;% — die Prozente siehst du erst nach deiner Entscheidung.</div>
+            </div>
+
+            <div class="esc-verdict-slot" data-om-id="621d70a3:420">
+              <div class="esc-verdict" id="esc-verdict" data-om-id="621d70a3:421">
+                <div class="esc-verdict-label" id="esc-verdict-label" data-om-id="621d70a3:422">Deine Entscheidung</div>
+                <div class="esc-verdict-text" id="esc-verdict-text" data-om-id="621d70a3:423">Reicht das für den Zweck? <strong>Akzeptieren</strong>, <strong>eskalieren</strong> — oder fehlt dem Modell etwas, das keine Denkzeit ersetzt?</div>
+                <div class="esc-curve" id="esc-curve" hidden="" data-om-id="621d70a3:424"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="esc-panel" data-om-id="621d70a3:425">
+            <div class="dial-tasklabel" style="margin-bottom: 12px;" data-om-id="621d70a3:426">Reasoning Effort</div>
+            <div class="esc-ladder" id="esc-ladder" data-om-id="621d70a3:427"><div class="esc-rung ahead"><div class="er-name">Hoch</div><div class="er-tok">+2.000 tok</div></div><div class="esc-rung ahead"><div class="er-name">Mittel</div><div class="er-tok">+450 tok</div></div><div class="esc-rung current"><div class="er-name">Niedrig</div><div class="er-tok">+60 tok</div></div></div>
+
+            <div class="esc-account" data-om-id="621d70a3:428">
+              <span class="ea-label" data-om-id="621d70a3:429">Token-Konto · bislang ausgegeben</span>
+              <span class="ea-val" id="esc-spent" data-om-id="621d70a3:430">60 tok</span>
+            </div>
+
+            <div class="esc-actions" data-om-id="621d70a3:431">
+              <button class="qbutton ghost" data-esc="escalate" data-om-id="621d70a3:432">↑ Eskalieren</button>
+              <button class="qbutton" data-esc="accept" data-om-id="621d70a3:433">✓ Akzeptieren</button>
+              <button class="qbutton ghost" data-esc="context" data-om-id="621d70a3:434">✋ Kontext fehlt — nachreichen statt eskalieren</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 08 ESKALATIONS-RECHNUNG ===================== -->
+  
+
+  <!-- ===================== 09 ÜBUNG D — OVERTHINKING-DETEKTOR ===================== -->
+  <section data-screen-label="10 Übung D Overthinking-Detektor" data-roleswitch="" data-om-id="621d70a3:513" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="9" data-role="dev">
+    <div class="chrome" data-om-id="621d70a3:514">
+      <div class="topbar" data-om-id="621d70a3:515">
+        <span data-om-id="621d70a3:516"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:517"><span class="pip" data-om-id="621d70a3:518"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:519">›</span><span class="bc-chapter" data-om-id="621d70a3:520">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:521">›</span>Praxis</span>
+        <span data-om-id="621d70a3:522"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 28px 0 10px;" data-om-id="621d70a3:523">„Mehr ≠ besser“ erkennen</div>
+      <p class="ex-instructions" data-om-id="621d70a3:524">
+        Bei jeder Aufgabe wurde der <strong data-om-id="621d70a3:525">Effort hochgedreht</strong>. Entscheide, was das brachte: es war <strong data-om-id="621d70a3:526">sinnvoll</strong>, war <strong data-om-id="621d70a3:527">Verschwendung</strong> (Plateau) oder es <strong data-om-id="621d70a3:528">schadete</strong> sogar — Overthinking auf einer zu leichten Aufgabe.
+      </p>
+
+      <div class="ex-stage" data-om-id="621d70a3:529">
+        <div class="ematch-grid" id="overthink-grid" data-om-id="621d70a3:530"><div class="ematch-item"><div class="em-scn">Formatiere eine unsortierte JSON-Datei sauber ein. <span class="em-meta">· Effort Mittel → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="0" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="0" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="0" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Wähle zwischen zwei fast identischen if-Bedingungen. <span class="em-meta">· Effort Niedrig → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="1" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="1" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="1" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Entwirf das Datenbank-Schema für ein neues Feature. <span class="em-meta">· Effort Niedrig → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="2" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="2" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="2" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Bestimme die Big-O-Komplexität einer einfachen Schleife. <span class="em-meta">· Effort Mittel → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="3" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="3" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="3" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Finde einen subtilen Off-by-one-Fehler in einer rekursiven Funktion. <span class="em-meta">· Effort Mittel → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="4" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="4" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="4" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div></div>
+
+        <div class="reveal-row" data-om-id="621d70a3:531">
+          <div class="reveal-status" id="overthink-status" data-om-id="621d70a3:532">Noch nichts beantwortet.</div>
+          <div style="display: flex; gap: 10px;" data-om-id="621d70a3:533">
+            <button class="qbutton ghost" data-overthink-action="reset" data-om-id="621d70a3:534">Zurücksetzen</button>
+            <button class="qbutton" data-overthink-action="reveal" data-om-id="621d70a3:535">Alles auflösen</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 10 CHEAT-SHEET ===================== -->
+  <section data-screen-label="11 Cheat-Sheet" data-om-id="621d70a3:539" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="10" data-deck-last-visible="">
+    <div class="chrome" data-om-id="621d70a3:540">
+      <div class="topbar" data-om-id="621d70a3:541">
+        <span data-om-id="621d70a3:542"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:543"><span class="pip" data-om-id="621d70a3:544"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:545">›</span><span class="bc-chapter" data-om-id="621d70a3:546">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:547">›</span>Mitnehmen</span>
+        <span data-om-id="621d70a3:548">Reasoning Effort · Cheat-Sheet</span>
+      </div>
+
+      <div class="eyebrow" data-om-id="621d70a3:549">Drei Sätze, die bleiben sollten</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 26px;" data-om-id="621d70a3:550">Effort ist ein <span class="accent" data-om-id="621d70a3:551">Budget</span>, kein Knopf für „besser".</h2>
+
+      <div class="takeaways" data-om-id="621d70a3:552">
+        <div class="takeaway" data-om-id="621d70a3:553">
+          <div class="tk-n" data-om-id="621d70a3:554">1</div>
+          <div class="tk-t" data-om-id="621d70a3:555"><strong data-om-id="621d70a3:556">Effort = Nachdenkzeit vor der Antwort.</strong> Gleiches Modell, mehr oder weniger interne Reasoning-Schritte — gesteuert über einen Regler (API: <span class="mono" data-om-id="621d70a3:557">reasoning_effort</span> bzw. Thinking-Budget), nicht über CoT-Prompts.</div>
+        </div>
+        <div class="takeaway" data-om-id="621d70a3:558">
+          <div class="tk-n" data-om-id="621d70a3:559">2</div>
+          <div class="tk-t" data-om-id="621d70a3:560"><strong data-om-id="621d70a3:561">Mehr hilft nur bei schweren Aufgaben.</strong> Auf leichten zahlst du Tokens und Latenz für nichts — und riskierst Overthinking.</div>
+        </div>
+        <div class="takeaway" data-om-id="621d70a3:562">
+          <div class="tk-n" data-om-id="621d70a3:563">3</div>
+          <div class="tk-t" data-om-id="621d70a3:564"><strong data-om-id="621d70a3:565">Niedrig starten, gezielt eskalieren.</strong> Koppele die Stufe an die Schwierigkeit, nicht an die Wichtigkeit der Aufgabe.</div>
+        </div>
+      </div>
+
+      <div class="cs-rules" data-om-id="621d70a3:566">
+        <div class="cs-rule" data-om-id="621d70a3:567">
+          <div class="cs-anim" aria-hidden="true">
+            <div class="cs-dial-col">
+              <div class="cs-dial">
+                <svg viewBox="0 0 100 56" fill="none"><path d="M10 50 A40 40 0 0 1 90 50" stroke="rgba(21,17,12,0.16)" stroke-width="6" stroke-linecap="round"></path><path d="M10 50 A40 40 0 0 1 90 50" stroke="#c9b89a" stroke-width="6" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="107"></path></svg>
+                <span class="needle" style="transform: rotate(-63deg);"></span>
+              </div>
+              <div class="cs-dial-labels"><span>min</span><span>max</span></div>
+            </div>
+            <div class="cs-dout">
+              <span class="ct-cap">denken</span>
+              <span class="ct" style="width: 26%;"></span>
+              <span class="ct ghost" style="width: 68%;"></span>
+              <span class="ct ghost" style="width: 82%;"></span>
+              <span class="ct-cap ans">antwort</span>
+              <span class="ct a"></span>
+              <span class="cs-mode">schnell · knapp</span>
+            </div>
+          </div>
+          <div class="r-when" data-om-id="621d70a3:568">Wenn · Masse, Latenz, Routine</div><div class="r-then" data-om-id="621d70a3:569"><strong data-om-id="621d70a3:570">Niedrig.</strong> Extrahieren, klassifizieren, formatieren.</div>
+        </div>
+        <div class="cs-rule" data-om-id="621d70a3:571">
+          <div class="cs-anim" aria-hidden="true">
+            <div class="cs-dial-col">
+              <div class="cs-dial">
+                <svg viewBox="0 0 100 56" fill="none"><path d="M10 50 A40 40 0 0 1 90 50" stroke="rgba(21,17,12,0.16)" stroke-width="6" stroke-linecap="round"></path><path d="M10 50 A40 40 0 0 1 90 50" stroke="#e89379" stroke-width="6" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="63"></path></svg>
+                <span class="needle" style="transform: rotate(0deg);"></span>
+              </div>
+              <div class="cs-dial-labels"><span>min</span><span>max</span></div>
+            </div>
+            <div class="cs-dout">
+              <span class="ct-cap">denken</span>
+              <span class="ct" style="width: 62%;"></span>
+              <span class="ct" style="width: 46%;"></span>
+              <span class="ct ghost" style="width: 82%;"></span>
+              <span class="ct-cap ans">antwort</span>
+              <span class="ct a"></span>
+              <span class="cs-mode">abwägen · prüfen</span>
+            </div>
+          </div>
+          <div class="r-when" data-om-id="621d70a3:572">Wenn · Urteil nötig, Standard</div><div class="r-then" data-om-id="621d70a3:573"><strong data-om-id="621d70a3:574">Mittel.</strong> Entwürfe, Zusammenfassungen, normales Coding.</div>
+        </div>
+        <div class="cs-rule" data-om-id="621d70a3:575">
+          <div class="cs-anim" aria-hidden="true">
+            <div class="cs-dial-col">
+              <div class="cs-dial">
+                <svg viewBox="0 0 100 56" fill="none"><path d="M10 50 A40 40 0 0 1 90 50" stroke="rgba(21,17,12,0.16)" stroke-width="6" stroke-linecap="round"></path><path d="M10 50 A40 40 0 0 1 90 50" stroke="#c8421f" stroke-width="6" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="13"></path></svg>
+                <span class="needle" style="transform: rotate(72deg);"></span>
+              </div>
+              <div class="cs-dial-labels"><span>min</span><span>max</span></div>
+            </div>
+            <div class="cs-dout">
+              <span class="ct-cap">denken</span>
+              <span class="ct" style="width: 92%;"></span>
+              <span class="ct" style="width: 68%;"></span>
+              <span class="ct" style="width: 82%;"></span>
+              <span class="ct-cap ans">antwort</span>
+              <span class="ct a"></span>
+              <span class="cs-mode">gründlich · tief</span>
+            </div>
+          </div>
+          <div class="r-when" data-om-id="621d70a3:576">Wenn · tiefes Reasoning, teure Fehler</div><div class="r-then" data-om-id="621d70a3:577"><strong data-om-id="621d70a3:578">Hoch.</strong> Beweise, Planung, Multi-File-Debugging.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- Exercise scripts -->
+<script src="exercises/effort-dial.js"></script>
+<script src="exercises/effort-match.js"></script>
+<script src="exercises/escalate.js"></script>
+<script src="exercises/overthink.js"></script>
+<script src="exercises/role-switch.js"></script>
+
+</body>
+</html>

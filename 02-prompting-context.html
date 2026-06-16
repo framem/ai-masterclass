@@ -1,0 +1,2729 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Prompting & Context Engineering — vom Wunsch zur verlässlichen Antwort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="deck-stage.js"></script>
+
+<template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f4f1ea"/>
+    <rect x="200" y="320" width="320" height="180" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="680" y="320" width="320" height="180" rx="14" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
+    <text x="360" y="390" text-anchor="middle" font-family="serif" font-size="36" fill="#15110c">Prompt</text>
+    <text x="360" y="435" text-anchor="middle" font-family="monospace" font-size="18" fill="#6b6357">WAS soll passieren</text>
+    <text x="840" y="390" text-anchor="middle" font-family="serif" font-size="36" fill="#fff">Context</text>
+    <text x="840" y="435" text-anchor="middle" font-family="monospace" font-size="18" fill="rgba(255,255,255,0.8)">WORAUF</text>
+    <text x="600" y="240" text-anchor="middle" font-family="serif" font-size="48" fill="#15110c" font-weight="500">Prompting &amp; Context</text>
+  </svg>
+</template>
+
+<link rel="stylesheet" href="exercises/exercises.css" />
+
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --bg-2: #ebe6db;
+    --paper: #faf7f1;
+    --ink: #15110c;
+    --ink-2: #3a342a;
+    --ink-3: #6b6357;
+    --hair: rgba(21, 17, 12, 0.14);
+    --accent: #c8421f;
+    --accent-soft: #e89379;
+    --accent-pale: #f6dccf;
+    --quiz-ok: #3d8a4a;
+    --quiz-no: #a83020;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --serif: "IBM Plex Serif", Georgia, serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+
+    /* projection-appropriate type scale (1920×1080) */
+    --type-title: 88px;
+    --type-h2: 64px;
+    --type-subtitle: 42px;
+    --type-lede: 30px;
+    --type-body: 26px;
+    --type-small: 19px;
+    --type-mono: 23px;
+    --type-eyebrow: 18px;
+    --pad-top: 56px;
+    --pad-bottom: 56px;
+    --pad-x: 80px;
+    --gap-title: 36px;
+    --gap-item: 22px;
+  }
+
+  html, body { background: var(--bg); }
+  body { margin: 0; font-family: var(--sans); color: var(--ink); }
+
+  deck-stage { --slide-bg: var(--bg); }
+  deck-stage > section {
+    width: 1920px; height: 1080px;
+    background: var(--bg);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* shared chrome */
+  .chrome {
+    position: absolute;
+    inset: var(--pad-top) var(--pad-x) 32px var(--pad-x);
+    display: flex; flex-direction: column;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 24px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding-bottom: 32px; border-bottom: 1px solid var(--hair);
+  }
+  .topbar .pip {
+    display: inline-block; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    margin-right: 12px; vertical-align: middle;
+  }
+  /* Audience-Switcher unter die Kopfzeilen-Linie, rechtsbündig zur Inhaltskante */
+  section[data-screen-label] > .role-toggle {
+    top: 132px; right: var(--pad-x);
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: var(--type-eyebrow);
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+    margin: 44px 0 26px;
+  }
+
+  h1.title {
+    font-size: 120px; line-height: 0.96; letter-spacing: -0.025em;
+    font-weight: 500; margin: 0 0 24px; max-width: 1500px;
+  }
+  h2.title {
+    font-size: var(--type-h2); line-height: 0.98; letter-spacing: -0.02em;
+    font-weight: 500; margin: 0 0 26px; max-width: 1600px;
+  }
+  h3.subtitle {
+    font-size: var(--type-subtitle); line-height: 1.2; font-weight: 400;
+    color: var(--ink-2); margin: 0 0 28px; max-width: 1400px;
+    font-family: var(--serif); font-style: italic;
+  }
+  p.lede {
+    font-size: var(--type-lede); line-height: 1.4; color: var(--ink-2);
+    max-width: 1500px;
+  }
+  p.body {
+    font-size: var(--type-body); line-height: 1.5; color: var(--ink-2);
+    max-width: 1100px;
+  }
+  .mono { font-family: var(--mono); }
+  .accent { color: var(--accent); }
+
+  /* card primitives */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+  .card.dark {
+    background: var(--ink); color: #f0ece3;
+    border-color: var(--ink);
+  }
+
+  /* Merksatz callout */
+  .callout {
+    margin-top: 24px;
+    padding: 20px 28px;
+    min-height: 76px;
+    box-sizing: border-box;
+    display: flex; align-items: center; gap: 24px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+  }
+  .callout .callout-label {
+    flex: 0 0 auto;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .callout .callout-body { flex: 1 1 auto; }
+  .callout .callout-body strong { color: var(--ink); }
+
+  .pill {
+    display: inline-block; font-family: var(--mono); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px;
+    background: var(--ink); color: var(--bg);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .pill.accent { background: var(--accent); color: #fff; }
+
+  /* ===== Übungs-Slides ===== */
+  .qrow {
+    display: grid; grid-template-columns: 48px 1fr; gap: 18px;
+    align-items: start;
+  }
+  .qrow + .qrow { margin-top: 14px; }
+  .qrow .letter {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 20px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    letter-spacing: 0;
+  }
+  .qrow .qtext { font-size: 21px; line-height: 1.45; color: var(--ink-2); padding-top: 8px; }
+  .qrow .qtext em { color: var(--ink); font-style: italic; }
+  .qrow .qtext .blank {
+    display: inline-block; min-width: 140px;
+    border-bottom: 1.5px dashed var(--ink-3); margin: 0 6px;
+    color: transparent;
+  }
+
+  .solution-row {
+    display: grid; grid-template-columns: 48px 1fr 1fr; gap: 16px;
+    align-items: center;
+    padding: 10px 0;
+  }
+  .solution-row + .solution-row { border-top: 1px solid rgba(255,255,255,0.10); }
+  .solution-row .letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 17px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .solution-row .stext { font-size: 17px; line-height: 1.35; color: #d8d2c5; }
+  .solution-row .schoice {
+    font-family: var(--mono); font-size: 17px; color: #f0ece3;
+    font-weight: 500; letter-spacing: 0.02em;
+  }
+  .solution-row .schoice small {
+    display: block; font-family: var(--sans); font-size: 14px;
+    font-weight: 400; color: #c8c2b6; margin-top: 2px; letter-spacing: 0;
+  }
+
+  .options-rail {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    margin-top: 14px;
+  }
+  .options-rail .opt {
+    background: var(--bg-2); border: 1px solid var(--hair);
+    border-radius: 10px; padding: 12px 14px;
+  }
+  .options-rail .opt .opt-name {
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    color: var(--ink);
+  }
+  .options-rail .opt .opt-tag {
+    font-size: 13px; line-height: 1.35; color: var(--ink-3); margin-top: 4px;
+  }
+
+  /* ===== Interaktive Quiz-Mechanik ===== */
+  .quiz { display: flex; flex-direction: column; gap: 10px; }
+
+  .qitem {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 7px;
+    padding: 10px 16px;
+    background: var(--paper);
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+  }
+  .qitem .qbody { font-size: 19px; line-height: 1.4; color: var(--ink-2); }
+  .qitem .qbody em { color: var(--ink); font-style: italic; }
+  /* Antworten stehen unter der Frage. Buttons und Begründung teilen dieselbe
+     zweite Zeile — die Buttons blenden aus, die Begründung ein, ohne Sprung. */
+  .qitem .qchoices {
+    grid-column: 1; grid-row: 2;
+    display: flex; gap: 6px; flex-wrap: wrap;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qchoices { opacity: 0; pointer-events: none; }
+  .qitem .qfb {
+    grid-column: 1; grid-row: 2;
+    justify-self: start; align-self: center;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--ink-3); line-height: 1.4;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .qitem.answered .qfb { opacity: 1; }
+  .qitem.answered .qfb .ok { color: var(--quiz-ok); font-weight: 600; }
+  .qitem.answered .qfb .no { color: var(--quiz-no); font-weight: 600; }
+
+  .qchoice {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    padding: 7px 12px; border-radius: 8px;
+    background: var(--bg-2); color: var(--ink-2);
+    border: 1.5px solid transparent;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.05s;
+    white-space: nowrap;
+  }
+  .qchoice:hover { background: var(--ink); color: var(--bg); }
+  .qchoice:active { transform: translateY(1px); }
+  .qchoice.picked-ok { background: var(--quiz-ok); color: #fff; border-color: var(--quiz-ok); }
+  .qchoice.picked-no { background: var(--quiz-no); color: #fff; border-color: var(--quiz-no); }
+  .qchoice.show-ok { border-color: var(--quiz-ok); color: var(--quiz-ok); background: transparent; border-style: dashed; }
+  .qitem.answered .qchoice { pointer-events: none; opacity: 0.85; }
+  .qitem.answered .qchoice.picked-ok,
+  .qitem.answered .qchoice.picked-no,
+  .qitem.answered .qchoice.show-ok { opacity: 1; }
+
+  /* Multiple-Choice-Karten für A2A / MCP */
+  .mcq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mcq {
+    text-align: left; cursor: pointer; appearance: none;
+    background: var(--paper); border: 1.5px solid var(--hair);
+    border-radius: 14px; padding: 20px 24px;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s, transform 0.05s;
+  }
+  .mcq:hover { border-color: var(--ink); }
+  .mcq:active { transform: translateY(1px); }
+  .mcq .mcq-head { display: flex; gap: 14px; align-items: baseline; }
+  .mcq .mcq-letter {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mcq .mcq-title { font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.25; color: var(--ink); text-align: left; }
+  .mcq .mcq-note { font-size: 17px; color: var(--ink-2); margin: 8px 0 0 54px; line-height: 1.4; }
+  .mcq.picked-ok { border-color: var(--quiz-ok); background: color-mix(in oklab, var(--quiz-ok) 8%, var(--paper)); }
+  .mcq.picked-no { border-color: var(--quiz-no); background: color-mix(in oklab, var(--quiz-no) 6%, var(--paper)); }
+  .mcq.show-ok { border-color: var(--quiz-ok); border-style: dashed; }
+  .mcq.picked-ok .mcq-letter, .mcq.show-ok .mcq-letter { background: var(--quiz-ok); }
+  .mcq.picked-no .mcq-letter { background: var(--quiz-no); }
+  .mcq-grid.answered .mcq { pointer-events: none; }
+
+  /* Reveal-Button */
+  .reveal-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 14px; gap: 16px;
+  }
+  .reveal-status {
+    font-family: var(--mono); font-size: 14px; color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .reveal-status .score { color: var(--ink); font-weight: 600; }
+  .qbutton {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 14px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 18px; border-radius: 999px;
+    background: var(--ink); color: var(--bg); border: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .qbutton:hover { background: var(--accent); }
+  .qbutton:active { transform: translateY(1px); }
+  .qbutton.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .qbutton.ghost:hover { background: var(--ink); color: var(--bg); }
+  /* invite-interaction pulse — same expanding accent ring used across the course's sliders & buttons. */
+  .qbutton:not(.ghost):not(:disabled) { animation: qbtn-attention-pulse 2.2s ease-out infinite; }
+  @keyframes qbtn-attention-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,66,31,0.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(200,66,31,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,66,31,0); }
+  }
+  .qbutton:not(.ghost):hover { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .qbutton:not(.ghost) { animation: none; }
+  }
+
+  /* ===== Workshop-Agenda ===== */
+  .agenda-row {
+    display: grid; grid-template-columns: 72px 1fr 92px;
+    gap: 20px; align-items: center;
+    padding: 14px 20px;
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px;
+  }
+  .agenda-row.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .agenda-row .a-num {
+    font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.08em;
+  }
+  .agenda-row.dark .a-num { color: var(--accent-soft); }
+  .agenda-row .a-title {
+    font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.15;
+  }
+  .agenda-row .a-desc {
+    font-size: 16px; color: var(--ink-3); margin-top: 3px; line-height: 1.35;
+  }
+  .agenda-row.dark .a-desc { color: #c8c2b6; }
+  .agenda-row .a-time {
+    font-family: var(--mono); font-size: 17px; text-align: right;
+    color: var(--accent);
+  }
+  .agenda-row.dark .a-time { color: var(--accent-soft); }
+
+  .goal {
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent);
+    background: var(--paper);
+    font-size: 18px; color: var(--ink-2); line-height: 1.4;
+  }
+  .goal strong { color: var(--ink); }
+
+  /* ===== Cheat-Sheet ===== */
+  .cs-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  .cs-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 14px; padding: 22px 24px;
+    display: flex; flex-direction: column;
+  }
+  .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
+  .cs-card .cs-num {
+    font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em;
+  }
+  .cs-card.dark .cs-num { color: var(--accent-soft); }
+  .cs-card .cs-name {
+    font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .cs-card .cs-row { margin-top: 14px; }
+  .cs-card .cs-label {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .cs-card.dark .cs-label { color: #c8c2b6; }
+  .cs-card .cs-val {
+    font-size: 15.5px; color: var(--ink-2); line-height: 1.4; margin-top: 3px;
+  }
+  .cs-card.dark .cs-val { color: #d8d2c5; }
+  .cs-card .cs-val.mono { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+  .cs-card.dark .cs-val.mono { color: #f0ece3; }
+
+  .cs-rules {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-top: 14px;
+  }
+  .cs-rule {
+    background: transparent; border: 1px dashed var(--hair);
+    border-radius: 10px; padding: 12px 16px;
+  }
+
+  /* Mitnehmen: statisches Echo der Übersichtskachel-Animation (.a-cw auf index.html) */
+  .cs-head-row { display: flex; align-items: center; gap: 44px; }
+  .cs-head-row .cs-head-main { flex: 1; min-width: 0; }
+  .cs-emblem {
+    flex: 0 0 auto; width: 400px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 14px;
+    padding: 18px 24px 20px; display: flex; flex-direction: column; gap: 12px;
+    box-shadow: 0 14px 32px -26px rgba(21,17,12,0.5);
+  }
+  .cs-emblem .cw-head { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--mono); font-size: 13px; color: var(--ink-2); letter-spacing: 0.04em; }
+  .cs-emblem .cw-head .cw-used { color: var(--ink-3); }
+  .cs-emblem .cw-bar { height: 12px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--hair); overflow: hidden; display: flex; }
+  .cs-emblem .cw-bar i { display: block; height: 100%; }
+  .cs-emblem .cwb-always { width: 18%; background: #8a8275; }
+  .cs-emblem .cwb-od { width: 25%; background: var(--accent); }
+  .cs-emblem .cw-grid { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; }
+  .cs-emblem .cw-c { aspect-ratio: 1 / 1; border-radius: 2px; background: var(--bg-2); }
+  .cs-emblem .cw-c.sys { background: #8a8275; }
+  .cs-emblem .cw-c.od { background: var(--accent); }
+  .cs-emblem .cw-leg { display: flex; gap: 18px; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .cs-emblem .cw-leg span { display: inline-flex; align-items: center; gap: 6px; }
+  .cs-emblem .cw-leg i { width: 8px; height: 8px; border-radius: 2px; background: #8a8275; }
+  .cs-emblem .cw-leg .lod i { background: var(--accent); }
+  .cs-rule .r-when {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .cs-rule .r-then {
+    font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;
+  }
+  .cs-rule .r-then strong { color: var(--ink); }
+
+  /* ===== Echte Praxis · Pair-Programming ===== */
+  .role-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 16px 20px;
+    display: flex; flex-direction: column;
+  }
+  .role-card .r-tag {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .role-card .r-name {
+    font-family: var(--serif); font-size: 30px; font-weight: 500;
+    line-height: 1; margin-top: 4px;
+  }
+  .role-card .r-sub {
+    font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--ink-3);
+    margin-top: 2px;
+  }
+  .role-card .r-body {
+    font-size: 16px; color: var(--ink-2); line-height: 1.45; margin-top: 10px;
+  }
+  .setup-bar {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 10px 22px;
+    margin-top: 16px; padding: 10px 18px;
+    background: var(--paper); border: 1px solid var(--hair); border-radius: 10px;
+  }
+  .setup-bar .s-tag {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding-right: 18px; border-right: 1px solid var(--hair);
+  }
+  .setup-bar .s-step {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 15px; color: var(--ink-2);
+  }
+  .setup-bar .s-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+  }
+  .setup-bar .timer { display: inline-flex; align-items: center; gap: 8px; margin-left: 2px; }
+  .setup-bar .t-display {
+    font-size: 19px; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums; min-width: 62px; letter-spacing: 0.02em;
+  }
+  .setup-bar .t-display.running { color: var(--accent); }
+  .setup-bar .t-display.done { color: var(--quiz-no); animation: timer-blink 0.9s steps(1) infinite; }
+  @keyframes timer-blink { 50% { opacity: 0.25; } }
+  .setup-bar .t-btn {
+    appearance: none; cursor: pointer; font-family: var(--mono);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 999px;
+    border: 1px solid var(--ink); background: var(--paper); color: var(--ink-2);
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .setup-bar .t-btn:hover { background: var(--bg-2); }
+  .setup-bar .t-toggle[data-running="true"] {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+
+  /* Kern-Loop · bindet Rollen, Tore und Versionen zu einem Move */
+  .loop-line {
+    display: flex; align-items: center; gap: 16px;
+    margin-top: 10px; padding: 8px 22px;
+    background: var(--accent-pale);
+    border: 1px solid var(--accent-soft);
+    border-radius: 10px;
+  }
+  .loop-line .ll-tag {
+    flex: 0 0 auto;
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding-right: 16px; border-right: 1px solid var(--accent-soft);
+  }
+  .loop-line .ll-body { font-size: 16px; line-height: 1.35; color: var(--ink-2); }
+  .loop-line .ll-body strong { color: var(--ink); font-weight: 600; }
+  .loop-line .ll-arrow { color: var(--accent); font-family: var(--mono); font-weight: 600; padding: 0 4px; }
+
+  .gate-list { display: flex; flex-direction: column; gap: 10px; }
+  .gate-list .gate-item {
+    display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+    padding: 8px 0;
+  }
+  .gate-list .gate-item + .gate-item { border-top: 1px solid rgba(255,255,255,0.10); }
+  .gate-list .g-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gate-list .g-body { font-size: 16px; line-height: 1.35; color: #d8d2c5; padding-top: 5px; }
+  .gate-list .g-body strong { color: #f0ece3; }
+  .gate-list .g-body em {
+    display: block; font-family: var(--mono); font-style: normal;
+    font-size: 14px; color: var(--accent-soft); margin-top: 3px;
+  }
+
+  .task-row {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 14px; align-items: start;
+    padding: 7px 0;
+  }
+  .task-row + .task-row { border-top: 1px solid var(--hair); }
+  .task-row .t-letter {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-row .t-body { font-size: 16px; line-height: 1.4; color: var(--ink-2); padding-top: 4px; }
+  .task-row .t-body strong { color: var(--ink); }
+
+  /* ===== Trainer-Musterlösung · verstecktes Overlay (Folie 08) ===== */
+  .sol-toggle {
+    position: absolute; right: 0; bottom: 44px; z-index: 6;
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3); background: var(--paper);
+    border: 1px solid var(--hair); border-radius: 999px;
+    padding: 7px 16px; display: inline-flex; align-items: center; gap: 9px;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .sol-toggle:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .sol-toggle .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+  .sol-overlay {
+    position: absolute; inset: 0; z-index: 12;
+    background: var(--bg);
+    padding: var(--pad-top) var(--pad-x) 32px;
+    display: flex; flex-direction: column;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .22s ease;
+  }
+  .sol-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+  .sol-head {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    padding-bottom: 18px; border-bottom: 1px solid var(--hair);
+  }
+  .sol-head .sh-eyebrow {
+    font-family: var(--mono); font-size: 14px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .sol-head h2 {
+    font-family: var(--serif); font-size: 40px; font-weight: 500;
+    letter-spacing: -0.01em; margin: 0; line-height: 1;
+  }
+  .sol-close {
+    appearance: none; cursor: pointer;
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--paper); background: var(--ink); border: 1px solid var(--ink);
+    border-radius: 999px; padding: 9px 20px;
+    transition: opacity .15s ease;
+  }
+  .sol-close:hover { opacity: 0.82; }
+  .sol-grid {
+    flex: 1; min-height: 0; margin-top: 18px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: auto; align-content: center; gap: 16px;
+  }
+  .sol-card {
+    background: var(--paper); border: 1px solid var(--hair);
+    border-radius: 12px; padding: 15px 18px;
+    display: flex; flex-direction: column; gap: 9px; min-height: 0;
+  }
+  .sol-card.note { background: var(--ink); border-color: var(--ink); color: #f0ece3; }
+  .sol-card .sc-head { display: flex; align-items: center; gap: 11px; }
+  .sol-card .sc-letter {
+    width: 28px; height: 28px; border-radius: 50%; flex: none;
+    background: var(--ink); color: var(--bg);
+    font-family: var(--mono); font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sol-card .sc-orig {
+    font-family: var(--serif); font-style: italic;
+    font-size: 15px; line-height: 1.25; color: var(--ink-3);
+  }
+  .sol-card .sc-v3 {
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.5;
+    color: var(--ink-2); background: var(--bg-2);
+    border: 1px solid var(--hair); border-radius: 8px;
+    padding: 11px 13px; white-space: pre-wrap;
+  }
+  .sol-card .sc-v3 b { color: var(--accent); font-weight: 600; }
+  .sol-card.note .sc-title {
+    font-family: var(--serif); font-size: 24px; font-weight: 500;
+    color: #f0ece3; line-height: 1.05;
+  }
+  .sol-card.note .sc-kicker {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent-soft);
+  }
+  .sol-card.note p { font-size: 16px; line-height: 1.5; color: rgba(240,236,227,0.86); margin: 0; }
+  .sol-card.note .sc-foot {
+    margin-top: auto; font-family: var(--mono); font-size: 12px;
+    color: rgba(240,236,227,0.55); letter-spacing: 0.04em;
+  }
+
+  /* Aufklapp-Erklärung nach Auflösung (für Übung 3 + 4) */
+  .explain {
+    margin-top: 16px;
+    background: var(--ink); color: #d8d2c5;
+    border-radius: 14px; padding: 18px 26px;
+    display: none;
+  }
+  .explain.open { display: block; }
+  .explain strong { color: #f0ece3; }
+  .explain .explain-accent { color: var(--accent-soft); font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+<style id="breadcrumb-nav">
+  /* Home breadcrumb in each slide topbar — back to the overview */
+  /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
+  .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
+  .topbar .home:hover { color: var(--accent); }
+  .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
+</style>
+<style id="bc-chapter-style">
+  .topbar .bc-chapter { color: var(--ink-3); font-weight: 400; }
+</style>
+</head>
+
+<body>
+<deck-stage>
+
+  <!-- ===================== 00 AUFHÄNGER — INSELMODELL ===================== -->
+  <section data-screen-label="00 Aufhänger Inselmodell">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 880px; gap: 64px; align-items: center; flex: 1; min-height: 0; padding: 8px 0;">
+
+        <!-- LEFT — framing + bridge -->
+        <div style="display: flex; flex-direction: column;">
+          <div class="eyebrow" style="margin: 0 0 18px;">Das Inselmodell</div>
+          <h2 class="title" style="font-size: 76px; line-height: 0.98;">Jeder sitzt auf<br/>seiner eigenen <span class="accent">Insel</span>.</h2>
+
+          <h3 class="subtitle" style="margin: 22px 0 0; max-width: 760px;">
+            Kommunikation gelingt nur über die Schnittmenge zweier Inseln. Gibt es keine — findet kein Austausch statt.
+          </h3>
+
+          <div class="callout" style="margin-top: 36px; max-width: 760px;">
+            <div class="callout-label">Und das Modell?</div>
+            <div class="callout-body">
+              Es sitzt auf einer <strong>ganz anderen Insel</strong>. <br/>
+              Prompting &amp; Context Engineering heißt: <strong>die Brücke von deiner Insel zu seiner bauen</strong>.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap;">
+            <span class="pill outline" style="font-size: 20px; padding: 9px 18px;">Schnittmenge schaffen</span>
+            <span class="pill outline" style="font-size: 20px; padding: 9px 18px;">Annahmen explizit machen</span>
+          </div>
+        </div>
+
+        <!-- RIGHT — embedded video -->
+        <div style="display: flex; flex-direction: column;">
+          <div style="position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 1px solid var(--ink); background: #000; box-shadow: 0 24px 48px -24px rgba(21,17,12,0.45);">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/UD_APAWafXY?rel=0&amp;modestbranding=1"
+              title="Vera F. Birkenbihl — Das Inselkonzept"
+              style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"
+              allow="accelerated-encoding; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; gap: 16px;">
+            <div>
+              <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--ink);">„Das Inselkonzept"</div>
+              <div style="font-size: 18px; color: var(--ink-3); margin-top: 2px;">Vera F. Birkenbihl — Ausschnitt aus dem Alpha-Vortrag</div>
+            </div>
+            <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.04em; text-align: right; white-space: nowrap;">youtu.be/UD_APAWafXY</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 01 TITLE ===================== -->
+  <section data-screen-label="01 Titel">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span></span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — Was ein Sprachmodell wirklich als Eingabe bekommt</div>
+      <h1 class="title" style="margin-top: 32px;">Prompting<br/>&amp; <span class="accent">Context</span>.</h1>
+
+      <h3 class="subtitle" style="margin-top: 28px;">
+        Vom Wunsch zur verlässlichen Antwort — wie aus einem Modell ein <em>Werkzeug</em> wird.
+      </h3>
+
+      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Spezifisch statt vage</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Few-Shot statt Erklärung</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Context kostet</span>
+        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">System statt Zufall</span>
+      </div>
+
+      <!-- decorative bottom row -->
+      <div style="margin-top: auto; padding-bottom: 24px;">
+        <div style="font-family: var(--mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 14px;">
+          <span style="display: inline-block; width: 28px; height: 1px; background: var(--accent);"></span>
+          Vier Hebel, ein Ergebnis
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 14px; align-items: center;">
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">01</div>
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 4px;">Anatomie</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">was reinläuft</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">+</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">02</div>
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 4px;">Patterns</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">was Wirkung zeigt</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">+</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">03</div>
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 4px;">Context</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">was zählt</div>
+          </div>
+          <div class="mono accent" style="font-size: 28px;">−</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">04</div>
+            <div style="font-family: var(--serif); font-size: 32px; font-weight: 500; margin-top: 4px;">Disziplin</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">was wir lassen</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03 WARUM PROMPTING + CONTEXT ===================== -->
+  <section data-screen-label="02 Warum Prompt Context" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Warum überhaupt Prompting &amp; Context?</div>
+      <h2 class="title" style="font-size: 56px;">Der Prompt ist die Bestellung.<br/>Der <span class="accent">Context</span> ist die Küche.</h2>
+
+      <p class="lede" style="margin-top: 4px;">
+        Ein Modell arbeitet <em>nur</em> mit dem, was es bekommt. Vage Bestellung &middot; planlose Küche = beliebige Antwort.<br>
+        <strong>Klare Bestellung &middot; gut vorbereitete Küche = verlässliches Werkzeug.</strong>
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 28px;">
+
+        <!-- Vague -->
+        <div class="card" style="padding: 24px 28px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div>
+              <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;">Vage · Zufall</div>
+              <div style="font-size: 28px; font-weight: 500; margin-top: 6px;">„Mach mal was Schönes."</div>
+            </div>
+            <span class="pill outline">unspezifisch</span>
+          </div>
+
+          <div data-nd='<span style="color: var(--ink-3);">user</span> &nbsp;„Schreib mir eine E-Mail an einen unzufriedenen Kunden."<br/><span style="color: var(--ink-3);">model</span> &nbsp;<em>erfindet Rolle, Tonalität, Länge, Format</em>' style="margin-top: 16px; padding: 14px 18px; background: var(--bg-2); border-radius: 10px; font-family: var(--mono); font-size: 17px; line-height: 1.5;">
+            <span style="color: var(--ink-3);">user</span> &nbsp;„Schreib mir einen Test für diese Funktion."<br/>
+            <span style="color: var(--ink-3);">model</span> &nbsp;<em>erfindet Framework, Umfang, Edge-Cases, Stil</em>
+          </div>
+
+          <ul data-nd='<li>Tonfall driftet — mal förmlich, mal locker</li><li>Länge schwankt zwischen 3 und 30 Sätzen</li><li>Nicht reproduzierbar, nicht testbar</li>' style="font-size: 20px; line-height: 1.45; padding-left: 24px; color: var(--ink-2); margin-top: 14px; margin-bottom: 0;">
+            <li>Test-Stil driftet — mal Jest, mal Mocha</li>
+            <li>Umfang schwankt zwischen 1 und 20 Fällen</li>
+            <li>Nicht reproduzierbar, nicht reviewbar</li>
+          </ul>
+        </div>
+
+        <!-- Strukturiert -->
+        <div class="card dark" style="padding: 24px 28px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div>
+              <div class="mono" style="font-size: 15px; color: #c8c2b6; letter-spacing: 0.08em; text-transform: uppercase;">Strukturiert · Engineering</div>
+              <div style="font-size: 28px; font-weight: 500; margin-top: 6px;">Rolle. Format.<br/>Beispiel. Constraint.</div>
+            </div>
+            <span class="pill accent">spezifisch</span>
+          </div>
+
+          <div data-nd='<span style="color: var(--accent-soft);">system</span> &nbsp;Du bist Customer-Success bei [Firma], 5 Jahre Erfahrung. Ton: ruhig, lösungsorientiert.<br/><span style="color: var(--accent-soft);">user</span> &nbsp;Schreib eine Antwort an [Kunde]. <br/>&nbsp;&nbsp;&nbsp;&nbsp;Constraint: max 120 Worte, 3 Absätze, klare nächste Schritte.<br/><span style="color: var(--accent-soft);">+</span> &nbsp;1 Beispiel-Mail aus dem Wiki als Few-Shot' style="margin-top: 16px; padding: 14px 18px; background: rgba(255,255,255,0.06); border-radius: 10px; font-family: var(--mono); font-size: 16px; line-height: 1.55; color: #f0ece3;">
+            <span style="color: var(--accent-soft);">system</span> &nbsp;Du bist Senior TS-Engineer, 5 Jahre Erfahrung. Stil: knapp, defensive Tests.<br/>
+            <span style="color: var(--accent-soft);">user</span> &nbsp;Schreib Tests für die Funktion unten. <br/>&nbsp;&nbsp;&nbsp;&nbsp;Constraint: Jest, max 30 Zeilen, 3 Edge-Cases.<br/>
+            <span style="color: var(--accent-soft);">+</span> &nbsp;1 bestehender Test aus dem Repo als Few-Shot
+          </div>
+
+          <ul style="font-size: 20px; line-height: 1.45; padding-left: 24px; color: #d8d2c5; margin-top: 14px; margin-bottom: 0;">
+            <li>vorhersagbarer Output über tausend Chat-Nachrichten hinweg</li>
+            <li>messbar — A/B-testbar gegen die nächste Version</li>
+            <li>wiederverwendbar als Baustein im Workflow</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 20px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 20px;">Ein guter Prompt ist <strong>nicht länger</strong>, sondern <strong>spezifischer</strong>. Ein guter Context ist <strong>nicht größer</strong>, sondern <strong>gezielter</strong>.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 04 ANATOMIE EINES PROMPTS ===================== -->
+  <section data-screen-label="03 Anatomie eines Prompts" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Was bekommt das Modell als Eingabe?</div>
+      <h2 class="title" style="font-size: 60px; margin-bottom: 4px;">Anatomie eines <span class="accent">Prompts</span>.</h2>
+      <p class="lede" style="margin-top: 8px; max-width: 1600px;">
+        Ein Prompt ist <em>nicht</em> nur die User-Frage. Er hat vier Komponenten — jede mit eigener Aufgabe, eigenem Ort und eigener Lebensdauer.
+      </p>
+
+      <!-- 4 column grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; margin-top: 28px;">
+
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: flex-end; align-items: baseline;">
+            <span class="pill outline" style="font-size: 11px;">persistent</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 38px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">System</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">wer bist du, wie redest du</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was steht drin</div>
+          <ul style="font-size: 17px; line-height: 1.4; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>Rolle &amp; Expertise</li>
+            <li>Ton &amp; Stil</li>
+            <li>Do / Don't</li>
+            <li>Output-Format global</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 16px;">Beispiel</div>
+          <div class="mono" data-nd='„Du bist erfahrene Lektorin für Geschäftsberichte. Antworte präzise, kein Marketing-Sprech."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-top: 6px; background: var(--bg-2); padding: 8px 10px; border-radius: 6px;">
+            „Du bist Senior&nbsp;TS-Engineer. Antworte präzise, kein Marketing-Sprech."
+          </div>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↑ Einmal setzen</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">gilt für alle folgenden Turns.</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: flex-end; align-items: baseline;">
+            <span class="pill outline" style="font-size: 11px;">flüchtig</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 38px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">User</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">was willst du <em>jetzt</em></div>
+
+          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was steht drin</div>
+          <ul style="font-size: 17px; line-height: 1.4; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>die konkrete Aufgabe</li>
+            <li>relevante Variablen</li>
+            <li>aktueller Stand</li>
+            <li>Constraints für diesen Turn</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 16px;">Beispiel</div>
+          <div class="mono" data-nd='„Fasse den Quartalsbericht unten auf max 5 Bullet-Points zusammen."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-top: 6px; background: var(--bg-2); padding: 8px 10px; border-radius: 6px;">
+            „Schreib einen Test für die unten stehende fn. Max 30 Zeilen."
+          </div>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">→ Jeder Turn neu</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">die spezifische Bestellung.</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: flex-end; align-items: baseline;">
+            <span class="pill outline" style="font-size: 11px;">zeigend</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 38px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Examples</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">zeigen statt erzählen</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was steht drin</div>
+          <ul style="font-size: 17px; line-height: 1.4; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>1–3 Input/Output-Paare</li>
+            <li>repräsentativ, nicht extrem</li>
+            <li>idealerweise auch Edge-Case</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 16px;">Beispiel</div>
+          <div class="mono" data-nd='in: „verspätete Lieferung"<br/>out: <span style="color: var(--accent);">Kategorie: Logistik</span>' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-top: 6px; background: var(--bg-2); padding: 8px 10px; border-radius: 6px;">
+            in: „Werbung"<br/>
+            out: <span style="color: var(--accent);">{"kategorie":"spam"}</span>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">★ Stärkster Hebel</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">3 Beispiele schlagen 500 Wörter.</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; justify-content: flex-end; align-items: baseline;">
+            <span class="pill outline" style="font-size: 11px;">strukturierend</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 38px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Output-Format</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">in welche Form gegossen</div>
+
+          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase;">Was steht drin</div>
+          <ul data-nd='<li>Feste Tabellen-Struktur</li><li>Feste Spalten &amp; Reihenfolge</li><li>Längen- &amp; Stil-Vorgabe</li>' style="font-size: 17px; line-height: 1.4; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+            <li>JSON-Schema oder XML-Tags</li>
+            <li>Markdown-Struktur</li>
+            <li>Längen- &amp; Stil-Constraint</li>
+          </ul>
+
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 16px;">Beispiel</div>
+          <div class="mono" data-nd='<span style="color: var(--accent);">Kategorie</span>&nbsp;|&nbsp;Risiko&nbsp;|&nbsp;Frist<br/>…feste Spalten, max 3 Zeilen…' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); margin-top: 6px; background: var(--bg-2); padding: 8px 10px; border-radius: 6px;">
+            <span style="color: var(--accent);">&lt;answer&gt;</span><br/>
+            &nbsp;&nbsp;…max 3 bullets…<br/>
+            <span style="color: var(--accent);">&lt;/answer&gt;</span>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 14px;">
+            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">▢ Macht maschinell-lesbar</div>
+            <div style="font-size: 15px; color: var(--ink-2); margin-top: 4px;">Pipeline statt Copy-Paste.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 22px;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body">
+          Wenn der Output schwankt, fehlt meist <strong>Output-Format</strong>. Wenn er stilistisch driftet, fehlt <strong>System</strong>. Wenn er Edge-Cases verfehlt, fehlen <strong>Examples</strong>. Wenn er das Thema verfehlt — fehlt <strong>User</strong>.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03A KONZEPT — SYSTEM/USER + TOKEN-TALLY (aus der Übungs-Sammlung) ===================== -->
+  <style id="tally-css">
+    .tally { display: grid; grid-template-columns: 1fr 560px; gap: 22px; flex: 1; min-height: 0; }
+
+    /* left — the conversation as it grows */
+    .tally-chat {
+      background: var(--paper); border: 1px solid var(--hair);
+      border-radius: 14px; padding: 18px 22px;
+      display: flex; flex-direction: column; min-height: 0;
+    }
+    .tally-chat-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 12px;
+    }
+    .tally-chat-head .tch-resent { color: var(--accent); }
+    .tally-stream {
+      flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+      display: flex; flex-direction: column; gap: 8px; padding: 3px 8px 3px 6px;
+    }
+    .tally-msg {
+      border-radius: 12px; padding: 10px 14px; border: 1px solid var(--hair);
+      animation: tallyIn 0.28s ease both; max-width: 84%;
+    }
+    @keyframes tallyIn { from { transform: translateY(6px); } to { transform: translateY(0); } }
+    .tally-msg-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .tally-tag {
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 2px 9px; border-radius: 999px;
+    }
+    .tally-resent {
+      font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .tally-tok { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+    .tally-body { font-family: var(--serif); font-size: 15px; line-height: 1.34; color: var(--ink-2); }
+
+    /* chat alignment: system = full-width banner (left), user = right, assistant = left */
+    .tally-msg.system { background: #f4ecdf; border-color: var(--accent-soft); align-self: stretch; max-width: 100%; border-radius: 12px; }
+    .tally-msg.system .tally-tag { background: var(--accent); color: #fff; }
+    .tally-msg.user { background: var(--bg); align-self: flex-end; border-bottom-right-radius: 4px; }
+    .tally-msg.user .tally-tag { background: var(--ink); color: var(--bg); }
+    .tally-msg.assistant { background: var(--bg-2); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .tally-msg.assistant .tally-tag { background: transparent; color: var(--ink); border: 1px solid var(--ink); padding: 1px 8px; }
+    .tally-msg.fresh { box-shadow: 0 0 0 2px var(--accent); }
+
+    .tally-empty {
+      margin: auto; text-align: center; color: var(--ink-3);
+      font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.4; max-width: 360px;
+    }
+
+    /* right — the running bill */
+    .tally-bill {
+      background: var(--ink); color: #f0ece3;
+      border-radius: 14px; padding: 20px 24px;
+      display: flex; flex-direction: column; min-height: 0;
+    }
+    .tally-bill-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: var(--mono); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #c8c2b6; margin-bottom: 2px;
+    }
+    .tally-callno { font-family: var(--serif); font-size: 29px; font-weight: 500; color: #f0ece3; margin-bottom: 14px; }
+    .tally-callno span { color: var(--accent-soft); }
+
+    .tally-stack-label {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #c8c2b6; margin-bottom: 7px;
+    }
+    .tally-stack { display: flex; height: 34px; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,0.05); }
+    .tally-seg { transition: flex-basis 0.4s ease; min-width: 2px; }
+    .tally-seg.sys  { background: var(--accent); }
+    .tally-seg.hist { background: #6b6357; }
+    .tally-seg.new  { background: var(--accent-soft); }
+    .tally-legend { display: flex; gap: 18px; margin-top: 10px; font-family: var(--mono); font-size: 12px; color: #c8c2b6; }
+    .tally-legend .tl-item { display: flex; align-items: center; gap: 7px; }
+    .tally-legend .tl-dot { width: 11px; height: 11px; border-radius: 2px; }
+    .tally-legend .tl-dot.sys { background: var(--accent); }
+    .tally-legend .tl-dot.hist { background: #6b6357; }
+    .tally-legend .tl-dot.new { background: var(--accent-soft); }
+
+    .tally-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .tally-num { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 12px 14px; }
+    .tally-num .tn-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #c8c2b6; }
+    .tally-num .tn-val { font-family: var(--mono); font-size: 30px; font-weight: 600; color: #f0ece3; margin-top: 3px; }
+    .tally-num.accent .tn-val { color: var(--accent-soft); }
+    .tally-num .tn-sub { font-family: var(--mono); font-size: 10px; color: #8f897e; margin-top: 2px; }
+
+    .tally-hist-label {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #c8c2b6; margin-bottom: 8px;
+      display: flex; justify-content: space-between;
+    }
+    .tally-hist {
+      display: flex; align-items: stretch; gap: 8px;
+      height: 110px;
+    }
+    .tally-hcol { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+    .tally-hbar {
+      width: 100%; max-width: 46px; border-radius: 4px 4px 0 0; overflow: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      transition: height 0.4s ease;
+    }
+    .tally-hbar .hb-seg { width: 100%; }
+    .tally-hbar .hb-seg.sys  { background: var(--accent); }
+    .tally-hbar .hb-seg.hist { background: #6b6357; }
+    .tally-hbar .hb-seg.new  { background: var(--accent-soft); }
+    .tally-hcol .hc-lbl { font-family: var(--mono); font-size: 13px; color: #8f897e; }
+    .tally-hcol.current .hc-lbl { color: var(--accent-soft); font-weight: 600; }
+
+    .tally-insight {
+      margin-top: auto; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.12);
+      font-family: var(--serif); font-size: 16px; line-height: 1.45; color: #f0ece3;
+    }
+    .tally-insight strong { color: var(--accent-soft); }
+
+    /* chat-head right cluster + small reset */
+    .tch-head-right { display: flex; align-items: center; gap: 12px; }
+    .tch-reset {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink-3); background: none; border: 1px solid var(--hair); border-radius: 999px;
+      padding: 5px 13px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .tch-reset:hover { color: var(--ink); border-color: var(--ink-3); }
+
+    /* composer — pinned to the bottom of the chat, where sending feels natural */
+    .tally-composer { margin-top: 12px; flex: 0 0 auto; }
+    .tcomp-label {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+      font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ink-3); margin-bottom: 7px;
+    }
+    .tcomp-label .tcl-tok { color: var(--accent); letter-spacing: 0.06em; }
+    .tcomp-box { display: flex; gap: 10px; align-items: stretch; }
+    .tcomp-text {
+      flex: 1; min-height: 52px; display: flex; align-items: center;
+      background: var(--bg); border: 1.5px solid var(--accent-soft);
+      border-radius: 12px; border-bottom-right-radius: 4px; padding: 11px 16px;
+      font-family: var(--serif); font-size: 16px; line-height: 1.32; color: var(--ink);
+      transition: border-color 0.2s ease;
+    }
+    .tcomp-text::after {
+      content: ''; width: 2px; height: 17px; margin-left: 3px; background: var(--accent);
+      animation: tcompCaret 1.1s step-end infinite; flex: 0 0 auto;
+    }
+    @keyframes tcompCaret { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+    .tcomp-send {
+      flex: 0 0 auto; padding: 0 22px; font-size: 14px; white-space: nowrap;
+      display: flex; align-items: center;
+    }
+    .tally-composer.done .tcomp-text {
+      color: var(--ink-3); font-style: italic; border-style: dashed; border-color: var(--hair);
+    }
+    .tally-composer.done .tcomp-text::after { display: none; }
+
+    /* bill — cumulative total is the hero */
+    .tally-total-hero {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 14px 18px 15px; margin-bottom: 16px;
+    }
+    .tth-label {
+      font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #c8c2b6;
+    }
+    .tth-row { display: flex; align-items: baseline; gap: 14px; margin-top: 5px; }
+    .tth-val {
+      font-family: var(--mono); font-size: 48px; font-weight: 700; line-height: 1;
+      letter-spacing: -0.015em; color: var(--accent-soft);
+    }
+    .tth-delta {
+      font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--accent); opacity: 0;
+    }
+    .tth-delta.show { animation: tthDelta 1.4s ease both; }
+    @keyframes tthDelta {
+      0% { opacity: 0; transform: translateY(7px); }
+      18% { opacity: 1; transform: translateY(0); }
+      78% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-5px); }
+    }
+    .tth-sub { font-family: var(--mono); font-size: 13px; color: #c8c2b6; margin-top: 7px; }
+    .tth-sub b { color: #f0ece3; }
+    .tally-total-hero.bump { animation: tthBump 0.42s ease; }
+    @keyframes tthBump { 0% { transform: scale(1); } 42% { transform: scale(1.022); } 100% { transform: scale(1); } }
+
+    .tally-call-line {
+      font-family: var(--mono); font-size: 13px; color: #c8c2b6; margin-top: 12px;
+    }
+    .tally-call-line b { color: #f0ece3; font-size: 15px; }
+    .tally-call-line .tcl-sub { color: #8f897e; }
+  </style>
+  <section data-screen-label="03a Konzept Token-Tally" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">System-Prompt · User-Prompt · und warum die Rechnung wächst</div>
+      <h2 class="title">Jeder Turn schickt das <span class="accent">ganze Gespräch</span> erneut. So summieren sich Tokens auf.</h2>
+      <p class="ex-instructions" style="margin-top: 8px;" data-nd="Ein Modell hat kein Gedächtnis. Damit es den Faden behält, wird bei jeder neuen Nachricht die komplette bisherige Unterhaltung noch einmal mitgeschickt — das kostet jedes Mal Tokens. Klicke dich durch.">
+        Ein LLM hat <strong>kein Gedächtnis</strong> zwischen Aufrufen. Damit es den Kontext kennt, sendet der Client bei <em>jedem</em> Turn das <strong>System-Prompt + den ganzen Verlauf</strong> erneut mit. Klicke <strong>„Antwort senden"</strong> und beobachte, wie der Input pro Aufruf wächst.
+      </p>
+
+      <div class="ex-stage tally" id="ex-tally">
+        <div class="tally-chat">
+          <div class="tally-chat-head">
+            <span>Die Unterhaltung — das, was im Kontext liegt</span>
+            <span class="tch-head-right">
+              <span class="tch-resent" id="tally-chat-resent"></span>
+              <button class="tch-reset" id="tally-reset">↺ Zurücksetzen</button>
+            </span>
+          </div>
+          <div class="tally-stream" id="tally-stream"></div>
+
+          <div class="tally-composer" id="tally-composer">
+            <div class="tcomp-label">
+              <span id="tally-comp-label">Deine nächste Nachricht</span>
+              <span class="tcl-tok" id="tally-comp-cost"></span>
+            </div>
+            <div class="tcomp-box">
+              <div class="tcomp-text" id="tally-next-text"></div>
+              <button class="btn accent tcomp-send" id="tally-next">Antwort senden →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tally-bill">
+          <div class="tally-bill-head">
+            <span>Die laufende Rechnung</span>
+          </div>
+
+          <div class="tally-total-hero" id="tally-total-hero">
+            <div class="tth-label">Input-Tokens gesamt · über alle Aufrufe</div>
+            <div class="tth-row">
+              <span class="tth-val" id="tally-total-tok">0 tok</span>
+              <span class="tth-delta" id="tally-total-delta"></span>
+            </div>
+            <div class="tth-sub" id="tally-total-sub">noch kein Aufruf gesendet</div>
+          </div>
+
+          <div class="tally-callno" id="tally-callno">Noch kein Aufruf</div>
+          <div class="tally-stack-label">Input dieses Aufrufs — woraus er besteht</div>
+          <div class="tally-stack" id="tally-stack"></div>
+          <div class="tally-legend">
+            <span class="tl-item"><span class="tl-dot sys"></span>System-Prompt</span>
+            <span class="tl-item"><span class="tl-dot hist"></span>Bisheriger Verlauf</span>
+            <span class="tl-item"><span class="tl-dot new"></span>Neue Nachricht</span>
+          </div>
+          <div class="tally-call-line">Input dieser Aufruf: <b id="tally-call-tok">0 tok</b> · <span class="tcl-sub" id="tally-call-sub">&nbsp;</span></div>
+
+          <div class="tally-hist-label">
+            <span>Input pro Aufruf</span>
+            <span id="tally-hist-note">wächst mit jedem Turn</span>
+          </div>
+          <div class="tally-hist" id="tally-hist"></div>
+
+          <div class="tally-insight" id="tally-insight">
+            Tipp: Das <strong>System-Prompt</strong> ist derselbe Text — du bezahlst ihn aber bei <strong>jedem</strong> Aufruf neu. Genau das üben die nächsten Folien.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03B ÜBUNG AGENT-PROMPT-DOCTOR (aus der Übungs-Sammlung) ===================== -->
+  <style id="sysdoc-fix-css">
+    /* BAUSTEINE/Fixes-Panel auf das gleiche Verhältnis wie die Token-Tally-Folie
+       (1fr / 560px) bringen — mehr Platz, dadurch größerer & lesbarerer Text.
+       Gilt für alle drei Prompt-Doctor-Übungen (Agent / Skill / User). */
+    #ex-sysdoc, #ex-skilldoc, #ex-userdoc { grid-template-columns: 1fr 560px; }
+    #ex-sysdoc .doctor-fixes-head, #ex-skilldoc .doctor-fixes-head, #ex-userdoc .doctor-fixes-head { font-size: 15px; }
+    #ex-sysdoc .doctor-fix-name, #ex-skilldoc .doctor-fix-name, #ex-userdoc .doctor-fix-name { font-size: 21px; }
+    #ex-sysdoc .doctor-fix-meta, #ex-skilldoc .doctor-fix-meta, #ex-userdoc .doctor-fix-meta { font-size: 14px; }
+    #ex-sysdoc .doctor-fix-note, #ex-skilldoc .doctor-fix-note, #ex-userdoc .doctor-fix-note { font-size: 14.5px; line-height: 1.5; }
+    #ex-sysdoc .doctor-fix-check, #ex-skilldoc .doctor-fix-check, #ex-userdoc .doctor-fix-check { width: 23px; height: 23px; font-size: 15px; }
+    #ex-sysdoc .doctor-sweet, #ex-skilldoc .doctor-sweet, #ex-userdoc .doctor-sweet { font-size: 14px; }
+  </style>
+  <section data-screen-label="03b Übung Agent-Prompt-Doctor" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Persistent · in jeder Chat-Nachricht neu bezahlt</div>
+      <h2 class="title">Baue den <span class="accent">Agent-Prompt</span>. Jeder Token zählt × N Chat-Nachrichten.</h2>
+      <p class="ex-instructions" style="margin-top: 8px;">
+        Der Agent-Prompt ist der <strong>persistente Teil</strong> — Rolle, Format-Default, Verhalten. Er gilt für <em>jede</em> Chat-Nachricht des Agenten (das Gegenstück, der on-demand <strong>Skill-Prompt</strong>, kommt in einer eigenen Übung). Schalt rechts die Bausteine an. Ziel: <strong>Score ≥ 7</strong> bei <strong>≤ 180 tok/Nachricht</strong>.
+      </p>
+
+      <div class="ex-stage doctor" id="ex-sysdoc">
+        <div class="doctor-pad">
+          <div class="doctor-brief" id="sysdoc-brief"></div>
+          <div class="doctor-text doctor-file" id="sysdoc-text"></div>
+          <div class="doctor-meters">
+            <div class="doctor-meter">
+              <div class="dm-label">Qualitäts-Score</div>
+              <div class="dm-val" id="sysdoc-score">1.5 / 10</div>
+              <div class="dm-bar score"><div id="sysdoc-score-bar" style="width: 15%;"></div></div>
+            </div>
+            <div class="doctor-meter">
+              <div class="dm-label">Token-Kosten · pro Chat-Nachricht</div>
+              <div class="dm-val" id="sysdoc-tokens">~7 tok</div>
+              <div class="dm-bar tokens"><div id="sysdoc-tokens-bar" style="width: 2%;"></div></div>
+            </div>
+            <div class="doctor-meter dark">
+              <div class="dm-label">Kosten × 1000 Chat-Nachrichten</div>
+              <div class="dm-val" id="sysdoc-percall">7k tok</div>
+              <div class="dm-bar"><div id="sysdoc-percall-bar" style="width: 2%; background: var(--accent-soft);"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doctor-fixes">
+          <div class="doctor-fixes-head">
+            <span>Bausteine</span>
+            <span id="sysdoc-active-count">0 von 6 aktiv</span>
+          </div>
+          <div class="doctor-fixes-list" id="sysdoc-fixes-list"></div>
+          <div class="doctor-fix-controls">
+            <div class="doctor-sweet" id="sysdoc-sweet">— Schalte Bausteine an</div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn accent" id="sysdoc-solve">Auflösen</button>
+              <button class="btn" id="sysdoc-reset" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #f0ece3;">↺ Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03C ÜBUNG SKILL-PROMPT-DOCTOR (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="03c Übung Skill-Prompt-Doctor" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">On-demand · dormant bis zum Trigger</div>
+      <h2 class="title">Baue den <span class="accent">Skill-Prompt</span>.</h2>
+      <p class="ex-instructions" style="margin-top: 8px;">
+        Nur der <strong>Header</strong> (Name + Beschreibung) ist always-on; der Body wird lazy geladen, erst wenn der Skill feuert.
+      </p>
+
+      <div class="ex-stage doctor" id="ex-skilldoc">
+        <div class="doctor-pad">
+          <div class="doctor-brief" id="skilldoc-brief"></div>
+          <div class="doctor-text doctor-file" id="skilldoc-text"></div>
+          <div class="doctor-meters">
+            <div class="doctor-meter">
+              <div class="dm-label">Qualitäts-Score</div>
+              <div class="dm-val" id="skilldoc-score">1.0 / 10</div>
+              <div class="dm-bar score"><div id="skilldoc-score-bar" style="width: 10%;"></div></div>
+            </div>
+            <div class="doctor-meter">
+              <div class="dm-label">Always-on · pro Chat-Nachricht</div>
+              <div class="dm-val" id="skilldoc-always">~6 tok</div>
+              <div class="dm-bar tokens"><div id="skilldoc-always-bar" style="width: 5%;"></div></div>
+            </div>
+            <div class="doctor-meter dark">
+              <div class="dm-label">On-demand · nur wenn Skill feuert</div>
+              <div class="dm-val" id="skilldoc-body">inaktiv</div>
+              <div class="dm-bar"><div id="skilldoc-body-bar" style="width: 0%; background: var(--accent-soft);"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doctor-fixes">
+          <div class="doctor-fixes-head">
+            <span>Bausteine · always-on vs on-demand</span>
+            <span id="skilldoc-active-count">0 von 6 aktiv</span>
+          </div>
+          <div class="doctor-fixes-list" id="skilldoc-fixes-list"></div>
+          <div class="doctor-fix-controls">
+            <div class="doctor-sweet" id="skilldoc-sweet">— Baue die Skill</div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn accent" id="skilldoc-solve">Auflösen</button>
+              <button class="btn" id="skilldoc-reset" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #f0ece3;">↺ Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 03D ÜBUNG USER-PROMPT-DOCTOR (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="03d Übung User-Prompt-Doctor" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Per-turn · gegeben Agent & Skills im Setup</div>
+      <h2 class="title">Schreibe den <span class="accent">User-Prompt</span>. Triggere das richtige Werkzeug — dupliziere keins.</h2>
+      <p class="ex-instructions" style="margin-top: 8px;">
+        Wähle eine <strong>Aufgabe</strong>. Je nach Aufgabe löst du sie über den stehenden <strong>Agent</strong>, eine <strong>Skill</strong> oder <strong>beides</strong>. Dein User-Prompt triggert das Richtige — ohne zu wiederholen, was Agent oder Skill schon können. <strong style="color: var(--warn);">⚠ Fixes</strong> sind Traps.
+      </p>
+
+      <div class="ex-stage doctor" id="ex-userdoc">
+        <div class="doctor-pad">
+          <div class="userdoc-taskbar">
+            <label class="udt-label" for="userdoc-task">Aufgabe diesen Turn</label>
+            <div class="cgp-dd udt-dd" id="userdoc-dd">
+              <button type="button" class="cgp-trigger" id="userdoc-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Aufgabe wählen">
+                <span class="cgp-trigger-text" id="userdoc-trigger-text"></span>
+                <span class="cgp-caret" aria-hidden="true"></span>
+              </button>
+              <div class="cgp-menu" id="userdoc-menu" role="listbox" hidden></div>
+            </div>
+          </div>
+          <div class="doctor-brief" id="userdoc-brief"></div>
+          <div class="userdoc-system" id="userdoc-system"></div>
+          <div class="doctor-pad-label">
+            <span>User-Prompt (dieser Turn)</span>
+            <span id="userdoc-charcount" style="text-transform: none; letter-spacing: 0.04em;">— Wörter / — Zeichen</span>
+          </div>
+          <div class="doctor-text" id="userdoc-text"></div>
+          <div class="doctor-meters">
+            <div class="doctor-meter">
+              <div class="dm-label">Klarheits-Score</div>
+              <div class="dm-val" id="userdoc-score">1.0 / 10</div>
+              <div class="dm-bar score"><div id="userdoc-score-bar" style="width: 10%;"></div></div>
+            </div>
+            <div class="doctor-meter">
+              <div class="dm-label">Token-Kosten</div>
+              <div class="dm-val" id="userdoc-tokens">~8 tok</div>
+              <div class="dm-bar tokens"><div id="userdoc-tokens-bar" style="width: 4%;"></div></div>
+            </div>
+            <div class="doctor-meter">
+              <div class="dm-label">Redundanz-Check</div>
+              <div class="doctor-redundancy" id="userdoc-redundant" style="margin-top: 6px;">— noch keine Fixes</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doctor-fixes">
+          <div class="doctor-fixes-head">
+            <span>Fixes · ⚠ TRAPS markiert</span>
+            <span id="userdoc-active-count">0 von 7 aktiv</span>
+          </div>
+          <div class="doctor-fixes-list" id="userdoc-fixes-list"></div>
+          <div class="doctor-fix-controls">
+            <div class="doctor-sweet" id="userdoc-sweet">— Schalte sinnvolle Fixes an, meide Traps</div>
+            <button class="btn" id="userdoc-reset" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #f0ece3;">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05 DIE 5 PATTERNS ===================== -->
+  <section data-screen-label="04 Die 5 Patterns" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Patterns &gt; Tricks</div>
+      <h2 class="title" style="font-size: 52px;">Fünf Muster, die <span class="accent">wirklich ziehen</span>.</h2>
+
+      <p class="lede" style="margin-top: 6px; max-width: 1600px;">
+        Jedes einzeln einsetzbar — und kombinierbar, messbar, wiederverwendbar.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; flex: 1; min-height: 0;">
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">01</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Few-Shot &middot; zeigen</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            1–3 Input/Output-Paare. Der mit Abstand stärkste Hebel — wenn man nur <em>einen</em> nutzt: diesen.
+          </p>
+          <div class="mono" data-nd='in: „Kunde reklamiert verspätete Lieferung"<br/>out: <span style="color: var(--accent);">Kategorie: Logistik · Dringlichkeit: hoch</span>' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            in: „Logout 500 bei abgelaufenem Token"<br/>
+            out: <span style="color: var(--accent);">{"area":"auth","sev":"high","kind":"bug"}</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">02</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Output-Format &middot; Gefäß</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            XML-Tags, JSON-Schema, Markdown-Struktur — gibt dem Modell ein klares Gefäß zum Hineinschreiben.
+          </p>
+          <div class="mono" data-nd='<span style="color: var(--accent);">Analyse:</span> … kurze Begründung<br/><span style="color: var(--accent);">Ergebnis:</span> … max 3 Bullet-Points' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            <span style="color: var(--accent);">&lt;analysis&gt;</span>…<span style="color: var(--accent);">&lt;/analysis&gt;</span><br/>
+            <span style="color: var(--accent);">&lt;answer&gt;</span>…max 3 bullets…<span style="color: var(--accent);">&lt;/answer&gt;</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">03</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Role &middot; System-Prompt</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            Macht aus generisch <em>jemand Bestimmtem</em>: Expertise, Ton, Do/Don't.
+          </p>
+          <div class="mono" data-nd='„Du bist <span style="color: var(--accent);">erfahrene Lektorin</span> für Geschäftsberichte, 10 J. Erfahrung. Knapp, sachlich, kein Hype."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            „Du bist <span style="color: var(--accent);">Senior&nbsp;Tech-Lead</span>, 10 J. Erfahrung mit verteilten Systemen. Knapp, technisch, kein Hype."
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">04</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Constraint &middot; Grenzen</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            Länge, Vokabular, erlaubte Werte. Begrenzt ausufernde Antworten. <em>Negative</em> Constraints („nutze nicht…") sind möglich, positive sind besser.
+          </p>
+          <div class="mono" data-nd='„Max <span style="color: var(--accent);">3 Bullet-Points</span>, je &le; 15 Wörter.<br/>Nur Werte aus: <span style="color: var(--accent);">niedrig | mittel | hoch</span>."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            „Max <span style="color: var(--accent);">3 Bullet-Points</span>, je &le; 15 Wörter.<br/>
+            Nur Werte aus: <span style="color: var(--accent);">low | med | high</span>."
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px; grid-column: 1 / -1;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">05</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Self-Check &middot; zweite Iteration in derselben Antwort</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            Lass das Modell <em>vor</em> der finalen Antwort einmal prüfen, ob es alle Anforderungen erfüllt. Geringer Aufwand, aber wirkungsvoll bei komplexen Outputs.
+          </p>
+          <div class="mono" data-nd='„Bevor du antwortest, prüfe kurz: 1) Längen-Vorgabe eingehalten? 2) alle 3 Angaben gesetzt? 3) keine Marketing-Phrasen?<br/>Dann gib die finale Antwort."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            „Bevor du antwortest, prüfe in <span style="color: var(--accent);">&lt;check&gt;</span>: 1) hält Längen-Constraint? 2) alle 3 Felder gesetzt? 3) keine Marketing-Phrasen?<br/>
+            Dann gib die finale Antwort in <span style="color: var(--accent);">&lt;answer&gt;</span>."
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 06 CONTEXT = WORKING MEMORY ===================== -->
+  <section data-screen-label="05 Context Working Memory">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Context Engineering</div>
+      <h2 class="title" style="font-size: 52px;">Context ist das <span class="accent">Arbeitsgedächtnis</span> des Modells.</h2>
+
+      <p class="lede" style="margin-top: 4px; max-width: 1600px;">
+        Alles, was rein soll, kostet Tokens. Token-Budget ist endlich — und je voller das Fenster, desto schlechter die Antwortqualität. <strong>Just-in-time schlägt just-in-case.</strong>
+      </p>
+
+      <!-- 5 Quellen + Costs -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 22px; align-items: stretch;">
+
+        <!-- Quellen -->
+        <div class="card" style="padding: 22px 26px;">
+          <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Fünf Quellen — geordnet nach Persistenz</div>
+          <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; margin-top: 2px;">Was alles in das Context Window läuft</div>
+
+          <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+
+            <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div class="mono" style="font-size: 14px; color: var(--ink-3);">01</div>
+              <div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">System-Prompt</div>
+                <div style="font-size: 14px; color: var(--ink-3);">Rolle, Stil, globale Constraints — bei jeder Chat-Nachricht dabei</div>
+              </div>
+              <div class="mono accent" style="font-size: 13px;">~200 tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div class="mono" style="font-size: 14px; color: var(--ink-3);">02</div>
+              <div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">AGENTS.md</div>
+                <div style="font-size: 14px; color: var(--ink-3);">Repo-spezifische Konventionen, Commands, Architektur</div>
+              </div>
+              <div class="mono accent" style="font-size: 13px;">~500–1k tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div class="mono" style="font-size: 14px; color: var(--ink-3);">03</div>
+              <div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">Skills &middot; Tool-Schemas</div>
+                <div style="font-size: 14px; color: var(--ink-3);">prozedurales Wissen + Tool-Beschreibungen, on-demand geladen</div>
+              </div>
+              <div class="mono accent" style="font-size: 13px;">~1–10k tok</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div class="mono" style="font-size: 14px; color: var(--ink-3);">04</div>
+              <div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">Files &middot; Search-Results &middot; Tool-Output</div>
+                <div style="font-size: 14px; color: var(--ink-3);">situatives Wissen — die größte und variabelste Quelle</div>
+              </div>
+              <div class="mono accent" style="font-size: 13px;">variabel</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
+              <div class="mono" style="font-size: 14px; color: var(--ink-3);">05</div>
+              <div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">Conversation-History</div>
+                <div style="font-size: 14px; color: var(--ink-3);">wächst mit jedem Turn — der heimliche Token-Fresser</div>
+              </div>
+              <div class="mono accent" style="font-size: 13px;">10–100k tok</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Costs / Polution -->
+        <div class="card dark" style="padding: 22px 26px; display: flex; flex-direction: column;">
+          <div class="mono" style="font-size: 13px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">Was Context kostet</div>
+          <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; color: #f0ece3; margin-top: 2px;">Drei Kosten — eine versteckte</div>
+
+          <div style="height: 1px; background: rgba(255,255,255,0.14); margin: 16px 0;"></div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">$ TOKENS</div>
+              <div style="font-size: 17px; color: #d8d2c5; line-height: 1.4; margin-top: 4px;">
+                Was reinläuft, wird abgerechnet — bei jeder Chat-Nachricht.
+              </div>
+            </div>
+            <div>
+              <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">⏱ LATENZ</div>
+              <div style="font-size: 17px; color: #d8d2c5; line-height: 1.4; margin-top: 4px;">
+                Verdoppelter Context = ungefähr verdoppelte Antwortzeit.
+              </div>
+            </div>
+            <div>
+              <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">⚠ QUALITÄT &middot; die versteckte</div>
+              <div style="font-size: 17px; color: #d8d2c5; line-height: 1.4; margin-top: 4px;">
+                Volles Fenster &rArr; das Modell verliert Fokus, „vergisst" Anweisungen vom Anfang, halluziniert eher.
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: auto; padding-top: 16px;">
+            <div class="mono" style="color: var(--accent-soft); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;">Faustregel</div>
+            <div style="font-size: 18px; color: #f0ece3; line-height: 1.4; margin-top: 4px;">
+              <strong>30 ganze Files vs. 30 Snippets + on-demand-read:</strong><br/>
+              fast immer gewinnt die zweite.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 05A ÜBUNG CONNECTION-GRAPH (geteilt mit Kap. 03) ===================== -->
+  <section data-screen-label="05a Übung Connection-Graph" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <h2 class="title" style="margin-top: 20px;">Wähle eine Aufgabe und <span class="accent">aktiviere</span> nur die nötigen Knoten.</h2>
+
+      <div class="ex-stage cgraph" id="ex-cgraph">
+        <div class="cgraph-board">
+          <div class="cgraph-picker">
+            <span class="cgp-label">Aufgabe</span>
+            <div class="cgp-dd" id="cgraph-dd">
+              <button type="button" class="cgp-trigger" id="cgraph-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Aufgabe wählen">
+                <span class="cgp-trigger-text" id="cgraph-trigger-text"></span>
+                <span class="cgp-caret" aria-hidden="true"></span>
+              </button>
+              <div class="cgp-menu" id="cgraph-menu" role="listbox" hidden></div>
+            </div>
+            <button class="cgp-reset" id="cgraph-reset" title="Zurücksetzen" aria-label="Zurücksetzen">↺</button>
+          </div>
+          <div class="cgraph-canvas" id="cgraph-canvas">
+            <svg id="cgraph-edges" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div id="cgraph-labels"></div>
+          </div>
+        </div>
+
+        <div class="cgraph-trace">
+          <div class="cgraph-trace-head">Context-Window</div>
+          <div id="cgraph-trace-body"></div>
+          <div class="cgraph-insight" id="cgraph-insight" hidden></div>
+          <div class="cgraph-check">
+            <button class="btn accent" id="cgraph-pruefen" disabled>Prüfen</button>
+            <button class="btn ghost" id="cgraph-clear" disabled>Leeren</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 ÜBUNG 0 — PATTERN ERKENNEN ===================== -->
+  <section data-screen-label="06 Übung 1 Pattern erkennen">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Aufgabe</div>
+      <h2 class="title" style="font-size: 38px; margin-bottom: 6px;">Ordne jedem Prompt-Schnipsel das <span class="accent">passende Pattern</span> zu.</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
+        Echte Snippets, wie sie in System- und User-Prompts vorkommen. Klick das Pattern, das du erkennst.
+      </p>
+
+      <!-- Pattern-Legende -->
+      <div class="options-rail" style="grid-template-columns: repeat(5, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Role</div><div class="opt-tag">wer redet, in welchem Ton</div></div>
+        <div class="opt"><div class="opt-name">Few-Shot</div><div class="opt-tag">Input → Output Beispiele</div></div>
+        <div class="opt"><div class="opt-name">Format</div><div class="opt-tag">JSON · XML · Markdown</div></div>
+        <div class="opt"><div class="opt-name">Constraint</div><div class="opt-tag">Länge · Werte · Tabu</div></div>
+        <div class="opt"><div class="opt-name">Self-Check</div><div class="opt-tag">vor Antwort prüfen</div></div>
+      </div>
+
+      <!-- Interaktive Quiz-Items -->
+      <div class="quiz" data-quiz="pattern-erkennen" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="role">
+          <div class="qbody" data-nd='<em>„Du bist eine erfahrene Datenschutzbeauftragte. Antworte juristisch präzise, vermeide Werbesprache."</em>'><em>„Du bist Senior Backend-Engineer mit API-Fokus. Antworte präzise und technisch, kein Buzzword-Bingo."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Role</span> — Rolle &amp; Stil im System-Prompt.</div>
+        </div>
+
+        <div class="qitem" data-correct="format">
+          <div class="qbody" data-nd='<em>„Antworte ausschließlich als gültige Tabelle mit den Spalten <span class="mono">Titel</span>, <span class="mono">Zusammenfassung</span>, <span class="mono">Schlagworte</span> — kein Fließtext drumherum."</em>'><em>„Antworte ausschließlich als gültiges JSON für unsere API-Response: Felder <span class="mono">id</span>, <span class="mono">status</span>, <span class="mono">items</span> (array) — kein Prosa-Text drumherum."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Format</span> — strukturiertes Output-Schema, maschinell lesbar.</div>
+        </div>
+
+        <div class="qitem" data-correct="fewshot">
+          <div class="qbody" data-nd='<em>„Beispiel — Input: <span class="mono">„Kunde reklamiert verspätete Lieferung"</span> → Output: <span class="mono">Kategorie: Logistik, Prio: hoch</span>. Jetzt klassifiziere: …"</em>'><em>„Beispiel — Input: <span class="mono">„Logout 500 bei abgelaufenem Token"</span> → Output: <span class="mono">{area: auth, sev: high}</span>. Jetzt klassifiziere: …"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Few-Shot</span> — zeigt, statt zu beschreiben.</div>
+        </div>
+
+        <div class="qitem" data-correct="constraint">
+          <div class="qbody" data-nd='<em>„Maximal 3 Bullet-Points, je &le; 15 Wörter. Nutze nur Werte aus <span class="mono">niedrig | mittel | hoch</span>."</em>'><em>„Commit-Message: eine Headline &le; 50 Zeichen + max 3 Bullets. Typ nur aus <span class="mono">feat | fix | chore</span>."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Constraint</span> — harte Grenzen für Länge &amp; Wertebereich.</div>
+        </div>
+
+        <div class="qitem" data-correct="selfcheck">
+          <div class="qbody" data-nd='<em>„Erstelle den Text. Lies ihn danach selbst noch einmal durch: Länge eingehalten? Alle drei Felder da? Kein Marketing-Sprech? Bessere nach, was nicht passt — und gib erst dann die Endfassung aus."</em>'><em>„Schreib die Funktion. Geh den Diff danach selbst durch: kompiliert sie? Edge-Cases abgedeckt? Keine ungenutzten Imports? Erst dann gib den finalen Code aus."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Self-Check</span> — das Modell prüft den eigenen Entwurf gegen die Vorgaben, bevor es final antwortet.</div>
+        </div>
+
+        <div class="qitem" data-correct="role">
+          <div class="qbody" data-nd='<em>„Du bist erfahrene Lektorin für Geschäftsberichte. Knapp, sachlich, kein Marketing-Sprech. Wenn du unsicher bist, sag es."</em>'><em>„Du bist Senior-Reviewer für TypeScript. Knapp, technisch, kein Hype. Wenn du unsicher bist, sag es."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Role</span> — auch das „sag wenn unsicher" ist Teil der Rollenanweisung.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Welches Werkzeug ist hier wirklich wirksam?</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 10 ÜBUNG 1 — TOKEN-BUDGET ===================== -->
+  <section data-screen-label="08 Übung 2 Token-Budget">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow" style="margin: 44px 0 26px;">Aufgabe</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Wo fließen in einer langen Session die <span class="accent">meisten Tokens</span> hin?</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 20px;">Wählt die Antwort, die ihr für richtig haltet. Als Orientierung gilt: Was im Verlauf der Session wächst, verbraucht die meisten Tokens.</p>
+
+      <!-- Optionen-Rail -->
+      <div class="options-rail" style="margin-top: 14px;">
+        <div class="opt"><div class="opt-name">klein</div><div class="opt-tag">~10–500 Tokens</div></div>
+        <div class="opt"><div class="opt-name">mittel</div><div class="opt-tag">~1k–10k</div></div>
+        <div class="opt"><div class="opt-name">groß</div><div class="opt-tag">~10k–100k</div></div>
+        <div class="opt"><div class="opt-name">unbegrenzt</div><div class="opt-tag">wächst mit Zeit</div></div>
+        <div class="opt"><div class="opt-name">irrelevant</div><div class="opt-tag">vernachlässigbar</div></div>
+      </div>
+
+      <!-- Interaktive Fragen -->
+      <div class="quiz" data-quiz="token-budget" style="margin-top: 14px;">
+
+        <div class="qitem" data-correct="klein">
+          <div class="qbody"><strong>Der typische User-Prompt von 2 Zeilen</strong> — wie groß ist sein Token-Footprint?</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="klein">klein</button>
+            <button class="qchoice" data-key="mittel">mittel</button>
+            <button class="qchoice" data-key="gross">groß</button>
+            <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
+            <button class="qchoice" data-key="irrelevant">irrelevant</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ klein</span> — ~30–100 Tokens. Optimieren lohnt sich hier <em>nicht</em>.</div>
+        </div>
+
+        <div class="qitem" data-correct="mittel">
+          <div class="qbody" data-nd='<strong>Ein einzelnes 4-seitiges Dokument</strong> im Context.'><strong>Ein einzelnes 200-Zeilen-TS-File</strong> im Context.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="klein">klein</button>
+            <button class="qchoice" data-key="mittel">mittel</button>
+            <button class="qchoice" data-key="gross">groß</button>
+            <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
+            <button class="qchoice" data-key="irrelevant">irrelevant</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ mittel</span> — ~1.5–2.5k Tokens. Einzeln vertretbar, in Summe gefährlich.</div>
+        </div>
+
+        <div class="qitem" data-correct="gross">
+          <div class="qbody" data-nd='<strong>Die Beschreibungen von 80 verfügbaren Werkzeugen</strong> auf einmal in den Prompt geladen.'><strong>Tool-Schemas von 80 MCP-Tools</strong> auf einmal in den Prompt geladen.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="klein">klein</button>
+            <button class="qchoice" data-key="mittel">mittel</button>
+            <button class="qchoice" data-key="gross">groß</button>
+            <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
+            <button class="qchoice" data-key="irrelevant">irrelevant</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ groß</span> — schnell 10k+ Tokens. Lieber Tools dynamisch ein-/ausschalten.</div>
+        </div>
+
+        <div class="qitem" data-correct="unbegrenzt">
+          <div class="qbody"><strong>Die Conversation-History</strong> nach 1–2 h Hin-und-Her mit dem Agenten.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="klein">klein</button>
+            <button class="qchoice" data-key="mittel">mittel</button>
+            <button class="qchoice" data-key="gross">groß</button>
+            <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
+            <button class="qchoice" data-key="irrelevant">irrelevant</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ unbegrenzt</span> — der unterschätzte Token-Verbraucher. <em>Neuer Loop, Summary mitnehmen.</em></div>
+        </div>
+
+        <div class="qitem" data-correct="mittel">
+          <div class="qbody" data-nd='<strong>Dein System-Prompt + das Team-Briefing</strong> mit allen Dauer-Anweisungen — bei <em>jeder</em> Nachricht erneut mitgeschickt.'><strong>Dein System-Prompt + AGENTS.md</strong> mit allen Standing-Instructions — bei <em>jedem</em> Turn erneut gesendet.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="klein">klein</button>
+            <button class="qchoice" data-key="mittel">mittel</button>
+            <button class="qchoice" data-key="gross">groß</button>
+            <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
+            <button class="qchoice" data-key="irrelevant">irrelevant</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ mittel</span> — fix pro Turn (~paar hundert–2k Tokens), aber jedes Mal aufs Neue. <em>Einmal knapp schreiben lohnt sich.</em></div>
+        </div>
+
+        <div class="qitem" data-correct="irrelevant">
+          <div class="qbody"><strong>Höflichkeitsfloskeln, Leerzeilen und Einrückung</strong> im Prompt — wie stark belasten sie das Budget?</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="klein">klein</button>
+            <button class="qchoice" data-key="mittel">mittel</button>
+            <button class="qchoice" data-key="gross">groß</button>
+            <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
+            <button class="qchoice" data-key="irrelevant">irrelevant</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ irrelevant</span> — eine Handvoll Tokens. Weder für Kosten noch Qualität der Mühe wert.</div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Was im Verlauf der Session wächst, verbraucht die meisten Tokens.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 11 ÜBUNG 2 — WELCHES PATTERN WOFÜR ===================== -->
+  <section data-screen-label="09 Übung 3 Pattern wofür">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Aufgabe</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Welches Pattern fixt jeweils das <span class="accent">konkrete Symptom</span>?</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">Jedes Zitat beschreibt ein wiederkehrendes Symptom. Klick das Pattern, das es zuverlässig behebt.</p>
+
+      <!-- Optionen-Rail -->
+      <div class="options-rail" style="grid-template-columns: repeat(5, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Role</div><div class="opt-tag">Stil &amp; Ton</div></div>
+        <div class="opt"><div class="opt-name">Few-Shot</div><div class="opt-tag">Beispiele</div></div>
+        <div class="opt"><div class="opt-name">Format</div><div class="opt-tag">Struktur</div></div>
+        <div class="opt"><div class="opt-name">Constraint</div><div class="opt-tag">Grenzen</div></div>
+        <div class="opt"><div class="opt-name">Self-Check</div><div class="opt-tag">Selbstprüfung</div></div>
+      </div>
+
+      <!-- Quiz -->
+      <div class="quiz" data-quiz="pattern-wofuer" style="margin-top: 18px;">
+
+        <div class="qitem" data-correct="format">
+          <div class="qbody" data-nd='<em>„Wir brauchen zuverlässig eine <strong>feste Tabellenstruktur</strong> für die Weiterverarbeitung. Mal kommt sie als Tabelle, mal als Fließtext mit Erklärungen drumherum."</em>'><em>„Wir brauchen zuverlässig <strong>parsbares JSON</strong> für eine downstream-Pipeline. Mal kommt es als JSON, mal als Markdown mit Erklärtext drumherum."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Format</span> — explizites Schema vorgeben, z. B. feste Spalten und Reihenfolge.'><span class="ok">✓ Format</span> — explizites Schema vorgeben, ggf. XML-Tags um die JSON-Antwort.</div>
+        </div>
+
+        <div class="qitem" data-correct="role">
+          <div class="qbody" data-nd='<em>„Antworten <strong>driften ständig in Marketing-Sprech</strong> ab — ‚nahtlos integriert’, ‚Game-Changer’…"</em>'><em>„PR-Reviews und Code-Kommentare <strong>driften ständig in Marketing-Sprech</strong> ab — ‚elegant’, ‚robust’, ‚nahtlos’…"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Role</span> — Persona + Ton im System-Prompt schärfen, „kein Marketing-Sprech".</div>
+        </div>
+
+        <div class="qitem" data-correct="fewshot">
+          <div class="qbody" data-nd='<em>„Eine seltene <strong>Sonderfall-Einstufung</strong> trifft das Modell nie zuverlässig. Wir haben 3 echte Beispiele in der Ablage."</em>'><em>„Eine seltene <strong>Edge-Case-Klassifizierung</strong> trifft das Modell nie zuverlässig. Wir haben 3 echte Beispiele in der DB."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Few-Shot</span> — 3 reale Beispiele &gt; jede längere Beschreibung.</div>
+        </div>
+
+        <div class="qitem" data-correct="constraint">
+          <div class="qbody" data-nd='<em>„Antworten werden im Schnitt <strong>3× so lang wie nötig</strong>. Wir wollen kompakte Zusammenfassungen, keine Aufsätze."</em>'><em>„Antworten werden im Schnitt <strong>3× so lang wie nötig</strong>. Wir wollen kompakte Tickets, keine Aufsätze."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Constraint</span> — harte Länge: „max 3 Bullets, je &le; 15 Wörter".</div>
+        </div>
+
+        <div class="qitem" data-correct="selfcheck">
+          <div class="qbody" data-nd='<em>„Trotz klarer Vorgaben rutschen <strong>vereinzelt Formatfehler und vergessene Felder</strong> durch — das fällt der Antwort meist sofort auf."</em>'><em>„Trotz klarer Vorgaben rutschen <strong>vereinzelt Syntaxfehler und vergessene Null-Checks</strong> durch — das sieht man dem Diff meist sofort an."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Self-Check</span> — das Modell vor der finalen Antwort selbst gegen die Kriterien prüfen lassen.</div>
+        </div>
+
+        <div class="qitem" data-correct="fewshot">
+          <div class="qbody" data-nd='<em>„Texte sollen <strong>exakt unseren Hausstil</strong> treffen — der lässt sich kaum in Regeln fassen, aber wir haben 3 Beispiele, die genau so klingen."</em>'><em>„Commit-Messages und Changelogs sollen <strong>exakt unseren Hausstil</strong> treffen — der lässt sich kaum in Regeln fassen, aber wir haben 3 Einträge, die genau so klingen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Few-Shot</span> — schwer beschreibbarer Stil? 3 echte Beispiele schlagen jede Stilregel. <span style="color: var(--ink-3);">(Verlockung: Role.)</span></div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Erst Symptom benennen, dann Pattern wählen.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 11A ÜBUNG SKILL-BUILDER (aus der Übungs-Sammlung) ===================== -->
+  <section data-screen-label="10a Übung Skill-Builder" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">IDE-Ansicht · on-demand statt always-on</div>
+      <h2 class="title">Was als <span class="accent">Skill</span> existiert, muss nicht in AGENTS.md.</h2>
+      <p class="ex-instructions" style="margin-top: 6px;">
+        Wähle ein Skill-Szenario. Die Token-Bilanz rechts zeigt: <strong>always-on (alle Chat-Nachrichten)</strong> vs <strong>on-demand (nur Trigger)</strong>. Pro Monat verbrennt ein „immer-an"-Skill schnell die Million.
+      </p>
+
+      <div class="ex-stage ide-stage" id="ex-skill-builder">
+        <div class="ide-tree" id="skill-tree"></div>
+        <div class="ide-viewer">
+          <div class="ide-viewer-tab" id="skill-viewer-tab"></div>
+          <div class="ide-viewer-content" id="skill-viewer-content"></div>
+        </div>
+        <div class="ide-builder">
+          <div class="ide-builder-section scenarios">
+            <div class="ide-builder-label">Beschreib eine Skill</div>
+            <div id="skill-scenarios"></div>
+          </div>
+          <div class="ide-analysis" id="skill-analysis"></div>
+          <div class="ide-insight" id="skill-insight"></div>
+          <div class="ide-actions">
+            <button class="btn accent" id="skill-create" disabled>↳ Skill erzeugen</button>
+            <button class="btn ghost" id="skill-reset">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 08 PRAXIS · PAIR PROMPT-REFACTORING ===================== -->
+  <section data-screen-label="12 Praxis Pair Refactoring" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Praxis</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Echte Praxis — vager Prompt → produktionsreifer Prompt</div>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 6px;">Refactored einen <span class="accent">schlechten Prompt</span> in drei Iterationen.</h2>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 28px; margin: 0;">
+        <p class="body" style="margin: 0; max-width: 1300px; font-size: 19px;">
+          15 Min Refactoren · 5 Min Debrief. Driver tippt, Navigator ist „Prompt-Doctor" — fragt, blockt, verbessert.
+        </p>
+        <button class="ex-eg-btn" type="button" data-eg-open="eg-refactor" style="flex: none;">Beispiel-Runde ansehen</button>
+      </div>
+
+      <!-- Setup · schmale Leiste -->
+      <div class="setup-bar">
+        <span class="s-tag">Setup · 2 min</span>
+        <span class="s-step"><span class="s-num">1</span> Paarbildung</span>
+        <span class="s-step"><span class="s-num">2</span> Vagen Prompt unten links wählen</span>
+        <span class="s-step"><span class="s-num">3</span> Test-Input wählen <span style="color: var(--ink-3);">· z.&nbsp;B. eine echte Kundenzeile</span></span>
+        <span class="s-step"><span class="s-num">4</span> Timer
+          <span class="timer" data-seconds="900">
+            <span class="t-display mono">15:00</span>
+            <button class="t-btn t-toggle" type="button">Start</button>
+            <button class="t-btn t-reset" type="button">Reset</button>
+          </span>
+        </span>
+      </div>
+
+      <!-- Rollen -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px;">
+        <div class="role-card">
+          <div class="r-tag">Rolle · Driver</div>
+          <div class="r-name">Driver</div>
+          <div class="r-sub">tippt &amp; testet</div>
+          <div class="r-body">
+            Schreibt V1 → V2 → V3 und testet jede gegen denselben Input.
+          </div>
+        </div>
+        <div class="role-card">
+          <div class="r-tag">Rolle · Navigator</div>
+          <div class="r-name">Prompt-Doctor</div>
+          <div class="r-sub">fragt die 4 Tore</div>
+          <div class="r-body">
+            Blockt jede neue Version, bis sie ein offenes Tor schließt — bis alle vier sitzen. Darf <em>nicht</em> selbst tippen.
+          </div>
+        </div>
+      </div>
+
+      <!-- Kern-Loop · ein Satz, der Rollen × Tore × Versionen bindet -->
+      <div class="loop-line">
+        <span class="ll-tag">Pro Runde · der Move</span>
+        <div class="ll-body">
+          <strong>Doctor stellt das nächste Tor</strong> <span class="ll-arrow">→</span> <strong>Driver schreibt die nächste Version</strong>, die es beantwortet <span class="ll-arrow">→</span> gegen denselben Test-Input prüfen <span class="ll-arrow">→</span> wiederholen, bis <strong>alle 4 Tore</strong> sitzen.
+        </div>
+      </div>
+
+      <!-- Tore + Tasks -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; flex: 1; min-height: 0;">
+
+        <div class="card dark" style="padding: 18px 24px; display: flex; flex-direction: column; order: 2;">
+          <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Spielregel · die 4 Tore des Prompt-Doctors</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px; margin-bottom: 10px;">Vor jeder neuen Version &middot; laut fragen.</div>
+          <div class="gate-list">
+            <div class="gate-item">
+              <div class="g-num">01</div>
+              <div class="g-body">
+                <strong>Role:</strong> „Wer soll hier reden?"
+                <em>→ Wenn nichts steht, ist die Antwort generisch.</em>
+              </div>
+            </div>
+            <div class="gate-item">
+              <div class="g-num">02</div>
+              <div class="g-body">
+                <strong>Format:</strong> „In welcher Form kommt der Output?"
+                <em>→ JSON · XML-Tags · Bullets · Tabelle?</em>
+              </div>
+            </div>
+            <div class="gate-item">
+              <div class="g-num">03</div>
+              <div class="g-body">
+                <strong>Few-Shot:</strong> „Wo sind 1–2 Beispiele?"
+                <em>→ Wenn keins da ist, halluziniert das Modell den Stil.</em>
+              </div>
+            </div>
+            <div class="gate-item">
+              <div class="g-num">04</div>
+              <div class="g-body">
+                <strong>Constraint:</strong> „Was sind die Grenzen?"
+                <em>→ Länge, Tonalität, erlaubte Werte.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks + Debrief -->
+        <div style="display: grid; grid-template-rows: auto auto; gap: 10px; min-height: 0; order: 1;">
+
+          <div class="card" style="padding: 13px 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline;">
+              <div>
+                <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Vage Prompts · wählt einen</div>
+                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500;">Refactored in V1 → V2 → V3</div>
+              </div>
+              <span class="pill outline" style="font-size: 11px;">absichtlich vage</span>
+            </div>
+            <div style="margin-top: 10px;">
+              <div class="task-row">
+                <div class="t-letter">A</div>
+                <div class="t-body"><strong>„Schreib mir eine Mail an einen unzufriedenen Kunden."</strong></div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">B</div>
+                <div class="t-body"><strong>„Fasse das Meeting-Protokoll zusammen."</strong></div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">C</div>
+                <div class="t-body"><strong>„Klassifiziere diesen Support-Ticket-Text."</strong></div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">D</div>
+                <div class="t-body"><strong>„Schreib einen Release-Note-Eintrag aus diesem Diff."</strong></div>
+              </div>
+              <div class="task-row">
+                <div class="t-letter">E</div>
+                <div class="t-body"><strong>Ein vager Prompt aus eurem eigenen Alltag.</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 11px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Debrief · 5 min in der Runde</div>
+            <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; margin-top: 2px;">Drei Fragen</div>
+            <ul style="font-size: 16px; line-height: 1.35; color: var(--ink-2); margin: 3px 0 0; padding-left: 22px;">
+              <li>Welche <strong>Iteration</strong> hat <strong>am meisten</strong> gebracht — V1→V2 oder V2→V3?</li>
+              <li>Wo war ein Few-Shot-Beispiel <strong>besser als 100 Worte Instruktion</strong>?</li>
+              <li>Was wäre euer Test, ob V3 <strong>wirklich</strong> besser ist als V1?</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Beispielaufgabe · gespielte Runde (wer sagt was · Learning) -->
+    <div class="ex-eg-backdrop" id="eg-refactor">
+      <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel-Runde">
+        <div class="ex-eg-head">
+          <div>
+            <div class="eg-eyebrow">Beispiel-Runde · so klingt eine Iteration</div>
+            <div class="eg-title">Beispiel-Runde: <span class="accent">Kundenmail</span> von V1 zu V3</div>
+          </div>
+          <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
+        </div>
+        <div class="ex-eg-body">
+          <div class="eg-script">
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 1 · Role</span></div><div class="eg-say">V1 ist nur „Schreib eine Mail.“ Als <strong>wer</strong> schreibt das Modell — und an wen?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">V2: „Du bist Support-Lead. Antworte einem Kunden, dessen Lieferung 5 Tage zu spät ist.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 2 · Format</span></div><div class="eg-say" data-nd="In welcher Form? Mit Betreff? Wie lang darf die Mail sein?">In welcher Form? Betreff dabei — strukturiert in Absätze, wie lang?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">Ergänzt: „Betreff + drei kurze Absätze, max. 120 Wörter.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 3 · Few-Shot</span></div><div class="eg-say">Woran erkennt das Modell <strong>unseren</strong> Ton? Zeig ihm ein Beispiel.</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="V3: einen Beispiel-Absatz in unserem Stil drangehängt — daran orientiert sich das Modell.">V3: einen Beispiel-Absatz im Firmen-Ton drangehängt, plus ein Gegenbeispiel, das wir vermeiden.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 4 · Constraint</span></div><div class="eg-say">Was darf <strong>nicht</strong> passieren?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">„Keine Rabatte versprechen, keine Schuldzuweisung — genau ein nächster Schritt mit Termin.“</div></div>
+          </div>
+          <div class="eg-aside">
+            <div class="eg-setup">
+              <div class="eg-setup-label">Die Aufgabe</div>
+              <div class="eg-setup-task"><strong>Aufgabe A</strong> — aus „Schreib mir eine Mail an einen unzufriedenen Kunden“ einen Prompt machen, der zuverlässig liefert. V1 → V2 → V3 in 15 Minuten.</div>
+            </div>
+            <div class="eg-learning">
+              <div class="eg-learning-label">Das Learning</div>
+              <div class="eg-learning-text">Derselbe Wunsch — drei Versionen. Der Prompt-Doctor hat nie selbst getippt, nur an <strong>vier Stellen</strong> „Stopp“ gesagt. V1 war eine Hoffnung, V3 ist eine Spezifikation: <em>Rolle, Format, Beispiel, Grenze.</em> Genau diese vier Fragen trennen einen vagen Prompt von einem, der zuverlässig liefert.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== 14 PRAXISBEISPIEL · ECHTE AGENTS.md ===================== -->
+  <section data-screen-label="13 Praxis AGENTS.md" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Konkret: eine AGENTS.md, die funktioniert</div>
+      <h2 class="title" style="font-size: 48px; margin-bottom: 20px;">So sieht eine <span class="accent">gute AGENTS.md</span> aus.</h2>
+
+      <!-- 2 Spalten: Beispiel + Was rein, was nicht -->
+      <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 22px;">
+
+        <!-- Beispiel-Code -->
+        <div class="card dark" style="padding: 0; overflow: hidden;">
+          <div style="padding: 12px 22px; border-bottom: 1px solid rgba(255,255,255,0.10); display: flex; justify-content: space-between; align-items: center;">
+            <span class="mono" style="font-size: 13px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;" data-nd="TEAM-BRIEFING">AGENTS.md</span>
+            <span class="mono" style="font-size: 12px; color: #c8c2b6;" data-nd="kurz · Redaktions-Team">~480 tokens · TS/Node-Repo</span>
+          </div>
+          <pre style="margin: 0; padding: 18px 22px; font-family: var(--mono); font-size: 14px; line-height: 1.55; color: #d8d2c5; white-space: pre-wrap;" data-nd='<span style="color: var(--accent-soft);"># Acme Redaktion</span><br><br><span style="color: var(--accent-soft);">## Kanäle</span><br>Newsletter · Blog · LinkedIn · internes Wiki<br><br><span style="color: var(--accent-soft);">## Routine-Aufgaben</span><br>- <span style="color: #f0a868;">Entwurf</span>    — erst Gliederung, dann Text<br>- <span style="color: #f0a868;">Korrektur</span>  — Duden-konform, Pflicht vor Freigabe<br>- <span style="color: #f0a868;">Freigabe</span>   — nichts ohne 4-Augen-Prinzip raus<br><br><span style="color: var(--accent-soft);">## Stil</span><br>- <span style="color: #7fc488;">Sie-Form</span>, kein Marketing-Sprech<br>- Markenname immer „Acme“, nie „ACME“<br>- max. <span style="color: #7fc488;">1 Ausrufezeichen</span> pro Absatz<br>- Texte über 300 Wörter: Zwischenüberschriften<br><br><span style="color: var(--accent-soft);">## Harte Regeln</span><br>- NIE Preise oder Zahlen <span style="color: #f0a868;">erfinden</span> — nur aus Faktenblatt<br>- NIE Kundennamen ohne Freigabe nennen<br>- Jede Zahl mit Quelle belegen<br><br><span style="color: var(--accent-soft);">## Annahmen, die du treffen darfst</span><br>- Zielgruppe: B2B, fachkundig<br>- Tonalität laut Markenhandbuch Kapitel 2'><span style="color: var(--accent-soft);"># Acme API</span>
+
+<span style="color: var(--accent-soft);">## Stack</span>
+Node 22 · TypeScript strict · Fastify · Postgres · Vitest
+
+<span style="color: var(--accent-soft);">## Commands</span>
+- <span style="color: #f0a868;">pnpm dev</span>       — local server (port 3000)
+- <span style="color: #f0a868;">pnpm test</span>      — vitest, must be green before commit
+- <span style="color: #f0a868;">pnpm lint</span>      — eslint + prettier, no warnings allowed
+- <span style="color: #f0a868;">pnpm db:migrate</span> — drizzle migrations
+
+<span style="color: var(--accent-soft);">## Style</span>
+- <span style="color: #7fc488;">tabs</span>, not spaces (legacy reasons, do not "fix")
+- error classes in <span style="color: #f0a868;">src/errors/</span>, NEVER throw plain Error
+- prefer <span style="color: #f0a868;">Result&lt;T,E&gt;</span> over try/catch in business logic
+- file size cap: <span style="color: #7fc488;">300 LOC</span>; split otherwise
+
+<span style="color: var(--accent-soft);">## Hard rules</span>
+- NEVER edit <span style="color: #f0a868;">migrations/</span> after merge — add new migration
+- NEVER call external APIs from <span style="color: #f0a868;">src/domain/</span> — stays pure
+- ALL routes go through <span style="color: #f0a868;">withRateLimit()</span>
+
+<span style="color: var(--accent-soft);">## Conventions you can assume</span>
+- vitest BDD style, <span style="color: #f0a868;">describe/it</span>, no jest globals
+- env vars validated in <span style="color: #f0a868;">src/config/env.ts</span></pre>
+        </div>
+
+        <!-- Was gehört rein, was nicht -->
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="card" style="padding: 16px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">+ Gehört rein</div>
+            <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+              <li>Stack &amp; wichtigste Commands</li>
+              <li>Repo-spezifische Konventionen</li>
+              <li data-nd='<strong>Harte Regeln</strong> („NIE Preise erfinden“)'><strong>Harte Regeln</strong> („NIE direkt Postgres-Connection")</li>
+              <li data-nd="Annahmen, die ein neuer Kollege wissen müsste">Annahmen, die ein neuer Dev wissen müsste</li>
+            </ul>
+          </div>
+          <div class="card" style="padding: 16px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">− Gehört NICHT rein</div>
+            <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
+              <li>Onboarding-Roman, Firmen-Vision</li>
+              <li data-nd="lange Beispieltexte (→ Vorlage)">Code-Beispiele (&rarr; Skill oder README)</li>
+              <li>Daten, die sich oft ändern (Versionen, URLs)</li>
+              <li>Persönliche Vorlieben ohne Begründung</li>
+            </ul>
+          </div>
+          <div class="card" style="padding: 16px 22px;">
+            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Faustregel</div>
+            <div style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin-top: 8px;">
+              Knapp, repo-spezifisch, kein Onboarding-Roman. Stil, Commands, harte Regeln — alles, was der Agent bei <em>jeder</em> Nachricht braucht, und nichts mehr.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 19px;">
+          Eine AGENTS.md ist <strong>kein Wiki</strong>, sondern was der Agent <em>bei jeder</em> Nachricht wissen muss. Alles andere gehört nach Skill, Memory oder MCP.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 15 CHEAT SHEET ===================== -->
+  <section data-screen-label="14 Cheat Sheet" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="cs-head-row">
+        <div class="cs-head-main">
+          <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
+          <h2 class="title" style="font-size: 56px; margin-bottom: 6px;">Prompting &amp; Context auf <span class="accent">einer Seite</span>.</h2>
+          <p class="body" style="margin: 0; max-width: 1100px; font-size: 19px;">
+            Die vier Anatomie-Teile, die fünf Patterns als kurze Daumenregeln, plus drei Wenn/Dann-Reflexe — abfotografieren oder ausdrucken.
+          </p>
+        </div>
+        <div class="cs-emblem" aria-hidden="true">
+          <div class="cw-head"><span>Context-Window</span><span class="cw-used">87k / 200k</span></div>
+          <div class="cw-bar"><i class="cwb-always"></i><i class="cwb-od"></i></div>
+          <div class="cw-grid">
+            <span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c"></span><span class="cw-c"></span>
+            <span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span>
+          </div>
+          <div class="cw-leg">
+            <span><i></i>Immer geladen</span>
+            <span class="lod"><i></i>On-demand</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anatomie + Patterns als Karten -->
+      <div class="cs-grid">
+        <div class="cs-card">
+          <div class="cs-num">01</div>
+          <div class="cs-name">System</div>
+          <div class="cs-row">
+            <div class="cs-label">Pattern</div>
+            <div class="cs-val mono">Role &middot; Persona</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Wirkung</div>
+            <div class="cs-val">setzt Stil &amp; Ton — gilt für alle Turns</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">generisch, Marketing-Sprech, Stil-Drift</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>1 Satz Persona, 1 Satz „so nicht".</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">02</div>
+          <div class="cs-name">User</div>
+          <div class="cs-row">
+            <div class="cs-label">Pattern</div>
+            <div class="cs-val mono">Few-Shot &middot; Beispiele</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Wirkung</div>
+            <div class="cs-val">3 Beispiele schlagen 500 Worte Anweisung</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">Edge-Cases gehen schief, Stil halluziniert</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Zeigen statt erzählen.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">03</div>
+          <div class="cs-name">Output</div>
+          <div class="cs-row">
+            <div class="cs-label">Pattern</div>
+            <div class="cs-val mono" data-nd="Format + Vorgabe">Format + Constraint</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Wirkung</div>
+            <div class="cs-val">macht maschinell-lesbar, begrenzt ausufernde Antworten</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val">Pipeline bricht, Outputs zu lang</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val" data-nd="&lt;strong&gt;Feste Vorlage / Tabelle + harte Länge.&lt;/strong&gt;"><strong>JSON-Schema oder XML-Tags + harte Länge.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">04</div>
+          <div class="cs-name">Context</div>
+          <div class="cs-row">
+            <div class="cs-label">Pattern</div>
+            <div class="cs-val mono" data-nd="Selbst-Check &middot; Wissen bei Bedarf">Self-Check &middot; Just-in-Time</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Wirkung</div>
+            <div class="cs-val">gezielt geladenes Wissen, vor-Antwort-Prüfung</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-val" data-nd="überladener Context, vergessene Anweisungen">Token-Pollution, vergessene Anweisungen</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent-soft);">Daumenregel</div>
+            <div class="cs-val" data-nd="&lt;strong&gt;Ausschnitte &gt; ganze Dokumente. Vorlage &gt; Riesen-Prompt.&lt;/strong&gt;"><strong>Snippets &gt; ganze Files. Skill &gt; Riesen-Prompt.</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Heuristiken -->
+      <div style="margin-top: 22px;">
+        <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Wenn / Dann · drei Workshop-Reflexe</div>
+        <div class="cs-rules">
+          <div class="cs-rule">
+            <div class="r-when">Wenn der Stil ständig driftet</div>
+            <div class="r-then"><strong>Role schärfen.</strong> Persona präziser, Tabu-Liste konkreter.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn das Modell halluziniert</div>
+            <div class="r-then"><strong>Few-Shot statt mehr Instruktion.</strong> 1–3 reale Beispiele &gt; 100 Worte.</div>
+          </div>
+          <div class="cs-rule">
+            <div class="r-when">Wenn der Context explodiert</div>
+            <div class="r-then" data-nd="&lt;strong&gt;Vorlage statt Riesen-Prompt.&lt;/strong&gt; Bei Bedarf laden, nicht auf Vorrat."><strong>Skill statt Riesen-Prompt.</strong> On-demand laden, nicht just-in-case.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
+        <div class="callout-label">Take-away</div>
+        <div class="callout-body" style="font-size: 19px;">
+          <strong>Prompting + Context Engineering ist eine Disziplin</strong>, kein Geheimwissen. Vier Anatomie-Teile, fünf Patterns, ein knappes Token-Budget — mehr braucht es 2026 nicht.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</deck-stage>
+
+<script>
+  // ============ Interaktiver Wissenscheck ============
+  (function() {
+    // Begründungs-Tag wie in den anderen Quizzes:
+    //   Richtig · LABEL   /   Daneben · richtig wäre LABEL   /   Lösung · LABEL
+    function labelOfCorrect(item) {
+      var correct = item.getAttribute('data-correct');
+      var ok = item.querySelector('.qchoice[data-key="' + correct + '"]');
+      return ok ? ok.textContent.trim() : correct;
+    }
+    function setFb(item, mode) {
+      var fb = item.querySelector('.qfb');
+      if (!fb) return;
+      var span = fb.querySelector('span');
+      if (!span) return;
+      var label = labelOfCorrect(item);
+      if (mode === 'no') {
+        span.className = 'no';
+        span.textContent = 'Daneben · richtig wäre ' + label;
+      } else if (mode === 'reveal') {
+        span.className = 'ok';
+        span.textContent = 'Lösung · ' + label;
+      } else {
+        span.className = 'ok';
+        span.textContent = 'Richtig · ' + label;
+      }
+    }
+
+    // ---- Übung 1 + 2: Quiz mit mehreren Fragen pro Folie ----
+    document.querySelectorAll('.quiz').forEach(function(quiz) {
+      var items = quiz.querySelectorAll('.qitem');
+      var slide = quiz.closest('section');
+      var statusEl = slide && slide.querySelector('.reveal-status .score');
+
+      function updateScore() {
+        if (!statusEl) return;
+        var answered = quiz.querySelectorAll('.qitem.answered').length;
+        statusEl.textContent = answered;
+      }
+
+      items.forEach(function(item) {
+        var correct = item.getAttribute('data-correct');
+        item.querySelectorAll('.qchoice').forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (item.classList.contains('answered')) return;
+            var key = btn.getAttribute('data-key');
+            if (key === correct) {
+              btn.classList.add('picked-ok');
+              setFb(item, 'ok');
+            } else {
+              btn.classList.add('picked-no');
+              // markiere die richtige zur Aufklärung
+              var ok = item.querySelector('.qchoice[data-key="' + correct + '"]');
+              if (ok) ok.classList.add('show-ok');
+              setFb(item, 'no');
+            }
+            item.classList.add('answered');
+            updateScore();
+          });
+        });
+      });
+    });
+
+    // ---- Übung 3 + 4: Single-Choice mit Karten ----
+    document.querySelectorAll('.mcq-grid').forEach(function(grid) {
+      var correct = grid.getAttribute('data-correct');
+      var slide = grid.closest('section');
+      var explain = slide && slide.querySelector('[data-explain]');
+
+      grid.querySelectorAll('.mcq').forEach(function(card) {
+        card.addEventListener('click', function() {
+          if (grid.classList.contains('answered')) return;
+          var key = card.getAttribute('data-key');
+          if (key === correct) {
+            card.classList.add('picked-ok');
+          } else {
+            card.classList.add('picked-no');
+            var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+            if (ok) ok.classList.add('show-ok');
+          }
+          grid.classList.add('answered');
+          if (explain) explain.classList.add('open');
+        });
+      });
+    });
+
+    // ---- Reveal-Buttons: alle Antworten auf der Folie aufdecken ----
+    document.querySelectorAll('[data-action="reveal"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        // Übung 1 + 2
+        slide.querySelectorAll('.qitem:not(.answered)').forEach(function(item) {
+          var correct = item.getAttribute('data-correct');
+          var ok = item.querySelector('.qchoice[data-key="' + correct + '"]');
+          if (ok) ok.classList.add('show-ok');
+          setFb(item, 'reveal');
+          item.classList.add('answered');
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) {
+          statusEl.textContent = slide.querySelectorAll('.qitem.answered').length;
+        }
+
+        // Übung 3 + 4
+        slide.querySelectorAll('.mcq-grid:not(.answered)').forEach(function(grid) {
+          var correct = grid.getAttribute('data-correct');
+          var ok = grid.querySelector('.mcq[data-key="' + correct + '"]');
+          if (ok) ok.classList.add('show-ok');
+          grid.classList.add('answered');
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.add('open');
+      });
+    });
+
+    // ---- Reset-Buttons: alles auf Folie zurücksetzen ----
+    document.querySelectorAll('[data-action="reset"]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var slide = btn.closest('section');
+        if (!slide) return;
+
+        slide.querySelectorAll('.qitem').forEach(function(item) {
+          item.classList.remove('answered');
+          item.querySelectorAll('.qchoice').forEach(function(b) {
+            b.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var statusEl = slide.querySelector('.reveal-status .score');
+        if (statusEl) statusEl.textContent = '0';
+
+        slide.querySelectorAll('.mcq-grid').forEach(function(grid) {
+          grid.classList.remove('answered');
+          grid.querySelectorAll('.mcq').forEach(function(c) {
+            c.classList.remove('picked-ok', 'picked-no', 'show-ok');
+          });
+        });
+        var explain = slide.querySelector('[data-explain]');
+        if (explain) explain.classList.remove('open');
+      });
+    });
+
+    // ---- Pfeil-/Tastatur-Nav nicht abfangen, wenn auf Button geklickt wird ----
+    // (die Buttons absorbieren Klicks bereits — kein Fokus-Loop nötig)
+
+  })();
+</script>
+<script>
+  // ---- Interaktiver Praxis-Timer (Setup-Leiste, Folie 08) ----
+  (function () {
+    document.querySelectorAll('.setup-bar .timer').forEach(function (timer) {
+      var total = parseInt(timer.getAttribute('data-seconds'), 10) || 900;
+      var remaining = total;
+      var tick = null;
+      var display = timer.querySelector('.t-display');
+      var toggle = timer.querySelector('.t-toggle');
+      var reset = timer.querySelector('.t-reset');
+
+      function fmt(s) {
+        var m = Math.floor(s / 60);
+        var sec = s % 60;
+        return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+      }
+      function render() { display.textContent = fmt(remaining); }
+      function stop() {
+        if (tick) { clearInterval(tick); tick = null; }
+        toggle.textContent = 'Start';
+        toggle.setAttribute('data-running', 'false');
+        display.classList.remove('running');
+      }
+      function start() {
+        if (tick || remaining <= 0) return;
+        toggle.textContent = 'Stop';
+        toggle.setAttribute('data-running', 'true');
+        display.classList.add('running');
+        display.classList.remove('done');
+        tick = setInterval(function () {
+          remaining -= 1;
+          if (remaining <= 0) {
+            remaining = 0;
+            render();
+            stop();
+            display.classList.add('done');
+            return;
+          }
+          render();
+        }, 1000);
+      }
+
+      toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (tick) stop(); else start();
+      });
+      reset.addEventListener('click', function (e) {
+        e.stopPropagation();
+        stop();
+        remaining = total;
+        display.classList.remove('done');
+        render();
+      });
+      render();
+    });
+  })();
+</script>
+<script src="exercises/token-tally.js"></script>
+<script src="exercises/connection-graph.js"></script>
+<script src="exercises/system-doctor.js"></script>
+<script src="exercises/skill-doctor.js"></script>
+<script src="exercises/user-doctor.js"></script>
+<script src="exercises/skill-builder.js"></script>
+<script src="exercises/role-switch.js"></script>
+<script src="exercises/example-task.js"></script>
+</body>
+</html>
