@@ -118,7 +118,7 @@
   function add(f) { return role === 'nondev' ? f.addition_nd : f.addition; }
 
   function render() {
-    solveBtn.textContent = revealed ? 'Lösung ausblenden' : 'Auflösen';
+    solveBtn.textContent = revealed ? 'Bearbeiten' : 'Prüfen';
     var b = BRIEF[role === 'nondev' ? 'nondev' : 'dev'];
     briefEl.innerHTML =
       '<div class="doctor-brief-goal">' + b.goal + '</div>';
@@ -274,10 +274,8 @@
   });
 
   solveBtn.addEventListener('click', function () {
+    // Prüfen = die EIGENE Auswahl bewerten (nicht überschreiben). Erneut: zurück zum Bearbeiten.
     revealed = !revealed;
-    if (revealed) {
-      FIXES.forEach(function (f) { state[f.id] = !!f.recommended; });
-    }
     render();
   });
 

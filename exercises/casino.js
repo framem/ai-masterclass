@@ -35,6 +35,19 @@
         { token: ' direkt',      logit: 4.8, completion: ': „Nein. Das ist eine schlechte Idee, weil ..."' },
         { token: ' und',         logit: 4.3, completion: ' fragte zurück, was genau er denn meine.' }
       ]
+    },
+    {
+      id: 'flat',
+      kind: 'Offen · flache Verteilung',
+      prompt: 'Mein Lieblingstier ist',
+      shape: [23, 21, 20, 19, 17],
+      candidates: [
+        { token: ' der',     logit: 4.4, completion: ' Hund — treu, verspielt und immer gut gelaunt.' },
+        { token: ' die',     logit: 4.3, completion: ' Katze, weil sie so eigensinnig und elegant ist.' },
+        { token: ' das',     logit: 4.2, completion: ' Pferd — kraftvoll und doch unglaublich sanft.' },
+        { token: ' ein',     logit: 4.1, completion: ' Delfin: verspielt, klug und sozial.' },
+        { token: ' mein',    logit: 4.0, completion: ' Wellensittich, der den ganzen Tag fröhlich pfeift.' }
+      ]
     }
   ];
 

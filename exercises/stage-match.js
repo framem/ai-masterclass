@@ -26,49 +26,49 @@
         text: 'Korrigiere einen Tippfehler in einer Fehlermeldung.',
         meta: 'eindeutig · winzig',
         correct: 'cmd',
-        why: 'Eindeutig und winzig. Ein Satz genügt, kein Plan nötig — <b>Befehl</b>.'
+        why: 'Eindeutig und winzig. Ein Satz genügt, kein Plan nötig.'
       },
       {
         text: 'Baue ein neues Auth-Feature über fünf Dateien — beim Vorgehen bist du unsicher.',
         meta: 'mehrteilig · Unsicherheit',
         correct: 'plan',
-        why: 'Mehrere Dateien + Unsicherheit. Lass dir das Vorgehen vor dem Code zeigen — <b>Plan</b>.'
+        why: 'Mehrere Dateien + Unsicherheit. Lass dir das Vorgehen vor dem Code zeigen.'
       },
       {
         text: 'Bring die rote CI-Pipeline wieder grün — die Tests sind verlässlich.',
         meta: 'klares Ziel · starke Guardrails',
         correct: 'goal',
-        why: 'Klares Ziel + verlässliche Tests als Guardrail. Lass den Loop laufen, prüf den PR — <b>Ziel</b>.'
+        why: 'Klares Ziel + verlässliche Tests als Guardrail. Lass den Loop laufen, prüf den PR.'
       },
       {
         text: 'Benenne eine Funktion um — du weißt genau, wo sie überall vorkommt.',
         meta: 'präzise · mechanisch',
         correct: 'cmd',
-        why: 'Präzise und mechanisch. Direkt ansagen — <b>Befehl</b>.'
+        why: 'Präzise und mechanisch. Direkt ansagen.'
       },
       {
         text: 'Plane ein größeres Refactoring, dessen Vorgehen du vor dem Start absegnen willst.',
         meta: 'Tragweite · Freigabe',
         correct: 'plan',
-        why: 'Du willst die Freigabe vor dem Start. Erst absegnen, dann ausführen lassen — <b>Plan</b>.'
+        why: 'Du willst die Freigabe vor dem Start. Erst absegnen, dann ausführen lassen.'
       },
       {
         text: 'Migriere ein Modul auf die neue API — die Tests decken es ab und du vertraust ihnen.',
         meta: 'abgegrenzt · verlässliche Tests',
         correct: 'goal',
-        why: 'Abgegrenzt + verlässliche Guardrails. Lass den Loop laufen, prüf den PR — <b>Ziel</b>.'
+        why: 'Abgegrenzt + verlässliche Guardrails. Lass den Loop laufen, prüf den PR.'
       },
       {
         text: 'Ändere den Timeout-Wert von 30 auf 60 Sekunden.',
         meta: 'ein Wert · klar',
         correct: 'cmd',
-        why: 'Ein einzelner, klar benannter Wert. Kein Spielraum, keine Planung — <b>Befehl</b>.'
+        why: 'Ein einzelner, klar benannter Wert. Kein Spielraum, keine Planung.'
       },
       {
         text: 'Führe eine neue State-Management-Library ein — den Schnitt willst du erst durchdenken.',
         meta: 'Architektur · offen',
         correct: 'plan',
-        why: 'Architektur-Entscheidung mit offenem Vorgehen. Erst den Plan sehen, dann umsetzen — <b>Plan</b>.'
+        why: 'Architektur-Entscheidung mit offenem Vorgehen. Erst den Plan sehen, dann umsetzen.'
       }
     ],
     nondev: [
@@ -76,49 +76,49 @@
         text: 'Korrigiere einen Tippfehler in einer Standard-E-Mail-Vorlage.',
         meta: 'eindeutig · winzig',
         correct: 'cmd',
-        why: 'Eindeutig und winzig. Ein Satz genügt, kein Plan nötig — <b>Befehl</b>.'
+        why: 'Eindeutig und winzig. Ein Satz genügt, kein Plan nötig.'
       },
       {
         text: 'Erstelle einen Schulungsplan für ein neues Tool über mehrere Abteilungen — beim Vorgehen bist du unsicher.',
         meta: 'mehrteilig · Unsicherheit',
         correct: 'plan',
-        why: 'Mehrere Abteilungen + Unsicherheit. Lass dir das Vorgehen vorab zeigen — <b>Plan</b>.'
+        why: 'Mehrere Abteilungen + Unsicherheit. Lass dir das Vorgehen vorab zeigen.'
       },
       {
         text: 'Bereinige die Kundendatenbank von doppelten Einträgen — die Abgleichregeln erkennen jeden Treffer zuverlässig.',
         meta: 'klares Ziel · starke Guardrails',
         correct: 'goal',
-        why: 'Klares Ziel + verlässliche Abgleichregeln als Guardrail. Lass den Loop laufen, prüf das Ergebnis — <b>Ziel</b>.'
+        why: 'Klares Ziel + verlässliche Abgleichregeln als Guardrail. Lass den Loop laufen, prüf das Ergebnis.'
       },
       {
         text: 'Benenne einen Begriff in allen Dokumenten um — du weißt genau, wo er vorkommt.',
         meta: 'präzise · mechanisch',
         correct: 'cmd',
-        why: 'Präzise und mechanisch. Direkt ansagen — <b>Befehl</b>.'
+        why: 'Präzise und mechanisch. Direkt ansagen.'
       },
       {
         text: 'Plane eine größere Umstrukturierung, deren Vorgehen du vor dem Start absegnen willst.',
         meta: 'Tragweite · Freigabe',
         correct: 'plan',
-        why: 'Du willst die Freigabe vor dem Start. Erst absegnen, dann ausführen lassen — <b>Plan</b>.'
+        why: 'Du willst die Freigabe vor dem Start. Erst absegnen, dann ausführen lassen.'
       },
       {
         text: 'Übertrage alle Quartalsrechnungen ins neue Format — die Validierungsregeln prüfen jeden Eintrag.',
         meta: 'abgegrenzt · verlässliche Prüfung',
         correct: 'goal',
-        why: 'Abgegrenzt + verlässliche Guardrails. Lass den Loop laufen, prüf das Ergebnis — <b>Ziel</b>.'
+        why: 'Abgegrenzt + verlässliche Guardrails. Lass den Loop laufen, prüf das Ergebnis.'
       },
       {
         text: 'Ändere in der Vorlage die Frist von 14 auf 30 Tage.',
         meta: 'ein Wert · klar',
         correct: 'cmd',
-        why: 'Ein einzelner, klar benannter Wert. Kein Spielraum, keine Planung — <b>Befehl</b>.'
+        why: 'Ein einzelner, klar benannter Wert. Kein Spielraum, keine Planung.'
       },
       {
         text: 'Bereite die Zusammenlegung mehrerer Mail-Verteiler vor — welche Gruppen wie zusammenkommen, willst du erst durchsprechen.',
         meta: 'offen · Abstimmung',
         correct: 'plan',
-        why: 'Offenes Vorgehen mit Abstimmungsbedarf. Erst den Plan sehen, dann umsetzen — <b>Plan</b>.'
+        why: 'Offenes Vorgehen mit Abstimmungsbedarf. Erst den Plan sehen, dann umsetzen.'
       }
     ]
   };

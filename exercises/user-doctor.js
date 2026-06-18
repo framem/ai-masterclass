@@ -22,8 +22,8 @@
     'REGEL → keine Endpunkte erfinden, deprecated markieren'
   ];
   var AGENT_ND = [
-    'ROLLE → "Referentin für Geschäftskorrespondenz"',
-    'FORMAT → klare Betreffzeile, Absätze, Aufzählungen',
+    'ROLLE → "Referentin für interne Berichte"',
+    'FORMAT → klare Überschrift, kurze Absätze, Aufzählungen',
     'STIL → knapp, sachlich, kein Marketing',
     'REGEL → keine Zahlen erfinden, Veraltetes markieren'
   ];
@@ -55,11 +55,11 @@
     dev: [
       {
         id: 'd-readme',
-        label: '/users/* in der README dokumentieren',
+        label: '/users/*-Endpunkt in der README dokumentieren',
         capability: 'agent',
         capWhy: 'Der <strong>Tech-Writer-Agent</strong> kann das direkt. Gib nur die konkrete Aufgabe + Quelle — Format & Stil stehen schon im System-Prompt.',
-        goal: 'Diesen Turn dokumentierst du die <strong>/users/* Endpunkte</strong> für die öffentliche README — Quelle ist die OpenAPI-Spec im Repo.',
-        out: '<span class="dbo-k">Fertig =</span> GET/POST/PATCH/DELETE sauber dokumentiert, deprecated markiert.',
+        goal: 'Adressat ist die <strong>öffentliche</strong> README — Quelle ist die OpenAPI-Spec im Repo.',
+        out: '<span class="dbo-k">Was soll rauskommen =</span> GET/POST/PATCH/DELETE sauber dokumentiert, deprecated markiert.',
         agent: AGENT_DEV, skill: null,
         base: 'mach mir was zu unserer api', baseTokens: 8,
         fixes: [
@@ -67,7 +67,7 @@
             addition: 'Schreibe eine README-Section für die /users/* Endpunkte (GET, POST, PATCH, DELETE).', score: 1.8, tokens: 28 },
           { id: 'source', name: 'Quelle pinnen', meta: 'Wo steht die Wahrheit?', label: 'QUELLE',
             addition: 'Quelle: /docs/openapi.yaml im aktuellen Repo.', score: 1.5, tokens: 16 },
-          { id: 'spec', name: 'Format-Override', meta: 'Spezialfall nur für diese Aufgabe', label: 'SPEC',
+          { id: 'spec', name: 'Format überschreiben', meta: 'Spezialfall nur für diese Aufgabe', label: 'SPEC',
             addition: 'Diesmal zusätzlich: eine Übersichts-Tabelle ganz oben (Methode · Pfad · Zweck).', score: 1.0, tokens: 24 },
           { id: 'edge', name: 'Edge-Case-Regel', meta: 'Aufgaben-spezifischer Sonderfall', label: 'EDGE',
             addition: 'Endpunkte mit deprecated:true → NUR als Warnzeile, keine Details.', score: 1.0, tokens: 26 },
@@ -84,8 +84,8 @@
         label: 'Release-Notes für v2.4 erzeugen',
         capability: 'skill',
         capWhy: 'Dafür gibt es die Skill <strong>changelog-generator</strong>. <strong>Triggere sie</strong> — erkläre das Changelog-Format nicht selbst, das steht im Skill-Body.',
-        goal: 'Diesen Turn brauchst du die <strong>Release-Notes für v2.4</strong>. Eine Skill kann das fertig — du musst sie nur sauber <strong>auslösen</strong>.',
-        out: '<span class="dbo-k">Fertig =</span> Changelog v2.3→v2.4, gruppiert, Breaking-Changes oben.',
+        goal: 'Ein <strong>Skill</strong> kann das — du musst ihn nur <strong>auslösen</strong>.',
+        out: '<span class="dbo-k">Was soll rauskommen =</span> Changelog v2.3→v2.4, gruppiert, Breaking-Changes oben.',
         agent: AGENT_DEV, skill: SKILL_CHANGELOG,
         base: 'mach die release notes für 2.4', baseTokens: 9,
         fixes: [
@@ -110,8 +110,8 @@
         label: 'Migration-Guide v2→v3 + Release-Notes',
         capability: 'both',
         capWhy: 'Den <strong>Migration-Guide</strong> schreibt der Agent; die <strong>Release-Notes</strong> liefert die Skill. Dein Prompt rahmt beides — ohne eins davon zu duplizieren.',
-        goal: 'Diesen Turn brauchst du einen <strong>Migration-Guide v2→v3</strong> <em>und</em> die <strong>Release-Notes</strong> als Anhang.',
-        out: '<span class="dbo-k">Fertig =</span> Guide (Breaking Changes, Vorher/Nachher) + angehängte Notes.',
+        goal: 'Die <strong>Release-Notes</strong> sollen als <strong>Anhang</strong> unter den Guide.',
+        out: '<span class="dbo-k">Was soll rauskommen =</span> Guide (Breaking Changes, Vorher/Nachher) + angehängte Notes.',
         agent: AGENT_DEV, skill: SKILL_CHANGELOG,
         base: 'schreib was zum v3 upgrade', baseTokens: 8,
         fixes: [
@@ -138,8 +138,8 @@
         label: 'Quartals-Status für den Q3-Report',
         capability: 'agent',
         capWhy: 'Die <strong>Referentin (Agent)</strong> kann das direkt. Gib nur die konkrete Aufgabe + Quelle — Format & Stil stehen schon im System-Prompt.',
-        goal: 'Diesen Turn schreibst du den <strong>Quartals-Statusabschnitt</strong> für den Q3-Report — Quelle ist die Controlling-Tabelle.',
-        out: '<span class="dbo-k">Fertig =</span> Umsatz/Kosten/Marge/Ausblick zusammengefasst, Vorläufiges markiert.',
+        goal: 'Quelle ist die <strong>Controlling-Tabelle</strong> Q3.',
+        out: '<span class="dbo-k">Was soll rauskommen =</span> Umsatz/Kosten/Marge/Ausblick zusammengefasst, Vorläufiges markiert.',
         agent: AGENT_ND, skill: null,
         base: 'mach mir was zu unserem report', baseTokens: 8,
         fixes: [
@@ -147,13 +147,13 @@
             addition: 'Schreibe den Statusabschnitt für die vier Quartalskennzahlen (Umsatz, Kosten, Marge, Ausblick).', score: 1.8, tokens: 28 },
           { id: 'source', name: 'Quelle pinnen', meta: 'Wo steht die Wahrheit?', label: 'QUELLE',
             addition: 'Quelle: die Controlling-Tabelle Q3 im aktuellen Ordner.', score: 1.5, tokens: 16 },
-          { id: 'spec', name: 'Format-Override', meta: 'Spezialfall nur für diese Aufgabe', label: 'SPEC',
+          { id: 'spec', name: 'Format überschreiben', meta: 'Spezialfall nur für diese Aufgabe', label: 'SPEC',
             addition: 'Diesmal zusätzlich: eine Übersichts-Tabelle ganz oben (Kennzahl · Wert · Trend).', score: 1.0, tokens: 24 },
           { id: 'edge', name: 'Edge-Case-Regel', meta: 'Aufgaben-spezifischer Sonderfall', label: 'EDGE',
             addition: 'Kennzahlen mit Status „vorläufig" → NUR als Warnzeile, keine Details.', score: 1.0, tokens: 26 },
-          { id: 'r-format', name: 'Mit Betreff formatieren', meta: '⚠ Bedenke den Agent', label: 'REDUNDANT',
-            addition: 'Bitte mit Betreff und Absätzen formatieren.', score: 0, tokens: 8,
-            redundant: true, redundantReason: 'Agent sagt schon: „klare Betreffzeile, kurze Absätze".' },
+          { id: 'r-format', name: 'Mit Überschrift formatieren', meta: '⚠ Bedenke den Agent', label: 'REDUNDANT',
+            addition: 'Bitte mit Überschrift und Absätzen formatieren.', score: 0, tokens: 8,
+            redundant: true, redundantReason: 'Agent sagt schon: „klare Überschrift, kurze Absätze".' },
           { id: 'r-tone', name: 'Sei knapp und sachlich', meta: '⚠ Bedenke den Agent', label: 'REDUNDANT',
             addition: 'Halte dich knapp und sachlich, kein Marketing-Sprech.', score: 0, tokens: 14,
             redundant: true, redundantReason: 'Agent sagt schon: „knapp, sachlich, kein Marketing".' }
@@ -164,8 +164,8 @@
         label: 'Monats-Report September erstellen',
         capability: 'skill',
         capWhy: 'Dafür gibt es die Skill <strong>monats-report</strong>. <strong>Triggere sie</strong> — beschreibe den Berichtsaufbau nicht selbst, der steht im Skill-Body.',
-        goal: 'Diesen Turn brauchst du den <strong>Monats-Report September</strong>. Eine Skill kann das fertig — du musst sie nur sauber <strong>auslösen</strong>.',
-        out: '<span class="dbo-k">Fertig =</span> Monatsbericht September, Ist-gegen-Plan, Top-3-Abweichungen.',
+        goal: 'Ein <strong>Skill</strong> kann das — du musst ihn nur <strong>auslösen</strong>.',
+        out: '<span class="dbo-k">Was soll rauskommen =</span> Monatsbericht September, Ist-gegen-Plan, Top-3-Abweichungen.',
         agent: AGENT_ND, skill: SKILL_REPORT,
         base: 'mach den report für september', baseTokens: 8,
         fixes: [
@@ -187,25 +187,25 @@
       },
       {
         id: 'n-both',
-        label: 'Anschreiben an den Vorstand + Report',
+        label: 'Anschreiben an die Geschäftsführung + Report',
         capability: 'both',
         capWhy: 'Das <strong>Anschreiben</strong> verfasst die Referentin (Agent); den <strong>Monats-Report</strong> liefert die Skill. Dein Prompt rahmt beides — ohne eins davon zu duplizieren.',
-        goal: 'Diesen Turn brauchst du ein <strong>Anschreiben an den Vorstand</strong> <em>und</em> den <strong>Monats-Report</strong> als Anlage.',
-        out: '<span class="dbo-k">Fertig =</span> kurzes Anschreiben + angehängter September-Report.',
+        goal: 'Der <strong>Monats-Report</strong> soll als <strong>Anlage</strong> ans Anschreiben.',
+        out: '<span class="dbo-k">Was soll rauskommen =</span> kurzes Anschreiben + angehängter September-Report.',
         agent: AGENT_ND, skill: SKILL_REPORT,
-        base: 'schreib was an den vorstand', baseTokens: 7,
+        base: 'schreib was an die geschäftsführung', baseTokens: 7,
         fixes: [
           { id: 'letter', name: 'Agent-Aufgabe', meta: 'Was schreibt der Agent?', label: 'BRIEF',
-            addition: 'Verfasse das Anschreiben an den Vorstand: Kontext + Bitte um Freigabe, halbe Seite.', score: 1.8, tokens: 26 },
+            addition: 'Verfasse das Anschreiben an die Geschäftsführung: Kontext + Bitte um Freigabe, halbe Seite.', score: 1.8, tokens: 26 },
           { id: 'trigger', name: 'Skill triggern', meta: 'Was übernimmt die Skill?', label: 'TRIGGER', recommended: true,
             addition: 'Lege den Monats-Report bei — via monats-report, September.', score: 1.6, tokens: 20 },
           { id: 'source', name: 'Quelle pinnen', meta: 'Wo steht die Wahrheit?', label: 'QUELLE',
             addition: 'Quelle: die Controlling-Tabelle September.', score: 1.2, tokens: 14 },
           { id: 'order', name: 'Reihenfolge', meta: 'Wie wird zusammengesetzt?', label: 'SPEC',
             addition: 'Erst das Anschreiben, dann der Report als Anlage darunter.', score: 1.0, tokens: 14 },
-          { id: 'r-format', name: 'Mit Betreff formatieren', meta: '⚠ Bedenke den Agent', label: 'REDUNDANT',
-            addition: 'Bitte mit Betreff und Absätzen formatieren.', score: 0, tokens: 8,
-            redundant: true, redundantReason: 'Agent sagt schon: „klare Betreffzeile, kurze Absätze".' },
+          { id: 'r-format', name: 'Mit Überschrift formatieren', meta: '⚠ Bedenke den Agent', label: 'REDUNDANT',
+            addition: 'Bitte mit Überschrift und Absätzen formatieren.', score: 0, tokens: 8,
+            redundant: true, redundantReason: 'Agent sagt schon: „klare Überschrift, kurze Absätze".' },
           { id: 'r-skillbody', name: 'Berichtsaufbau vorgeben', meta: '⚠ Bedenke die Skill', label: 'REDUNDANT',
             addition: 'Gliedere den Report nach Abteilung, dann Top-3-Abweichungen.', score: 0, tokens: 20,
             redundant: true, redundantReason: 'Macht die monats-report-Skill — nicht hier wiederholen.' }
@@ -225,6 +225,9 @@
   var charcountEl = section.querySelector('#userdoc-charcount');
   var scoreEl = section.querySelector('#userdoc-score');
   var scoreBar = section.querySelector('#userdoc-score-bar');
+  var overspecEl = section.querySelector('#userdoc-overspec');
+  var optimalEl = section.querySelector('#userdoc-optimal');
+  var scoreNoteEl = section.querySelector('#userdoc-scorenote');
   var tokensEl = section.querySelector('#userdoc-tokens');
   var tokensBar = section.querySelector('#userdoc-tokens-bar');
   var redundantEl = section.querySelector('#userdoc-redundant');
@@ -293,31 +296,33 @@
 
   function renderBrief() {
     var t = task();
+    var headHtml = revealed
+      ? '<div class="doctor-brief-head"><span class="ud-cap ' + t.capability + '">' + CAP_LABEL[t.capability] + '</span></div>'
+      : '';
+    var capWhyHtml = revealed ? '<div class="ud-capwhy">→ ' + t.capWhy + '</div>' : '';
     briefEl.innerHTML =
-      '<div class="doctor-brief-head">' +
-        '<span>Auftrag · dieser Turn</span>' +
-        '<span class="ud-cap ' + t.capability + '">' + CAP_LABEL[t.capability] + '</span>' +
-      '</div>' +
+      headHtml +
       '<div class="doctor-brief-goal">' + t.goal + '</div>' +
       '<div class="doctor-brief-out">' + t.out + '</div>' +
-      '<div class="ud-capwhy">→ ' + t.capWhy + '</div>';
+      capWhyHtml;
   }
 
   function renderSystem() {
     var t = task();
+    var agentName = t.agent === AGENT_DEV ? 'Tech-Writer-Agent' : 'Referentin (Agent)';
     var agentList = '<ul class="userdoc-system-list">' +
       t.agent.map(function (s) { return '<li>' + s + '</li>'; }).join('') + '</ul>';
     var html =
-      '<div class="userdoc-system-head">Im Setup verfügbar</div>' +
+      '<div class="userdoc-system-head">Im Chat verfügbar</div>' +
       '<div class="uds-cols' + (t.skill ? ' two' : '') + '">' +
-        '<div class="uds-col">' +
-          '<div class="uds-col-head agent">Agent · System-Prompt <span class="uds-tag">always-on</span></div>' +
+        '<div class="uds-col agent">' +
+          '<div class="uds-col-head agent">' + agentName + '</div>' +
           agentList +
         '</div>';
     if (t.skill) {
       html +=
-        '<div class="uds-col">' +
-          '<div class="uds-col-head skill">Skill · ' + t.skill.name + ' <span class="uds-tag">on-demand</span></div>' +
+        '<div class="uds-col skill">' +
+          '<div class="uds-col-head skill">' + t.skill.name + ' Skill</div>' +
           '<ul class="userdoc-system-list">' +
             t.skill.items.map(function (s) { return '<li>' + s + '</li>'; }).join('') +
           '</ul>' +
@@ -331,13 +336,12 @@
     var t = task();
     renderBrief();
     renderSystem();
-    if (solveBtn) solveBtn.textContent = revealed ? 'Lösung ausblenden' : 'Auflösen';
+    if (solveBtn) solveBtn.textContent = revealed ? 'Bearbeiten' : 'Prüfen';
 
     var anyFixed = t.fixes.some(function (f) { return state[f.id]; });
 
     // Prompt preview
     var lines = [];
-    lines.push('<div class="doctor-line label">VAGER USER-PROMPT</div>');
     lines.push('<div class="doctor-line base' + (anyFixed ? ' fixed' : '') + '">' + escapeHtml(t.base) + '</div>');
     t.fixes.forEach(function (f) {
       if (state[f.id]) {
@@ -355,7 +359,7 @@
       var on = state[f.id];
       var div = document.createElement('div');
       div.className = 'doctor-fix' + (on ? ' on' : '') + (revealed && f.redundant ? ' redundant' : '') + (revealed && !f.redundant ? ' recommended' : '');
-      var scoreStr = f.score > 0 ? '+ ' + f.score.toFixed(1) + ' Score' : ((revealed && f.redundant) ? '+ 0 (redundant!)' : '+ 0 Score');
+      var scoreStr = f.score > 0 ? '+ ' + f.score.toFixed(1) + ' Score' : (f.redundant ? '+ 0 (redundant!)' : '+ 0 Score');
       var badge = '';
       if (revealed && f.redundant) badge = ' <span style="color: var(--warn); font-family: var(--mono); font-size: 10px;">·  ⚠ TRAP</span>';
       else if (revealed && f.recommended) badge = ' <span style="color: var(--ok); font-family: var(--mono); font-size: 10px;">· ✓ EMPFOHLEN</span>';
@@ -369,7 +373,7 @@
         '</div>' +
         '<div style="font-size: 12px; color: #c8c2b6; margin-bottom: 6px;">' + displayMeta + '</div>' +
         '<div class="doctor-fix-meta">' +
-          '<span class="' + (f.score > 0 ? 'qm-up' : '') + '" ' + ((revealed && f.redundant) ? 'style="color: var(--warn);"' : '') + '>' + scoreStr + '</span>' +
+          (revealed ? '<span class="' + (f.score > 0 ? 'qm-up' : '') + '" ' + (f.redundant ? 'style="color: var(--warn);"' : '') + '>' + scoreStr + '</span>' : '') +
           '<span>+ ' + f.tokens + ' tok</span>' +
         '</div>' +
         ((revealed && f.redundant) ? '<div class="doctor-fix-note"><strong>Warum Trap:</strong> ' + f.redundantReason + '</div>' : '');
@@ -393,12 +397,36 @@
     });
     score = Math.min(10, score);
 
-    scoreEl.textContent = score.toFixed(1) + ' / 10';
-    scoreBar.style.width = (score * 10) + '%';
+    // Erreichbares Optimum = Basis + alle SINNVOLLEN Bausteine (Traps zaehlen 0).
+    // Alles darueber ist nur durch Ueberspezifizieren "erreichbar" — bewusst gesperrt.
+    var optimum = 1.0;
+    t.fixes.forEach(function (f) { if (!f.redundant) optimum += f.score; });
+    optimum = Math.min(10, optimum);
+
     scoreEl.classList.remove('ok', 'warn', 'bad');
-    if (score >= 6) scoreEl.classList.add('ok');
-    else if (score >= 4) scoreEl.classList.add('warn');
-    else scoreEl.classList.add('bad');
+
+    if (revealed) {
+      // Loesung sichtbar: Optimum-Zahl, Marker, Geisterzone, Badge.
+      scoreBar.style.width = (score * 10) + '%';
+      if (score >= 6) scoreEl.classList.add('ok');
+      else if (score >= 4) scoreEl.classList.add('warn');
+      else scoreEl.classList.add('bad');
+      var optPct = optimum * 10;
+      optimalEl.style.left = optPct + '%';
+      overspecEl.style.left = optPct + '%';
+      optimalEl.style.display = '';
+      overspecEl.style.display = '';
+      var tag = score >= 6 ? ' <span class="dm-tag">optimal</span>' : '';
+      scoreEl.innerHTML = score.toFixed(1) + ' <span class="dm-max">/ 10</span>' + tag;
+      scoreNoteEl.innerHTML = 'Optimal ≈ ' + optimum.toFixed(1) + ' · über die <span style="border-bottom:1px dashed var(--ink-3);">schraffierte Zone</span> kämst du nur, indem du dem Agent alles haarklein vorgibst — Tokens ohne Mehrwert.';
+    } else {
+      // Vor dem Auflösen: keine Loesung verraten — Score bleibt verdeckt.
+      scoreBar.style.width = '0%';
+      optimalEl.style.display = 'none';
+      overspecEl.style.display = 'none';
+      scoreEl.innerHTML = '? <span class="dm-max">/ 10</span>';
+      scoreNoteEl.innerHTML = '';
+    }
 
     tokensEl.textContent = '~' + tokens + ' tok';
     var pct = Math.min(100, (tokens / 200) * 100);
@@ -411,7 +439,7 @@
 
     if (!revealed) {
       redundantEl.classList.remove('hit');
-      redundantEl.innerHTML = '— wähle Fixes, dann <strong>Auflösen</strong><br/><span style="font-size: 11px; opacity: 0.7;">Prüft, ob du etwas wiederholst, das Agent/Skill schon können.</span>';
+      redundantEl.innerHTML = '— wähle Fixes, dann <strong>Prüfen</strong><br/><span style="font-size: 11px; opacity: 0.7;">Prüft, ob du etwas wiederholst, das Agent/Skill schon können.</span>';
     } else if (redundantOn.length > 0) {
       redundantEl.classList.add('hit');
       redundantEl.innerHTML = '⚠ ' + redundantOn.length + ' redundant<br/>' +
@@ -424,16 +452,12 @@
     activeCountEl.textContent = activeCount + ' von ' + t.fixes.length + ' aktiv';
     if (!revealed) {
       sweetEl.classList.remove('hit');
-      if (activeCount === 0) {
-        sweetEl.innerHTML = '— Wähle die Fixes, die dieser Turn wirklich braucht.';
-      } else {
-        sweetEl.innerHTML = activeCount + ' Fix' + (activeCount > 1 ? 'es' : '') + ' aktiv · prüfe mit <strong>„Auflösen“</strong>, ob Traps dabei sind.';
-      }
+      sweetEl.innerHTML = '';
     } else {
       var inSweet = score >= 6 && tokens <= 120 && redundantOn.length === 0;
       if (inSweet) {
         sweetEl.classList.add('hit');
-        sweetEl.innerHTML = '✓ <span style="color: #fff;">Sweet-Spot!</span> Score ' + score.toFixed(1) + ', ' + tokens + ' tok, kein Duplikat';
+        sweetEl.innerHTML = '✓ <span style="color: #fff;">Optimal getroffen!</span> Score ' + score.toFixed(1) + ', ' + tokens + ' tok, kein Duplikat';
       } else {
         sweetEl.classList.remove('hit');
         if (redundantOn.length > 0) {
@@ -448,9 +472,6 @@
       }
     }
 
-    var fullText = t.base + ' ' + t.fixes.filter(function (f) { return state[f.id]; }).map(function (f) { return f.addition; }).join(' ');
-    var words = fullText.split(/\s+/).filter(Boolean).length;
-    charcountEl.textContent = words + ' Wörter · ' + fullText.length + ' Zeichen';
   }
 
   function escapeHtml(s) {
@@ -468,10 +489,8 @@
   resetBtn.addEventListener('click', function () { revealed = false; resetState(); render(); });
 
   solveBtn.addEventListener('click', function () {
+    // Prüfen = die EIGENE Auswahl bewerten (nicht überschreiben). Erneut: zurück zum Bearbeiten.
     revealed = !revealed;
-    if (revealed) {
-      task().fixes.forEach(function (f) { state[f.id] = !f.redundant; });
-    }
     render();
   });
 

@@ -225,6 +225,11 @@
   .options-rail .opt .opt-tag {
     font-size: 13px; line-height: 1.35; color: var(--ink-3); margin-top: 4px;
   }
+  .options-rail .opt .opt-desc {
+    font-size: 13px; line-height: 1.35; color: var(--ink-2);
+    margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--hair);
+    text-wrap: pretty;
+  }
 
   /* ===== Interaktive Quiz-Mechanik ===== */
   .quiz { display: flex; flex-direction: column; gap: 7px; }
@@ -344,13 +349,13 @@
   .smatch-item.answered .sm-btn { pointer-events: none; }
   /* Buttons und Begründung teilen dieselbe Grid-Zelle; ein unsichtbarer Sizer
      reserviert die Höhe der längsten Begründung — die Karte springt nicht. */
-  .sm-fb, .sm-fb-sizer { grid-area: 2 / 1; align-self: end; margin-top: 8px; font-size: 17px; line-height: 1.4; color: var(--ink-3); }
+  .sm-fb, .sm-fb-sizer { grid-area: 2 / 1; align-self: end; margin-top: 8px; font-family: var(--mono); font-size: 14px; line-height: 1.4; color: var(--ink-3); }
   .sm-fb-sizer { visibility: hidden; }
   .sm-fb { visibility: hidden; opacity: 0; transition: opacity .25s ease; }
   .smatch-item.answered .sm-fb { visibility: visible; opacity: 1; }
   .smatch-item.answered .smatch-row { visibility: hidden; }
-  .sm-fb b { color: var(--ink); font-weight: 600; }
-  .sm-fb .sm-fb-tag { font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+  .sm-fb b { color: var(--ink); }
+  .sm-fb .sm-fb-tag { font-weight: 600; }
   .sm-fb .sm-fb-tag.ok { color: var(--quiz-ok); }
   .sm-fb .sm-fb-tag.no { color: var(--quiz-no); }
 
@@ -767,11 +772,12 @@
         <span></span>
       </div>
 
-      <div class="eyebrow" style="font-size: 24px;">Vorbereitung — Wie viel du dem Agenten überlässt</div>
+      <div class="eyebrow" style="font-size: 24px;">Wie viel du dem Agenten überlässt</div>
       <h1 class="title" style="margin-top: 32px;">Befehl, Plan<br/>oder <span class="accent">Ziel</span>.</h1>
 
-      <h3 class="subtitle" style="margin-top: 28px;">
-        Dieselbe Aufgabe, drei Eingriffstiefen. Je autonomer, desto mehr denkt der Agent selbst — und desto mehr Kontrolle gibst du ab.
+      <h3 class="subtitle" style="margin-top: 28px; text-wrap: balance;">
+        Dieselbe Aufgabe, drei Eingriffstiefen.<br/>
+        Je autonomer, desto mehr denkt der Agent selbst — und desto mehr Kontrolle gibst du ab.
       </h3>
 
       <div class="agenda">
@@ -839,7 +845,7 @@
 
       <div class="callout" style="margin-top: auto; padding: 16px 24px; min-height: 0;">
         <div class="callout-label">Merksatz</div>
-        <div class="callout-body" style="font-size: 20px;">Wähl die <strong>niedrigste Stufe, die die Aufgabe noch in einem Rutsch erledigt.</strong> Mehr Autonomie ist kein Ziel, sondern ein Werkzeug.</div>
+        <div class="callout-body" style="font-size: 20px;">Gib dem Agenten <strong>nur so viel Spielraum, wie die Aufgabe braucht</strong>. Kleine, klare Sache? Ein <strong>Befehl</strong> reicht. Erst wenn's größer und unklarer wird, lohnt sich <strong>Plan</strong> oder <strong>Ziel</strong>.</div>
       </div>
 
     </div>
@@ -1101,9 +1107,15 @@
         <span></span>
       </div>
 
-      <div class="eyebrow">Welche Stufe passt?</div>
-      <h2 class="title" style="font-size: 56px;">Befehl, Plan <span style="color: var(--ink-3); font-weight: 400;">oder</span> <span class="accent">Ziel</span>?</h2>
-      <p class="body" style="margin: 0 0 14px; font-size: 19px;">Ordne jedem Szenario die passende Stufe zu — <strong>Befehl</strong>, <strong>Plan</strong> oder <strong>Ziel</strong>.</p>
+      <div class="eyebrow">Aufgabe</div>
+      <h2 class="title" style="font-size: 38px; margin-bottom: 6px;">Ordne jedem Szenario die <span class="accent">passende Stufe</span> zu.</h2>
+
+      <!-- Stufen-Legende -->
+      <div class="options-rail" style="grid-template-columns: repeat(3, 1fr); margin-top: 14px; margin-bottom: 16px;">
+        <div class="opt"><div class="opt-name">Befehl</div><div class="opt-tag">du steuerst</div><div class="opt-desc">Jeder Schritt unter deiner Kontrolle — für eindeutige, winzige Aufgaben.</div></div>
+        <div class="opt"><div class="opt-name">Plan</div><div class="opt-tag">du gibst frei</div><div class="opt-desc">Modell zeigt erst das Vorgehen, du segnest ab — dann die Umsetzung.</div></div>
+        <div class="opt"><div class="opt-name">Ziel</div><div class="opt-tag">du delegierst</div><div class="opt-desc">Du definierst nur das Ergebnis; der Agent läuft im Loop, du prüfst.</div></div>
+      </div>
 
       <div class="ex-stage">
         <div class="smatch-grid" id="stage-grid"></div>
@@ -1115,6 +1127,106 @@
             <button class="qbutton" data-stage-action="reveal">Alles auflösen</button>
           </div>
         </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 07 MITNEHMEN — DIE ACHSE AUF EINER SEITE ===================== -->
+  <section data-screen-label="07 Mitnehmen" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Zum Mitnehmen — die ganze Achse auf einer Folie</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 6px;">Befehl, Plan oder Ziel — <span class="accent">auf einer Seite</span>.</h2>
+
+      <div class="cs-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 34px;">
+        <div class="cs-card">
+          <div class="cs-num">01 — DU STEUERST</div>
+          <div class="cs-name">Befehl</div>
+          <div class="cs-row">
+            <div class="cs-label">Was</div>
+            <div class="cs-val">Eine eng gefasste Anweisung — ein Schritt, sofort prüfbar.</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Eingriff</div>
+            <div class="cs-val">bei jedem Schritt</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Beispiel</div>
+            <div class="cs-val mono" data-nd='»Ersetz „Q3" durch „Q4".« → 22 Treffer ✓'>»Benenne getUser → fetchUser um.« → 14 Stellen ✓</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 16px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>In einem Satz präzise sagbar? Sag es als Befehl.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">02 — DU GIBST FREI</div>
+          <div class="cs-name">Plan</div>
+          <div class="cs-row">
+            <div class="cs-label">Was</div>
+            <div class="cs-val">Du nennst das Ziel, der Agent schlägt erst einen Plan vor.</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Eingriff</div>
+            <div class="cs-val">an der Plan-Freigabe</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Beispiel</div>
+            <div class="cs-val mono" data-nd='»Aus dem Bericht eine Präsentation — erst ein Plan.«'>»Pagination auf der Orders-Liste — erst ein Plan.«</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 16px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Plan ändern ist günstig — lies ihn, bevor du freigibst.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">03 — DU DELEGIERST</div>
+          <div class="cs-name">Ziel</div>
+          <div class="cs-row">
+            <div class="cs-label">Was</div>
+            <div class="cs-val">Du setzt Ziel + Erfolgskriterium, der Agent läuft eigenständig.</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Eingriff</div>
+            <div class="cs-val">erst am Ergebnis</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Beispiel</div>
+            <div class="cs-val mono" data-nd='»Bring den Report durch die Plausibilitätsprüfung.« → 4 Werte korrigiert ✓'>»Mach die Test-Suite grün.« → fixt 3, läuft nach ✓</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 16px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Erst die Leitplanken, dann der Autopilot.</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spectrum" style="margin-top: 30px;">
+        <div class="spec-grid">
+          <div class="spec-wedge"></div>
+          <div class="spec-node"><span class="sn-name">Befehl</span><span class="sn-dot d1"></span></div>
+          <div></div>
+          <div class="spec-node"><span class="sn-name">Plan</span><span class="sn-dot d2"></span></div>
+          <div></div>
+          <div class="spec-node is-accent"><span class="sn-name">Ziel</span><span class="sn-dot d3"></span></div>
+        </div>
+        <div class="spec-ends">
+          <span>← mehr Kontrolle · kleinerer Handlungsspielraum</span>
+          <span>mehr Autonomie · größerer Handlungsspielraum →</span>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: auto; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Merksatz</div>
+        <div class="callout-body" style="font-size: 22px;"><strong>So klein wie möglich, so autonom wie nötig.</strong> Mehr Spielraum gibst du erst, wenn die Aufgabe ihn wirklich braucht.</div>
       </div>
 
     </div>

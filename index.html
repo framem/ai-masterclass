@@ -397,6 +397,7 @@
 
   /* ---------- Kapitel & Vertiefung cards ---------- */
   .chapter-stack { display: grid; gap: 18px; }
+  .chapter-stack.glossary-top { margin-bottom: 34px; }
   .chapter-card {
     position: relative; display: grid;
     grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
@@ -1090,6 +1091,26 @@
 
 <main class="wrap">
 
+  <div class="chapter-stack glossary-top">
+      <a class="chapter-card" href="glossary.html">
+        <div class="cc-body">
+          <span class="cc-num sub">Nachschlagen</span>
+          <span class="cc-title">Glossar</span>
+          <span class="cc-desc">Begriffe von A2A bis Workflow — kompakt erklärt.</span>
+          <span class="cc-go">Öffnen →</span>
+        </div>
+        <div class="cc-aside">
+          <div class="dots"></div>
+          <div class="cc-anim a-gloss" aria-hidden="true">
+            <span class="gsearch">
+              <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"></circle><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+              <span class="gterms"><span>Token</span><span>MCP</span><span>Agent</span><span>Context</span></span>
+            </span>
+          </div>
+        </div>
+      </a>
+  </div>
+
   <section class="section" id="vorlauf">
     <div class="section-head">
       <h2>Vorbereitung</h2>
@@ -1148,24 +1169,6 @@
               <span class="wchip w1">Befehl</span>
               <span class="wchip w2">Plan</span>
               <span class="wchip w3">Ziel</span>
-            </span>
-          </div>
-        </div>
-      </a>
-
-      <a class="chapter-card" href="glossary.html">
-        <div class="cc-body">
-          <span class="cc-num sub">Nachschlagen</span>
-          <span class="cc-title">Glossar</span>
-          <span class="cc-desc">Begriffe von A2A bis Workflow — kompakt erklärt.</span>
-          <span class="cc-go">Öffnen →</span>
-        </div>
-        <div class="cc-aside">
-          <div class="dots"></div>
-          <div class="cc-anim a-gloss" aria-hidden="true">
-            <span class="gsearch">
-              <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="2"></circle><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
-              <span class="gterms"><span>Token</span><span>MCP</span><span>Agent</span><span>Context</span></span>
             </span>
           </div>
         </div>

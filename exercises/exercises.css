@@ -285,7 +285,30 @@
     background: var(--ink);
     transition: width 0.3s ease, background 0.3s ease;
   }
-  .doctor-meter .dm-bar.score > div { background: linear-gradient(90deg, var(--warn), var(--ok)); }
+  .doctor-meter .dm-bar.score > div { background: linear-gradient(90deg, var(--warn), var(--ok)); z-index: 2; }
+  /* Optimal-Marker + „überspezifiziert"-Geisterzone auf der Score-Leiste */
+  .doctor-meter .dm-bar.score { overflow: hidden; }
+  .doctor-meter .dm-bar .dm-overspec {
+    position: absolute; top: 0; bottom: 0; right: 0; left: 63%;
+    background-color: var(--bg);
+    background-image: repeating-linear-gradient(-45deg, rgba(21,17,12,0.16) 0 2px, transparent 2px 5px);
+    z-index: 1;
+  }
+  .doctor-meter .dm-bar .dm-optimal {
+    position: absolute; top: 0; bottom: 0; left: 63%; width: 2px;
+    background: var(--ink); z-index: 3; box-shadow: 0 0 0 1px rgba(244,236,223,0.65);
+  }
+  .doctor-meter .dm-note {
+    margin-top: 8px; font-family: var(--mono); font-size: 11px; line-height: 1.45;
+    color: var(--ink-3); letter-spacing: 0.01em;
+  }
+  .doctor-meter .dm-val .dm-max { opacity: 0.4; font-weight: 500; }
+  .doctor-meter .dm-val .dm-tag {
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-left: 10px; padding: 3px 9px; border-radius: 999px;
+    vertical-align: middle;
+  }
+  .doctor-meter .dm-val.ok .dm-tag { color: var(--ok); background: rgba(61,138,74,0.13); }
   .doctor-meter .dm-bar.tokens > div { background: var(--ok); }
   .doctor-meter .dm-bar.tokens.warn > div { background: var(--warn); }
   .doctor-meter .dm-bar.tokens.bad  > div { background: var(--bad); }
@@ -1009,7 +1032,7 @@
     align-self: center;
   }
   .doctor-brief-goal {
-    font-family: var(--serif); font-size: 17px; line-height: 1.38; color: var(--ink);
+    font-family: var(--serif); font-size: 21px; line-height: 1.4; color: var(--ink);
   }
   .doctor-brief-goal strong { color: var(--accent); font-weight: 600; }
   .doctor-brief-out {
@@ -1059,7 +1082,7 @@
     margin-bottom: 12px;
   }
   .userdoc-taskbar .udt-label {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
     color: var(--ink-3); white-space: nowrap;
   }
   /* New dropdown layout (shared .cgp-* component), adapted to the taskbar:
@@ -1083,6 +1106,7 @@
     letter-spacing: 0.12em; text-transform: uppercase;
     padding: 4px 11px; border-radius: 999px; white-space: nowrap;
   }
+  .ud-cap.task  { background: var(--bg-2); color: var(--ink-3); border: 1px solid var(--hair); }
   .ud-cap.agent { background: var(--ink); color: #f0ece3; }
   .ud-cap.skill { background: var(--accent); color: #fff; }
   .ud-cap.both  { background: var(--accent-pale); color: var(--accent); border: 1px solid var(--accent); }
@@ -1097,10 +1121,17 @@
     display: grid; grid-template-columns: 1fr; gap: 12px;
   }
   .uds-cols.two { grid-template-columns: 1fr 1fr; }
+  .uds-col {
+    border: 1px solid var(--hair); border-radius: 8px;
+    padding: 9px 11px 10px; background: rgba(250,247,241,0.45);
+  }
+  .uds-col.agent { border-left: 3px solid var(--ink); }
+  .uds-col.skill { border-left: 3px solid var(--accent); }
   .uds-col-head {
     display: flex; align-items: center; gap: 7px;
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--ink-2); margin-bottom: 7px;
+    color: var(--ink-2); margin-bottom: 8px; padding-bottom: 7px;
+    border-bottom: 1px solid var(--hair);
   }
   .uds-col-head::before {
     content: ""; width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto;
