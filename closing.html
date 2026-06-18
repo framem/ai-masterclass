@@ -187,8 +187,17 @@
   .cap-lede .cl-body { font-size: 18px; line-height: 1.55; color: #d8d2c5; margin: 16px 0 0; max-width: 70ch; }
   .cap-lede .cl-body b { color: #fff; }
 
-  .track-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
-  @media (max-width: 720px) { .track-row { grid-template-columns: 1fr; } }
+  /* persona-driven single-track display */
+  .cap-track { margin-bottom: 22px; }
+  .ctk-bar { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 14px; flex-wrap: wrap; }
+  .ctk-q { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .role-toggle { display: inline-flex; align-items: center; gap: 14px; font-family: var(--mono); user-select: none; }
+  .role-toggle .rt-lbl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .role-toggle .rt-pill { display: inline-flex; background: var(--paper); border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; box-shadow: 0 2px 0 rgba(21,17,12,0.16); }
+  .role-toggle button { appearance: none; border: 0; cursor: pointer; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: 0.06em; color: var(--ink-2); padding: 8px 18px; transition: background .15s, color .15s; }
+  .role-toggle button:hover { background: var(--bg-2); }
+  .role-toggle button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .track[hidden] { display: none; }
   .track {
     background: var(--paper); border: 1px solid var(--hair); border-radius: 16px;
     padding: 26px 28px; display: flex; flex-direction: column;
@@ -303,7 +312,7 @@
         <div class="obj-aside">
           <span class="oa-num">Vorbereitung</span>
           <span class="oa-title">Was ist ein LM?</span>
-          <a class="oa-link" href="01-lm-refresher.html">Einheit öffnen →</a>
+          <a class="oa-link" href="lm-refresher.html">Einheit öffnen →</a>
         </div>
         <div class="obj-list">
           <div class="check"><span class="box">✓</span><span class="ct">Ich kann erklären, dass ein Modell <b>Token für Token</b> das jeweils wahrscheinlichste Folge-Token vorhersagt.</span></div>
@@ -316,7 +325,7 @@
         <div class="obj-aside">
           <span class="oa-num">Kapitel 01</span>
           <span class="oa-title">Prompting &amp; Context</span>
-          <a class="oa-link" href="02-prompting-context.html">Einheit öffnen →</a>
+          <a class="oa-link" href="prompting-context.html">Einheit öffnen →</a>
         </div>
         <div class="obj-list">
           <div class="check"><span class="box">✓</span><span class="ct">Ich kann einen Prompt <b>strukturiert</b> aufbauen (Rolle, Aufgabe, Kontext, gewünschtes Format).</span></div>
@@ -329,7 +338,7 @@
         <div class="obj-aside">
           <span class="oa-num">Kapitel 02</span>
           <span class="oa-title">Agentic Workflows</span>
-          <a class="oa-link" href="03-agentic-workflows.html">Einheit öffnen →</a>
+          <a class="oa-link" href="agentic-workflows.html">Einheit öffnen →</a>
         </div>
         <div class="obj-list">
           <div class="check"><span class="box">✓</span><span class="ct">Ich kann eine Aufgabe in <b>Explore → Plan → Execute → Commit</b> zerlegen.</span></div>
@@ -342,7 +351,7 @@
         <div class="obj-aside">
           <span class="oa-num">Kapitel 03</span>
           <span class="oa-title">Workflows vs Agents · MCP</span>
-          <a class="oa-link" href="04-workflows-agents-mcp.html">Einheit öffnen →</a>
+          <a class="oa-link" href="workflows-agents-mcp.html">Einheit öffnen →</a>
         </div>
         <div class="obj-list">
           <div class="check"><span class="box">✓</span><span class="ct">Ich unterscheide <b>Augmented LLM, Workflow und Agent</b> und wähle je nach Aufgabe.</span></div>
@@ -355,7 +364,7 @@
         <div class="obj-aside">
           <span class="oa-num">Kapitel 04</span>
           <span class="oa-title">AI im SDLC + Guardrails</span>
-          <a class="oa-link" href="05-ai-sdlc-guardrails.html">Einheit öffnen →</a>
+          <a class="oa-link" href="ai-sdlc-guardrails.html">Einheit öffnen →</a>
         </div>
         <div class="obj-list">
           <div class="check"><span class="box">✓</span><span class="ct">Ich kann pro <b>SDLC-Phase</b> die AI-Andockpunkte benennen und Sweet-Spots von Begleitpflicht trennen.</span></div>
@@ -368,7 +377,7 @@
         <div class="obj-aside">
           <span class="oa-num">Kapitel 05</span>
           <span class="oa-title">Evaluation &amp; Vertrauen</span>
-          <a class="oa-link" href="06-evaluation-trust.html">Einheit öffnen →</a>
+          <a class="oa-link" href="evaluation-trust.html">Einheit öffnen →</a>
           <span class="oa-mini"><b>neu</b> · schließt das Curriculum</span>
         </div>
         <div class="obj-list">
@@ -396,18 +405,28 @@
       <span class="cl-tag">Die Mission</span>
       <span class="cl-title">Baue einen AI-Helfer für eine echte Aufgabe — und weise nach, dass er gut ist.</span>
       <span class="cl-body">
-        Kein Tool-Wettbewerb, kein Production-System. Ziel ist die <b>durchgängige Denkweise</b>: einen Prompt entwerfen, das Vorgehen wählen, Leitplanken setzen — und am Ende mit einer <b>Zahl auf festen Fällen</b> zeigen, dass deine Lösung besser ist als der erste Entwurf. Wähle eine der zwei Spuren.
+        Kein Tool-Wettbewerb, kein Production-System. Ziel ist die <b>durchgängige Denkweise</b>: einen Prompt entwerfen, das Vorgehen wählen, Leitplanken setzen — und am Ende mit einer <b>Zahl auf festen Fällen</b> zeigen, dass deine Lösung besser ist als der erste Entwurf. Deine Spur folgt deiner gewählten <b>Persona</b> — du kannst jederzeit umschalten.
       </span>
     </div>
 
-    <div class="track-row">
-      <div class="track dev">
+    <div class="cap-track">
+      <div class="ctk-bar">
+        <span class="ctk-q">Deine Spur</span>
+        <div class="role-toggle" role="group" aria-label="Persona wählen">
+          <span class="rt-lbl">Persona</span>
+          <div class="rt-pill">
+            <button type="button" data-role="dev" aria-pressed="true">Dev</button>
+            <button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button>
+          </div>
+        </div>
+      </div>
+      <div class="track dev" data-track="dev">
         <span class="tk-tag">Spur A · Dev</span>
         <span class="tk-name">Commits → Release-Changelog</span>
         <span class="tk-mission">Baue einen Helfer, der aus einer Liste von Commit-Messages einen <b>sauberen, gruppierten Changelog</b> macht — ohne erfundene Einträge, mit Ticket-Bezug.</span>
         <span class="tk-alt">Alternativen: PR-Pre-Review · Test-Generator aus einer User-Story · Log-Triage.</span>
       </div>
-      <div class="track nondev">
+      <div class="track nondev" data-track="nondev" hidden>
         <span class="tk-tag">Spur B · Fachbereich</span>
         <span class="tk-name">Mail-Eingang → Action-Items</span>
         <span class="tk-mission">Baue einen Helfer, der aus einer langen E-Mail <b>klare Action-Items + einen Antwortentwurf</b> zieht — nichts erfindet, Fristen korrekt überträgt.</span>
@@ -556,6 +575,32 @@
   });
 
   load(); refresh();
+})();
+
+/* persona switch — syncs the capstone track with the course-wide persona */
+(function () {
+  var KEY = 'amc-persona';
+  var wrap = document.querySelector('.cap-track');
+  if (!wrap) return;
+  var tracks = Array.prototype.slice.call(wrap.querySelectorAll('[data-track]'));
+  var btns = Array.prototype.slice.call(wrap.querySelectorAll('.role-toggle button'));
+  function get() {
+    try { var v = localStorage.getItem(KEY); return (v === 'dev' || v === 'nondev') ? v : 'dev'; }
+    catch (e) { return 'dev'; }
+  }
+  function apply(role) {
+    tracks.forEach(function (t) { t.hidden = t.getAttribute('data-track') !== role; });
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-role') === role)); });
+  }
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var r = b.getAttribute('data-role');
+      try { localStorage.setItem(KEY, r); } catch (e) {}
+      apply(r);
+    });
+  });
+  window.addEventListener('storage', function (e) { if (e.key === KEY) apply(get()); });
+  apply(get());
 })();
 </script>
 </body>

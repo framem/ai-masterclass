@@ -158,7 +158,7 @@
   /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
   .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
   .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
-  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw::before { content: "\2022"; color: var(--accent); font-weight: 700; }
   .agenda .ag-kw.accent { color: var(--accent); }
   .pill.warn { background: var(--warn); color: #fff; }
 
@@ -546,8 +546,16 @@
   /* Home breadcrumb in each slide topbar — back to the overview */
   /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
   .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
-  .topbar .home:hover { color: var(--accent); }
+  /* Klar als anklickbarer Zurück-Button gestaltet: umrandete Pille + Pfeil, füllt sich beim Hover */
+  .topbar .home {
+    display: inline-flex; align-items: center; gap: 0.45em;
+    padding: 0.3em 0.85em; border: 1.5px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-weight: 600; text-decoration: none; cursor: pointer;
+    vertical-align: baseline; transition: background .18s ease, color .18s ease;
+  }
+  .topbar .home .pip { display: none; }
+  .topbar .home::before { content: "\2190"; font-weight: 700; font-size: 1.05em; line-height: 1; display: flex; align-items: center; justify-content: center; height: 1em; transform: translateY(-0.06em); }
+  .topbar .home:hover, .topbar .home:focus-visible { background: var(--accent); color: var(--paper); outline: none; }
   .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
 </style>
 <style id="bc-chapter-style">

@@ -693,7 +693,7 @@
     vertical-align: baseline; transition: background .18s ease, color .18s ease;
   }
   .topbar .home .pip { display: none; }
-  .topbar .home::before { content: "←"; font-weight: 700; font-size: 1.05em; line-height: 1; display: flex; align-items: center; justify-content: center; height: 1em; transform: translateY(-0.06em); }
+  .topbar .home::before { content: "\2190"; font-weight: 700; font-size: 1.05em; line-height: 1; display: flex; align-items: center; justify-content: center; height: 1em; transform: translateY(-0.06em); }
   .topbar .home:hover, .topbar .home:focus-visible { background: var(--accent); color: var(--paper); outline: none; }
   .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
 </style>
@@ -732,8 +732,8 @@
           </div>
 
           <div style="display: flex; gap: 28px; margin-top: 32px; flex-wrap: wrap;">
-            <span style="display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 20px; letter-spacing: 0.02em; color: var(--ink-2);"><span style="color: var(--accent); font-weight: 600;">›</span>Schnittmenge schaffen</span>
-            <span style="display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 20px; letter-spacing: 0.02em; color: var(--ink-2);"><span style="color: var(--accent); font-weight: 600;">›</span>Annahmen explizit machen</span>
+            <span style="display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 20px; letter-spacing: 0.02em; color: var(--ink-2);"><span style="color: var(--accent); font-weight: 600;">•</span>Schnittmenge schaffen</span>
+            <span style="display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 20px; letter-spacing: 0.02em; color: var(--ink-2);"><span style="color: var(--accent); font-weight: 600;">•</span>Annahmen explizit machen</span>
           </div>
         </div>
 
@@ -1092,7 +1092,7 @@
             1–3 Input/Output-Paare. Der mit Abstand stärkste Hebel — wenn man nur <em>einen</em> nutzt: diesen.
           </p>
           <div class="mono" data-nd='in: „Kunde reklamiert verspätete Lieferung"<br/>out: <span style="color: var(--accent);">Kategorie: Logistik · Dringlichkeit: hoch</span>' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
-            in: „Logout 500 bei abgelaufenem Token"<br/>
+            in: „Logout wirft HTTP 500, wenn das Token abgelaufen ist"<br/>
             out: <span style="color: var(--accent);">{"area":"auth","sev":"high","kind":"bug"}</span>
           </div>
         </div>
@@ -2044,8 +2044,8 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
       <!-- Interaktive Quiz-Items -->
       <div class="quiz" data-quiz="pattern-erkennen" style="margin-top: 14px;">
 
-        <div class="qitem" data-correct="role">
-          <div class="qbody" data-nd='<em>„Du bist eine erfahrene Datenschutzbeauftragte. Antworte juristisch präzise, vermeide Werbesprache."</em>'><em>„Du bist Senior Backend-Engineer mit API-Fokus. Antworte präzise und technisch, kein Buzzword-Bingo."</em></div>
+        <div class="qitem" data-correct="constraint">
+          <div class="qbody" data-nd='<em>„Maximal 3 Bullet-Points, je &le; 15 Wörter. Nutze nur Werte aus <span class="mono">niedrig | mittel | hoch</span>."</em>'><em>„Commit-Message: eine Headline &le; 50 Zeichen + max 3 Bullets. Typ nur aus <span class="mono">feat | fix | chore</span>."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
             <button class="qchoice" data-key="format">Format</button>
@@ -2053,7 +2053,7 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Role</span> — Rolle &amp; Stil im System-Prompt.</div>
+          <div class="qfb"><span class="ok">✓ Constraint</span> — harte Grenzen für Länge &amp; Wertebereich.</div>
         </div>
 
         <div class="qitem" data-correct="format">
@@ -2068,30 +2068,6 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
           <div class="qfb"><span class="ok">✓ Format</span> — strukturiertes Output-Schema, maschinell lesbar.</div>
         </div>
 
-        <div class="qitem" data-correct="fewshot">
-          <div class="qbody" data-nd='<em>„Beispiel — Input: <span class="mono">„Kunde reklamiert verspätete Lieferung"</span> → Output: <span class="mono">Kategorie: Logistik, Prio: hoch</span>. Jetzt klassifiziere: …"</em>'><em>„Beispiel — Input: <span class="mono">„Logout 500 bei abgelaufenem Token"</span> → Output: <span class="mono">{area: auth, sev: high}</span>. Jetzt klassifiziere: …"</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Few-Shot</span> — zeigt, statt zu beschreiben.</div>
-        </div>
-
-        <div class="qitem" data-correct="constraint">
-          <div class="qbody" data-nd='<em>„Maximal 3 Bullet-Points, je &le; 15 Wörter. Nutze nur Werte aus <span class="mono">niedrig | mittel | hoch</span>."</em>'><em>„Commit-Message: eine Headline &le; 50 Zeichen + max 3 Bullets. Typ nur aus <span class="mono">feat | fix | chore</span>."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Constraint</span> — harte Grenzen für Länge &amp; Wertebereich.</div>
-        </div>
-
         <div class="qitem" data-correct="selfcheck">
           <div class="qbody" data-nd='<em>„Erstelle den Text. Lies ihn danach selbst noch einmal durch: Länge eingehalten? Alle drei Felder da? Kein Marketing-Sprech? Bessere nach, was nicht passt — und gib erst dann die Endfassung aus."</em>'><em>„Schreib die Funktion. Geh den Diff danach selbst durch: kompiliert sie? Edge-Cases abgedeckt? Keine ungenutzten Imports? Erst dann gib den finalen Code aus."</em></div>
           <div class="qchoices">
@@ -2104,6 +2080,18 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
           <div class="qfb"><span class="ok">✓ Self-Check</span> — das Modell prüft den eigenen Entwurf gegen die Vorgaben, bevor es final antwortet.</div>
         </div>
 
+        <div class="qitem" data-correct="role">
+          <div class="qbody" data-nd='<em>„Du bist eine erfahrene Datenschutzbeauftragte. Antworte juristisch präzise, vermeide Werbesprache."</em>'><em>„Du bist Senior Backend-Engineer mit API-Fokus. Antworte präzise und technisch, kein Buzzword-Bingo."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Role</span> — Rolle &amp; Stil im System-Prompt.</div>
+        </div>
+
         <div class="qitem" data-correct="constraint">
           <div class="qbody" data-nd='<em>„Erwähne unter keinen Umständen konkrete Preise, Rabatte oder Liefertermine. Wirst du danach gefragt, verweise an den Vertrieb — rate niemals."</em>'><em>„Nenne unter keinen Umständen interne Repo-Namen, Hostnamen oder Tokens. Tauchen sie im Kontext auf, ersetze sie durch <span class="mono">[redacted]</span> — nie ausgeben."</em></div>
           <div class="qchoices">
@@ -2114,6 +2102,18 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
           <div class="qfb"><span class="ok">✓ Constraint</span> — auch ein Tabu (was <em>nicht</em> gesagt werden darf) ist eine harte Grenze, nicht nur Länge.</div>
+        </div>
+
+        <div class="qitem" data-correct="fewshot">
+          <div class="qbody" data-nd='<em>„Beispiel — aus <span class="mono">„Kunde reklamiert verspätete Lieferung"</span> wird <span class="mono">Kategorie: Logistik · Prio: hoch</span>. Jetzt genauso einordnen: …"</em>'><em>„Beispiel — Input: <span class="mono">„Logout wirft HTTP 500, wenn das Token abgelaufen ist"</span> → Output: <span class="mono">{area: auth, sev: high}</span>. Jetzt klassifiziere: …"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Few-Shot</span> — zeigt, statt zu beschreiben.</div>
         </div>
 
       </div>
@@ -2359,10 +2359,10 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
       </div>
 
       <div class="eyebrow">Echte Praxis — vager Prompt → produktionsreifer Prompt</div>
-      <h2 class="title" style="font-size: 44px; margin-bottom: 6px;">Refactored einen <span class="accent">schlechten Prompt</span> in drei Iterationen.</h2>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 6px;">Refactored einen <span class="accent">schlechten Prompt</span> in fünf Gates.</h2>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 28px; margin: 0;">
         <p class="body" style="margin: 0; max-width: 1300px; font-size: 19px;">
-          15 Min Refactoren · 5 Min Debrief. Driver tippt, Navigator ist „Prompt-Doctor" — fragt, blockt, verbessert.
+          15 Min Refactoren · 5 Min Debrief. User tippt, Navigator ist „Prompt-Doctor" — fragt, blockt, verbessert.
         </p>
         <button class="ex-eg-btn" type="button" data-eg-open="eg-refactor" style="flex: none;">Beispiel-Runde ansehen</button>
       </div>
@@ -2386,10 +2386,10 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px;">
         <div class="role-card">
           <div class="r-tag">Rolle · Driver</div>
-          <div class="r-name">Driver</div>
+          <div class="r-name">User</div>
           <div class="r-sub">tippt &amp; testet</div>
           <div class="r-body">
-            Schreibt V1 → V2 → V3 und testet jede gegen denselben Input.
+            Arbeitet alle fünf Gates ab und testet jede Fassung gegen denselben Input.
           </div>
         </div>
         <div class="role-card">
@@ -2406,7 +2406,7 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
       <div class="loop-line">
         <span class="ll-tag">Pro Runde · der Move</span>
         <div class="ll-body">
-          <strong>Doctor nennt das nächste Pattern</strong> <span class="ll-arrow">→</span> <strong>Driver schreibt die nächste Version</strong>, die es abdeckt <span class="ll-arrow">→</span> gegen denselben Test-Input prüfen <span class="ll-arrow">→</span> wiederholen, bis <strong>alle 5 Patterns</strong> sitzen.
+          <strong>Doctor nennt das nächste Pattern</strong> <span class="ll-arrow">→</span> <strong>User schreibt die nächste Version</strong>, die es abdeckt <span class="ll-arrow">→</span> gegen denselben Test-Input prüfen <span class="ll-arrow">→</span> wiederholen, bis <strong>alle 5 Patterns</strong> sitzen.
         </div>
       </div>
 
@@ -2415,7 +2415,7 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
 
         <div class="card dark" style="padding: 18px 24px; display: flex; flex-direction: column; order: 2;">
           <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Spielregel · die 5 Patterns des Prompt-Doctors</div>
-          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px; margin-bottom: 10px;">Vor jeder neuen Version &middot; laut fragen.</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px; margin-bottom: 10px;">Vor jeder neuen Version &middot; fragen.</div>
           <div class="gate-list">
             <div class="gate-item">
               <div class="g-num">01</div>
@@ -2462,25 +2462,24 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
             <div style="display: flex; justify-content: space-between; align-items: baseline;">
               <div>
                 <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Vage Prompts · wählt einen</div>
-                <div style="font-family: var(--serif); font-size: 24px; font-weight: 500;">Refactored in V1 → V2 → V3</div>
               </div>
             </div>
             <div style="margin-top: 10px;">
               <div class="task-row">
                 <div class="t-letter">A</div>
-                <div class="t-body"><strong>„Schreib mir eine Mail an einen unzufriedenen Kunden."</strong></div>
+                <div class="t-body" data-nd='<strong>„Schreib mir eine Mail an einen unzufriedenen Kunden."</strong>'><strong>„Schreib eine PR-Beschreibung aus diesem Branch-Diff."</strong></div>
               </div>
               <div class="task-row">
                 <div class="t-letter">B</div>
-                <div class="t-body"><strong>„Fasse das Meeting-Protokoll zusammen."</strong></div>
+                <div class="t-body" data-nd='<strong>„Fasse das Meeting-Protokoll zusammen."</strong>'><strong>„Fasse diesen Incident-Log zusammen."</strong></div>
               </div>
               <div class="task-row">
                 <div class="t-letter">C</div>
-                <div class="t-body"><strong>„Klassifiziere diesen Support-Ticket-Text."</strong></div>
+                <div class="t-body" data-nd='<strong>„Klassifiziere diese Kunden-E-Mails nach Anliegen."</strong>'><strong>„Klassifiziere diese Log-Zeilen nach Schweregrad."</strong></div>
               </div>
               <div class="task-row">
                 <div class="t-letter">D</div>
-                <div class="t-body"><strong>„Schreib einen Release-Note-Eintrag aus diesem Diff."</strong></div>
+                <div class="t-body" data-nd='<strong>„Erstelle ein Angebot aus diesen Eckdaten."</strong>'><strong>„Schreib Unit-Tests für die Funktion unten."</strong></div>
               </div>
               <div class="task-row">
                 <div class="t-letter">E</div>
@@ -2493,9 +2492,9 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
             <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Debrief · 5 min in der Runde</div>
             <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; margin-top: 2px;">Drei Fragen</div>
             <ul style="font-size: 16px; line-height: 1.35; color: var(--ink-2); margin: 3px 0 0; padding-left: 22px;">
-              <li>Welche <strong>Iteration</strong> hat <strong>am meisten</strong> gebracht — V1→V2 oder V2→V3?</li>
+              <li>Welches <strong>Gate</strong> hat <strong>am meisten</strong> gebracht?</li>
               <li>Wo war ein Few-Shot-Beispiel <strong>besser als 100 Worte Instruktion</strong>?</li>
-              <li>Was wäre euer Test, ob V3 <strong>wirklich</strong> besser ist als V1?</li>
+              <li>Was wäre euer Test, ob die Endfassung <strong>wirklich</strong> besser ist als die Startfassung?</li>
             </ul>
           </div>
 
@@ -2505,36 +2504,54 @@ Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
     </div>
 
     <!-- Beispielaufgabe · gespielte Runde (wer sagt was · Learning) -->
+    <style>
+      /* Chat-Ansicht — nur für diese Beispiel-Runde: Sprecher versetzt links/rechts */
+      #eg-refactor .ex-eg { width: min(1420px, 100%); }
+      #eg-refactor .eg-script { gap: 16px; }
+      #eg-refactor .eg-line {
+        display: flex; flex-direction: column; gap: 5px;
+        max-width: 80%;
+      }
+      #eg-refactor .eg-line.nav { align-self: flex-start; align-items: flex-start; }
+      #eg-refactor .eg-line.drv { align-self: flex-end; align-items: flex-end; }
+      #eg-refactor .eg-who {
+        flex-direction: row; align-items: baseline; gap: 9px;
+        text-align: left; padding-top: 0;
+      }
+      #eg-refactor .eg-line.drv .eg-who { flex-direction: row-reverse; }
+      #eg-refactor .eg-say { border-radius: 4px 12px 12px 12px; }
+      #eg-refactor .eg-line.drv .eg-say { border-radius: 12px 4px 12px 12px; }
+    </style>
     <div class="ex-eg-backdrop" id="eg-refactor">
       <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel-Runde">
         <div class="ex-eg-head">
           <div>
             <div class="eg-eyebrow">Beispiel-Runde · so klingt eine Iteration</div>
-            <div class="eg-title">Beispiel-Runde: <span class="accent">Kundenmail</span> von V1 zu V3</div>
+            <div class="eg-title">Beispiel-Runde: <span class="accent">Kundenmail</span> in 5 Gates</div>
           </div>
           <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
         </div>
         <div class="ex-eg-body">
           <div class="eg-script">
-            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 1 · Role</span></div><div class="eg-say">V1 ist nur „Schreib eine Mail.“ Als <strong>wer</strong> schreibt das Modell — und an wen?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">V2: „Du bist Support-Lead. Antworte einem Kunden, dessen Lieferung 5 Tage zu spät ist.“</div></div>
-            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 2 · Format</span></div><div class="eg-say" data-nd="In welcher Form? Mit Betreff? Wie lang darf die Mail sein?">In welcher Form? Betreff dabei — strukturiert in Absätze, wie lang?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">Ergänzt: „Betreff + drei kurze Absätze, max. 120 Wörter.“</div></div>
-            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 3 · Few-Shot</span></div><div class="eg-say">Woran erkennt das Modell <strong>unseren</strong> Ton? Zeig ihm ein Beispiel.</div></div>
-            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="V3: einen Beispiel-Absatz in unserem Stil drangehängt — daran orientiert sich das Modell.">V3: einen Beispiel-Absatz im Firmen-Ton drangehängt, plus ein Gegenbeispiel, das wir vermeiden.</div></div>
-            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 4 · Constraint</span></div><div class="eg-say">Was darf <strong>nicht</strong> passieren?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">„Keine Rabatte versprechen, keine Schuldzuweisung — genau ein nächster Schritt mit Termin.“</div></div>
-            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 5 · Self-Check</span></div><div class="eg-say">Lass das Modell vor dem Senden selbst gegenprüfen: alle Vorgaben erfüllt?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">Ergänzt: „Prüfe vor der Ausgabe: Betreff da, ≤ 120 Wörter, keine Rabatte — sonst korrigieren.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Gate 1 · Role</span></div><div class="eg-say">Die Startfassung ist nur „Schreib eine Mail.“ Als <strong>wer</strong> schreibt das Modell — und an wen?</div></div>
+            <div class="eg-line drv"><div class="eg-who">User</div><div class="eg-say">„Du bist Support-Lead. Antworte einem Kunden, dessen Lieferung 5 Tage zu spät ist.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Gate 2 · Format</span></div><div class="eg-say" data-nd="In welcher Form? Mit Betreff? Wie lang darf die Mail sein?">In welcher Form? Betreff dabei — strukturiert in Absätze, wie lang?</div></div>
+            <div class="eg-line drv"><div class="eg-who">User</div><div class="eg-say">Ergänzt: „Betreff + drei kurze Absätze, max. 120 Wörter.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Gate 3 · Few-Shot</span></div><div class="eg-say">Woran erkennt das Modell <strong>unseren</strong> Ton? Zeig ihm ein Beispiel.</div></div>
+            <div class="eg-line drv"><div class="eg-who">User</div><div class="eg-say" data-nd="Ein Beispiel-Absatz in unserem Stil drangehängt — daran orientiert sich das Modell.">Hängt einen Beispiel-Absatz im Firmen-Ton dran, plus ein Gegenbeispiel, das wir vermeiden.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Gate 4 · Constraint</span></div><div class="eg-say">Was darf <strong>nicht</strong> passieren?</div></div>
+            <div class="eg-line drv"><div class="eg-who">User</div><div class="eg-say">„Keine Rabatte versprechen, keine Schuldzuweisung — genau ein nächster Schritt mit Termin.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Gate 5 · Self-Check</span></div><div class="eg-say">Lass das Modell vor dem Senden selbst gegenprüfen: alle Vorgaben erfüllt?</div></div>
+            <div class="eg-line drv"><div class="eg-who">User</div><div class="eg-say">Ergänzt: „Prüfe vor der Ausgabe: Betreff da, ≤ 120 Wörter, keine Rabatte — sonst korrigieren.“</div></div>
           </div>
           <div class="eg-aside">
             <div class="eg-setup">
               <div class="eg-setup-label">Die Aufgabe</div>
-              <div class="eg-setup-task"><strong>Aufgabe A</strong> — aus „Schreib mir eine Mail an einen unzufriedenen Kunden“ einen Prompt machen, der zuverlässig liefert. V1 → V2 → V3 in 15 Minuten.</div>
+              <div class="eg-setup-task"><strong>Beispiel · Fachbereich</strong> — aus „Schreib mir eine Mail an einen unzufriedenen Kunden“ einen Prompt machen, der zuverlässig liefert. Startfassung → Endfassung in 5 Gates, 15 Minuten.</div>
             </div>
             <div class="eg-learning">
               <div class="eg-learning-label">Das Learning</div>
-              <div class="eg-learning-text">Derselbe Wunsch — drei Versionen. Der Prompt-Doctor hat nie selbst getippt, nur an <strong>fünf Stellen</strong> „Stopp“ gesagt. V1 war eine Hoffnung, V3 ist eine Spezifikation: <em>Rolle, Format, Beispiel, Grenze, Selbst-Check.</em> Genau diese fünf Fragen trennen einen vagen Prompt von einem, der zuverlässig liefert.</div>
+              <div class="eg-learning-text">Derselbe Wunsch — in fünf Schritten geschärft. Der Prompt-Doctor hat nie selbst getippt, nur an <strong>fünf Stellen</strong> „Stopp“ gesagt. Die Startfassung war eine Hoffnung, die Endfassung ist eine Spezifikation: <em>Rolle, Format, Beispiel, Grenze, Selbst-Check.</em> Genau diese fünf Fragen trennen einen vagen Prompt von einem, der zuverlässig liefert.</div>
             </div>
           </div>
         </div>

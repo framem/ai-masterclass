@@ -1050,7 +1050,7 @@
     padding-left: 12px; position: relative; line-height: 1.4;
   }
   .userdoc-system-list li::before {
-    content: "›"; position: absolute; left: 0; color: var(--accent);
+    content: "\2022"; position: absolute; left: 0; color: var(--accent);
   }
 
   /* User-Prompt: task picker (choose what THIS turn needs) */

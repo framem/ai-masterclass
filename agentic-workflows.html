@@ -172,7 +172,7 @@
   /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
   .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
   .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
-  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw::before { content: "\2022"; color: var(--accent); font-weight: 700; }
   .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Übungs-Slides ===== */
@@ -541,8 +541,16 @@
   /* Home breadcrumb in each slide topbar — back to the overview */
   /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
   .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
-  .topbar .home:hover { color: var(--accent); }
+  /* Klar als anklickbarer Zurück-Button gestaltet: umrandete Pille + Pfeil, füllt sich beim Hover */
+  .topbar .home {
+    display: inline-flex; align-items: center; gap: 0.45em;
+    padding: 0.3em 0.85em; border: 1.5px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-weight: 600; text-decoration: none; cursor: pointer;
+    vertical-align: baseline; transition: background .18s ease, color .18s ease;
+  }
+  .topbar .home .pip { display: none; }
+  .topbar .home::before { content: "\2190"; font-weight: 700; font-size: 1.05em; line-height: 1; display: flex; align-items: center; justify-content: center; height: 1em; transform: translateY(-0.06em); }
+  .topbar .home:hover, .topbar .home:focus-visible { background: var(--accent); color: var(--paper); outline: none; }
   .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
 </style>
 <style id="bc-chapter-style">
@@ -600,10 +608,10 @@
             <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">Plan ausführen, klein iterieren</div>
           </div>
           <div class="mono accent" style="font-size: 28px;">→</div>
-          <div style="background: var(--accent); border: 1px solid var(--accent); border-radius: 12px; padding: 22px 24px; color: #fff;">
-            <div class="mono" style="font-size: 18px; color: rgba(255,255,255,0.7); letter-spacing: 0.1em;">04</div>
+          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
+            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">04</div>
             <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Commit</div>
-            <div style="font-size: 18px; color: rgba(255,255,255,0.85); margin-top: 4px;">festschreiben, was funktioniert</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">festschreiben, was funktioniert</div>
           </div>
         </div>
       </div>
@@ -866,7 +874,7 @@
       </div>
 
       <div class="eyebrow">Warum gerade diese vier Phasen?</div>
-      <h2 class="title" style="font-size: 52px;">Jede Phase schützt vor einem<br/>konkreten <span class="accent">Failure-Mode</span>.</h2>
+      <h2 class="title" style="font-size: 52px;">Jede Phase schützt vor einem<br/>konkreten <span class="accent">Fehlermuster</span>.</h2>
 
       <p class="lede" style="margin-top: 6px; max-width: 1600px;">
         Wer eine Phase überspringt, bekommt zuverlässig den dazugehörigen Fehler. Deshalb ist die Reihenfolge selbst die wichtigste Schutzmaßnahme.
@@ -1444,7 +1452,7 @@
         </div>
 
         <div class="qitem" data-correct="selbst">
-          <div class="qbody" data-nd='<em>„Zwei Zahlen in der morgigen Vorstandsfolie korrigieren — du weißt genau, welche und wo."</em>'><em>„Hotfix: eine Zeile in Prod ändern, du kennst die Stelle exakt — jede Minute Downtime kostet."</em></div>
+          <div class="qbody" data-nd='<em>„Zwei Zahlen in der morgigen Vorstandsfolie korrigieren — du weißt genau, welche und wo."</em>'><em>„Tippfehler in einer Log-Meldung korrigieren — du weißt genau, welche Datei und Zeile."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="agent">Agent · voller Loop</button>
             <button class="qchoice" data-key="planonly">Plan-only</button>
@@ -1868,18 +1876,8 @@
           <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
           <h2 class="title" style="font-size: 56px; margin-bottom: 6px;">EPEC auf <span class="accent">einer Seite</span>.</h2>
           <p class="body" style="margin: 0; max-width: 1150px; font-size: 19px;">
-            Hier sind die vier Phasen mit Tool-Set, Artefakt, Failure-Mode und einer Daumenregel — abfotografieren oder ausdrucken.
+            Hier sind die vier Phasen mit Tool-Set, Artefakt, Fehlermuster und einer Daumenregel — abfotografieren oder ausdrucken.
           </p>
-        </div>
-        <div class="cs-emblem" aria-hidden="true">
-          <span class="em-cap">Der EPEC-Loop</span>
-          <div class="epec">
-            <span class="ep on">Explore</span>
-            <span class="ep">Plan</span>
-            <span class="ep">Commit</span>
-            <span class="ep">Execute</span>
-            <span class="rotor"><svg viewBox="0 0 24 24" fill="none"><path d="M20 12a8 8 0 1 1-2.4-5.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M20 3.6v3.6h-3.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
-          </div>
         </div>
       </div>
 
@@ -1897,7 +1895,7 @@
             <div class="cs-val">mentales Modell — was ist da, was nicht</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-label">Fehlermuster</div>
             <div class="cs-val">halluzinierte Konventionen, „erfundener" Code</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
@@ -1918,7 +1916,7 @@
             <div class="cs-val">nummerierte To-Dos — vom Menschen freigegeben</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-label">Fehlermuster</div>
             <div class="cs-val">falsche Aufgabe gelöst, Annahmen versteckt</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
@@ -1939,7 +1937,7 @@
             <div class="cs-val">grüne Tests, Implementierung — noch uncommitted</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-label">Fehlermuster</div>
             <div class="cs-val">Theorie ohne Realität — Plan nie ausgeführt</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
@@ -1960,7 +1958,7 @@
             <div class="cs-val">sauberer Commit + PR — review-fähig</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-label">Fehlermuster</div>
             <div class="cs-val">verlorene Arbeit, nichts reproduzierbar</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">

@@ -115,7 +115,7 @@
   /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
   .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
   .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
-  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw::before { content: "\2022"; color: var(--accent); font-weight: 700; }
   .agenda .ag-kw.accent { color: var(--accent); }
 
   /* Cheat-Sheet primitives */
@@ -251,8 +251,16 @@
   /* Home breadcrumb in each slide topbar — back to the overview */
   /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
   .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
-  .topbar .home:hover { color: var(--accent); }
+  /* Klar als anklickbarer Zurück-Button gestaltet: umrandete Pille + Pfeil, füllt sich beim Hover */
+  .topbar .home {
+    display: inline-flex; align-items: center; gap: 0.45em;
+    padding: 0.3em 0.85em; border: 1.5px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-weight: 600; text-decoration: none; cursor: pointer;
+    vertical-align: baseline; transition: background .18s ease, color .18s ease;
+  }
+  .topbar .home .pip { display: none; }
+  .topbar .home::before { content: "\2190"; font-weight: 700; font-size: 1.05em; line-height: 1; display: flex; align-items: center; justify-content: center; height: 1em; transform: translateY(-0.06em); }
+  .topbar .home:hover, .topbar .home:focus-visible { background: var(--accent); color: var(--paper); outline: none; }
   .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
 </style>
 <style id="bc-chapter-style">
@@ -1043,6 +1051,16 @@
           <div class="qfb"><span class="ok">✓ Parallelisierung</span> — unabhängige Teilaufgaben im Fan-out, danach Aggregat. <span class="no">Routing</span> wählt <em>einen</em> Pfad, hier laufen mehrere gleichzeitig.</div>
         </div>
 
+        <div class="qitem" data-correct="orchestrator">
+          <div class="qbody"><em>„Benenne eine Funktion im ganzen Repo um."</em> Ein Modell findet zur Laufzeit die betroffenen Dateien, verteilt pro Datei eine Teil-Änderung an Worker-Modelle und führt alles zusammen.</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="parallel">Parallelisierung</button>
+            <button class="qchoice" data-key="orchestrator">Orchestrator-Workers</button>
+            <button class="qchoice" data-key="agent">Agent</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Orchestrator-Workers</span> — ein Modell zerlegt die Aufgabe <em>zur Laufzeit</em> und delegiert an Worker. <span class="no">Parallelisierung</span> hätte einen festen, vorab definierten Split; ein <span class="no">Agent</span> würde auch das Ziel selbst bestimmen.</div>
+        </div>
+
         <div class="qitem" data-correct="agent">
           <div class="qbody"><em>„Plan ein langes Wochenende in Lissabon — 600 € Budget, Kunst-Fokus."</em> Recherchier Flüge, Hotels, Museen — und koordinier alles.</div>
           <div class="qchoices">
@@ -1056,7 +1074,7 @@
       </div>
 
       <div class="reveal-row">
-        <div class="reveal-status"><span class="score">0</span> / 5 beantwortet · <em>Tippe deine Antwort an — das Feedback klappt sofort auf.</em></div>
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · <em>Tippe deine Antwort an — das Feedback klappt sofort auf.</em></div>
         <div style="display: flex; gap: 10px;">
           <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
           <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
@@ -1279,50 +1297,6 @@
   </section>
 
 
-  <!-- ===================== 07A ÜBUNG CONNECTION-GRAPH (aus der Übungs-Sammlung) ===================== -->
-  <section data-screen-label="07a Übung Connection-Graph" data-roleswitch>
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
-        <span></span>
-      </div>
-
-      <h2 class="title" style="margin-top: 20px;">Wähle eine Aufgabe und <span class="accent">aktiviere</span> nur die nötigen Knoten.</h2>
-
-      <div class="ex-stage cgraph" id="ex-cgraph">
-        <div class="cgraph-board">
-          <div class="cgraph-picker">
-            <span class="cgp-label">Aufgabe</span>
-            <div class="cgp-dd" id="cgraph-dd">
-              <button type="button" class="cgp-trigger" id="cgraph-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Aufgabe wählen">
-                <span class="cgp-trigger-text" id="cgraph-trigger-text"></span>
-                <span class="cgp-caret" aria-hidden="true"></span>
-              </button>
-              <div class="cgp-menu" id="cgraph-menu" role="listbox" hidden></div>
-            </div>
-            <button class="cgp-reset" id="cgraph-reset" title="Zurücksetzen" aria-label="Zurücksetzen">↺</button>
-          </div>
-          <div class="cgraph-canvas" id="cgraph-canvas">
-            <svg id="cgraph-edges" xmlns="http://www.w3.org/2000/svg"></svg>
-            <div id="cgraph-labels"></div>
-          </div>
-        </div>
-
-        <div class="cgraph-trace">
-          <div class="cgraph-trace-head">Context-Window</div>
-          <div id="cgraph-trace-body"></div>
-          <div class="cgraph-insight" id="cgraph-insight" hidden></div>
-          <div class="cgraph-check">
-            <button class="btn accent" id="cgraph-pruefen" disabled>Prüfen</button>
-            <button class="btn ghost" id="cgraph-clear" disabled>Leeren</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
   <!-- ===================== 07B MCP IN DER PRAXIS — JIRA & CONFLUENCE ===================== -->
   <section data-screen-label="07b MCP Praxis Jira Confluence">
     <div class="chrome">
@@ -1428,100 +1402,6 @@
         <div class="callout-label">Merksatz</div>
         <div class="callout-body" style="font-size: 19px;">
           Die <strong>API gehört dem MCP-Server</strong>, nicht dem Agenten. Atlassian patcht ihre REST-Schnittstelle — der Server wird aktualisiert, alle MCP-fähigen Clients profitieren mit. Keine Doppelarbeit pro Tool.
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ===================== 07C ÜBUNG — MCP-VERSTÄNDNIS ===================== -->
-  <section data-screen-label="07c Übung MCP">
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Wissenscheck</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">Aufgabe</div>
-      <h2 class="title" style="font-size: 44px; margin-bottom: 8px;">Welches Szenario ist <span class="accent">echtes MCP</span>?</h2>
-      <p class="body" style="margin: 0; max-width: 1600px;">
-        MCP = offener Standard, der LLM-<strong>Clients</strong> (Desktop-App, IDE, Agent) eine einheitliche Sprache gibt, um <strong>Tools, Daten und Ressourcen</strong> einzubinden — ohne pro Quelle eine eigene Integration zu bauen.
-      </p>
-
-      <!-- Antwortmöglichkeiten (klickbar) -->
-      <div class="mcq-grid" data-quiz="mcp" data-correct="A" style="margin-top: 22px;">
-
-        <button class="mcq" data-key="A" type="button">
-          <div class="mcq-head">
-            <div class="mcq-letter">A</div>
-            <div class="mcq-title" data-nd='Der Agent bindet einen MCP-Server für euer Ticketsystem ein und kann darüber Vorgänge lesen &amp; anlegen — genauso für Chat &amp; Datenbank.'>Der Agent bindet einen <span class="mono" style="font-size: 20px;">jira-mcp</span>-Server ein und kann darüber Tickets lesen &amp; anlegen — unverändert auch für Slack &amp; Postgres.</div>
-          </div>
-          <p class="mcq-note" data-nd='Ein Protokoll, viele Quellen. Der Client kennt das Ticketsystem nicht direkt — nur MCP.'>Ein Protokoll, viele Quellen. Der Client kennt keine Jira-API direkt — nur MCP.</p>
-        </button>
-
-        <button class="mcq" data-key="B" type="button">
-          <div class="mcq-head">
-            <div class="mcq-letter">B</div>
-            <div class="mcq-title" data-nd='Eine Anwendung schickt direkt einen Prompt an die Modell-Schnittstelle.'>Ein Python-Skript schickt mit <span class="mono" style="font-size: 20px;">requests.post()</span> einen Prompt an die Anthropic-API.</div>
-          </div>
-          <p class="mcq-note">Direkter Modellaufruf. Kein Tool, kein Protokoll dazwischen.</p>
-        </button>
-
-        <button class="mcq" data-key="C" type="button">
-          <div class="mcq-head">
-            <div class="mcq-letter">C</div>
-            <div class="mcq-title">Zwei autonome Agenten verhandeln über ein offenes Protokoll, wer welche Teilaufgabe übernimmt.</div>
-          </div>
-          <p class="mcq-note">Klingt ähnlich — ist aber das andere Protokoll (A2A).</p>
-        </button>
-
-        <button class="mcq" data-key="D" type="button">
-          <div class="mcq-head">
-            <div class="mcq-letter">D</div>
-            <div class="mcq-title">Ein Workflow ruft drei Modelle nacheinander auf und reicht das Ergebnis weiter.</div>
-          </div>
-          <p class="mcq-note">Code orchestriert Modelle — hat mit MCP nichts zu tun.</p>
-        </button>
-
-      </div>
-
-      <!-- Frage 2: Transfer -->
-      <div class="quiz" data-quiz="mcp-transfer" style="margin-top: 16px;">
-        <div class="qitem" data-correct="mcp">
-          <div class="qbody" data-nd='<em>„Euer Agent nutzt das Ticketsystem schon per MCP. Jetzt soll er zusätzlich die <strong>Wissensdatenbank</strong> durchsuchen. Was ist der MCP-Weg?"</em>'><em>„Euer Agent nutzt schon <span class="mono">jira-mcp</span>. Jetzt soll er zusätzlich <strong>Confluence-Seiten</strong> lesen. Was ist der MCP-Weg?"</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="rest">Eigene REST-Integration</button>
-            <button class="qchoice" data-key="mcp">MCP-Server einbinden</button>
-            <button class="qchoice" data-key="agent">Zweiten Agenten bauen</button>
-          </div>
-          <div class="qfb" data-nd='<span class="ok">✓ MCP-Server einbinden</span> — gleicher Client, ein Server mehr. <span class="no">Eigene Integration</span> = Aufwand pro Quelle. <span class="no">Zweiter Agent</span> = unnötig, das wäre A2A-Territorium.'><span class="ok">✓ MCP-Server einbinden</span> — <span class="mono">confluence-mcp</span> dazu, gleicher Client. <span class="no">REST</span> = Integration pro Quelle. <span class="no">Zweiter Agent</span> = unnötig, das wäre A2A-Territorium.</div>
-        </div>
-      </div>
-
-      <!-- Erklärung (klappt nach Antwort / Reveal auf) -->
-      <div class="explain" data-explain>
-        <div style="display: flex; gap: 24px; align-items: flex-start;">
-          <div style="flex-shrink: 0;">
-            <div class="explain-accent">↳ Auflösung</div>
-            <div style="font-family: var(--serif); font-size: 48px; font-weight: 500; color: var(--accent-soft); line-height: 1; margin-top: 4px;">A</div>
-          </div>
-          <div style="flex: 1; padding-left: 22px; border-left: 1px solid rgba(255,255,255,0.14);">
-            <div style="font-size: 18px; line-height: 1.5;">
-              MCP ist der <strong>USB-C-Stecker für LLM-Tools</strong>: ein Client, ein Protokoll, beliebig viele MCP-Server. <strong>B</strong> ist reine API-Anfrage, <strong>C</strong> ist A2A (zwischen Agenten), <strong>D</strong> ein Workflow.
-            </div>
-            <div class="mono" style="margin-top: 10px; font-size: 13px; color: var(--accent-soft); letter-spacing: 0.06em;">
-              Merksatz: MCP verbindet einen Agenten <em>mit Werkzeugen</em>. A2A verbindet Agenten <em>untereinander</em>.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="reveal-row">
-        <div class="reveal-status">Zwei Fragen — klick deine Antworten an, oder lass auflösen.</div>
-        <div style="display: flex; gap: 10px;">
-          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
-          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
         </div>
       </div>
 
@@ -1833,229 +1713,6 @@ server.<span class="fn">registerTool</span>(
     .mtx-dlg .d-act b { color: var(--ink); }
   </style>
 
-  <!-- ===================== 08 ANATOMIE EINES AGENTEN ===================== -->
-  <style id="agent-anatomy-style">
-    .ag-grid { display: grid; grid-template-columns: 1.12fr 1fr; gap: 26px; margin-top: 18px; flex: 1; min-height: 0; }
-
-    /* --- The agent file panel (left) --- */
-    .ag-file { background: var(--ink); border: 1px solid var(--ink); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
-    .ag-file-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 22px; border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    .ag-file-bar .ag-fname { font-family: var(--mono); font-size: 15px; color: var(--accent-soft); letter-spacing: 0.04em; }
-    .ag-file-bar .ag-fmeta { font-family: var(--mono); font-size: 13px; color: #c8c2b6; }
-    .ag-zone { padding: 13px 24px 15px 26px; }
-    .ag-zone + .ag-zone { border-top: 1px solid rgba(255,255,255,0.08); }
-    .ag-zone.front { background: rgba(232,147,121,0.08); border-left: 3px solid var(--accent); }
-    .ag-zone.body { border-left: 3px solid #4d463a; }
-    .ag-ztag {
-      display: block; text-align: right; margin-bottom: 4px;
-      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent-soft);
-    }
-    .ag-zone.body .ag-ztag { color: #8a8273; }
-
-    .ag-code { font-family: var(--mono); font-size: 15.5px; line-height: 1.62; color: #e9e4d9; white-space: pre-wrap; margin: 0; }
-    .ag-code .k   { color: #6f675a; }
-    .ag-code .key { color: var(--accent-soft); }
-    .ag-code .h   { color: #f0ece3; font-weight: 600; }
-    .ag-code .hh  { color: var(--accent-soft); font-weight: 600; }
-    .ag-code .c   { color: #8a8273; }
-
-    /* --- Right column cards --- */
-    .ag-side { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
-    .ag-card { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 20px 24px; }
-    .ag-card.dark { background: var(--ink); border-color: var(--ink); }
-    .ag-card-label { font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; }
-    .ag-card.dark .ag-card-label { color: var(--accent-soft); }
-
-    /* file-location rows */
-    .ag-loc { display: flex; align-items: flex-start; gap: 14px; padding: 11px 0; border-bottom: 1px dashed var(--hair); }
-    .ag-loc:last-child { border-bottom: none; }
-    .ag-loc .ag-glyph {
-      flex: 0 0 auto; width: 26px; height: 26px; border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--mono); font-size: 15px; font-weight: 700; margin-top: 1px;
-    }
-    .ag-glyph.yes { background: var(--accent); color: #fff; }
-    .ag-glyph.info { background: var(--bg-2); color: var(--ink); border: 1px solid var(--hair); }
-    .ag-glyph.no { background: transparent; color: var(--ink-3); border: 1px dashed var(--ink-3); }
-    .ag-loc .ag-path { font-family: var(--mono); font-size: 16px; color: var(--ink); }
-    .ag-loc.bad .ag-path { color: var(--ink-3); text-decoration: line-through; text-decoration-thickness: 1px; }
-    .ag-loc .ag-meaning { font-size: 14.5px; color: var(--ink-2); line-height: 1.36; margin-top: 2px; }
-    .ag-loc .ag-meaning strong { color: var(--ink); }
-
-    /* building blocks */
-    .ag-block { display: flex; align-items: baseline; gap: 14px; padding: 9px 0; }
-    .ag-block + .ag-block { border-top: 1px solid rgba(255,255,255,0.08); }
-    .ag-block .ag-bk-key { flex: 0 0 132px; font-family: var(--mono); font-size: 15px; color: var(--accent-soft); }
-    .ag-block .ag-bk-txt { font-size: 15px; color: #d8d2c5; line-height: 1.4; }
-    .ag-block .ag-bk-txt b { color: #f0ece3; font-weight: 600; }
-    .ag-principle { margin-top: 14px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 16px; color: #e9e4d9; line-height: 1.42; }
-    .ag-principle strong { color: var(--accent-soft); }
-  </style>
-  <section data-screen-label="08 Anatomie eines Agenten">
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Praxis</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">Vom Ziel zur Datei — wie ein spezifischer Agent entsteht</div>
-      <h2 class="title" style="font-size: 52px; margin-bottom: 8px;">Anatomie eines <span class="accent">spezifischen Agenten</span>.</h2>
-
-      <p class="body" style="margin: 0; max-width: 1700px; font-size: 20px;">
-        Ein Agent ist kein Programm, das du schreibst — es ist eine <strong>Markdown-Datei</strong>, die beschreibt, <em>wer</em> er ist, <em>was</em> er nutzen darf und <em>wie</em> er vorgeht. Vier Bausteine, eine feste Adresse im Repo.
-      </p>
-
-      <div class="ag-grid">
-
-        <!-- ============ ANNOTATED AGENT FILE ============ -->
-        <div class="ag-file">
-          <div class="ag-file-bar">
-            <span class="ag-fname">.agents/release-notes.md</span>
-            <span class="ag-fmeta">~520 tokens · YAML + Markdown</span>
-          </div>
-
-          <div class="ag-zone front">
-            <span class="ag-ztag">Verschaltung</span>
-<pre class="ag-code"><span class="k">---</span>
-<span class="key">name</span>: Release-Notes-Agent
-<span class="key">mcps</span>: [github, linear]
-<span class="key">skills</span>: [markdown-report]
-<span class="key">schedule</span>: "Fri 16:00 Europe/Berlin"
-<span class="k">---</span></pre>
-          </div>
-
-          <div class="ag-zone body">
-            <span class="ag-ztag">Anleitung</span>
-<pre class="ag-code"><span class="h"># Release-Notes-Agent</span>
-
-<span class="hh">## Rolle</span>
-Du fasst die Releases der Woche für das
-#product-Update zusammen.
-
-<span class="hh">## Workflow</span>
-1. GitHub: gemergte PRs mit Label `release`.
-2. Linear: geschlossene Issues im Cycle.
-3. Skill `markdown-report` → Template release-notes.
-4. Schreibe nach docs/releases/&lt;datum&gt;.md.
-
-<span class="hh">## Ton &amp; Grenzen</span>
-Knapp, nutzerorientiert, kein interner Jargon.
-Bei Unklarheit nachfragen — nicht raten.</pre>
-          </div>
-        </div>
-
-        <!-- ============ RIGHT: LOCATION + BUILDING BLOCKS ============ -->
-        <div class="ag-side">
-
-          <div class="ag-card">
-            <div class="ag-card-label">Wohin gehört die Datei?</div>
-            <div style="margin-top: 8px;">
-              <div class="ag-loc">
-                <span class="ag-glyph yes">✓</span>
-                <div>
-                  <div class="ag-path">.agents/&lt;name&gt;.md</div>
-                  <div class="ag-meaning">Genau hier. <strong>Ein Agent = eine Datei</strong>, klein und benannt.</div>
-                </div>
-              </div>
-              <div class="ag-loc">
-                <span class="ag-glyph info">·</span>
-                <div>
-                  <div class="ag-path">AGENTS.md</div>
-                  <div class="ag-meaning">Etwas <strong>anderes</strong>: Team-Regeln für <em>alle</em> Agenten — always-on, kein einzelner Agent.</div>
-                </div>
-              </div>
-              <div class="ag-loc bad">
-                <span class="ag-glyph no">✗</span>
-                <div>
-                  <div class="ag-path">release-notes.agent.md</div>
-                  <div class="ag-meaning">Gibt's nicht. Erfundene Endung, die <strong>kein Tool</strong> als Agent erkennt.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="ag-card dark" style="flex: 1; display: flex; flex-direction: column;">
-            <div class="ag-card-label">Die 4 Bausteine</div>
-            <div style="margin-top: 6px;">
-              <div class="ag-block">
-                <span class="ag-bk-key">name</span>
-                <span class="ag-bk-txt"><b>Identität</b> — ein eindeutiger Name.</span>
-              </div>
-              <div class="ag-block">
-                <span class="ag-bk-key">mcps</span>
-                <span class="ag-bk-txt"><b>Werkzeuge</b> — welche MCP-Server er nutzen darf.</span>
-              </div>
-              <div class="ag-block">
-                <span class="ag-bk-key">skills</span>
-                <span class="ag-bk-txt"><b>Rezepte</b> — Prozesswissen, on-demand geladen.</span>
-              </div>
-              <div class="ag-block">
-                <span class="ag-bk-key">Rolle · Workflow · Ton</span>
-                <span class="ag-bk-txt"><b>Anleitung</b> — ein Satz, nummerierte Schritte, Stil + Grenzen.</span>
-              </div>
-            </div>
-            <div class="ag-principle" style="margin-top: auto;">
-              Du schreibst <strong>keinen Code</strong> — du verschaltest, was schon existiert: vorhandene MCPs + Skills, gebündelt zu einem Ziel.
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
-        <div class="callout-label">Merksatz</div>
-        <div class="callout-body" style="font-size: 20px;">
-          <span class="mono" style="color: var(--ink);">.agents/&lt;name&gt;.md</span> = <strong>ein</strong> Agent.&nbsp;&nbsp;·&nbsp;&nbsp;<span class="mono" style="color: var(--ink);">AGENTS.md</span> = das <strong>ganze Team</strong>.&nbsp;&nbsp;·&nbsp;&nbsp;Eine eigene <span class="mono" style="color: var(--ink);">*.agent.md</span> gibt es <strong>nicht</strong>.
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ===================== 08A ÜBUNG AGENT-BUILDER (aus der Übungs-Sammlung) ===================== -->
-  <section data-screen-label="08a Übung Agent-Builder" data-roleswitch>
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Praxis</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">IDE-Ansicht · welcher Kontext ist da, was kommt dazu</div>
-      <h2 class="title">Beschreibe deinen Agenten — sieh, welche <span class="accent">Dateien relevant</span> werden.</h2>
-      <p class="ex-instructions" style="margin-top: 6px;">
-        Klicke links Dateien an, um sie zu lesen. Wähle rechts ein Szenario — die ★-markierten Dateien werden für den Agenten relevant. Drücke <strong>Agent erzeugen</strong>: die neue Definition erscheint im Tree.
-      </p>
-
-      <div class="ex-stage ide-stage" id="ex-agent-builder">
-        <div class="ide-tree" id="agent-tree"></div>
-        <div class="ide-viewer">
-          <div class="ide-viewer-tab" id="agent-viewer-tab"></div>
-          <div class="ide-viewer-content" id="agent-viewer-content"></div>
-        </div>
-        <div class="ide-builder">
-          <div class="ide-builder-section scenarios">
-            <div class="ide-builder-label">Beschreib einen Agenten</div>
-            <div id="agent-scenarios"></div>
-          </div>
-          <div class="ide-analysis" id="agent-analysis"></div>
-          <div class="ide-insight" id="agent-insight"></div>
-          <div class="ide-actions">
-            <button class="btn accent" id="agent-create" disabled>↳ Agent erzeugen</button>
-            <button class="btn ghost" id="agent-reset">↺ Reset</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
   <!-- ===================== 08B WISSENSCHECK — KAPITEL-RECAP ===================== -->
   <section data-screen-label="08b Wissenscheck Kapitel-Recap">
     <div class="chrome">
@@ -2154,34 +1811,6 @@ Bei Unklarheit nachfragen — nicht raten.</pre>
           <p class="body" style="margin: 0; max-width: 1100px; font-size: 19px;">
             Vier Stationen mit Auslöser, Default-Werkzeug, Failure-Mode und einer Daumenregel — abfotografieren, an die Wand hängen.
           </p>
-        </div>
-        <div class="cs-emblem" aria-hidden="true">
-          <span class="em-cap">Wer entscheidet?</span>
-          <div class="mrow">
-            <span class="mtag">Workflow · fester Pfad</span>
-            <div class="mtrack">
-              <span class="em-chip">Step 1</span><span class="mlink"></span>
-              <span class="em-chip">Step 2</span><span class="mlink"></span>
-              <span class="em-chip">Step 3</span>
-            </div>
-          </div>
-          <div class="mrow">
-            <span class="mtag">Agent · entscheidet selbst</span>
-            <div class="mfan">
-              <span class="em-chip magent">Agent</span>
-              <svg class="mfan-svg" viewBox="0 0 56 104" aria-hidden="true">
-                <path class="fp" d="M0 52 C 22 52, 26 15, 56 15"></path>
-                <path class="fp" d="M0 52 L 56 52"></path>
-                <path class="fp" d="M0 52 C 22 52, 26 89, 56 89"></path>
-                <path class="fp hot" d="M0 52 L 56 52"></path>
-              </svg>
-              <div class="mfan-targets">
-                <span class="em-chip">Skill</span>
-                <span class="em-chip">MCP · Tool</span>
-                <span class="em-chip">Antwort</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -2534,8 +2163,6 @@ Bei Unklarheit nachfragen — nicht raten.</pre>
   })();
 </script>
 <!-- Exercise scripts -->
-<script src="exercises/connection-graph.js"></script>
-<script src="exercises/agent-builder.js"></script>
 <script src="exercises/role-switch.js"></script>
 <script src="exercises/example-task.js"></script>
 </body>
