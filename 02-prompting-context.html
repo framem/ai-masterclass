@@ -145,7 +145,7 @@
     display: flex; align-items: center; gap: 24px;
     border-left: 3px solid var(--accent);
     background: var(--paper);
-    font-size: 22px; line-height: 1.4; color: var(--ink-2);
+    font-size: 24px; line-height: 1.4; color: var(--ink-2);
   }
   .callout .callout-label {
     flex: 0 0 auto;
@@ -167,6 +167,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\2022"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Übungs-Slides ===== */
   .qrow {
@@ -379,11 +384,11 @@
 
   /* ===== Cheat-Sheet ===== */
   .cs-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
   }
   .cs-card {
     background: var(--paper); border: 1px solid var(--hair);
-    border-radius: 14px; padding: 22px 24px;
+    border-radius: 14px; padding: 28px 28px;
     display: flex; flex-direction: column;
   }
   .cs-card.dark { background: var(--ink); color: #f0ece3; border-color: var(--ink); }
@@ -395,7 +400,7 @@
     font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;
     letter-spacing: -0.01em;
   }
-  .cs-card .cs-row { margin-top: 14px; }
+  .cs-card .cs-row { margin-top: 18px; }
   .cs-card .cs-label {
     font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
   }
@@ -439,6 +444,23 @@
   .cs-emblem .cw-leg span { display: inline-flex; align-items: center; gap: 6px; }
   .cs-emblem .cw-leg i { width: 8px; height: 8px; border-radius: 2px; background: #8a8275; }
   .cs-emblem .cw-leg .lod i { background: var(--accent); }
+
+  /* Token-Verbrauchs-Balken (vom Context-Kapitel übernommen) */
+  .source-bar {
+    display: flex; border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--hair);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    color: var(--ink);
+  }
+  .source-bar > div {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 14px;
+    border-right: 1px solid rgba(21,17,12,0.18);
+  }
+  .source-bar > div:last-child { border-right: none; }
+  .source-bar .src-label { font-size: 12.5px; letter-spacing: 0.04em; white-space: nowrap; }
+  .source-bar .src-tok { font-size: 10.5px; color: var(--ink-3); margin-top: 3px; font-weight: 500; }
+
   .cs-rule .r-when {
     font-family: var(--mono); font-size: 11px; color: var(--accent);
     letter-spacing: 0.08em; text-transform: uppercase;
@@ -663,8 +685,16 @@
   /* Home breadcrumb in each slide topbar — back to the overview */
   /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
   .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
-  .topbar .home:hover { color: var(--accent); }
+  /* Klar als anklickbarer Zurück-Button gestaltet: umrandete Pille + Pfeil, füllt sich beim Hover */
+  .topbar .home {
+    display: inline-flex; align-items: center; gap: 0.45em;
+    padding: 0.3em 0.85em; border: 1.5px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-weight: 600; text-decoration: none; cursor: pointer;
+    vertical-align: baseline; transition: background .18s ease, color .18s ease;
+  }
+  .topbar .home .pip { display: none; }
+  .topbar .home::before { content: "←"; font-weight: 700; font-size: 1.05em; line-height: 1; display: flex; align-items: center; justify-content: center; height: 1em; transform: translateY(-0.06em); }
+  .topbar .home:hover, .topbar .home:focus-visible { background: var(--accent); color: var(--paper); outline: none; }
   .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
 </style>
 <style id="bc-chapter-style">
@@ -676,7 +706,7 @@
 <deck-stage>
 
   <!-- ===================== 00 AUFHÄNGER — INSELMODELL ===================== -->
-  <section data-screen-label="00 Aufhänger Inselmodell">
+  <section data-screen-label="Aufhänger · Inselmodell">
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
@@ -701,9 +731,9 @@
             </div>
           </div>
 
-          <div style="display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap;">
-            <span class="pill outline" style="font-size: 20px; padding: 9px 18px;">Schnittmenge schaffen</span>
-            <span class="pill outline" style="font-size: 20px; padding: 9px 18px;">Annahmen explizit machen</span>
+          <div style="display: flex; gap: 28px; margin-top: 32px; flex-wrap: wrap;">
+            <span style="display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 20px; letter-spacing: 0.02em; color: var(--ink-2);"><span style="color: var(--accent); font-weight: 600;">›</span>Schnittmenge schaffen</span>
+            <span style="display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 20px; letter-spacing: 0.02em; color: var(--ink-2);"><span style="color: var(--accent); font-weight: 600;">›</span>Annahmen explizit machen</span>
           </div>
         </div>
 
@@ -734,7 +764,7 @@
 
 
   <!-- ===================== 01 TITLE ===================== -->
-  <section data-screen-label="01 Titel">
+  <section data-screen-label="Titel">
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span></span>
@@ -748,11 +778,11 @@
         Vom Wunsch zur verlässlichen Antwort — wie aus einem Modell ein <em>Werkzeug</em> wird.
       </h3>
 
-      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Spezifisch statt vage</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Few-Shot statt Erklärung</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Context kostet</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">System statt Zufall</span>
+      <div class="agenda">
+        <span class="ag-kw">Spezifisch statt vage</span>
+        <span class="ag-kw">Few-Shot statt Erklärung</span>
+        <span class="ag-kw">Context kostet</span>
+        <span class="ag-kw">System statt Zufall</span>
       </div>
 
       <!-- decorative bottom row -->
@@ -793,7 +823,7 @@
 
 
   <!-- ===================== 03 WARUM PROMPTING + CONTEXT ===================== -->
-  <section data-screen-label="02 Warum Prompt Context" data-roleswitch>
+  <section data-screen-label="Warum Prompt &amp; Context" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
@@ -867,7 +897,7 @@
 
 
   <!-- ===================== 04 ANATOMIE EINES PROMPTS ===================== -->
-  <section data-screen-label="03 Anatomie eines Prompts" data-roleswitch>
+  <section data-screen-label="Anatomie eines Prompts" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
@@ -1009,6 +1039,98 @@
   </section>
 
 
+  <!-- ===================== 05 DIE 5 PATTERNS ===================== -->
+  <section data-screen-label="Die 5 Patterns" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Patterns</div>
+      <h2 class="title" style="font-size: 52px;">Fünf Muster, die <span class="accent">wirklich ziehen</span>.</h2>
+
+      <p class="body" style="margin-top: 8px; max-width: 1600px; font-size: var(--type-small);">
+        Dieselben Bausteine wie in der Anatomie — jetzt als anwendbare Hebel. Plus zwei neue: <strong>Constraint</strong> und <strong>Self-Check</strong>. Einzeln einsetzbar, kombinierbar, wiederverwendbar.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; flex: 1; min-height: 0;">
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">01</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Role &middot; System-Prompt</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            Macht aus generisch <em>jemand Bestimmtem</em>: Expertise, Ton, Do/Don't.
+          </p>
+          <div class="mono" data-nd='„Du bist <span style="color: var(--accent);">erfahrene Lektorin</span> für Geschäftsberichte, 10 J. Erfahrung. Knapp, sachlich, kein Hype."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            „Du bist <span style="color: var(--accent);">Senior&nbsp;Tech-Lead</span>, 10 J. Erfahrung mit verteilten Systemen. Knapp, technisch, kein Hype."
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">02</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Output-Format &middot; Gefäß</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            XML-Tags, JSON-Schema, Markdown-Struktur — gibt dem Modell ein klares Gefäß zum Hineinschreiben.
+          </p>
+          <div class="mono" data-nd='<span style="color: var(--accent);">Analyse:</span> … kurze Begründung<br/><span style="color: var(--accent);">Ergebnis:</span> … max 3 Bullet-Points' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            <span style="color: var(--accent);">&lt;analysis&gt;</span>…<span style="color: var(--accent);">&lt;/analysis&gt;</span><br/>
+            <span style="color: var(--accent);">&lt;answer&gt;</span>…max 3 bullets…<span style="color: var(--accent);">&lt;/answer&gt;</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">03</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Few-Shot &middot; zeigen</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            1–3 Input/Output-Paare. Der mit Abstand stärkste Hebel — wenn man nur <em>einen</em> nutzt: diesen.
+          </p>
+          <div class="mono" data-nd='in: „Kunde reklamiert verspätete Lieferung"<br/>out: <span style="color: var(--accent);">Kategorie: Logistik · Dringlichkeit: hoch</span>' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            in: „Logout 500 bei abgelaufenem Token"<br/>
+            out: <span style="color: var(--accent);">{"area":"auth","sev":"high","kind":"bug"}</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">04</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Constraint &middot; Grenzen</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            Länge, Vokabular, erlaubte Werte. Begrenzt ausufernde Antworten. <em>Negative</em> Constraints („nutze nicht…") sind möglich, positive sind besser — <strong>harte Verbote („NIE …") bleiben die legitime Ausnahme</strong> für Sicherheits- und Compliance-Grenzen.
+          </p>
+          <div class="mono" data-nd='„Max <span style="color: var(--accent);">3 Bullet-Points</span>, je &le; 15 Wörter.<br/>Nur Werte aus: <span style="color: var(--accent);">niedrig | mittel | hoch</span>."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            „Max <span style="color: var(--accent);">3 Bullet-Points</span>, je &le; 15 Wörter.<br/>
+            Nur Werte aus: <span style="color: var(--accent);">low | med | high</span>."
+          </div>
+        </div>
+
+        <div class="card" style="padding: 18px 24px;">
+          <div style="display: flex; align-items: baseline; gap: 14px;">
+            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">05</div>
+            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Self-Check &middot; zweite Iteration in derselben Antwort</div>
+          </div>
+          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
+            Lass das Modell <em>vor</em> der finalen Antwort einmal prüfen, ob es alle Anforderungen erfüllt. Geringer Aufwand, aber wirkungsvoll bei komplexen Outputs.
+          </p>
+          <div class="mono" data-nd='„Bevor du antwortest, prüfe kurz: 1) Längen-Vorgabe eingehalten? 2) alle 3 Angaben gesetzt? 3) keine Marketing-Phrasen?<br/>Dann gib die finale Antwort."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
+            „Bevor du antwortest, prüfe in <span style="color: var(--accent);">&lt;check&gt;</span>: 1) hält Längen-Constraint? 2) alle 3 Felder gesetzt? 3) keine Marketing-Phrasen?<br/>
+            Dann gib die finale Antwort in <span style="color: var(--accent);">&lt;answer&gt;</span>."
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
   <!-- ===================== 03A KONZEPT — SYSTEM/USER + TOKEN-TALLY (aus der Übungs-Sammlung) ===================== -->
   <style id="tally-css">
     .tally { display: grid; grid-template-columns: 1fr 560px; gap: 22px; flex: 1; min-height: 0; }
@@ -1143,6 +1265,13 @@
     }
     .tcomp-label .tcl-tok { color: var(--accent); letter-spacing: 0.06em; }
     .tcomp-box { display: flex; gap: 10px; align-items: stretch; }
+    .tcomp-reset {
+      flex: 0 0 auto; padding: 0 18px; display: flex; align-items: center; justify-content: center;
+      background: none; border: 1.5px solid var(--hair); border-radius: 12px;
+      color: var(--ink-3); font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; line-height: 1; cursor: pointer; white-space: nowrap;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .tcomp-reset:hover { color: var(--ink); border-color: var(--ink-3); }
     .tcomp-text {
       flex: 1; min-height: 52px; display: flex; align-items: center;
       background: var(--bg); border: 1.5px solid var(--accent-soft);
@@ -1199,45 +1328,38 @@
     .tally-call-line b { color: #f0ece3; font-size: 15px; }
     .tally-call-line .tcl-sub { color: #8f897e; }
   </style>
-  <section data-screen-label="03a Konzept Token-Tally" data-roleswitch>
+  <section data-screen-label="Konzept · Token-Tally" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">System-Prompt · User-Prompt · und warum die Rechnung wächst</div>
-      <h2 class="title">Jeder Turn schickt das <span class="accent">ganze Gespräch</span> erneut. So summieren sich Tokens auf.</h2>
-      <p class="ex-instructions" style="margin-top: 8px;" data-nd="Ein Modell hat kein Gedächtnis. Damit es den Faden behält, wird bei jeder neuen Nachricht die komplette bisherige Unterhaltung noch einmal mitgeschickt — das kostet jedes Mal Tokens. Klicke dich durch.">
-        Ein LLM hat <strong>kein Gedächtnis</strong> zwischen Aufrufen. Damit es den Kontext kennt, sendet der Client bei <em>jedem</em> Turn das <strong>System-Prompt + den ganzen Verlauf</strong> erneut mit. Klicke <strong>„Antwort senden"</strong> und beobachte, wie der Input pro Aufruf wächst.
+      <h2 class="title" style="margin-top: 44px;">Jeder Turn schickt das <span class="accent">ganze Gespräch</span> erneut.</h2>
+      <p class="ex-instructions" style="margin-top: 8px; font-size: var(--type-small); line-height: 1.5; color: var(--ink-2);" data-nd="Ein Modell hat <strong>kein Gedächtnis</strong>. Damit es den Faden behält, wird bei jeder neuen Nachricht die komplette bisherige Unterhaltung noch einmal mitgeschickt — das kostet jedes Mal Tokens.">
+        Ein Modell hat <strong>kein Gedächtnis</strong> zwischen Aufrufen. Damit es den Kontext kennt, sendet der Client bei <em>jedem</em> Turn das <strong>System-Prompt + den ganzen Verlauf</strong> erneut mit.
       </p>
-
       <div class="ex-stage tally" id="ex-tally">
         <div class="tally-chat">
-          <div class="tally-chat-head">
-            <span>Die Unterhaltung — das, was im Kontext liegt</span>
-            <span class="tch-head-right">
-              <span class="tch-resent" id="tally-chat-resent"></span>
-              <button class="tch-reset" id="tally-reset">↺ Zurücksetzen</button>
-            </span>
-          </div>
           <div class="tally-stream" id="tally-stream"></div>
 
           <div class="tally-composer" id="tally-composer">
             <div class="tcomp-label">
               <span id="tally-comp-label">Deine nächste Nachricht</span>
+              <span class="tch-resent" id="tally-chat-resent"></span>
               <span class="tcl-tok" id="tally-comp-cost"></span>
             </div>
             <div class="tcomp-box">
               <div class="tcomp-text" id="tally-next-text"></div>
               <button class="btn accent tcomp-send" id="tally-next">Antwort senden →</button>
+              <button class="tcomp-reset" id="tally-reset" type="button" title="Zurücksetzen" aria-label="Zurücksetzen">Reset</button>
             </div>
           </div>
         </div>
 
         <div class="tally-bill">
           <div class="tally-bill-head">
-            <span>Die laufende Rechnung</span>
+            <span></span>
           </div>
 
           <div class="tally-total-hero" id="tally-total-hero">
@@ -1271,6 +1393,11 @@
         </div>
       </div>
 
+      <div class="callout" style="margin-top: 20px; padding: 14px 24px; min-height: 0;" data-nd='<div class="callout-label">Hinweis</div><div class="callout-body" style="font-size: 18px;"><strong>Prompt-Caching</strong> macht den wiederholten Teil in der Praxis deutlich günstiger — die Token-Menge im Fenster bleibt aber dieselbe.</div>'>
+        <div class="callout-label">Hinweis</div>
+        <div class="callout-body" style="font-size: 18px;"><strong>Prompt-Caching</strong> macht den wiederholten Input in der Praxis deutlich günstiger — die Token-Menge im Fenster (und damit die Wirkung auf die Qualität) bleibt dieselbe.</div>
+      </div>
+
     </div>
   </section>
 
@@ -1288,18 +1415,17 @@
     #ex-sysdoc .doctor-fix-check, #ex-skilldoc .doctor-fix-check, #ex-userdoc .doctor-fix-check { width: 23px; height: 23px; font-size: 15px; }
     #ex-sysdoc .doctor-sweet, #ex-skilldoc .doctor-sweet, #ex-userdoc .doctor-sweet { font-size: 14px; }
   </style>
-  <section data-screen-label="03b Übung Agent-Prompt-Doctor" data-roleswitch>
+  <section data-screen-label="Übung · Agent-Prompt-Doctor" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">Persistent · in jeder Chat-Nachricht neu bezahlt</div>
-      <h2 class="title">Baue den <span class="accent">Agent-Prompt</span>. Jeder Token zählt × N Chat-Nachrichten.</h2>
-      <p class="ex-instructions" style="margin-top: 8px;">
-        Der Agent-Prompt ist der <strong>persistente Teil</strong> — Rolle, Format-Default, Verhalten. Er gilt für <em>jede</em> Chat-Nachricht des Agenten (das Gegenstück, der on-demand <strong>Skill-Prompt</strong>, kommt in einer eigenen Übung). Schalt rechts die Bausteine an. Ziel: <strong>Score ≥ 7</strong> bei <strong>≤ 180 tok/Nachricht</strong>.
-      </p>
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 44px;">
+        <h2 class="title" style="margin: 0;">Baue den <span class="accent">Agent-Prompt</span>.</h2>
+        <button class="ex-eg-btn" type="button" data-eg-open="eg-weather-agent" style="flex: none;">Fertiges Beispiel: Wetter-Agent</button>
+      </div>
 
       <div class="ex-stage doctor" id="ex-sysdoc">
         <div class="doctor-pad">
@@ -1341,22 +1467,192 @@
       </div>
 
     </div>
+    <!-- Fertiges Beispiel · Wetter-Agent (read-only Referenz) -->
+    <style>
+      #eg-weather-agent .ex-eg-body, #eg-weather-skill .ex-eg-body, #eg-trip-compare .ex-eg-body { display: flex; overflow: hidden; }
+      #eg-weather-agent .doctor-file, #eg-weather-skill .doctor-file, #eg-trip-compare .doctor-file { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+      #eg-weather-agent .doctor-file .sd-pad, #eg-weather-skill .doctor-file .sd-pad, #eg-trip-compare .doctor-file .sd-pad { overflow-y: auto; min-height: 0; flex: 1; }
+      .md-src {
+        font-family: var(--mono); font-size: 16px; line-height: 1.62;
+        color: var(--ink-2); white-space: pre-wrap; margin: 0;
+        word-break: break-word;
+      }
+      .md-src .md-h1 { color: var(--ink); font-weight: 600; }
+      .md-src .md-h2 { color: var(--accent); font-weight: 600; }
+      .md-src .md-mk { color: var(--ink-3); }
+      .md-src .md-code { color: var(--ink); }
+      .md-src .md-arrow { color: var(--ink-3); }
+      .md-src .md-fm { color: var(--ink-3); }
+      .md-src .md-key { color: var(--ink); }
+      .md-src .md-fence { color: var(--ink-3); }
+      /* Agent-vs-Skill Vergleichsspalte */
+      .as-compare { display: flex; flex-direction: column; gap: 14px; overflow-y: auto; min-height: 0; padding-right: 4px; }
+      .as-compare-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+      .as-card { border: 1px solid var(--hair); border-radius: 12px; padding: 15px 17px; background: var(--paper); }
+      .as-card .as-name { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+      .as-card .as-name strong { font-size: 17px; color: var(--ink); }
+      .as-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; }
+      .as-tag.always { color: var(--accent); background: rgba(200,66,31,0.10); }
+      .as-tag.demand { color: #3d8a4a; background: rgba(61,138,74,0.12); }
+      .as-card p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+      .as-card p strong { color: var(--ink); }
+      .as-rule { font-size: 15px; line-height: 1.55; color: var(--ink-2); padding: 13px 16px; border-left: 3px solid var(--accent); background: rgba(200,66,31,0.045); border-radius: 0 8px 8px 0; }
+      .as-rule strong { color: var(--ink); }
+    </style>
+    <div class="ex-eg-backdrop" id="eg-weather-agent">
+      <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel Wetter-Agent">
+        <div class="ex-eg-head">
+          <div>
+            <div class="eg-eyebrow">Fertiges Beispiel · zum Anschauen</div>
+            <div class="eg-title">Ein durchgebauter <span class="accent">Wetter-Agent</span></div>
+          </div>
+          <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
+        </div>
+        <div class="ex-eg-body">
+          <div class="doctor-text doctor-file" style="overflow: visible;">
+            <div class="sd-filebar">
+              <span class="sd-dot"></span>
+              <span class="sd-filename">wetter.agent.md</span>
+            </div>
+            <div class="sd-pad"><div class="md-src"><span class="md-h1"># Wetter-Agent</span>
+
+<span class="md-h2">## Rolle</span>
+Du bist ein präziser Wetter-Assistent für eine Reise-App.
+Beantworte Wetterfragen knapp und alltagstauglich.
+
+<span class="md-h2">## Tools</span>
+<span class="md-mk">-</span> <span class="md-code">get_current(ort)</span>
+<span class="md-mk">-</span> <span class="md-code">get_forecast(ort, tage)</span>
+<span class="md-mk">-</span> <span class="md-code">geocode(ort)</span>
+Bei mehrdeutigem Ort zuerst <span class="md-code">geocode</span>, dann rückfragen.
+
+<span class="md-h2">## Output-Format</span>
+Standard: 1 Satz Kernaussage, danach max. 3 Bullets:
+<span class="md-mk">-</span> Temperatur
+<span class="md-mk">-</span> Niederschlag
+<span class="md-mk">-</span> Wind
+Einheiten metrisch (°C, mm, km/h).
+
+<span class="md-h2">## Regeln</span>
+<span class="md-mk">-</span> Mehrdeutiger Ort <span class="md-arrow">→</span> rückfragen, nicht raten.
+<span class="md-mk">-</span> Kein Tool-Ergebnis <span class="md-arrow">→</span> offen sagen, nie Werte erfinden.
+<span class="md-mk">-</span> Kein Zeitraum genannt <span class="md-arrow">→</span> nach Tag/Zeitraum fragen.
+
+<span class="md-h2">## Ton</span>
+Knapp, sachlich, alltagsnah. Genau eine Handlungsempfehlung pro
+Antwort (z. B. „Regenjacke mitnehmen"). Keine Wetter-Floskeln.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
 
   <!-- ===================== 03C ÜBUNG SKILL-PROMPT-DOCTOR (aus der Übungs-Sammlung) ===================== -->
-  <section data-screen-label="03c Übung Skill-Prompt-Doctor" data-roleswitch>
+  <section data-screen-label="Wohin gehört das Beispiel?" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">On-demand · dormant bis zum Trigger</div>
-      <h2 class="title">Baue den <span class="accent">Skill-Prompt</span>.</h2>
-      <p class="ex-instructions" style="margin-top: 8px;">
-        Nur der <strong>Header</strong> (Name + Beschreibung) ist always-on; der Body wird lazy geladen, erst wenn der Skill feuert.
+      <div class="eyebrow">Few-Shot · wohin damit</div>
+      <h2 class="title" style="font-size: 52px;">Beispiele sind stark — die Frage ist <span class="accent">wo</span>.</h2>
+
+      <p class="lede" style="margin-top: 4px; max-width: 1600px;">
+        „Beispiel meiden" hieß nie <em>kein</em> Beispiel — drei Beispiele schlagen 500 Wörter. Es heißt: nicht in ein <strong>always-on</strong>-Prompt, das bei <strong>jeder</strong> Nachricht mitzahlt. Wo das Beispiel hingehört, entscheidet, ob du es einmal oder tausendmal bezahlst.
       </p>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; flex: 1; min-height: 0;">
+
+        <!-- System-Prompt -->
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+            <div style="font-family: var(--serif); font-size: 25px; font-weight: 500;">System-Prompt</div>
+            <span class="pill outline" style="font-size: 11px;">always-on</span>
+          </div>
+          <div class="mono" style="font-size: 12.5px; color: var(--ink-3); margin-top: 5px; letter-spacing: 0.04em;">in jeder Nachricht dabei</div>
+          <div style="height: 1px; background: var(--hair); margin: 14px 0;"></div>
+          <div style="display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 600; color: var(--quiz-no);">
+            <span>✗</span><span>meist meiden</span>
+          </div>
+          <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 8px 0 0;">
+            Format + Regeln liefern dieselbe Konsistenz für einen <strong>Bruchteil</strong> der Token. Ausnahme: ein Stil, der sich <em>nicht</em> in Regeln fassen lässt.
+          </p>
+        </div>
+
+        <!-- Agent -->
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+            <div style="font-family: var(--serif); font-size: 25px; font-weight: 500;">Agent</div>
+            <span class="pill outline" style="font-size: 11px;">always-on</span>
+          </div>
+          <div class="mono" style="font-size: 12.5px; color: var(--ink-3); margin-top: 5px; letter-spacing: 0.04em;" data-nd="z.B. ein fest eingerichteter Assistent">Copilot · Claude · Cursor</div>
+          <div style="height: 1px; background: var(--hair); margin: 14px 0;"></div>
+          <div style="display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 600; color: var(--quiz-ok);">
+            <span>✓</span><span>oft sinnvoll</span>
+          </div>
+          <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 8px 0 0;">
+            Macht <strong>immer dieselbe</strong> Aufgabe → das Beispiel <strong>amortisiert</strong> sich. Hier ist es der richtige Ort, kein User-Prompt kommt mehr nach.
+          </p>
+        </div>
+
+        <!-- Skill -->
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+            <div style="font-family: var(--serif); font-size: 25px; font-weight: 500;">Skill</div>
+            <span class="pill outline" style="font-size: 11px;">on-demand</span>
+          </div>
+          <div class="mono" style="font-size: 12.5px; color: var(--ink-3); margin-top: 5px; letter-spacing: 0.04em;">lädt nur, wenn sie feuert</div>
+          <div style="height: 1px; background: var(--hair); margin: 14px 0;"></div>
+          <div style="display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 600; color: var(--quiz-ok);">
+            <span>✓</span><span>ja — in den Body</span>
+          </div>
+          <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 8px 0 0;">
+            Das ausführliche Beispiel in den <strong>on-demand-Teil</strong> (oder eine eigene Datei) — Treffsicherheit ohne Always-on-Kosten.
+          </p>
+        </div>
+
+        <!-- User-Prompt -->
+        <div class="card" style="padding: 22px 24px; display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+            <div style="font-family: var(--serif); font-size: 25px; font-weight: 500;">User-Prompt</div>
+            <span class="pill outline" style="font-size: 11px;">per Turn</span>
+          </div>
+          <div class="mono" style="font-size: 12.5px; color: var(--ink-3); margin-top: 5px; letter-spacing: 0.04em;">kostet nur einmal</div>
+          <div style="height: 1px; background: var(--hair); margin: 14px 0;"></div>
+          <div style="display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 600; color: var(--quiz-ok);">
+            <span>★</span><span>idealer Ort</span>
+          </div>
+          <p style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin: 8px 0 0;">
+            Das Beispiel sitzt <strong>genau bei der Aufgabe</strong>, die gerade ansteht — voller Nutzen, einmaliger Preis. Default für einmalige Aufgaben.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 22px;">
+        <div class="callout-label">Faustregel</div>
+        <div class="callout-body">
+          Je <strong>enger und wiederholter</strong> die Aufgabe, desto eher gehört das Beispiel in die <strong>persistente Definition</strong> (Agent/Skill). Breiter Job → Regel, Beispiel in den <strong>User-Prompt</strong>. Großer Agent oder Skill → Beispiel in eine <strong>Datei auslagern</strong>, die nur bei Bedarf lädt.
+        </div>
+      </div>
+
+    </div>
+  </section><section data-screen-label="Übung · Skill-Prompt-Doctor" data-roleswitch>
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-top: 44px;">
+        <h2 class="title" style="margin: 0;">Baue den <span class="accent">Skill-Prompt</span>.</h2>
+        <div style="display: flex; gap: 10px; flex: none;">
+          <button class="ex-eg-btn" type="button" data-eg-open="eg-weather-skill">Beispiel: Reise-Wetter-Bericht</button>
+          <button class="ex-eg-btn" type="button" data-eg-open="eg-trip-compare">Beispiel: Reiseziel-Vergleich</button>
+        </div>
+      </div>
 
       <div class="ex-stage doctor" id="ex-skilldoc">
         <div class="doctor-pad">
@@ -1383,7 +1679,7 @@
 
         <div class="doctor-fixes">
           <div class="doctor-fixes-head">
-            <span>Bausteine · always-on vs on-demand</span>
+            <span>Bausteine</span>
             <span id="skilldoc-active-count">0 von 6 aktiv</span>
           </div>
           <div class="doctor-fixes-list" id="skilldoc-fixes-list"></div>
@@ -1398,21 +1694,156 @@
       </div>
 
     </div>
+    <!-- Fertiges Beispiel · Reise-Wetter-Bericht (read-only Referenz) -->
+    <div class="ex-eg-backdrop" id="eg-weather-skill">
+      <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel Reise-Wetter-Bericht">
+        <div class="ex-eg-head">
+          <div>
+            <div class="eg-eyebrow">Fertiges Beispiel · zum Anschauen</div>
+            <div class="eg-title">Eine durchgebaute <span class="accent">Reise-Wetter-Bericht-Skill</span></div>
+          </div>
+          <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
+        </div>
+        <div class="ex-eg-body">
+          <div class="doctor-text doctor-file" style="overflow: visible;">
+            <div class="sd-filebar">
+              <span class="sd-dot"></span>
+              <span class="sd-filename">reise-wetter-bericht.skill.md</span>
+            </div>
+            <div class="sd-pad">
+              <div class="md-src"><span class="md-fm">---</span>
+<span class="md-key">name:</span> reise-wetter-bericht
+<span class="md-key">description:</span> Erstellt einen kompakten Reise-Wetter-Bericht
+  für Ziel + Zeitraum. Nutze, wenn nach Wetter für eine Reise,
+  einen Trip oder mehrere Tage gefragt wird.
+<span class="md-fm">---</span>
+
+<span class="md-h1"># Reise-Wetter-Bericht</span>
+
+<span class="md-h2">## Wann NICHT</span>
+Nicht für einzelne „Wie ist das Wetter gerade?"-Fragen — die
+beantwortet der Agent direkt. Nur für mehrtägige Reise-Berichte.
+
+<span class="md-h2">## Eingaben klären</span>
+Vor dem ersten Tool-Aufruf prüfen:
+- Kein <span class="md-code">Ort</span> genannt <span class="md-arrow">→</span> zuerst nachfragen, nicht raten.
+- Kein <span class="md-code">Zeitraum</span> genannt <span class="md-arrow">→</span> nach Reisetagen fragen.
+- Ort mehrdeutig (mehrere Treffer) <span class="md-arrow">→</span> Auswahl anbieten statt annehmen.
+
+<span class="md-h2">## Prozedur</span>
+1. Ziel geocoden, Zeitraum klären
+2. <span class="md-code">get_forecast</span> für alle Reisetage
+3. je Tag Kernwerte ziehen (Temp, Regen, Wind)
+4. Packliste aus den Extremwerten ableiten
+
+<span class="md-h2">## Format</span>
+Gib den Bericht in diesem Aufbau aus:
+<span class="md-fence">```markdown</span>
+# Reise-Wetter-Bericht {Ort} · {Zeitraum}
+
+| Tag | °C | Regen | Wind |
+|-----|----|-------|------|
+| …   | …  | …     | …    |
+
+**Einpacken:** 2–4 Bullets aus den Extremwerten
+<span class="md-fence">```</span>
+
+<span class="md-h2">## Beispiel</span>
+<span class="md-fence">```markdown</span>
+# Reise-Wetter-Bericht Lissabon · 12.–15. Juni
+
+| Tag | °C | Regen | Wind    |
+|-----|----|-------|---------|
+| Do  | 24 | 0 mm  | 18 km/h |
+| Fr  | 22 | 4 mm  | 25 km/h |
+
+**Einpacken:** leichte Jacke, Sonnencreme, Regenschirm für Fr.
+<span class="md-fence">```</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fertiges Beispiel · Reiseziel-Vergleich (zweiter Skill, gleiches Setup) -->
+    <div class="ex-eg-backdrop" id="eg-trip-compare">
+      <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel Reiseziel-Vergleich">
+        <div class="ex-eg-head">
+          <div>
+            <div class="eg-eyebrow">Zweiter Skill · gleicher Agent, gleiche Tools</div>
+            <div class="eg-title">Noch eine Skill: <span class="accent">Reiseziel-Vergleich</span></div>
+          </div>
+          <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
+        </div>
+        <div class="ex-eg-body">
+          <div class="doctor-text doctor-file" style="overflow: visible;">
+            <div class="sd-filebar">
+              <span class="sd-dot"></span>
+              <span class="sd-filename">reiseziel-vergleich.skill.md</span>
+            </div>
+            <div class="sd-pad"><div class="md-src"><span class="md-fm">---</span>
+<span class="md-key">name:</span> reiseziel-vergleich
+<span class="md-key">description:</span> Vergleicht das Wetter mehrerer Reiseziele im
+  selben Zeitraum und empfiehlt das beste. Nutze, wenn zwischen
+  mehreren Orten für eine Reise abgewogen werden soll.
+<span class="md-fm">---</span>
+
+<span class="md-h1"># Reiseziel-Vergleich</span>
+
+<span class="md-h2">## Wann NICHT</span>
+Nicht für ein einzelnes Ziel — dafür ist der
+<span class="md-code">reise-wetter-bericht</span> da. Nur beim Abwägen
+zwischen <strong>2 oder mehr</strong> Orten.
+
+<span class="md-h2">## Eingaben klären</span>
+<span class="md-mk">-</span> Weniger als 2 Ziele genannt <span class="md-arrow">→</span> nachfragen.
+<span class="md-mk">-</span> Kein <span class="md-code">Zeitraum</span> <span class="md-arrow">→</span> nach Reisetagen fragen.
+
+<span class="md-h2">## Prozedur</span>
+1. alle Ziele <span class="md-code">geocode</span>n
+2. <span class="md-code">get_forecast</span> je Ziel für denselben Zeitraum
+3. je Ziel Mittel aus Temp, Regentagen, Wind bilden
+4. ranken — bestes Wetter oben, mit kurzer Begründung
+
+<span class="md-h2">## Format</span>
+Empfehlung in 1 Satz, dann Vergleichstabelle, Gewinner markiert:
+<span class="md-fence">```markdown</span>
+**Empfehlung:** {Ort} — {1 Satz warum}
+
+| Ziel | Ø °C | Regentage | Wertung |
+|------|------|-----------|---------|
+| …    | …    | …         | …       |
+<span class="md-fence">```</span>
+
+<span class="md-h2">## Beispiel</span>
+<span class="md-fence">```markdown</span>
+**Empfehlung:** Barcelona — am wärmsten und fast kein Regen.
+
+| Ziel      | Ø °C | Regentage | Wertung |
+|-----------|------|-----------|---------|
+| Barcelona | 24   | 0         | ★★★     |
+| Lissabon  | 22   | 1         | ★★      |
+| Nizza     | 21   | 2         | ★       |
+<span class="md-fence">```</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
 
   <!-- ===================== 03D ÜBUNG USER-PROMPT-DOCTOR (aus der Übungs-Sammlung) ===================== -->
-  <section data-screen-label="03d Übung User-Prompt-Doctor" data-roleswitch>
+  <section data-screen-label="Übung · User-Prompt-Doctor" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">Per-turn · gegeben Agent & Skills im Setup</div>
-      <h2 class="title">Schreibe den <span class="accent">User-Prompt</span>. Triggere das richtige Werkzeug — dupliziere keins.</h2>
+      <h2 class="title" style="margin-top: 44px;">Schreibe den <span class="accent">User-Prompt</span>.</h2>
       <p class="ex-instructions" style="margin-top: 8px;">
-        Wähle eine <strong>Aufgabe</strong>. Je nach Aufgabe löst du sie über den stehenden <strong>Agent</strong>, eine <strong>Skill</strong> oder <strong>beides</strong>. Dein User-Prompt triggert das Richtige — ohne zu wiederholen, was Agent oder Skill schon können. <strong style="color: var(--warn);">⚠ Fixes</strong> sind Traps.
+        Wähle eine <strong>Aufgabe</strong>. Je nach Aufgabe löst du sie über den stehenden <strong>Agent</strong>, eine <strong>Skill</strong> oder <strong>beides</strong>. Dein User-Prompt triggert das Richtige — ohne zu wiederholen, was Agent oder Skill schon können. Manche Fixes sind <strong>Traps</strong>: erst selbst wählen, dann <strong>Auflösen</strong>.
       </p>
 
       <div class="ex-stage doctor" id="ex-userdoc">
@@ -1454,13 +1885,16 @@
 
         <div class="doctor-fixes">
           <div class="doctor-fixes-head">
-            <span>Fixes · ⚠ TRAPS markiert</span>
+            <span>Fixes · sinnvoll oder Trap?</span>
             <span id="userdoc-active-count">0 von 7 aktiv</span>
           </div>
           <div class="doctor-fixes-list" id="userdoc-fixes-list"></div>
           <div class="doctor-fix-controls">
-            <div class="doctor-sweet" id="userdoc-sweet">— Schalte sinnvolle Fixes an, meide Traps</div>
-            <button class="btn" id="userdoc-reset" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #f0ece3;">↺ Reset</button>
+            <div class="doctor-sweet" id="userdoc-sweet">— Wähle die Fixes, die dieser Turn wirklich braucht.</div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn accent" id="userdoc-solve">Auflösen</button>
+              <button class="btn" id="userdoc-reset" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #f0ece3;">↺ Reset</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1469,100 +1903,12 @@
   </section>
 
 
-  <!-- ===================== 05 DIE 5 PATTERNS ===================== -->
-  <section data-screen-label="04 Die 5 Patterns" data-roleswitch>
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">Patterns &gt; Tricks</div>
-      <h2 class="title" style="font-size: 52px;">Fünf Muster, die <span class="accent">wirklich ziehen</span>.</h2>
-
-      <p class="lede" style="margin-top: 6px; max-width: 1600px;">
-        Jedes einzeln einsetzbar — und kombinierbar, messbar, wiederverwendbar.
-      </p>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; flex: 1; min-height: 0;">
-
-        <div class="card" style="padding: 18px 24px;">
-          <div style="display: flex; align-items: baseline; gap: 14px;">
-            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">01</div>
-            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Few-Shot &middot; zeigen</div>
-          </div>
-          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
-            1–3 Input/Output-Paare. Der mit Abstand stärkste Hebel — wenn man nur <em>einen</em> nutzt: diesen.
-          </p>
-          <div class="mono" data-nd='in: „Kunde reklamiert verspätete Lieferung"<br/>out: <span style="color: var(--accent);">Kategorie: Logistik · Dringlichkeit: hoch</span>' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
-            in: „Logout 500 bei abgelaufenem Token"<br/>
-            out: <span style="color: var(--accent);">{"area":"auth","sev":"high","kind":"bug"}</span>
-          </div>
-        </div>
-
-        <div class="card" style="padding: 18px 24px;">
-          <div style="display: flex; align-items: baseline; gap: 14px;">
-            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">02</div>
-            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Output-Format &middot; Gefäß</div>
-          </div>
-          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
-            XML-Tags, JSON-Schema, Markdown-Struktur — gibt dem Modell ein klares Gefäß zum Hineinschreiben.
-          </p>
-          <div class="mono" data-nd='<span style="color: var(--accent);">Analyse:</span> … kurze Begründung<br/><span style="color: var(--accent);">Ergebnis:</span> … max 3 Bullet-Points' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
-            <span style="color: var(--accent);">&lt;analysis&gt;</span>…<span style="color: var(--accent);">&lt;/analysis&gt;</span><br/>
-            <span style="color: var(--accent);">&lt;answer&gt;</span>…max 3 bullets…<span style="color: var(--accent);">&lt;/answer&gt;</span>
-          </div>
-        </div>
-
-        <div class="card" style="padding: 18px 24px;">
-          <div style="display: flex; align-items: baseline; gap: 14px;">
-            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">03</div>
-            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Role &middot; System-Prompt</div>
-          </div>
-          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
-            Macht aus generisch <em>jemand Bestimmtem</em>: Expertise, Ton, Do/Don't.
-          </p>
-          <div class="mono" data-nd='„Du bist <span style="color: var(--accent);">erfahrene Lektorin</span> für Geschäftsberichte, 10 J. Erfahrung. Knapp, sachlich, kein Hype."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
-            „Du bist <span style="color: var(--accent);">Senior&nbsp;Tech-Lead</span>, 10 J. Erfahrung mit verteilten Systemen. Knapp, technisch, kein Hype."
-          </div>
-        </div>
-
-        <div class="card" style="padding: 18px 24px;">
-          <div style="display: flex; align-items: baseline; gap: 14px;">
-            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">04</div>
-            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Constraint &middot; Grenzen</div>
-          </div>
-          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
-            Länge, Vokabular, erlaubte Werte. Begrenzt ausufernde Antworten. <em>Negative</em> Constraints („nutze nicht…") sind möglich, positive sind besser.
-          </p>
-          <div class="mono" data-nd='„Max <span style="color: var(--accent);">3 Bullet-Points</span>, je &le; 15 Wörter.<br/>Nur Werte aus: <span style="color: var(--accent);">niedrig | mittel | hoch</span>."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
-            „Max <span style="color: var(--accent);">3 Bullet-Points</span>, je &le; 15 Wörter.<br/>
-            Nur Werte aus: <span style="color: var(--accent);">low | med | high</span>."
-          </div>
-        </div>
-
-        <div class="card" style="padding: 18px 24px; grid-column: 1 / -1;">
-          <div style="display: flex; align-items: baseline; gap: 14px;">
-            <div class="mono accent" style="font-size: 14px; letter-spacing: 0.08em;">05</div>
-            <div style="font-family: var(--serif); font-size: 28px; font-weight: 500;">Self-Check &middot; zweite Iteration in derselben Antwort</div>
-          </div>
-          <p style="font-size: 17px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 8px;">
-            Lass das Modell <em>vor</em> der finalen Antwort einmal prüfen, ob es alle Anforderungen erfüllt. Geringer Aufwand, aber wirkungsvoll bei komplexen Outputs.
-          </p>
-          <div class="mono" data-nd='„Bevor du antwortest, prüfe kurz: 1) Längen-Vorgabe eingehalten? 2) alle 3 Angaben gesetzt? 3) keine Marketing-Phrasen?<br/>Dann gib die finale Antwort."' style="font-size: 13px; line-height: 1.5; color: var(--ink-2); background: var(--bg-2); padding: 8px 12px; border-radius: 6px;">
-            „Bevor du antwortest, prüfe in <span style="color: var(--accent);">&lt;check&gt;</span>: 1) hält Längen-Constraint? 2) alle 3 Felder gesetzt? 3) keine Marketing-Phrasen?<br/>
-            Dann gib die finale Antwort in <span style="color: var(--accent);">&lt;answer&gt;</span>."
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
+  <!-- ===================== 05B WOHIN GEHÖRT DAS BEISPIEL? ===================== -->
+  
 
 
   <!-- ===================== 06 CONTEXT = WORKING MEMORY ===================== -->
-  <section data-screen-label="05 Context Working Memory">
+  <section data-screen-label="Context · Working Memory" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
@@ -1581,7 +1927,7 @@
 
         <!-- Quellen -->
         <div class="card" style="padding: 22px 26px;">
-          <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Fünf Quellen — geordnet nach Persistenz</div>
+          <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Fünf Quellen — von fix bis stetig wachsend</div>
           <div style="font-family: var(--serif); font-size: 24px; font-weight: 500; margin-top: 2px;">Was alles in das Context Window läuft</div>
 
           <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 10px;">
@@ -1598,8 +1944,8 @@
             <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
               <div class="mono" style="font-size: 14px; color: var(--ink-3);">02</div>
               <div>
-                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">AGENTS.md</div>
-                <div style="font-size: 14px; color: var(--ink-3);">Repo-spezifische Konventionen, Commands, Architektur</div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;" data-nd="Projekt-Spielregeln">AGENTS.md</div>
+                <div style="font-size: 14px; color: var(--ink-3);" data-nd="Feste Vorgaben fürs Projekt: Stil, Abläufe, Rahmenbedingungen">Repo-spezifische Konventionen, Commands, Architektur</div>
               </div>
               <div class="mono accent" style="font-size: 13px;">~500–1k tok</div>
             </div>
@@ -1607,8 +1953,8 @@
             <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
               <div class="mono" style="font-size: 14px; color: var(--ink-3);">03</div>
               <div>
-                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">Skills &middot; Tool-Schemas</div>
-                <div style="font-size: 14px; color: var(--ink-3);">prozedurales Wissen + Tool-Beschreibungen, on-demand geladen</div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;" data-nd="Skills &middot; Werkzeug-Beschreibungen">Skills &middot; Tool-Schemas</div>
+                <div style="font-size: 14px; color: var(--ink-3);" data-nd="Vorgehenswissen + Beschreibung der verfügbaren Werkzeuge, bei Bedarf geladen">prozedurales Wissen + Tool-Beschreibungen, on-demand geladen</div>
               </div>
               <div class="mono accent" style="font-size: 13px;">~1–10k tok</div>
             </div>
@@ -1616,7 +1962,7 @@
             <div style="display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px; background: var(--bg-2); border-radius: 8px;">
               <div class="mono" style="font-size: 14px; color: var(--ink-3);">04</div>
               <div>
-                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;">Files &middot; Search-Results &middot; Tool-Output</div>
+                <div style="font-family: var(--mono); font-weight: 600; font-size: 14px;" data-nd="Dateien &middot; Such-Treffer &middot; Werkzeug-Ausgaben">Files &middot; Search-Results &middot; Tool-Output</div>
                 <div style="font-size: 14px; color: var(--ink-3);">situatives Wissen — die größte und variabelste Quelle</div>
               </div>
               <div class="mono accent" style="font-size: 13px;">variabel</div>
@@ -1651,7 +1997,7 @@
             <div>
               <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.08em;">⏱ LATENZ</div>
               <div style="font-size: 17px; color: #d8d2c5; line-height: 1.4; margin-top: 4px;">
-                Verdoppelter Context = ungefähr verdoppelte Antwortzeit.
+                Mehr Context = spürbar längere Antwortzeit.
               </div>
             </div>
             <div>
@@ -1676,53 +2022,8 @@
     </div>
   </section>
 
-
-  <!-- ===================== 05A ÜBUNG CONNECTION-GRAPH (geteilt mit Kap. 03) ===================== -->
-  <section data-screen-label="05a Übung Connection-Graph" data-roleswitch>
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Theorie</span>
-        <span></span>
-      </div>
-
-      <h2 class="title" style="margin-top: 20px;">Wähle eine Aufgabe und <span class="accent">aktiviere</span> nur die nötigen Knoten.</h2>
-
-      <div class="ex-stage cgraph" id="ex-cgraph">
-        <div class="cgraph-board">
-          <div class="cgraph-picker">
-            <span class="cgp-label">Aufgabe</span>
-            <div class="cgp-dd" id="cgraph-dd">
-              <button type="button" class="cgp-trigger" id="cgraph-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Aufgabe wählen">
-                <span class="cgp-trigger-text" id="cgraph-trigger-text"></span>
-                <span class="cgp-caret" aria-hidden="true"></span>
-              </button>
-              <div class="cgp-menu" id="cgraph-menu" role="listbox" hidden></div>
-            </div>
-            <button class="cgp-reset" id="cgraph-reset" title="Zurücksetzen" aria-label="Zurücksetzen">↺</button>
-          </div>
-          <div class="cgraph-canvas" id="cgraph-canvas">
-            <svg id="cgraph-edges" xmlns="http://www.w3.org/2000/svg"></svg>
-            <div id="cgraph-labels"></div>
-          </div>
-        </div>
-
-        <div class="cgraph-trace">
-          <div class="cgraph-trace-head">Context-Window</div>
-          <div id="cgraph-trace-body"></div>
-          <div class="cgraph-insight" id="cgraph-insight" hidden></div>
-          <div class="cgraph-check">
-            <button class="btn accent" id="cgraph-pruefen" disabled>Prüfen</button>
-            <button class="btn ghost" id="cgraph-clear" disabled>Leeren</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
   <!-- ===================== 07 ÜBUNG 0 — PATTERN ERKENNEN ===================== -->
-  <section data-screen-label="06 Übung 1 Pattern erkennen">
+  <section data-screen-label="Wissenscheck · Pattern erkennen">
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
@@ -1731,17 +2032,13 @@
 
       <div class="eyebrow">Aufgabe</div>
       <h2 class="title" style="font-size: 38px; margin-bottom: 6px;">Ordne jedem Prompt-Schnipsel das <span class="accent">passende Pattern</span> zu.</h2>
-      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
-        Echte Snippets, wie sie in System- und User-Prompts vorkommen. Klick das Pattern, das du erkennst.
-      </p>
-
       <!-- Pattern-Legende -->
       <div class="options-rail" style="grid-template-columns: repeat(5, 1fr); margin-top: 14px;">
-        <div class="opt"><div class="opt-name">Role</div><div class="opt-tag">wer redet, in welchem Ton</div></div>
-        <div class="opt"><div class="opt-name">Few-Shot</div><div class="opt-tag">Input → Output Beispiele</div></div>
-        <div class="opt"><div class="opt-name">Format</div><div class="opt-tag">JSON · XML · Markdown</div></div>
-        <div class="opt"><div class="opt-name">Constraint</div><div class="opt-tag">Länge · Werte · Tabu</div></div>
-        <div class="opt"><div class="opt-name">Self-Check</div><div class="opt-tag">vor Antwort prüfen</div></div>
+        <div class="opt"><div class="opt-name">Role</div><div class="opt-tag">Persona · Stil &amp; Ton</div></div>
+        <div class="opt"><div class="opt-name">Format</div><div class="opt-tag">JSON · XML · Tabelle</div></div>
+        <div class="opt"><div class="opt-name">Few-Shot</div><div class="opt-tag">Input → Output zeigen</div></div>
+        <div class="opt"><div class="opt-name">Constraint</div><div class="opt-tag">Länge · Werte · Tabus</div></div>
+        <div class="opt"><div class="opt-name">Self-Check</div><div class="opt-tag">vor Ausgabe prüfen</div></div>
       </div>
 
       <!-- Interaktive Quiz-Items -->
@@ -1751,8 +2048,8 @@
           <div class="qbody" data-nd='<em>„Du bist eine erfahrene Datenschutzbeauftragte. Antworte juristisch präzise, vermeide Werbesprache."</em>'><em>„Du bist Senior Backend-Engineer mit API-Fokus. Antworte präzise und technisch, kein Buzzword-Bingo."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
@@ -1763,8 +2060,8 @@
           <div class="qbody" data-nd='<em>„Antworte ausschließlich als gültige Tabelle mit den Spalten <span class="mono">Titel</span>, <span class="mono">Zusammenfassung</span>, <span class="mono">Schlagworte</span> — kein Fließtext drumherum."</em>'><em>„Antworte ausschließlich als gültiges JSON für unsere API-Response: Felder <span class="mono">id</span>, <span class="mono">status</span>, <span class="mono">items</span> (array) — kein Prosa-Text drumherum."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
@@ -1775,8 +2072,8 @@
           <div class="qbody" data-nd='<em>„Beispiel — Input: <span class="mono">„Kunde reklamiert verspätete Lieferung"</span> → Output: <span class="mono">Kategorie: Logistik, Prio: hoch</span>. Jetzt klassifiziere: …"</em>'><em>„Beispiel — Input: <span class="mono">„Logout 500 bei abgelaufenem Token"</span> → Output: <span class="mono">{area: auth, sev: high}</span>. Jetzt klassifiziere: …"</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
@@ -1787,8 +2084,8 @@
           <div class="qbody" data-nd='<em>„Maximal 3 Bullet-Points, je &le; 15 Wörter. Nutze nur Werte aus <span class="mono">niedrig | mittel | hoch</span>."</em>'><em>„Commit-Message: eine Headline &le; 50 Zeichen + max 3 Bullets. Typ nur aus <span class="mono">feat | fix | chore</span>."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
@@ -1799,24 +2096,24 @@
           <div class="qbody" data-nd='<em>„Erstelle den Text. Lies ihn danach selbst noch einmal durch: Länge eingehalten? Alle drei Felder da? Kein Marketing-Sprech? Bessere nach, was nicht passt — und gib erst dann die Endfassung aus."</em>'><em>„Schreib die Funktion. Geh den Diff danach selbst durch: kompiliert sie? Edge-Cases abgedeckt? Keine ungenutzten Imports? Erst dann gib den finalen Code aus."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
           <div class="qfb"><span class="ok">✓ Self-Check</span> — das Modell prüft den eigenen Entwurf gegen die Vorgaben, bevor es final antwortet.</div>
         </div>
 
-        <div class="qitem" data-correct="role">
-          <div class="qbody" data-nd='<em>„Du bist erfahrene Lektorin für Geschäftsberichte. Knapp, sachlich, kein Marketing-Sprech. Wenn du unsicher bist, sag es."</em>'><em>„Du bist Senior-Reviewer für TypeScript. Knapp, technisch, kein Hype. Wenn du unsicher bist, sag es."</em></div>
+        <div class="qitem" data-correct="constraint">
+          <div class="qbody" data-nd='<em>„Erwähne unter keinen Umständen konkrete Preise, Rabatte oder Liefertermine. Wirst du danach gefragt, verweise an den Vertrieb — rate niemals."</em>'><em>„Nenne unter keinen Umständen interne Repo-Namen, Hostnamen oder Tokens. Tauchen sie im Kontext auf, ersetze sie durch <span class="mono">[redacted]</span> — nie ausgeben."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
             <button class="qchoice" data-key="constraint">Constraint</button>
             <button class="qchoice" data-key="selfcheck">Self-Check</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Role</span> — auch das „sag wenn unsicher" ist Teil der Rollenanweisung.</div>
+          <div class="qfb"><span class="ok">✓ Constraint</span> — auch ein Tabu (was <em>nicht</em> gesagt werden darf) ist eine harte Grenze, nicht nur Länge.</div>
         </div>
 
       </div>
@@ -1833,8 +2130,118 @@
   </section>
 
 
+  <!-- ===================== 11 ÜBUNG 2 — WELCHES PATTERN WOFÜR ===================== -->
+  <section data-screen-label="Wissenscheck · Pattern wofür">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Aufgabe</div>
+      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Welches Pattern fixt jeweils das <span class="accent">konkrete Symptom</span>?</h2>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">Jedes Zitat beschreibt ein wiederkehrendes Symptom. Klick das Pattern, das es zuverlässig behebt.</p>
+
+      <!-- Optionen-Rail -->
+      <div class="options-rail" style="grid-template-columns: repeat(5, 1fr); margin-top: 14px;">
+        <div class="opt"><div class="opt-name">Role</div><div class="opt-tag">Persona · Stil &amp; Ton</div></div>
+        <div class="opt"><div class="opt-name">Format</div><div class="opt-tag">JSON · XML · Tabelle</div></div>
+        <div class="opt"><div class="opt-name">Few-Shot</div><div class="opt-tag">Input → Output zeigen</div></div>
+        <div class="opt"><div class="opt-name">Constraint</div><div class="opt-tag">Länge · Werte · Tabus</div></div>
+        <div class="opt"><div class="opt-name">Self-Check</div><div class="opt-tag">vor Ausgabe prüfen</div></div>
+      </div>
+
+      <!-- Quiz -->
+      <div class="quiz" data-quiz="pattern-wofuer" style="margin-top: 18px;">
+
+        <div class="qitem" data-correct="format">
+          <div class="qbody" data-nd='<em>„Wir brauchen zuverlässig eine <strong>feste Tabellenstruktur</strong> für die Weiterverarbeitung. Mal kommt sie als Tabelle, mal als Fließtext mit Erklärungen drumherum."</em>'><em>„Wir brauchen zuverlässig <strong>parsbares JSON</strong> für eine downstream-Pipeline. Mal kommt es als JSON, mal als Markdown mit Erklärtext drumherum."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb" data-nd='<span class="ok">✓ Format</span> — explizites Schema vorgeben, z. B. feste Spalten und Reihenfolge.'><span class="ok">✓ Format</span> — explizites Schema vorgeben, ggf. XML-Tags um die JSON-Antwort.</div>
+        </div>
+
+        <div class="qitem" data-correct="role">
+          <div class="qbody" data-nd='<em>„Antworten <strong>driften ständig in Marketing-Sprech</strong> ab — ‚nahtlos integriert’, ‚Game-Changer’…"</em>'><em>„PR-Reviews und Code-Kommentare <strong>driften ständig in Marketing-Sprech</strong> ab — ‚elegant’, ‚robust’, ‚nahtlos’…"</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Role</span> — Persona + Ton im System-Prompt schärfen, „kein Marketing-Sprech".</div>
+        </div>
+
+        <div class="qitem" data-correct="fewshot">
+          <div class="qbody" data-nd='<em>„Eine seltene <strong>Sonderfall-Einstufung</strong> trifft das Modell nie zuverlässig. Wir haben 3 echte Beispiele in der Ablage."</em>'><em>„Eine seltene <strong>Edge-Case-Klassifizierung</strong> trifft das Modell nie zuverlässig. Wir haben 3 echte Beispiele in der DB."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Few-Shot</span> — 3 reale Beispiele &gt; jede längere Beschreibung.</div>
+        </div>
+
+        <div class="qitem" data-correct="constraint">
+          <div class="qbody" data-nd='<em>„Antworten werden im Schnitt <strong>3× so lang wie nötig</strong>. Wir wollen kompakte Zusammenfassungen, keine Aufsätze."</em>'><em>„Antworten werden im Schnitt <strong>3× so lang wie nötig</strong>. Wir wollen kompakte Tickets, keine Aufsätze."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Constraint</span> — harte Länge: „max 3 Bullets, je &le; 15 Wörter".</div>
+        </div>
+
+        <div class="qitem" data-correct="selfcheck">
+          <div class="qbody" data-nd='<em>„Trotz klarer Vorgaben rutschen <strong>vereinzelt Formatfehler und vergessene Felder</strong> durch — das fällt der Antwort meist sofort auf."</em>'><em>„Trotz klarer Vorgaben rutschen <strong>vereinzelt Syntaxfehler und vergessene Null-Checks</strong> durch — das sieht man dem Diff meist sofort an."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Self-Check</span> — das Modell vor der finalen Antwort selbst gegen die Kriterien prüfen lassen.</div>
+        </div>
+
+        <div class="qitem" data-correct="fewshot">
+          <div class="qbody" data-nd='<em>„Texte sollen <strong>exakt unseren Hausstil</strong> treffen — der lässt sich kaum in Regeln fassen, aber wir haben 3 Beispiele, die genau so klingen."</em>'><em>„Commit-Messages und Changelogs sollen <strong>exakt unseren Hausstil</strong> treffen — der lässt sich kaum in Regeln fassen, aber wir haben 3 Einträge, die genau so klingen."</em></div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="role">Role</button>
+            <button class="qchoice" data-key="format">Format</button>
+            <button class="qchoice" data-key="fewshot">Few-Shot</button>
+            <button class="qchoice" data-key="constraint">Constraint</button>
+            <button class="qchoice" data-key="selfcheck">Self-Check</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Few-Shot</span> — schwer beschreibbarer Stil? 3 echte Beispiele schlagen jede Stilregel. <span style="color: var(--ink-3);">(Verlockung: Role.)</span></div>
+        </div>
+
+      </div>
+
+      <div class="reveal-row">
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Erst Symptom benennen, dann Pattern wählen.</em></div>
+        <div style="display: flex; gap: 10px;">
+          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
+          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
   <!-- ===================== 10 ÜBUNG 1 — TOKEN-BUDGET ===================== -->
-  <section data-screen-label="08 Übung 2 Token-Budget">
+  <section data-screen-label="Wissenscheck · Token-Budget">
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
@@ -1843,12 +2250,12 @@
 
       <div class="eyebrow" style="margin: 44px 0 26px;">Aufgabe</div>
       <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Wo fließen in einer langen Session die <span class="accent">meisten Tokens</span> hin?</h2>
-      <p class="body" style="margin: 0; max-width: 1600px; font-size: 20px;">Wählt die Antwort, die ihr für richtig haltet. Als Orientierung gilt: Was im Verlauf der Session wächst, verbraucht die meisten Tokens.</p>
+      <p class="body" style="margin: 0; max-width: 1600px; font-size: 20px;">Wähle für jeden Posten die Größenklasse, die du für richtig hältst. Tipp: nicht raten, sondern überlegen, ob der Posten <em>fix pro Turn</em> ist oder <em>mit der Session mitwächst</em>.</p>
 
       <!-- Optionen-Rail -->
       <div class="options-rail" style="margin-top: 14px;">
         <div class="opt"><div class="opt-name">klein</div><div class="opt-tag">~10–500 Tokens</div></div>
-        <div class="opt"><div class="opt-name">mittel</div><div class="opt-tag">~1k–10k</div></div>
+        <div class="opt"><div class="opt-name">mittel</div><div class="opt-tag">~500–10k</div></div>
         <div class="opt"><div class="opt-name">groß</div><div class="opt-tag">~10k–100k</div></div>
         <div class="opt"><div class="opt-name">unbegrenzt</div><div class="opt-tag">wächst mit Zeit</div></div>
         <div class="opt"><div class="opt-name">irrelevant</div><div class="opt-tag">vernachlässigbar</div></div>
@@ -1882,7 +2289,7 @@
         </div>
 
         <div class="qitem" data-correct="gross">
-          <div class="qbody" data-nd='<strong>Die Beschreibungen von 80 verfügbaren Werkzeugen</strong> auf einmal in den Prompt geladen.'><strong>Tool-Schemas von 80 MCP-Tools</strong> auf einmal in den Prompt geladen.</div>
+          <div class="qbody" data-nd='<strong>Die Beschreibungen von 80 verfügbaren Werkzeugen</strong> auf einmal in den Prompt geladen.'><strong>Die Schemas von 80 Tools</strong> auf einmal in den Prompt geladen.</div>
           <div class="qchoices">
             <button class="qchoice" data-key="klein">klein</button>
             <button class="qchoice" data-key="mittel">mittel</button>
@@ -1914,7 +2321,7 @@
             <button class="qchoice" data-key="unbegrenzt">unbegrenzt</button>
             <button class="qchoice" data-key="irrelevant">irrelevant</button>
           </div>
-          <div class="qfb"><span class="ok">✓ mittel</span> — fix pro Turn (~paar hundert–2k Tokens), aber jedes Mal aufs Neue. <em>Einmal knapp schreiben lohnt sich.</em></div>
+          <div class="qfb"><span class="ok">✓ mittel</span> — fix pro Turn (~0,5–2k Tokens), aber jedes Mal aufs Neue. <em>Einmal knapp schreiben lohnt sich.</em></div>
         </div>
 
         <div class="qitem" data-correct="irrelevant">
@@ -1932,158 +2339,10 @@
       </div>
 
       <div class="reveal-row">
-        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Was im Verlauf der Session wächst, verbraucht die meisten Tokens.</em></div>
+        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Was wächst mit der Zeit — und was bleibt fix pro Turn?</em></div>
         <div style="display: flex; gap: 10px;">
           <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
           <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ===================== 11 ÜBUNG 2 — WELCHES PATTERN WOFÜR ===================== -->
-  <section data-screen-label="09 Übung 3 Pattern wofür">
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">Aufgabe</div>
-      <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Welches Pattern fixt jeweils das <span class="accent">konkrete Symptom</span>?</h2>
-      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">Jedes Zitat beschreibt ein wiederkehrendes Symptom. Klick das Pattern, das es zuverlässig behebt.</p>
-
-      <!-- Optionen-Rail -->
-      <div class="options-rail" style="grid-template-columns: repeat(5, 1fr); margin-top: 14px;">
-        <div class="opt"><div class="opt-name">Role</div><div class="opt-tag">Stil &amp; Ton</div></div>
-        <div class="opt"><div class="opt-name">Few-Shot</div><div class="opt-tag">Beispiele</div></div>
-        <div class="opt"><div class="opt-name">Format</div><div class="opt-tag">Struktur</div></div>
-        <div class="opt"><div class="opt-name">Constraint</div><div class="opt-tag">Grenzen</div></div>
-        <div class="opt"><div class="opt-name">Self-Check</div><div class="opt-tag">Selbstprüfung</div></div>
-      </div>
-
-      <!-- Quiz -->
-      <div class="quiz" data-quiz="pattern-wofuer" style="margin-top: 18px;">
-
-        <div class="qitem" data-correct="format">
-          <div class="qbody" data-nd='<em>„Wir brauchen zuverlässig eine <strong>feste Tabellenstruktur</strong> für die Weiterverarbeitung. Mal kommt sie als Tabelle, mal als Fließtext mit Erklärungen drumherum."</em>'><em>„Wir brauchen zuverlässig <strong>parsbares JSON</strong> für eine downstream-Pipeline. Mal kommt es als JSON, mal als Markdown mit Erklärtext drumherum."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb" data-nd='<span class="ok">✓ Format</span> — explizites Schema vorgeben, z. B. feste Spalten und Reihenfolge.'><span class="ok">✓ Format</span> — explizites Schema vorgeben, ggf. XML-Tags um die JSON-Antwort.</div>
-        </div>
-
-        <div class="qitem" data-correct="role">
-          <div class="qbody" data-nd='<em>„Antworten <strong>driften ständig in Marketing-Sprech</strong> ab — ‚nahtlos integriert’, ‚Game-Changer’…"</em>'><em>„PR-Reviews und Code-Kommentare <strong>driften ständig in Marketing-Sprech</strong> ab — ‚elegant’, ‚robust’, ‚nahtlos’…"</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Role</span> — Persona + Ton im System-Prompt schärfen, „kein Marketing-Sprech".</div>
-        </div>
-
-        <div class="qitem" data-correct="fewshot">
-          <div class="qbody" data-nd='<em>„Eine seltene <strong>Sonderfall-Einstufung</strong> trifft das Modell nie zuverlässig. Wir haben 3 echte Beispiele in der Ablage."</em>'><em>„Eine seltene <strong>Edge-Case-Klassifizierung</strong> trifft das Modell nie zuverlässig. Wir haben 3 echte Beispiele in der DB."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Few-Shot</span> — 3 reale Beispiele &gt; jede längere Beschreibung.</div>
-        </div>
-
-        <div class="qitem" data-correct="constraint">
-          <div class="qbody" data-nd='<em>„Antworten werden im Schnitt <strong>3× so lang wie nötig</strong>. Wir wollen kompakte Zusammenfassungen, keine Aufsätze."</em>'><em>„Antworten werden im Schnitt <strong>3× so lang wie nötig</strong>. Wir wollen kompakte Tickets, keine Aufsätze."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Constraint</span> — harte Länge: „max 3 Bullets, je &le; 15 Wörter".</div>
-        </div>
-
-        <div class="qitem" data-correct="selfcheck">
-          <div class="qbody" data-nd='<em>„Trotz klarer Vorgaben rutschen <strong>vereinzelt Formatfehler und vergessene Felder</strong> durch — das fällt der Antwort meist sofort auf."</em>'><em>„Trotz klarer Vorgaben rutschen <strong>vereinzelt Syntaxfehler und vergessene Null-Checks</strong> durch — das sieht man dem Diff meist sofort an."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Self-Check</span> — das Modell vor der finalen Antwort selbst gegen die Kriterien prüfen lassen.</div>
-        </div>
-
-        <div class="qitem" data-correct="fewshot">
-          <div class="qbody" data-nd='<em>„Texte sollen <strong>exakt unseren Hausstil</strong> treffen — der lässt sich kaum in Regeln fassen, aber wir haben 3 Beispiele, die genau so klingen."</em>'><em>„Commit-Messages und Changelogs sollen <strong>exakt unseren Hausstil</strong> treffen — der lässt sich kaum in Regeln fassen, aber wir haben 3 Einträge, die genau so klingen."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="role">Role</button>
-            <button class="qchoice" data-key="fewshot">Few-Shot</button>
-            <button class="qchoice" data-key="format">Format</button>
-            <button class="qchoice" data-key="constraint">Constraint</button>
-            <button class="qchoice" data-key="selfcheck">Self-Check</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Few-Shot</span> — schwer beschreibbarer Stil? 3 echte Beispiele schlagen jede Stilregel. <span style="color: var(--ink-3);">(Verlockung: Role.)</span></div>
-        </div>
-
-      </div>
-
-      <div class="reveal-row">
-        <div class="reveal-status"><span class="score">0</span> / 6 beantwortet · Kernfrage: <em>Erst Symptom benennen, dann Pattern wählen.</em></div>
-        <div style="display: flex; gap: 10px;">
-          <button class="qbutton ghost" data-action="reset">Zurücksetzen</button>
-          <button class="qbutton" data-action="reveal">Auflösung anzeigen</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ===================== 11A ÜBUNG SKILL-BUILDER (aus der Übungs-Sammlung) ===================== -->
-  <section data-screen-label="10a Übung Skill-Builder" data-roleswitch>
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Wissenscheck</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">IDE-Ansicht · on-demand statt always-on</div>
-      <h2 class="title">Was als <span class="accent">Skill</span> existiert, muss nicht in AGENTS.md.</h2>
-      <p class="ex-instructions" style="margin-top: 6px;">
-        Wähle ein Skill-Szenario. Die Token-Bilanz rechts zeigt: <strong>always-on (alle Chat-Nachrichten)</strong> vs <strong>on-demand (nur Trigger)</strong>. Pro Monat verbrennt ein „immer-an"-Skill schnell die Million.
-      </p>
-
-      <div class="ex-stage ide-stage" id="ex-skill-builder">
-        <div class="ide-tree" id="skill-tree"></div>
-        <div class="ide-viewer">
-          <div class="ide-viewer-tab" id="skill-viewer-tab"></div>
-          <div class="ide-viewer-content" id="skill-viewer-content"></div>
-        </div>
-        <div class="ide-builder">
-          <div class="ide-builder-section scenarios">
-            <div class="ide-builder-label">Beschreib eine Skill</div>
-            <div id="skill-scenarios"></div>
-          </div>
-          <div class="ide-analysis" id="skill-analysis"></div>
-          <div class="ide-insight" id="skill-insight"></div>
-          <div class="ide-actions">
-            <button class="btn accent" id="skill-create" disabled>↳ Skill erzeugen</button>
-            <button class="btn ghost" id="skill-reset">↺ Reset</button>
-          </div>
         </div>
       </div>
 
@@ -2092,7 +2351,7 @@
 
 
   <!-- ===================== 08 PRAXIS · PAIR PROMPT-REFACTORING ===================== -->
-  <section data-screen-label="12 Praxis Pair Refactoring" data-roleswitch>
+  <section data-screen-label="Praxis · Pair-Refactoring" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Praxis</span>
@@ -2136,9 +2395,9 @@
         <div class="role-card">
           <div class="r-tag">Rolle · Navigator</div>
           <div class="r-name">Prompt-Doctor</div>
-          <div class="r-sub">fragt die 4 Tore</div>
+          <div class="r-sub">fragt die 5 Patterns</div>
           <div class="r-body">
-            Blockt jede neue Version, bis sie ein offenes Tor schließt — bis alle vier sitzen. Darf <em>nicht</em> selbst tippen.
+            Blockt jede neue Version, bis sie ein offenes Pattern abdeckt — bis alle fünf sitzen. Darf <em>nicht</em> selbst tippen.
           </div>
         </div>
       </div>
@@ -2147,7 +2406,7 @@
       <div class="loop-line">
         <span class="ll-tag">Pro Runde · der Move</span>
         <div class="ll-body">
-          <strong>Doctor stellt das nächste Tor</strong> <span class="ll-arrow">→</span> <strong>Driver schreibt die nächste Version</strong>, die es beantwortet <span class="ll-arrow">→</span> gegen denselben Test-Input prüfen <span class="ll-arrow">→</span> wiederholen, bis <strong>alle 4 Tore</strong> sitzen.
+          <strong>Doctor nennt das nächste Pattern</strong> <span class="ll-arrow">→</span> <strong>Driver schreibt die nächste Version</strong>, die es abdeckt <span class="ll-arrow">→</span> gegen denselben Test-Input prüfen <span class="ll-arrow">→</span> wiederholen, bis <strong>alle 5 Patterns</strong> sitzen.
         </div>
       </div>
 
@@ -2155,7 +2414,7 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; flex: 1; min-height: 0;">
 
         <div class="card dark" style="padding: 18px 24px; display: flex; flex-direction: column; order: 2;">
-          <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Spielregel · die 4 Tore des Prompt-Doctors</div>
+          <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Spielregel · die 5 Patterns des Prompt-Doctors</div>
           <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px; margin-bottom: 10px;">Vor jeder neuen Version &middot; laut fragen.</div>
           <div class="gate-list">
             <div class="gate-item">
@@ -2186,6 +2445,13 @@
                 <em>→ Länge, Tonalität, erlaubte Werte.</em>
               </div>
             </div>
+            <div class="gate-item">
+              <div class="g-num">05</div>
+              <div class="g-body">
+                <strong>Self-Check:</strong> „Soll das Modell sich selbst prüfen?"
+                <em>→ Entwurf gegen die Vorgaben checken, bevor es final antwortet.</em>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2198,7 +2464,6 @@
                 <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Vage Prompts · wählt einen</div>
                 <div style="font-family: var(--serif); font-size: 24px; font-weight: 500;">Refactored in V1 → V2 → V3</div>
               </div>
-              <span class="pill outline" style="font-size: 11px;">absichtlich vage</span>
             </div>
             <div style="margin-top: 10px;">
               <div class="task-row">
@@ -2259,6 +2524,8 @@
             <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say" data-nd="V3: einen Beispiel-Absatz in unserem Stil drangehängt — daran orientiert sich das Modell.">V3: einen Beispiel-Absatz im Firmen-Ton drangehängt, plus ein Gegenbeispiel, das wir vermeiden.</div></div>
             <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 4 · Constraint</span></div><div class="eg-say">Was darf <strong>nicht</strong> passieren?</div></div>
             <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">„Keine Rabatte versprechen, keine Schuldzuweisung — genau ein nächster Schritt mit Termin.“</div></div>
+            <div class="eg-line nav"><div class="eg-who">Prompt-Doctor<span class="eg-gate">Tor 5 · Self-Check</span></div><div class="eg-say">Lass das Modell vor dem Senden selbst gegenprüfen: alle Vorgaben erfüllt?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Driver</div><div class="eg-say">Ergänzt: „Prüfe vor der Ausgabe: Betreff da, ≤ 120 Wörter, keine Rabatte — sonst korrigieren.“</div></div>
           </div>
           <div class="eg-aside">
             <div class="eg-setup">
@@ -2267,105 +2534,17 @@
             </div>
             <div class="eg-learning">
               <div class="eg-learning-label">Das Learning</div>
-              <div class="eg-learning-text">Derselbe Wunsch — drei Versionen. Der Prompt-Doctor hat nie selbst getippt, nur an <strong>vier Stellen</strong> „Stopp“ gesagt. V1 war eine Hoffnung, V3 ist eine Spezifikation: <em>Rolle, Format, Beispiel, Grenze.</em> Genau diese vier Fragen trennen einen vagen Prompt von einem, der zuverlässig liefert.</div>
+              <div class="eg-learning-text">Derselbe Wunsch — drei Versionen. Der Prompt-Doctor hat nie selbst getippt, nur an <strong>fünf Stellen</strong> „Stopp“ gesagt. V1 war eine Hoffnung, V3 ist eine Spezifikation: <em>Rolle, Format, Beispiel, Grenze, Selbst-Check.</em> Genau diese fünf Fragen trennen einen vagen Prompt von einem, der zuverlässig liefert.</div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-
-  <!-- ===================== 14 PRAXISBEISPIEL · ECHTE AGENTS.md ===================== -->
-  <section data-screen-label="13 Praxis AGENTS.md" data-roleswitch>
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Mitnehmen</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">Konkret: eine AGENTS.md, die funktioniert</div>
-      <h2 class="title" style="font-size: 48px; margin-bottom: 20px;">So sieht eine <span class="accent">gute AGENTS.md</span> aus.</h2>
-
-      <!-- 2 Spalten: Beispiel + Was rein, was nicht -->
-      <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 22px;">
-
-        <!-- Beispiel-Code -->
-        <div class="card dark" style="padding: 0; overflow: hidden;">
-          <div style="padding: 12px 22px; border-bottom: 1px solid rgba(255,255,255,0.10); display: flex; justify-content: space-between; align-items: center;">
-            <span class="mono" style="font-size: 13px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;" data-nd="TEAM-BRIEFING">AGENTS.md</span>
-            <span class="mono" style="font-size: 12px; color: #c8c2b6;" data-nd="kurz · Redaktions-Team">~480 tokens · TS/Node-Repo</span>
-          </div>
-          <pre style="margin: 0; padding: 18px 22px; font-family: var(--mono); font-size: 14px; line-height: 1.55; color: #d8d2c5; white-space: pre-wrap;" data-nd='<span style="color: var(--accent-soft);"># Acme Redaktion</span><br><br><span style="color: var(--accent-soft);">## Kanäle</span><br>Newsletter · Blog · LinkedIn · internes Wiki<br><br><span style="color: var(--accent-soft);">## Routine-Aufgaben</span><br>- <span style="color: #f0a868;">Entwurf</span>    — erst Gliederung, dann Text<br>- <span style="color: #f0a868;">Korrektur</span>  — Duden-konform, Pflicht vor Freigabe<br>- <span style="color: #f0a868;">Freigabe</span>   — nichts ohne 4-Augen-Prinzip raus<br><br><span style="color: var(--accent-soft);">## Stil</span><br>- <span style="color: #7fc488;">Sie-Form</span>, kein Marketing-Sprech<br>- Markenname immer „Acme“, nie „ACME“<br>- max. <span style="color: #7fc488;">1 Ausrufezeichen</span> pro Absatz<br>- Texte über 300 Wörter: Zwischenüberschriften<br><br><span style="color: var(--accent-soft);">## Harte Regeln</span><br>- NIE Preise oder Zahlen <span style="color: #f0a868;">erfinden</span> — nur aus Faktenblatt<br>- NIE Kundennamen ohne Freigabe nennen<br>- Jede Zahl mit Quelle belegen<br><br><span style="color: var(--accent-soft);">## Annahmen, die du treffen darfst</span><br>- Zielgruppe: B2B, fachkundig<br>- Tonalität laut Markenhandbuch Kapitel 2'><span style="color: var(--accent-soft);"># Acme API</span>
-
-<span style="color: var(--accent-soft);">## Stack</span>
-Node 22 · TypeScript strict · Fastify · Postgres · Vitest
-
-<span style="color: var(--accent-soft);">## Commands</span>
-- <span style="color: #f0a868;">pnpm dev</span>       — local server (port 3000)
-- <span style="color: #f0a868;">pnpm test</span>      — vitest, must be green before commit
-- <span style="color: #f0a868;">pnpm lint</span>      — eslint + prettier, no warnings allowed
-- <span style="color: #f0a868;">pnpm db:migrate</span> — drizzle migrations
-
-<span style="color: var(--accent-soft);">## Style</span>
-- <span style="color: #7fc488;">tabs</span>, not spaces (legacy reasons, do not "fix")
-- error classes in <span style="color: #f0a868;">src/errors/</span>, NEVER throw plain Error
-- prefer <span style="color: #f0a868;">Result&lt;T,E&gt;</span> over try/catch in business logic
-- file size cap: <span style="color: #7fc488;">300 LOC</span>; split otherwise
-
-<span style="color: var(--accent-soft);">## Hard rules</span>
-- NEVER edit <span style="color: #f0a868;">migrations/</span> after merge — add new migration
-- NEVER call external APIs from <span style="color: #f0a868;">src/domain/</span> — stays pure
-- ALL routes go through <span style="color: #f0a868;">withRateLimit()</span>
-
-<span style="color: var(--accent-soft);">## Conventions you can assume</span>
-- vitest BDD style, <span style="color: #f0a868;">describe/it</span>, no jest globals
-- env vars validated in <span style="color: #f0a868;">src/config/env.ts</span></pre>
-        </div>
-
-        <!-- Was gehört rein, was nicht -->
-        <div style="display: flex; flex-direction: column; gap: 14px;">
-          <div class="card" style="padding: 16px 22px;">
-            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">+ Gehört rein</div>
-            <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
-              <li>Stack &amp; wichtigste Commands</li>
-              <li>Repo-spezifische Konventionen</li>
-              <li data-nd='<strong>Harte Regeln</strong> („NIE Preise erfinden“)'><strong>Harte Regeln</strong> („NIE direkt Postgres-Connection")</li>
-              <li data-nd="Annahmen, die ein neuer Kollege wissen müsste">Annahmen, die ein neuer Dev wissen müsste</li>
-            </ul>
-          </div>
-          <div class="card" style="padding: 16px 22px;">
-            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">− Gehört NICHT rein</div>
-            <ul style="font-size: 17px; line-height: 1.45; padding-left: 22px; color: var(--ink-2); margin: 8px 0 0;">
-              <li>Onboarding-Roman, Firmen-Vision</li>
-              <li data-nd="lange Beispieltexte (→ Vorlage)">Code-Beispiele (&rarr; Skill oder README)</li>
-              <li>Daten, die sich oft ändern (Versionen, URLs)</li>
-              <li>Persönliche Vorlieben ohne Begründung</li>
-            </ul>
-          </div>
-          <div class="card" style="padding: 16px 22px;">
-            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase;">Faustregel</div>
-            <div style="font-size: 16px; line-height: 1.45; color: var(--ink-2); margin-top: 8px;">
-              Knapp, repo-spezifisch, kein Onboarding-Roman. Stil, Commands, harte Regeln — alles, was der Agent bei <em>jeder</em> Nachricht braucht, und nichts mehr.
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
-        <div class="callout-label">Merksatz</div>
-        <div class="callout-body" style="font-size: 19px;">
-          Eine AGENTS.md ist <strong>kein Wiki</strong>, sondern was der Agent <em>bei jeder</em> Nachricht wissen muss. Alles andere gehört nach Skill, Memory oder MCP.
-        </div>
-      </div>
-
     </div>
   </section>
 
 
   <!-- ===================== 15 CHEAT SHEET ===================== -->
-  <section data-screen-label="14 Cheat Sheet" data-roleswitch>
+  <section data-screen-label="Mitnehmen · Cheat-Sheet" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
         <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 01 · Prompting &amp; Context</span><span class="bc-sep">›</span>Mitnehmen</span>
@@ -2376,39 +2555,24 @@ Node 22 · TypeScript strict · Fastify · Postgres · Vitest
         <div class="cs-head-main">
           <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
           <h2 class="title" style="font-size: 56px; margin-bottom: 6px;">Prompting &amp; Context auf <span class="accent">einer Seite</span>.</h2>
-          <p class="body" style="margin: 0; max-width: 1100px; font-size: 19px;">
-            Die vier Anatomie-Teile, die fünf Patterns als kurze Daumenregeln, plus drei Wenn/Dann-Reflexe — abfotografieren oder ausdrucken.
-          </p>
-        </div>
-        <div class="cs-emblem" aria-hidden="true">
-          <div class="cw-head"><span>Context-Window</span><span class="cw-used">87k / 200k</span></div>
-          <div class="cw-bar"><i class="cwb-always"></i><i class="cwb-od"></i></div>
-          <div class="cw-grid">
-            <span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c sys"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c od"></span><span class="cw-c"></span><span class="cw-c"></span>
-            <span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span><span class="cw-c"></span>
-          </div>
-          <div class="cw-leg">
-            <span><i></i>Immer geladen</span>
-            <span class="lod"><i></i>On-demand</span>
-          </div>
         </div>
       </div>
 
       <!-- Anatomie + Patterns als Karten -->
-      <div class="cs-grid">
+      <div class="cs-grid" style="margin-top: 40px;">
         <div class="cs-card">
           <div class="cs-num">01</div>
           <div class="cs-name">System</div>
           <div class="cs-row">
             <div class="cs-label">Pattern</div>
-            <div class="cs-val mono">Role &middot; Persona</div>
+            <div class="cs-val mono">Role</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Wirkung</div>
             <div class="cs-val">setzt Stil &amp; Ton — gilt für alle Turns</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-label">Behebt</div>
             <div class="cs-val">generisch, Marketing-Sprech, Stil-Drift</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
@@ -2422,14 +2586,35 @@ Node 22 · TypeScript strict · Fastify · Postgres · Vitest
           <div class="cs-name">User</div>
           <div class="cs-row">
             <div class="cs-label">Pattern</div>
-            <div class="cs-val mono">Few-Shot &middot; Beispiele</div>
+            <div class="cs-val mono">Aufgabe + Constraint</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Wirkung</div>
+            <div class="cs-val">die konkrete Aufgabe pro Turn — mit harten Grenzen</div>
+          </div>
+          <div class="cs-row">
+            <div class="cs-label">Behebt</div>
+            <div class="cs-val">Thema verfehlt, Antwort ufert aus</div>
+          </div>
+          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
+            <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
+            <div class="cs-val"><strong>Eine klare Aufgabe + harte Länge.</strong></div>
+          </div>
+        </div>
+
+        <div class="cs-card">
+          <div class="cs-num">03</div>
+          <div class="cs-name">Examples</div>
+          <div class="cs-row">
+            <div class="cs-label">Pattern</div>
+            <div class="cs-val mono">Few-Shot</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Wirkung</div>
             <div class="cs-val">3 Beispiele schlagen 500 Worte Anweisung</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
+            <div class="cs-label">Behebt</div>
             <div class="cs-val">Edge-Cases gehen schief, Stil halluziniert</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
@@ -2439,71 +2624,84 @@ Node 22 · TypeScript strict · Fastify · Postgres · Vitest
         </div>
 
         <div class="cs-card">
-          <div class="cs-num">03</div>
-          <div class="cs-name">Output</div>
+          <div class="cs-num">04</div>
+          <div class="cs-name">Output-Format</div>
           <div class="cs-row">
             <div class="cs-label">Pattern</div>
-            <div class="cs-val mono" data-nd="Format + Vorgabe">Format + Constraint</div>
+            <div class="cs-val mono">Format + Self-Check</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Wirkung</div>
-            <div class="cs-val">macht maschinell-lesbar, begrenzt ausufernde Antworten</div>
+            <div class="cs-val">macht maschinell-lesbar — einmal selbst prüfen vor dem Senden</div>
           </div>
           <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
-            <div class="cs-val">Pipeline bricht, Outputs zu lang</div>
+            <div class="cs-label">Behebt</div>
+            <div class="cs-val">Weiterverarbeitung bricht, Felder fehlen</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
             <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
-            <div class="cs-val" data-nd="&lt;strong&gt;Feste Vorlage / Tabelle + harte Länge.&lt;/strong&gt;"><strong>JSON-Schema oder XML-Tags + harte Länge.</strong></div>
-          </div>
-        </div>
-
-        <div class="cs-card">
-          <div class="cs-num">04</div>
-          <div class="cs-name">Context</div>
-          <div class="cs-row">
-            <div class="cs-label">Pattern</div>
-            <div class="cs-val mono" data-nd="Selbst-Check &middot; Wissen bei Bedarf">Self-Check &middot; Just-in-Time</div>
-          </div>
-          <div class="cs-row">
-            <div class="cs-label">Wirkung</div>
-            <div class="cs-val">gezielt geladenes Wissen, vor-Antwort-Prüfung</div>
-          </div>
-          <div class="cs-row">
-            <div class="cs-label">Failure-Mode</div>
-            <div class="cs-val" data-nd="überladener Context, vergessene Anweisungen">Token-Pollution, vergessene Anweisungen</div>
-          </div>
-          <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
-            <div class="cs-label" style="color: var(--accent-soft);">Daumenregel</div>
-            <div class="cs-val" data-nd="&lt;strong&gt;Ausschnitte &gt; ganze Dokumente. Vorlage &gt; Riesen-Prompt.&lt;/strong&gt;"><strong>Snippets &gt; ganze Files. Skill &gt; Riesen-Prompt.</strong></div>
+            <div class="cs-val"><strong>Feste Vorlage/Tabelle + kurzer Self-Check.</strong></div>
           </div>
         </div>
       </div>
 
-      <!-- Heuristiken -->
-      <div style="margin-top: 22px;">
-        <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Wenn / Dann · drei Workshop-Reflexe</div>
-        <div class="cs-rules">
-          <div class="cs-rule">
-            <div class="r-when">Wenn der Stil ständig driftet</div>
-            <div class="r-then"><strong>Role schärfen.</strong> Persona präziser, Tabu-Liste konkreter.</div>
-          </div>
-          <div class="cs-rule">
-            <div class="r-when">Wenn das Modell halluziniert</div>
-            <div class="r-then"><strong>Few-Shot statt mehr Instruktion.</strong> 1–3 reale Beispiele &gt; 100 Worte.</div>
-          </div>
-          <div class="cs-rule">
-            <div class="r-when">Wenn der Context explodiert</div>
-            <div class="r-then" data-nd="&lt;strong&gt;Vorlage statt Riesen-Prompt.&lt;/strong&gt; Bei Bedarf laden, nicht auf Vorrat."><strong>Skill statt Riesen-Prompt.</strong> On-demand laden, nicht just-in-case.</div>
-          </div>
+      <!-- Die 5 Patterns — als eigene Reihe, einzeln benannt -->
+      <div style="margin-top: 52px;">
+        <div style="font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">
+          Die 5 Patterns &nbsp;·&nbsp; <span class="accent">einzeln einsetzbar, frei kombinierbar</span>
+        </div>
+        <div class="options-rail">
+          <div class="opt"><div class="opt-name"><span class="accent">01</span> Role</div><div class="opt-tag">Persona · Stil &amp; Ton</div></div>
+          <div class="opt"><div class="opt-name"><span class="accent">02</span> Format</div><div class="opt-tag">JSON · XML · Tabelle</div></div>
+          <div class="opt"><div class="opt-name"><span class="accent">03</span> Few-Shot</div><div class="opt-tag">Input → Output zeigen</div></div>
+          <div class="opt"><div class="opt-name"><span class="accent">04</span> Constraint</div><div class="opt-tag">Länge · Werte · Tabus</div></div>
+          <div class="opt"><div class="opt-name"><span class="accent">05</span> Self-Check</div><div class="opt-tag">vor Ausgabe prüfen</div></div>
         </div>
       </div>
 
-      <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
-        <div class="callout-label">Take-away</div>
-        <div class="callout-body" style="font-size: 19px;">
-          <strong>Prompting + Context Engineering ist eine Disziplin</strong>, kein Geheimwissen. Vier Anatomie-Teile, fünf Patterns, ein knappes Token-Budget — mehr braucht es 2026 nicht.
+      <!-- Token-Verbrauchs-Balken: so sieht ein „Alles-an"-Setup aus -->
+      <div style="margin-top: 52px;">
+        <div style="font-family: var(--mono); font-size: 13px; color: var(--ink-3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">
+          Contextverbrauch von Agenten und Chat
+        </div>
+        <div class="source-bar" style="height: 54px;">
+          <div style="background: var(--bg-2); flex: 15;">
+            <div class="src-label">AWS MCP</div><div class="src-tok">15.000</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 8;">
+            <div class="src-label">GitHub</div><div class="src-tok">8.000</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 6;">
+            <div class="src-label">Playwright</div><div class="src-tok">6.000</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 5;">
+            <div class="src-label">Confluence</div><div class="src-tok">5.200</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 5;">
+            <div class="src-label">Jira</div><div class="src-tok">4.500</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 4;">
+            <div class="src-label">Slack</div><div class="src-tok">3.500</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 4;">
+            <div class="src-label">+ 5 weitere</div><div class="src-tok">~18.000</div>
+          </div>
+          <div style="background: var(--bg-2); flex: 12;">
+            <div class="src-label">Conversation-History</div><div class="src-tok">~38.000</div>
+          </div>
+          <div style="background: var(--quiz-ok); color: #fff; flex: 3;" data-nd='<div class="src-label">E-Mail-Agent</div><div class="src-tok" style="color: rgba(255,255,255,0.82);">600</div>'>
+            <div class="src-label">API-Doku-Agent</div><div class="src-tok" style="color: rgba(255,255,255,0.82);">700</div>
+          </div>
+          <div style="background: var(--quiz-ok); color: #fff; flex: 3;" data-nd='<div class="src-label">monats-report · Skill</div><div class="src-tok" style="color: rgba(255,255,255,0.82);">1.200</div>'>
+            <div class="src-label">changelog-generator · Skill</div><div class="src-tok" style="color: rgba(255,255,255,0.82);">1.200</div>
+          </div>
+          <div style="background: var(--ink); color: #f0ece3; flex: 16;">
+            <div class="src-label" style="color: #f0ece3;">noch frei</div>
+            <div class="src-tok" style="color: #c8c2b6;">~100.000</div>
+          </div>
+        </div>
+        <div style="font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; margin-top: 6px; display: flex; justify-content: space-between;">
+          <span>0 tok</span><span>50.000</span><span>100.000</span><span>150.000</span><span style="color: var(--ink);">200.000 ⌐</span>
         </div>
       </div>
 
@@ -2722,7 +2920,6 @@ Node 22 · TypeScript strict · Fastify · Postgres · Vitest
 <script src="exercises/system-doctor.js"></script>
 <script src="exercises/skill-doctor.js"></script>
 <script src="exercises/user-doctor.js"></script>
-<script src="exercises/skill-builder.js"></script>
 <script src="exercises/role-switch.js"></script>
 <script src="exercises/example-task.js"></script>
 </body>

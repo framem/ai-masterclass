@@ -18,7 +18,7 @@
 
   var BRIEF = {
     dev: {
-      goal: 'Du schreibst einen <strong>Skill</strong> („Changelog-Generator"), den das Team <strong>on-demand</strong> nutzt — nur beim Release (<strong>feuert ~30×/Monat</strong>). Nur der <strong>Header</strong> (Name + Beschreibung) ist <strong>always-on</strong>; der <strong>Body</strong> wird <strong>lazy</strong> geladen, erst wenn der Skill <strong>feuert</strong>.',
+      goal: 'Du schreibst einen <strong>Skill</strong> („Changelog-Generator"), den das Team <strong>on-demand</strong> beim Release nutzt (<strong>~30×/Monat</strong>). Nur der <strong>Header</strong> (Name + Beschreibung) ist <strong>always-on</strong>; der <strong>Body</strong> wird <strong>lazy</strong> geladen, erst wenn der Skill <strong>feuert</strong>.',
       out: '<span class="dbo-k">Skill soll erzeugen:</span> Markdown-Changelog · nach feat/fix/breaking gruppiert · Beispiel inklusive'
     },
     nondev: {
@@ -41,6 +41,19 @@
       score: 2.2,
       tokens: 24,
       recommended: true
+    },
+    {
+      id: 'cram',
+      name: 'Ganze Anleitung in die Beschreibung',
+      meta: 'Alles in die Trigger-Zeile quetschen',
+      label: 'BESCHREIBUNG · ALWAYS-ON',
+      bucket: 'always',
+      addition: 'description: Changelog-Generator. Liest git log, gruppiert nach feat/fix/breaking, baut Markdown mit ## je Version, ### je Gruppe, Bullets mit Hash, Breaking oben. Beispiel: ## v2.1.0 ...',
+      addition_nd: 'description: Monats-Report. Liest Rohzahlen je Abteilung, rechnet Ist gegen Plan, markiert Top-3-Abweichungen, baut Tabelle plus Fazit. Beispiel: # Report Mai ...',
+      score: 0.4,
+      tokens: 88,
+      costly: true,
+      note: 'Die Beschreibung ist <strong>always-on</strong> — sie liegt in <strong>jeder</strong> Chat-Nachricht. Die ganze Prozedur hier reinzupacken macht den Skill so teuer wie ein Agent-Prompt und killt den On-demand-Vorteil. Prozedur &amp; Beispiel gehören in den <strong>Body</strong>.'
     },
     {
       id: 'scope',
@@ -90,19 +103,6 @@
       score: 1.4,
       tokens: 34,
       recommended: true
-    },
-    {
-      id: 'cram',
-      name: 'Ganze Anleitung in die Beschreibung',
-      meta: 'Alles in die Trigger-Zeile quetschen',
-      label: 'BESCHREIBUNG · ALWAYS-ON',
-      bucket: 'always',
-      addition: 'description: Changelog-Generator. Liest git log, gruppiert nach feat/fix/breaking, baut Markdown mit ## je Version, ### je Gruppe, Bullets mit Hash, Breaking oben. Beispiel: ## v2.1.0 ...',
-      addition_nd: 'description: Monats-Report. Liest Rohzahlen je Abteilung, rechnet Ist gegen Plan, markiert Top-3-Abweichungen, baut Tabelle plus Fazit. Beispiel: # Report Mai ...',
-      score: 0.4,
-      tokens: 88,
-      costly: true,
-      note: 'Die Beschreibung ist <strong>always-on</strong> — sie liegt in <strong>jeder</strong> Chat-Nachricht. Die ganze Prozedur hier reinzupacken macht den Skill so teuer wie ein Agent-Prompt und killt den On-demand-Vorteil. Prozedur &amp; Beispiel gehören in den <strong>Body</strong>.'
     }
   ];
 
@@ -134,20 +134,16 @@
     solveBtn.textContent = revealed ? 'Lösung ausblenden' : 'Auflösen';
     var b = BRIEF[role === 'nondev' ? 'nondev' : 'dev'];
     briefEl.innerHTML =
-      '<div class="doctor-brief-head"><span>Dein Auftrag</span></div>' +
-      '<div class="doctor-brief-goal">' + b.goal + '</div>' +
-      '<div class="doctor-brief-out">' + b.out + '</div>';
+      '<div class="doctor-brief-goal">' + b.goal + '</div>';
 
     // Text panel rendered as a real SKILL.md file:
     //   filename bar → frontmatter HEADER (between ---, always-on) → BODY (on-demand)
-    var filePath = role === 'nondev' ? 'skills/monats-report/' : 'skills/changelog-generator/';
+    var fileName = role === 'nondev' ? 'monats-report.skill.md' : 'changelog-generator.skill.md';
     var lines = [];
     lines.push(
       '<div class="sd-filebar">' +
         '<span class="sd-dot"></span>' +
-        '<span class="sd-filename">SKILL.md</span>' +
-        '<span class="sd-filepath">' + filePath + '</span>' +
-        '<button class="sd-copy" type="button">⧉ Kopieren</button>' +
+        '<span class="sd-filename">' + fileName + '</span>' +
       '</div>'
     );
     lines.push('<div class="sd-pad">');
@@ -253,11 +249,11 @@
     } else {
       sweetEl.classList.remove('hit');
       if (activeCount === 0) {
-        sweetEl.innerHTML = '— Baue den Skill. Faustregel: <em>Beschreibung winzig (always-on), Body ausführlich (on-demand)</em>.';
+        sweetEl.innerHTML = '— Baue den Skill.';
       } else if (!hasDesc) {
         sweetEl.innerHTML = '⚠ Ohne <strong>Beschreibung</strong> lädt der Skill nie — der ganze Body bleibt totes Gewicht.';
       } else if (always > ALWAYS_BUDGET) {
-        sweetEl.textContent = 'Beschreibung zu schwer (' + always + ' > ' + ALWAYS_BUDGET + ' tok always-on) — das zahlst du pro Nachricht.';
+        sweetEl.textContent = 'Beschreibung zu schwer — das zahlst du pro Nachricht.';
       } else if (score < 7) {
         sweetEl.textContent = 'Always-on schlank — aber Score noch zu niedrig (' + score.toFixed(1) + '). Fülle den Body.';
       } else {

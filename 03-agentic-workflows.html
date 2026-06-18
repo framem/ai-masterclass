@@ -169,6 +169,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Übungs-Slides ===== */
   .qrow {
@@ -563,11 +568,11 @@
         Vom einzelnen Prompt zur strukturierten Zusammenarbeit mit einem autonomen Modell.
       </h3>
 
-      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Loop statt One-Shot</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Tools statt Text</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Phasen statt Improvisation</span>
-        <span class="pill accent" style="font-size: 24px; padding: 10px 20px;">Explore → Plan → Execute → Commit</span>
+      <div class="agenda">
+        <span class="ag-kw">Loop statt One-Shot</span>
+        <span class="ag-kw">Tools statt Text</span>
+        <span class="ag-kw">Phasen statt Improvisation</span>
+        <span class="ag-kw accent">Explore → Plan → Execute → Commit</span>
       </div>
 
       <!-- decorative pipeline at bottom -->

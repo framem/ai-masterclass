@@ -232,10 +232,12 @@
   var activeCountEl = section.querySelector('#userdoc-active-count');
   var sweetEl = section.querySelector('#userdoc-sweet');
   var resetBtn = section.querySelector('#userdoc-reset');
+  var solveBtn = section.querySelector('#userdoc-solve');
 
   var role = 'dev';
   var taskIdx = 0;
   var state = {};
+  var revealed = false;
 
   function tasks() { return TASKS[role === 'nondev' ? 'nondev' : 'dev']; }
   function task() { return tasks()[taskIdx]; }
@@ -329,6 +331,7 @@
     var t = task();
     renderBrief();
     renderSystem();
+    if (solveBtn) solveBtn.textContent = revealed ? 'Lösung ausblenden' : 'Auflösen';
 
     var anyFixed = t.fixes.some(function (f) { return state[f.id]; });
 
@@ -338,9 +341,10 @@
     lines.push('<div class="doctor-line base' + (anyFixed ? ' fixed' : '') + '">' + escapeHtml(t.base) + '</div>');
     t.fixes.forEach(function (f) {
       if (state[f.id]) {
-        var labelStyle = f.redundant ? ' style="color: var(--warn);"' : '';
-        lines.push('<div class="doctor-line label"' + labelStyle + '>' + f.label + (f.redundant ? ' ⚠' : '') + '</div>');
-        lines.push('<div class="doctor-line added"' + (f.redundant ? ' style="border-left-color: var(--warn); background: rgba(184,132,31,0.10);"' : '') + '>' + escapeHtml(f.addition) + '</div>');
+        var showWarn = revealed && f.redundant;
+        var labelStyle = showWarn ? ' style="color: var(--warn);"' : '';
+        lines.push('<div class="doctor-line label"' + labelStyle + '>' + f.label + (showWarn ? ' ⚠' : '') + '</div>');
+        lines.push('<div class="doctor-line added"' + (showWarn ? ' style="border-left-color: var(--warn); background: rgba(184,132,31,0.10);"' : '') + '>' + escapeHtml(f.addition) + '</div>');
       }
     });
     textEl.innerHTML = lines.join('');
@@ -350,22 +354,25 @@
     t.fixes.forEach(function (f) {
       var on = state[f.id];
       var div = document.createElement('div');
-      div.className = 'doctor-fix' + (on ? ' on' : '') + (f.redundant ? ' redundant' : '') + (f.recommended ? ' recommended' : '');
-      var scoreStr = f.score > 0 ? '+ ' + f.score.toFixed(1) + ' Score' : (f.redundant ? '+ 0 (redundant!)' : '+ 0 Score');
+      div.className = 'doctor-fix' + (on ? ' on' : '') + (revealed && f.redundant ? ' redundant' : '') + (revealed && !f.redundant ? ' recommended' : '');
+      var scoreStr = f.score > 0 ? '+ ' + f.score.toFixed(1) + ' Score' : ((revealed && f.redundant) ? '+ 0 (redundant!)' : '+ 0 Score');
+      var badge = '';
+      if (revealed && f.redundant) badge = ' <span style="color: var(--warn); font-family: var(--mono); font-size: 10px;">·  ⚠ TRAP</span>';
+      else if (revealed && f.recommended) badge = ' <span style="color: var(--ok); font-family: var(--mono); font-size: 10px;">· ✓ EMPFOHLEN</span>';
+      else if (revealed) badge = ' <span style="color: var(--ok); font-family: var(--mono); font-size: 10px;">· ✓ sinnvoll</span>';
+      var displayMeta = (!revealed && f.redundant) ? 'Zusätzliche Anweisung' : f.meta;
       div.innerHTML =
         '<div class="doctor-fix-head">' +
-          '<div class="doctor-fix-name">' + f.name +
-            (f.redundant ? ' <span style="color: var(--warn); font-family: var(--mono); font-size: 10px;">·  ⚠ TRAP</span>' : '') +
-            (f.recommended ? ' <span style="color: var(--ok); font-family: var(--mono); font-size: 10px;">· EMPFOHLEN</span>' : '') +
+          '<div class="doctor-fix-name">' + f.name + badge +
           '</div>' +
           '<div class="doctor-fix-check">' + (on ? '✓' : '') + '</div>' +
         '</div>' +
-        '<div style="font-size: 12px; color: #c8c2b6; margin-bottom: 6px;">' + f.meta + '</div>' +
+        '<div style="font-size: 12px; color: #c8c2b6; margin-bottom: 6px;">' + displayMeta + '</div>' +
         '<div class="doctor-fix-meta">' +
-          '<span class="' + (f.score > 0 ? 'qm-up' : '') + '" ' + (f.redundant ? 'style="color: var(--warn);"' : '') + '>' + scoreStr + '</span>' +
+          '<span class="' + (f.score > 0 ? 'qm-up' : '') + '" ' + ((revealed && f.redundant) ? 'style="color: var(--warn);"' : '') + '>' + scoreStr + '</span>' +
           '<span>+ ' + f.tokens + ' tok</span>' +
         '</div>' +
-        (f.redundant ? '<div class="doctor-fix-note"><strong>Warum Trap:</strong> ' + f.redundantReason + '</div>' : '');
+        ((revealed && f.redundant) ? '<div class="doctor-fix-note"><strong>Warum Trap:</strong> ' + f.redundantReason + '</div>' : '');
       div.addEventListener('click', function () {
         state[f.id] = !state[f.id];
         render();
@@ -402,7 +409,10 @@
     else if (tokens > 80) { tokensBar.parentNode.classList.add('warn'); tokensEl.classList.add('warn'); }
     else { tokensEl.classList.add('ok'); }
 
-    if (redundantOn.length > 0) {
+    if (!revealed) {
+      redundantEl.classList.remove('hit');
+      redundantEl.innerHTML = '— wähle Fixes, dann <strong>Auflösen</strong><br/><span style="font-size: 11px; opacity: 0.7;">Prüft, ob du etwas wiederholst, das Agent/Skill schon können.</span>';
+    } else if (redundantOn.length > 0) {
       redundantEl.classList.add('hit');
       redundantEl.innerHTML = '⚠ ' + redundantOn.length + ' redundant<br/>' +
         '<span style="font-size: 11px; opacity: 0.85;">' + redundantOn[0].redundantReason + '</span>';
@@ -412,20 +422,29 @@
     }
 
     activeCountEl.textContent = activeCount + ' von ' + t.fixes.length + ' aktiv';
-    var inSweet = score >= 6 && tokens <= 120 && redundantOn.length === 0;
-    if (inSweet) {
-      sweetEl.classList.add('hit');
-      sweetEl.innerHTML = '✓ <span style="color: #fff;">Sweet-Spot!</span> Score ' + score.toFixed(1) + ', ' + tokens + ' tok, kein Duplikat';
-    } else {
+    if (!revealed) {
       sweetEl.classList.remove('hit');
-      if (redundantOn.length > 0) {
-        sweetEl.innerHTML = 'Redundant zu Agent/Skill — kostet Tokens ohne Nutzen';
-      } else if (score < 6) {
-        sweetEl.textContent = 'Score noch zu niedrig (' + score.toFixed(1) + ' < 6)';
-      } else if (tokens > 120) {
-        sweetEl.textContent = 'User-Prompt zu lang (' + tokens + ' > 120 tok)';
+      if (activeCount === 0) {
+        sweetEl.innerHTML = '— Wähle die Fixes, die dieser Turn wirklich braucht.';
       } else {
-        sweetEl.innerHTML = '— Schalte sinnvolle Fixes an, meide Traps';
+        sweetEl.innerHTML = activeCount + ' Fix' + (activeCount > 1 ? 'es' : '') + ' aktiv · prüfe mit <strong>„Auflösen“</strong>, ob Traps dabei sind.';
+      }
+    } else {
+      var inSweet = score >= 6 && tokens <= 120 && redundantOn.length === 0;
+      if (inSweet) {
+        sweetEl.classList.add('hit');
+        sweetEl.innerHTML = '✓ <span style="color: #fff;">Sweet-Spot!</span> Score ' + score.toFixed(1) + ', ' + tokens + ' tok, kein Duplikat';
+      } else {
+        sweetEl.classList.remove('hit');
+        if (redundantOn.length > 0) {
+          sweetEl.innerHTML = 'Redundant zu Agent/Skill — kostet Tokens ohne Nutzen';
+        } else if (score < 6) {
+          sweetEl.textContent = 'Score noch zu niedrig (' + score.toFixed(1) + ' < 6)';
+        } else if (tokens > 120) {
+          sweetEl.textContent = 'User-Prompt zu lang (' + tokens + ' > 120 tok)';
+        } else {
+          sweetEl.innerHTML = '— Schalte sinnvolle Fixes an, meide Traps';
+        }
       }
     }
 
@@ -440,16 +459,26 @@
 
   function selectTask(i) {
     taskIdx = i;
+    revealed = false;
     populateTasks();
     resetState();
     render();
   }
 
-  resetBtn.addEventListener('click', function () { resetState(); render(); });
+  resetBtn.addEventListener('click', function () { revealed = false; resetState(); render(); });
+
+  solveBtn.addEventListener('click', function () {
+    revealed = !revealed;
+    if (revealed) {
+      task().fixes.forEach(function (f) { state[f.id] = !f.redundant; });
+    }
+    render();
+  });
 
   section.addEventListener('rolechange', function (e) {
     role = e.detail.role;
     taskIdx = 0;
+    revealed = false;
     populateTasks();
     resetState();
     render();

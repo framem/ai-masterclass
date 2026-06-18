@@ -45,7 +45,7 @@
     [
       { yes: false, text: 'Halluzinationen kommen vom Modell, nicht vom Input. Filtern auf der Eingangsseite hilft nicht — der Input kann völlig harmlos sein.' },
       { yes: false, text: 'Sandbox kapselt Aktionen, nicht Wahrheitsgehalt. Modell kann perfekt sicher und perfekt falsch sein.' },
-      { yes: true,  text: 'Ein zweiter Pass (Fact-Check-LLM, Regel-Engine, RAG-Verifier) ist die Standardabwehr. Vergleicht Aussagen mit Ground-Truth.' },
+      { yes: true,  text: 'Ein zweiter Pass (Fact-Check-Modell, Regel-Engine, RAG-Verifier) ist die Standardabwehr. Vergleicht Aussagen mit Ground-Truth.' },
       { yes: false, text: 'Audit zeigt im Nachhinein, was passiert ist — der Nutzer hat die Halluzination längst gesehen und geglaubt.' }
     ],
     [

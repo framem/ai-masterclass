@@ -161,6 +161,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Übungs-Slides ===== */
   .qrow {
@@ -612,20 +617,20 @@
   <section data-screen-label="01 Titel">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span></span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span></span>
         <span></span>
       </div>
 
-      <div class="eyebrow" style="font-size: 24px;">Kapitel — Wie viel du dem Agenten überlässt</div>
+      <div class="eyebrow" style="font-size: 24px;">Vorbereitung — Wie viel du dem Agenten überlässt</div>
       <h1 class="title" style="margin-top: 32px;">Befehl, Plan<br/>oder <span class="accent">Ziel</span>.</h1>
 
       <h3 class="subtitle" style="margin-top: 28px;">
         Dieselbe Aufgabe, drei Eingriffstiefen. Je autonomer, desto mehr denkt der Agent selbst — und desto mehr Kontrolle gibst du an Freigabe-Punkte und Guardrails ab.
       </h3>
 
-      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">So klein wie möglich</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">So autonom wie nötig</span>
+      <div class="agenda">
+        <span class="ag-kw">So klein wie möglich</span>
+        <span class="ag-kw">So autonom wie nötig</span>
       </div>
 
 
@@ -637,7 +642,7 @@
   <section data-screen-label="02 Das Spektrum">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -699,7 +704,7 @@
   <section data-screen-label="03 Stufe 1 Befehl" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -755,7 +760,7 @@
   <section data-screen-label="04 Stufe 2 Plan" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -815,7 +820,7 @@
   <section data-screen-label="05 Stufe 3 Ziel Autopilot" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -871,7 +876,7 @@
   <section data-screen-label="06 Übung Welche Stufe" data-roleswitch="">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#vertiefung"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Arbeitsweise</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Arbeitsweise</span><span class="bc-sep">›</span>Wissenscheck</span>
         <span></span>
       </div>
 

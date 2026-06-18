@@ -1001,7 +1001,13 @@
     color: var(--accent); margin-bottom: 5px;
     display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
   }
-  .doctor-brief-head .db-scale { color: var(--ink-3); letter-spacing: 0.06em; white-space: nowrap; }
+  .doctor-brief-head .db-scale {
+    flex: 0 0 auto; white-space: nowrap;
+    font-size: 12px; letter-spacing: 0.08em; font-weight: 700;
+    color: var(--paper); background: var(--accent);
+    padding: 4px 11px; border-radius: 999px;
+    align-self: center;
+  }
   .doctor-brief-goal {
     font-family: var(--serif); font-size: 17px; line-height: 1.38; color: var(--ink);
   }

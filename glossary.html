@@ -196,7 +196,7 @@
   <div class="wrap">
     <div class="topline">
       <span><span class="pip"></span>AI Master Class</span>
-      <a class="back" href="index.html#vertiefung">← Übersicht</a>
+      <a class="back" href="index.html#vorlauf">← Übersicht</a>
     </div>
     <div class="hero">
       <p class="eyebrow">Nachschlagen</p>
@@ -212,7 +212,7 @@
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <input id="q" type="search" placeholder="Begriff suchen — z. B. Token, RAG, MCP …" autocomplete="off" />
     </label>
-    <span class="count"><b id="shown">35</b> von 35 Begriffen</span>
+    <span class="count"><b id="shown">38</b> von 38 Begriffen</span>
   </div>
 </div>
 
@@ -245,6 +245,11 @@
     </div>
 
     <div class="item">
+      <div class="term">Autoregressiv</div>
+      <div class="def">Erzeugungsweise eines LM: Es schreibt <em>Token für Token</em> — jedes neue Token hängt an allem bisher Geschriebenen. Kein Plan im Voraus, nur immer der nächste Schritt.</div>
+    </div>
+
+    <div class="item">
       <div class="term">Context Engineering</div>
       <div class="def">Die Disziplin, dem Modell <em>genau das Richtige</em> in den Kontext zu legen — nicht möglichst viel. Während der Prompt das WAS liefert, liefert der Context das WORAUF.</div>
     </div>
@@ -256,7 +261,7 @@
 
     <div class="item">
       <div class="term">Context Window</div>
-      <div class="def">Maximale Token-Menge, die das Modell bei einer Anfrage gleichzeitig sehen kann (z.&nbsp;B. 128&nbsp;K).</div>
+      <div class="def">Maximale Token-Menge, die das Modell bei einer Anfrage gleichzeitig sehen kann (z.&nbsp;B. 200&nbsp;K – 1&nbsp;M).</div>
     </div>
 
     <div class="item">
@@ -315,6 +320,11 @@
     </div>
 
     <div class="item">
+      <div class="term">Post-Training</div>
+      <div class="def">Phase <em>nach</em> dem Pretraining: RLHF &amp; Präferenzdaten formen Ton, Hilfsbereitschaft, Verweigerungen und Tool-Use. Der größte im Alltag spürbare Unterschied zwischen Modellen mit ähnlichen Rohdaten.</div>
+    </div>
+
+    <div class="item">
       <div class="term">Prompt</div>
       <div class="def">Die Eingabe an ein Modell — die „Bestellung". Sagt, <em>was</em> passieren soll (Aufgabe, Rolle, Format); der Context liefert das <em>worauf</em>.</div>
     </div>
@@ -337,6 +347,11 @@
     <div class="item">
       <div class="term">Reasoning Effort</div>
       <div class="def">Stellrad, wie viel ein Modell vor der Antwort „nachdenkt". Mehr&nbsp;≠&nbsp;besser: bei einfachen Aufgaben kostet es nur Zeit und Tokens (Overthinking).</div>
+    </div>
+
+    <div class="item">
+      <div class="term">Sampling</div>
+      <div class="def">Dritter Schritt der LM-Pipeline (Tokenize · Predict · Sample): aus der Wahrscheinlichkeitsverteilung wird <em>ein</em> Token gezogen. Die <span class="mono">Temperatur</span> steuert, wie strikt der wahrscheinlichste Pfad gewählt wird.</div>
     </div>
 
     <div class="item">
@@ -401,7 +416,7 @@
 <footer>
   <div class="wrap">
     <span>AI Master Class · Glossar · 2026</span>
-    <span><a href="index.html#vertiefung">← Zurück zur Übersicht</a></span>
+    <span><a href="index.html#vorlauf">← Zurück zur Übersicht</a></span>
   </div>
 </footer>
 

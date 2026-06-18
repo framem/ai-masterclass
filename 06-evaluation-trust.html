@@ -115,6 +115,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Plausibility-trap (slide 02) ===== */
   .trap-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
@@ -377,11 +382,11 @@
         Die Frage, die jedes andere Kapitel zusammenhält: <em>Woher weißt du, dass es gut ist?</em> — Outputs messbar machen, statt sie zu erfühlen. Vertrauen kalibrieren, statt blind zu glauben oder alles zu prüfen.
       </h3>
 
-      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Klingt-richtig ≠ ist-richtig</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Die Eval-Leiter</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Anatomie einer Eval</span>
-        <span class="pill accent" style="font-size: 24px; padding: 10px 20px;">Vertrauen oder verifizieren?</span>
+      <div class="agenda">
+        <span class="ag-kw">Klingt-richtig ≠ ist-richtig</span>
+        <span class="ag-kw">Die Eval-Leiter</span>
+        <span class="ag-kw">Anatomie einer Eval</span>
+        <span class="ag-kw accent">Vertrauen oder verifizieren?</span>
       </div>
 
       <div style="margin-top: auto; padding-bottom: 24px;">
@@ -716,7 +721,7 @@
       <h2 class="title" style="font-size: 52px;">Baue deine erste Eval — in <span class="accent">vier Schritten</span>.</h2>
 
       <p class="body" style="margin: 0; max-width: 1700px; font-size: 20px;">
-        Nehmt eine echte Aufgabe aus eurem Alltag (Dev: z.&nbsp;B. Commit&nbsp;→&nbsp;Changelog · Non-Dev: z.&nbsp;B. Mail&nbsp;→&nbsp;Action-Items). Ziel ist kein Tool, sondern ein <strong>Maßstab</strong>, mit dem ihr zwei Prompt-Varianten ehrlich vergleichen könnt.
+        Nehmt eine echte Aufgabe aus eurem Alltag (Dev: z.&nbsp;B. Commit&nbsp;→&nbsp;Changelog · Fachbereich: z.&nbsp;B. Mail&nbsp;→&nbsp;Action-Items). Ziel ist kein Tool, sondern ein <strong>Maßstab</strong>, mit dem ihr zwei Prompt-Varianten ehrlich vergleichen könnt.
       </p>
 
       <div class="recipe-row">

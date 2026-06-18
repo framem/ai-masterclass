@@ -112,6 +112,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* Cheat-Sheet primitives */
   .cs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
@@ -404,11 +409,11 @@
         Ein Spektrum, fünf Muster, ein Tool-Loop — und ein Stecker, der alle Werkzeuge spricht.
       </h3>
 
-      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Spektrum, nicht Schalter</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">5 Workflow-Patterns</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Tool-Use-Loop</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">MCP als USB-C</span>
+      <div class="agenda">
+        <span class="ag-kw">Spektrum, nicht Schalter</span>
+        <span class="ag-kw">5 Workflow-Patterns</span>
+        <span class="ag-kw">Tool-Use-Loop</span>
+        <span class="ag-kw">MCP als USB-C</span>
       </div>
 
       <div style="margin-top: auto; padding-bottom: 24px;">
@@ -485,7 +490,7 @@
             <span class="pill outline" style="font-size: 11px;">vorhersehbar</span>
           </div>
           <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Workflow</div>
-          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">Code orchestriert mehrere LLM-Aufrufe</div>
+          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">Code orchestriert mehrere Modell-Aufrufe</div>
           <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
           <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 0 0 12px;">
             Dein Code legt fest, in welcher Reihenfolge welche Modelle/Tools laufen. Verzweigungen sind hartcodiert, keine offene Schleife.
@@ -651,7 +656,7 @@
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Ein LLM teilt eine Aufgabe in Subtasks, delegiert an Worker-LLMs, fasst zusammen.
+            Ein Modell teilt eine Aufgabe in Subtasks, delegiert an Worker-Modelle, fasst zusammen.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
             <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
@@ -676,7 +681,7 @@
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Ein LLM generiert, ein zweites bewertet — Schleife bis das Ergebnis den Test besteht.
+            Ein Modell generiert, ein zweites bewertet — Schleife bis das Ergebnis den Test besteht.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
             <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>

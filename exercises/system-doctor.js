@@ -13,13 +13,13 @@
   // The concrete assignment the learner is building toward (switches with role)
   var BRIEF = {
     dev: {
-      scale: 'läuft ~1.000×/Tag',
-      goal: 'Du baust den System-Prompt für einen <strong>API-Doku-Assistenten</strong>, den das Entwickler-Team <strong>dauerhaft für genau diese eine Aufgabe</strong> einsetzt: aus rohen Endpunkt-Notizen saubere Referenz-Doku machen. Den Prompt schreibst du <strong>einmal</strong> — er läuft dann über tausende Chat-Nachrichten, immer gleich, ohne Nachjustieren.',
+      scale: 'läuft bei jedem Doku-Auftrag',
+      goal: 'Du baust den Prompt für einen <strong>API-Doku-Assistenten</strong>, den das Entwickler-Team <strong>dauerhaft für genau diese eine Aufgabe</strong> einsetzt: aus Endpunkt-Notizen saubere Referenz-Doku machen. Den Prompt schreibst du <strong>einmal</strong> — er läuft danach bei <strong>jedem</strong> Doku-Auftrag des Teams, immer gleich, ohne Nachjustieren. Über die Zeit summiert sich das auf <strong>tausende Chat-Nachrichten</strong>.',
       out: '<span class="dbo-k">Soll-Ausgabe:</span> Markdown · ## je Endpunkt · cURL-Beispiel · nie Endpunkte erfinden'
     },
     nondev: {
-      scale: 'läuft ~1.000×/Tag',
-      goal: 'Du baust den System-Prompt für einen <strong>Email-Assistenten</strong>, den die Fachabteilung <strong>dauerhaft für genau diese eine Aufgabe</strong> einsetzt: aus Stichpunkten klare Geschäfts-Mails machen. Den Prompt schreibst du <strong>einmal</strong> — er läuft dann über tausende Chat-Nachrichten, immer gleich, ohne Nachjustieren.',
+      scale: 'läuft bei jeder Antwort-Mail',
+      goal: 'Du baust den Prompt für einen <strong>Mail-Assistenten im Kundenservice</strong>, den das Support-Team <strong>dauerhaft für genau diese eine Aufgabe</strong> einsetzt: aus knappen Stichpunkten der Mitarbeitenden (z.&nbsp;B. <em>„Lieferung verspätet · neuer Termin Fr · 10€-Gutschein"</em>) fertige, freundliche <strong>Antwort-Mails an Kund:innen</strong> formulieren. Den Prompt schreibst du <strong>einmal</strong> — er läuft danach bei <strong>jeder</strong> Antwort-Mail des Teams, immer gleich, ohne Nachjustieren. Über die Zeit summiert sich das auf <strong>tausende Chat-Nachrichten</strong>.',
       out: '<span class="dbo-k">Soll-Ausgabe:</span> Betreff · kurze Absätze · To-do-Liste · nie Zahlen erfinden'
     }
   };
@@ -80,7 +80,7 @@
       score: 0.7,
       tokens: 92,
       costly: true,
-      note: 'Schlechter Deal <strong>hier</strong>: <strong>+92 tok für nur +0,7 Score</strong> — und das fließt in <strong>jede</strong> Chat-Nachricht (× 1.000/Tag). Format &amp; Regeln liefern dieselbe Konsistenz für einen Bruchteil. Konkrete Beispiele gehören eher in den User-Prompt oder ins Eval, nicht ins persistente System-Prompt.'
+      note: 'Schlechter Deal <strong>hier</strong>: <strong>+92 tok für nur +0,7 Score</strong> — und das fließt in <strong>jede</strong> Chat-Nachricht (× tausende). Format &amp; Regeln liefern dieselbe Konsistenz für einen Bruchteil. Konkrete Beispiele gehören eher in den User-Prompt, nicht ins persistente System-Prompt.'
     },
     {
       id: 'style',
@@ -121,25 +121,21 @@
     solveBtn.textContent = revealed ? 'Lösung ausblenden' : 'Auflösen';
     var b = BRIEF[role === 'nondev' ? 'nondev' : 'dev'];
     briefEl.innerHTML =
-      '<div class="doctor-brief-head"><span>Dein Auftrag</span><span class="db-scale">' + b.scale + '</span></div>' +
-      '<div class="doctor-brief-goal">' + b.goal + '</div>' +
-      '<div class="doctor-brief-out">' + b.out + '</div>';
+      '<div class="doctor-brief-goal">' + b.goal + '</div>';
 
     var anyFixed = FIXES.some(function (f) { return state[f.id]; });
 
     // Text panel rendered as the AGENTS.md file. Unlike a Skill (where only the
     // frontmatter is always-on), the WHOLE agent prompt is always-on.
     var lines = [];
+    var agentFile = (role === 'nondev') ? 'email.agent.md' : 'api-docu.agent.md';
     lines.push(
       '<div class="sd-filebar">' +
         '<span class="sd-dot"></span>' +
-        '<span class="sd-filename">AGENTS.md</span>' +
-        '<span class="sd-filepath">./</span>' +
-        '<button class="sd-copy" type="button">⧉ Kopieren</button>' +
+        '<span class="sd-filename">' + agentFile + '</span>' +
       '</div>'
     );
     lines.push('<div class="sd-pad">');
-    lines.push('<div class="sd-zone-label">Ganze Datei · <span class="z-always">always-on</span> · zählt in jeder Nachricht</div>');
     // The vague base prompt is shown until the first building block replaces it.
     if (!anyFixed) {
       lines.push('<div class="doctor-line label">BASIS</div>');

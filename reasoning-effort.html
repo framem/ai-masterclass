@@ -105,6 +105,19 @@
   .callout .callout-body { flex: 1 1 auto; }
   .callout .callout-body strong { color: var(--ink); }
 
+  /* Title-slide effort ramp — a diagram, not controls: three rising bars on a shared baseline */
+  .effort-ramp { display: inline-flex; align-items: flex-end; gap: 30px; margin-top: 30px; padding-bottom: 14px; border-bottom: 1px solid var(--hair); }
+  .effort-ramp .er-step { display: flex; flex-direction: column; align-items: center; gap: 13px; }
+  .effort-ramp .er-bar { width: 18px; border-radius: 4px 4px 0 0; background: var(--er-c, var(--ink-3)); }
+  .effort-ramp .er-step.low  { --er-c: #c9b89a; }
+  .effort-ramp .er-step.med  { --er-c: var(--accent-soft); }
+  .effort-ramp .er-step.high { --er-c: var(--accent); }
+  .effort-ramp .er-step.low  .er-bar { height: 24px; }
+  .effort-ramp .er-step.med  .er-bar { height: 48px; }
+  .effort-ramp .er-step.high .er-bar { height: 76px; }
+  .effort-ramp .er-label { font-family: var(--mono); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+  .effort-caption { display: block; margin-top: 12px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+
   .pill { display: inline-block; font-family: var(--mono); font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--ink); color: var(--bg); letter-spacing: 0.06em; text-transform: uppercase; }
   .pill.accent { background: var(--accent); color: #fff; }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
@@ -157,7 +170,7 @@
 
   /* Merksatz immer unten: Callout direkt über dem Footer verankern */
   section[data-screen-label="03 Was ist Reasoning Effort"] .callout { margin-top: auto; }
-  section[data-screen-label="03 Was ist Reasoning Effort"]
+
   /* ===== Slide 2 — trade-off chart ===== */
   .tradeoff { display: grid; grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center; flex: 1; min-height: 0; }
   .chart-wrap { background: var(--paper); border: 1px solid var(--hair); border-radius: 16px; padding: 26px 30px 18px; }
@@ -450,13 +463,15 @@
         <span data-om-id="621d70a3:21"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:22"><span class="pip" data-om-id="621d70a3:23"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:24">›</span><span class="bc-chapter" data-om-id="621d70a3:25">Reasoning Effort</span></span>
       </div>
       <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;" data-om-id="621d70a3:26">
-        <div class="eyebrow" style="margin: 0 0 26px;" data-om-id="621d70a3:27">Theorie &amp; vier interaktive Übungen</div>
         <h1 class="title" data-om-id="621d70a3:28">Reasoning<br data-om-id="621d70a3:29"><span class="accent" data-om-id="621d70a3:30">Effort</span>.</h1>
         <h3 class="subtitle" style="margin-top: 18px;" data-om-id="621d70a3:31">Wie viel das Modell <em data-om-id="621d70a3:32">nachdenkt</em>, bevor es antwortet — und warum „mehr" nicht immer „besser" heißt.</h3>
-        <div style="display: flex; gap: 12px; margin-top: 18px;" data-om-id="621d70a3:33">
-          <span class="pill outline" data-om-id="621d70a3:34">Niedrig</span>
-          <span class="pill outline" data-om-id="621d70a3:35">Mittel</span>
-          <span class="pill accent" data-om-id="621d70a3:36">Hoch</span>
+        <div data-om-id="621d70a3:33">
+          <div class="effort-ramp" aria-hidden="true">
+            <div class="er-step low"><div class="er-bar"></div><span class="er-label">Niedrig</span></div>
+            <div class="er-step med"><div class="er-bar"></div><span class="er-label">Mittel</span></div>
+            <div class="er-step high"><div class="er-bar"></div><span class="er-label">Hoch</span></div>
+          </div>
+          <span class="effort-caption">Drei Stufen — wie viel das Modell nachdenkt</span>
         </div>
       </div>
     </div>
@@ -467,7 +482,7 @@
     <div class="chrome" data-om-id="621d70a3:41">
       <div class="topbar" data-om-id="621d70a3:42">
         <span data-om-id="621d70a3:43"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:44"><span class="pip" data-om-id="621d70a3:45"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:46">›</span><span class="bc-chapter" data-om-id="621d70a3:47">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:48">›</span>Theorie</span>
-        <span data-om-id="621d70a3:49"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+        <span data-om-id="621d70a3:49"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button></div></span>
       </div>
 
       <div class="eyebrow" data-om-id="621d70a3:50">Erst denken, dann antworten</div>
@@ -537,7 +552,7 @@
           </div>
           <div class="d-tok">~60 Reasoning-Tokens</div>
           <div class="d-meta" data-om-id="621d70a3:131"><b data-om-id="621d70a3:133">Antwort fast sofort</b></div>
-          <div class="d-use" data-om-id="621d70a3:134">Reflex: Das Modell antwortet praktisch direkt aus dem Stand.</div>
+          <div class="d-use" data-om-id="621d70a3:134">Kaum Zwischenschritte — das Modell antwortet praktisch aus dem Stand.</div>
         </div>
         <div class="delib" data-om-id="621d70a3:135">
           <div class="d-top" data-om-id="621d70a3:136"><span class="d-name" data-om-id="621d70a3:137">Mittel</span><span class="lvl med" data-om-id="621d70a3:138">medium</span></div>
@@ -701,75 +716,16 @@
   </section>
 
   <!-- ===================== 05 ÜBUNG A — EFFORT-DIAL ===================== -->
-  <section data-screen-label="09 Eskalations-Rechnung" data-om-id="621d70a3:438" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="8" data-deck-active="">
-    <div class="chrome" data-om-id="621d70a3:439">
-      <div class="topbar" data-om-id="621d70a3:440">
-        <span data-om-id="621d70a3:441"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:442"><span class="pip" data-om-id="621d70a3:443"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:444">›</span><span class="bc-chapter" data-om-id="621d70a3:445">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:446">›</span>Theorie</span>
-        <span data-om-id="621d70a3:447"></span>
-      </div>
-
-      <div class="eyebrow" data-om-id="621d70a3:448">Die häufigste Rückfrage zur Daumenregel</div>
-      <h2 class="title" style="font-size: 56px; margin-bottom: 14px;" data-om-id="621d70a3:449">„Zahle ich den Input dann nicht doppelt?“ — <span class="accent" data-om-id="621d70a3:450">Doch.</span> Und es rechnet sich trotzdem.</h2>
-
-      <div class="calc" data-om-id="621d70a3:451">
-        <div class="calc-left" data-om-id="621d70a3:452">
-          <div class="calc-setup" data-om-id="621d70a3:453">Annahme: <b data-om-id="621d70a3:454">100 Aufgaben</b> · Input je <b data-om-id="621d70a3:455">2.000 tok</b> · Reasoning: Niedrig ≈ <b data-om-id="621d70a3:456">60</b> / Hoch ≈ <b data-om-id="621d70a3:457">2.000 tok</b> · Niedrig löst <b data-om-id="621d70a3:458">80 von 100</b></div>
-
-          <div class="strat" data-om-id="621d70a3:459">
-            <div class="strat-head" data-om-id="621d70a3:460"><span class="strat-name" data-om-id="621d70a3:461">Immer Hoch</span><span class="strat-total" data-om-id="621d70a3:462">400.000 tok</span></div>
-            <div class="strat-math" data-om-id="621d70a3:463">100 × (2.000 Input + 2.000 Reasoning)</div>
-            <div class="strat-bar" data-om-id="621d70a3:464"><div class="sb-fill" style="width: 100%;" data-om-id="621d70a3:465"><div class="sb-seg input" style="width: 50%;" data-om-id="621d70a3:466"></div><div class="sb-seg reason" style="width: 50%;" data-om-id="621d70a3:467"></div></div></div>
-          </div>
-
-          <div class="strat win" data-om-id="621d70a3:468">
-            <div class="strat-head" data-om-id="621d70a3:469"><span class="strat-name" data-om-id="621d70a3:470">Niedrig starten, 20 eskalieren</span><span class="strat-total" data-om-id="621d70a3:471">286.000 tok</span></div>
-            <div class="strat-math" data-om-id="621d70a3:472">100 × (2.000 + 60) &nbsp;+&nbsp; 20 × (2.000 Input <em data-om-id="621d70a3:473">nochmal</em> + 2.000 Reasoning)</div>
-            <div class="strat-bar" data-om-id="621d70a3:474"><div class="sb-fill" style="width: 71.5%;" data-om-id="621d70a3:475"><div class="sb-seg input" style="width: 70%;" data-om-id="621d70a3:476"></div><div class="sb-seg double" style="width: 14%;" data-om-id="621d70a3:477"></div><div class="sb-seg reason" style="width: 16%;" data-om-id="621d70a3:478"></div></div></div>
-          </div>
-
-          <div class="calc-legend" data-om-id="621d70a3:479">
-            <div class="cl" data-om-id="621d70a3:480"><span class="sw" style="background: #c9b89a;" data-om-id="621d70a3:481"></span>Input</div>
-            <div class="cl" data-om-id="621d70a3:482"><span class="sw" style="background: var(--warn);" data-om-id="621d70a3:483"></span>Input doppelt bezahlt</div>
-            <div class="cl" data-om-id="621d70a3:484"><span class="sw" style="background: var(--accent);" data-om-id="621d70a3:485"></span>Reasoning</div>
-          </div>
-
-          <div class="calc-verdict" data-om-id="621d70a3:486"><strong data-om-id="621d70a3:487">−114.000 Tokens (−29 %)</strong> — obwohl 20 Inputs doppelt bezahlt wurden.</div>
-        </div>
-
-        <div class="to-points" data-om-id="621d70a3:488">
-          <div class="to-point" data-om-id="621d70a3:489">
-            <div class="tp-ic" data-om-id="621d70a3:490">1</div>
-            <div data-om-id="621d70a3:491"><div class="tp-h" data-om-id="621d70a3:492">Nur die Fehlschläge zahlen doppelt</div><div class="tp-b" data-om-id="621d70a3:493">80 von 100 Aufgaben kommen nie über Niedrig hinaus — deren gespartes High-Reasoning finanziert die 20 zweiten Anläufe locker.</div></div>
-          </div>
-          <div class="to-point" data-om-id="621d70a3:494">
-            <div class="tp-ic" data-om-id="621d70a3:495">2</div>
-            <div data-om-id="621d70a3:496"><div class="tp-h" data-om-id="621d70a3:497">Reasoning ist die teure Währung</div><div class="tp-b" data-om-id="621d70a3:498">Reasoning-Tokens werden wie Output abgerechnet — typischerweise 3–5× teurer als Input. Der doppelte Input wiegt weniger, als er aussieht.</div></div>
-          </div>
-          <div class="to-point" data-om-id="621d70a3:499">
-            <div class="tp-ic" data-om-id="621d70a3:500">3</div>
-            <div data-om-id="621d70a3:501"><div class="tp-h" data-om-id="621d70a3:502">Prompt Caching</div><div class="tp-b" data-om-id="621d70a3:503">Der identische Input kommt beim zweiten Anlauf aus dem Cache — bei den großen Anbietern kostet er dann nur noch einen Bruchteil (~10&nbsp;%).</div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="callout" data-om-id="621d70a3:504">
-        <div class="callout-label" data-om-id="621d70a3:505">Wann kippt die Rechnung?</div>
-        <div class="callout-body" data-om-id="621d70a3:506">
-          Bei <strong data-om-id="621d70a3:507">riesigem Input</strong> (z.&nbsp;B. 100k Tokens Kontext) und <strong data-om-id="621d70a3:508">niedriger Erfolgsquote auf Niedrig</strong> wird Eskalieren teuer — dann direkt höher einsteigen. Genau das meint „Reasoning an die Schwierigkeit koppeln“: Weißt du <em data-om-id="621d70a3:509">vorher</em>, dass es schwer ist, startest du gar nicht erst auf Niedrig.
-        </div>
-      </div>
-
-    </div>
-  </section><section data-screen-label="06 Übung A Effort-Dial" data-roleswitch="" data-om-id="621d70a3:302" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="5" data-role="dev">
+  <section data-screen-label="06 Übung A Effort-Dial" data-roleswitch="" data-om-id="621d70a3:302" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="5" data-role="dev">
     <div class="chrome" data-om-id="621d70a3:303">
       <div class="topbar" data-om-id="621d70a3:304">
         <span data-om-id="621d70a3:305"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:306"><span class="pip" data-om-id="621d70a3:307"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:308">›</span><span class="bc-chapter" data-om-id="621d70a3:309">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:310">›</span>Wissenscheck</span>
-        <span data-om-id="621d70a3:311"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+        <span data-om-id="621d70a3:311"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button></div></span>
       </div>
 
       <div class="eyebrow" style="margin: 28px 0 12px;" data-om-id="621d70a3:312">Trade-off fühlen</div>
       <p class="ex-instructions" data-om-id="621d70a3:313">
-        Wähle eine Aufgabe, dann dreh am <strong data-om-id="621d70a3:314">Effort-Regler</strong>. Beobachte, wie sich <strong data-om-id="621d70a3:315">Qualität</strong>, <strong data-om-id="621d70a3:316">Kosten</strong> und <strong data-om-id="621d70a3:317">Latenz</strong> bewegen — und finde die <strong data-om-id="621d70a3:318">niedrigste Stufe, die noch gute Qualität liefert</strong>. Das ist der Sweet-Spot. <strong data-om-id="621d70a3:319">Vorsicht:</strong> Eine der vier Aufgaben verträgt gar keinen hohen Effort.
+        Wähle eine Aufgabe, dann dreh am <strong data-om-id="621d70a3:314">Effort-Regler</strong>. Beobachte, wie sich <strong data-om-id="621d70a3:315">Qualität</strong>, <strong data-om-id="621d70a3:316">Kosten</strong> und <strong data-om-id="621d70a3:317">Latenz</strong> bewegen — und finde die <strong data-om-id="621d70a3:318">niedrigste Stufe, die noch gute Qualität liefert</strong>. Das ist der Sweet-Spot. <strong data-om-id="621d70a3:319">Vorsicht:</strong> Eine der vier Aufgaben verträgt gar keinen hohen Effort. <span class="mono" style="color: var(--ink-3); font-size: 14px;">· Alle Werte illustrativ.</span>
       </p>
 
       <div class="ex-stage" data-om-id="621d70a3:320">
@@ -820,7 +776,7 @@
     <div class="chrome" data-om-id="621d70a3:362">
       <div class="topbar" data-om-id="621d70a3:363">
         <span data-om-id="621d70a3:364"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:365"><span class="pip" data-om-id="621d70a3:366"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:367">›</span><span class="bc-chapter" data-om-id="621d70a3:368">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:369">›</span>Wissenscheck</span>
-        <span data-om-id="621d70a3:370"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+        <span data-om-id="621d70a3:370"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button></div></span>
       </div>
 
       <div class="eyebrow" style="margin: 28px 0 10px;" data-om-id="621d70a3:371">Urteilsvermögen trainieren</div>
@@ -855,7 +811,7 @@
     <div class="chrome" data-om-id="621d70a3:388">
       <div class="topbar" data-om-id="621d70a3:389">
         <span data-om-id="621d70a3:390"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:391"><span class="pip" data-om-id="621d70a3:392"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:393">›</span><span class="bc-chapter" data-om-id="621d70a3:394">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:395">›</span>Wissenscheck</span>
-        <span data-om-id="621d70a3:396"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+        <span data-om-id="621d70a3:396"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button></div></span>
       </div>
 
       <div class="eyebrow" style="margin: 28px 0 12px;" data-om-id="621d70a3:397">Die Daumenregel üben</div>
@@ -914,15 +870,74 @@
     </div>
   </section>
 
-  <!-- ===================== 08 ESKALATIONS-RECHNUNG ===================== -->
-  
+  <!-- ===================== 09 ESKALATIONS-RECHNUNG ===================== -->
+  <section data-screen-label="09 Eskalations-Rechnung" data-om-id="621d70a3:438" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="8">
+    <div class="chrome" data-om-id="621d70a3:439">
+      <div class="topbar" data-om-id="621d70a3:440">
+        <span data-om-id="621d70a3:441"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:442"><span class="pip" data-om-id="621d70a3:443"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:444">›</span><span class="bc-chapter" data-om-id="621d70a3:445">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:446">›</span>Theorie</span>
+        <span data-om-id="621d70a3:447"></span>
+      </div>
 
-  <!-- ===================== 09 ÜBUNG D — OVERTHINKING-DETEKTOR ===================== -->
+      <div class="eyebrow" data-om-id="621d70a3:448">Die häufigste Rückfrage zur Daumenregel</div>
+      <h2 class="title" style="font-size: 56px; margin-bottom: 14px;" data-om-id="621d70a3:449">„Zahle ich den Input dann nicht doppelt?“ — <span class="accent" data-om-id="621d70a3:450">Doch.</span> Und es rechnet sich trotzdem.</h2>
+
+      <div class="calc" data-om-id="621d70a3:451">
+        <div class="calc-left" data-om-id="621d70a3:452">
+          <div class="calc-setup" data-om-id="621d70a3:453">Annahme: <b data-om-id="621d70a3:454">100 Aufgaben</b> · Input je <b data-om-id="621d70a3:455">2.000 tok</b> · Reasoning: Niedrig ≈ <b data-om-id="621d70a3:456">60</b> / Hoch ≈ <b data-om-id="621d70a3:457">2.000 tok</b> · Niedrig löst <b data-om-id="621d70a3:458">80 von 100</b></div>
+
+          <div class="strat" data-om-id="621d70a3:459">
+            <div class="strat-head" data-om-id="621d70a3:460"><span class="strat-name" data-om-id="621d70a3:461">Immer Hoch</span><span class="strat-total" data-om-id="621d70a3:462">400.000 tok</span></div>
+            <div class="strat-math" data-om-id="621d70a3:463">100 × (2.000 Input + 2.000 Reasoning)</div>
+            <div class="strat-bar" data-om-id="621d70a3:464"><div class="sb-fill" style="width: 100%;" data-om-id="621d70a3:465"><div class="sb-seg input" style="width: 50%;" data-om-id="621d70a3:466"></div><div class="sb-seg reason" style="width: 50%;" data-om-id="621d70a3:467"></div></div></div>
+          </div>
+
+          <div class="strat win" data-om-id="621d70a3:468">
+            <div class="strat-head" data-om-id="621d70a3:469"><span class="strat-name" data-om-id="621d70a3:470">Niedrig starten, 20 eskalieren</span><span class="strat-total" data-om-id="621d70a3:471">286.000 tok</span></div>
+            <div class="strat-math" data-om-id="621d70a3:472">100 × (2.000 + 60) &nbsp;+&nbsp; 20 × (2.000 Input <em data-om-id="621d70a3:473">nochmal</em> + 2.000 Reasoning)</div>
+            <div class="strat-bar" data-om-id="621d70a3:474"><div class="sb-fill" style="width: 71.5%;" data-om-id="621d70a3:475"><div class="sb-seg input" style="width: 70%;" data-om-id="621d70a3:476"></div><div class="sb-seg double" style="width: 14%;" data-om-id="621d70a3:477"></div><div class="sb-seg reason" style="width: 16%;" data-om-id="621d70a3:478"></div></div></div>
+          </div>
+
+          <div class="calc-legend" data-om-id="621d70a3:479">
+            <div class="cl" data-om-id="621d70a3:480"><span class="sw" style="background: #c9b89a;" data-om-id="621d70a3:481"></span>Input</div>
+            <div class="cl" data-om-id="621d70a3:482"><span class="sw" style="background: var(--warn);" data-om-id="621d70a3:483"></span>Input doppelt bezahlt</div>
+            <div class="cl" data-om-id="621d70a3:484"><span class="sw" style="background: var(--accent);" data-om-id="621d70a3:485"></span>Reasoning</div>
+          </div>
+
+          <div class="calc-verdict" data-om-id="621d70a3:486"><strong data-om-id="621d70a3:487">−114.000 Tokens (−29 %)</strong> — obwohl 20 Inputs doppelt bezahlt wurden. In Euro fällt der Vorteil noch größer aus, weil Reasoning-Tokens teurer abgerechnet werden als Input.</div>
+        </div>
+
+        <div class="to-points" data-om-id="621d70a3:488">
+          <div class="to-point" data-om-id="621d70a3:489">
+            <div class="tp-ic" data-om-id="621d70a3:490">1</div>
+            <div data-om-id="621d70a3:491"><div class="tp-h" data-om-id="621d70a3:492">Nur die Fehlschläge zahlen doppelt</div><div class="tp-b" data-om-id="621d70a3:493">80 von 100 Aufgaben kommen nie über Niedrig hinaus — deren gespartes High-Reasoning finanziert die 20 zweiten Anläufe locker.</div></div>
+          </div>
+          <div class="to-point" data-om-id="621d70a3:494">
+            <div class="tp-ic" data-om-id="621d70a3:495">2</div>
+            <div data-om-id="621d70a3:496"><div class="tp-h" data-om-id="621d70a3:497">Reasoning ist die teure Währung</div><div class="tp-b" data-om-id="621d70a3:498">Reasoning-Tokens werden wie Output abgerechnet — typischerweise 3–5× teurer als Input. Der doppelte Input wiegt weniger, als er aussieht.</div></div>
+          </div>
+          <div class="to-point" data-om-id="621d70a3:499">
+            <div class="tp-ic" data-om-id="621d70a3:500">3</div>
+            <div data-om-id="621d70a3:501"><div class="tp-h" data-om-id="621d70a3:502">Prompt Caching</div><div class="tp-b" data-om-id="621d70a3:503">Der identische Input kommt beim zweiten Anlauf aus dem Cache — bei den großen Anbietern kostet er dann nur noch einen Bruchteil (~10&nbsp;%).</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" data-om-id="621d70a3:504">
+        <div class="callout-label" data-om-id="621d70a3:505">Wann kippt die Rechnung?</div>
+        <div class="callout-body" data-om-id="621d70a3:506">
+          Bei <strong data-om-id="621d70a3:507">riesigem Input</strong> (z.&nbsp;B. 100k Tokens Kontext) und <strong data-om-id="621d70a3:508">niedriger Erfolgsquote auf Niedrig</strong> wird Eskalieren teuer — dann direkt höher einsteigen. Genau das meint „Reasoning an die Schwierigkeit koppeln“: Weißt du <em data-om-id="621d70a3:509">vorher</em>, dass es schwer ist, startest du gar nicht erst auf Niedrig.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 10 ÜBUNG D — OVERTHINKING-DETEKTOR ===================== -->
   <section data-screen-label="10 Übung D Overthinking-Detektor" data-roleswitch="" data-om-id="621d70a3:513" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="9" data-role="dev">
     <div class="chrome" data-om-id="621d70a3:514">
       <div class="topbar" data-om-id="621d70a3:515">
         <span data-om-id="621d70a3:516"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:517"><span class="pip" data-om-id="621d70a3:518"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:519">›</span><span class="bc-chapter" data-om-id="621d70a3:520">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:521">›</span>Praxis</span>
-        <span data-om-id="621d70a3:522"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button></div></span>
+        <span data-om-id="621d70a3:522"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button></div></span>
       </div>
 
       <div class="eyebrow" style="margin: 28px 0 10px;" data-om-id="621d70a3:523">„Mehr ≠ besser“ erkennen</div>

@@ -106,13 +106,65 @@
     max-width: 44ch; margin: 32px 0 0;
   }
 
+  /* ---------- Hero persona — globaler Schalter, einmal setzen ---------- */
+  .hero-persona {
+    margin-top: 40px; padding-top: 28px;
+    border-top: 1px solid rgba(250,247,241,0.22);
+    display: flex; flex-direction: column; gap: 16px;
+    max-width: 640px;
+  }
+  .hero-persona .hp-head {
+    display: flex; align-items: center; gap: 16px 20px; flex-wrap: wrap;
+  }
+  .hero-persona .hp-label {
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(250,247,241,0.82);
+  }
+  .hero-persona .role-toggle {
+    display: inline-flex; font-family: var(--mono);
+    border: 1px solid rgba(250,247,241,0.5); border-radius: 999px; overflow: hidden;
+    user-select: none;
+  }
+  .hero-persona .role-toggle button {
+    appearance: none; border: 0; cursor: pointer; background: transparent;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.06em; color: rgba(250,247,241,0.85);
+    padding: 9px 20px; transition: background .15s ease, color .15s ease;
+  }
+  .hero-persona .role-toggle button:hover { background: rgba(250,247,241,0.12); }
+  .hero-persona .role-toggle button[aria-pressed="true"] { background: var(--paper); color: var(--ink); }
+  .hero-persona .hp-pv-label {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em;
+    color: rgba(250,247,241,0.9); line-height: 1.45;
+  }
+  .hero-persona .hp-preview {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+  @media (max-width: 640px) { .hero-persona .hp-preview { grid-template-columns: 1fr; } }
+  .hero-persona .hp-pv-card {
+    display: flex; flex-direction: column; gap: 6px;
+    border: 1px solid rgba(250,247,241,0.25); border-radius: 11px;
+    padding: 13px 16px;
+    transition: opacity .18s ease, border-color .18s ease, background .18s ease;
+  }
+  .hero-persona .pv-chip {
+    font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250,247,241,0.55);
+  }
+  .hero-persona .pv-text {
+    font-family: var(--serif); font-style: italic;
+    font-size: 15.5px; line-height: 1.42; color: rgba(250,247,241,0.92);
+  }
+
   /* ---------- Sections ---------- */
   main.wrap { padding: 72px 40px 140px; }
   .section + .section { margin-top: 72px; }
-  .section { scroll-margin-top: 28px; }
+  .section { scroll-margin-top: 0; }
   .section-head {
+    position: sticky; top: 0; z-index: 20;
     display: flex; align-items: baseline; gap: 18px;
-    padding-bottom: 22px; margin-bottom: 30px;
+    padding-top: 34px; padding-bottom: 22px; margin-bottom: 30px;
+    background: var(--bg);
     border-bottom: 1px solid var(--hair);
   }
   .section-head h2 {
@@ -523,7 +575,7 @@
   }
 
   /* ---------- Vertiefung asides ---------- */
-  .cc-num.sub { color: var(--ink-3); }
+  .cc-num.sub { color: var(--accent); }
 
   /* V · Arbeitsweise: drei gleichwertige Modi */
   .a-work .seg {
@@ -1012,6 +1064,26 @@
         <span class="sr-only">Von Tokens und Agenten.</span>
       </h1>
       <p>Von den Grundlagen der Sprachmodelle bis zum produktiven Einsatz von Agenten.</p>
+      <div class="hero-persona">
+        <div class="hp-head">
+          <span class="hp-label">Persona — gilt für alle Übungen</span>
+          <div class="role-toggle" id="personaToggle">
+            <button type="button" data-role="dev" aria-pressed="true">Dev</button>
+            <button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button>
+          </div>
+        </div>
+        <span class="hp-pv-label">Einmal hier wählen, später auf jeder Übungsfolie umschaltbar. So ändert sich z.&#8239;B. eine Quiz-Frage — gleiche Übung, gleiche Lösung, andere Einkleidung:</span>
+        <div class="hp-preview" id="personaPreview">
+          <div class="hp-pv-card" data-role="dev">
+            <span class="pv-chip">Dev</span>
+            <span class="pv-text">„Schreibe Tests für diese Funktion.“</span>
+          </div>
+          <div class="hp-pv-card" data-role="nondev">
+            <span class="pv-chip">Fachbereich</span>
+            <span class="pv-text">„Prüfe diese Auswertung Schritt für Schritt auf Fehler.“</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </header>
@@ -1021,34 +1093,6 @@
   <section class="section" id="vorlauf">
     <div class="section-head">
       <h2>Vorbereitung</h2>
-      <span class="count">Setup &amp; Grundlagen</span>
-    </div>
-
-    <div class="persona-bar">
-      <div class="pb-text">
-        <span class="pb-label">Persona einstellen</span>
-        <span class="pb-desc">Gilt für alle Übungen in allen Kapiteln — einmal hier wählen, später auf jeder Übungsfolie jederzeit umschaltbar.</span>
-      </div>
-      <div class="pb-switch">
-        <span class="rt-lbl">Persona</span>
-        <div class="role-toggle" id="personaToggle">
-          <button type="button" data-role="dev" aria-pressed="true">Dev</button>
-          <button type="button" data-role="nondev" aria-pressed="false">Non-Dev</button>
-        </div>
-      </div>
-      <div class="pb-preview" id="personaPreview">
-        <span class="pb-pv-label">So ändert sich z. B. eine Quiz-Frage — gleiche Übung, gleiche Lösung, andere Einkleidung:</span>
-        <div class="pb-pv-pair">
-          <div class="pb-pv-card" data-role="dev">
-            <span class="pv-chip">Dev</span>
-            <span class="pv-text">„Schreibe Tests für diese Funktion.“</span>
-          </div>
-          <div class="pb-pv-card" data-role="nondev">
-            <span class="pv-chip">Non-Dev</span>
-            <span class="pv-text">„Prüfe diese Auswertung Schritt für Schritt auf Fehler.“</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="chapter-stack">
@@ -1133,11 +1177,10 @@
 
   <section class="section" id="kapitel">
     <div class="section-head">
-      <h2>Kapitel</h2>
-      <span class="count">01 — 04 · Hauptcurriculum · je 75 Min</span>
+      <h2>Lernpfad</h2>
     </div>
     <p class="agenda-intro">
-      Jedes Kapitel ist ein eigenständiger <strong>75-Minuten-Workshop</strong> mit demselben Vorgehen<br>— erst die Theorie, ein Wissenscheck, dann Hands-on, am Ende ein Cheat-Sheet zum Mitnehmen.
+      Jedes Kapitel ist ein eigenständiger <strong>75-Minuten-Workshop</strong> mit demselben Vorgehen.
     </p>
     <div class="rhythm">
       <div class="rhythm-step">
@@ -1153,7 +1196,7 @@
       <div class="rhythm-step">
         <span class="rs-time">25 min</span>
         <span class="rs-label">Praxis</span>
-        <span class="rs-sub">Pair-Refactoring</span>
+        <span class="rs-sub">Praxis in Partnerarbeit</span>
       </div>
       <div class="rhythm-step">
         <span class="rs-time">15 min</span>
@@ -1295,7 +1338,6 @@
   <section class="section" id="vertiefung">
     <div class="section-head">
       <h2>Vertiefung</h2>
-      <span class="count">Einzelthemen &amp; Material</span>
     </div>
     <p class="agenda-intro">
       Eigenständige Einheiten zu <strong>Einzelthemen</strong> — unabhängig vom Hauptcurriculum einsetzbar, zur Ergänzung zwischen den Kapiteln oder zur Nachbereitung.
@@ -1418,7 +1460,6 @@
   <section class="section" id="abschluss">
     <div class="section-head">
       <h2>Abschluss</h2>
-      <span class="count">Lernziele · Selbst-Check · Capstone</span>
     </div>
     <p class="agenda-intro">
       Zum Abschluss zwei Dinge: <strong>ehrlich einordnen</strong>, was beherrscht wird — und an einer echten Aufgabe <strong>nachweisen</strong>, dass die Kette von Prompt bis Guardrail hält.
@@ -1749,7 +1790,7 @@
       b.textContent = old.textContent;
       var active = (b.dataset.role === role);
       b.setAttribute("aria-pressed", String(active));
-      if (active) { b.style.background = "var(--accent)"; b.style.color = "#fff"; }
+      if (active) { b.style.background = "var(--paper)"; b.style.color = "var(--ink)"; }
       b.addEventListener("click", function () {
         try { localStorage.setItem(KEY, b.dataset.role); } catch (e) {}
         paint(b.dataset.role);
@@ -1763,14 +1804,14 @@
   function paintPreview(role) {
     var pv = document.getElementById("personaPreview");
     if (!pv) return;
-    pv.querySelectorAll(".pb-pv-card").forEach(function (old) {
+    pv.querySelectorAll(".hp-pv-card").forEach(function (old) {
       var c = old.cloneNode(true);
       var active = (c.dataset.role === role);
-      c.style.opacity = active ? "1" : "0.42";
-      c.style.borderColor = active ? "var(--ink)" : "var(--hair)";
-      c.style.boxShadow = active ? "0 2px 0 rgba(21,17,12,0.16)" : "none";
+      c.style.opacity = active ? "1" : "0.4";
+      c.style.borderColor = active ? "rgba(250,247,241,0.55)" : "rgba(250,247,241,0.2)";
+      c.style.background = active ? "rgba(250,247,241,0.08)" : "transparent";
       var chip = c.querySelector(".pv-chip");
-      if (chip) chip.style.color = active ? "var(--accent)" : "var(--ink-3)";
+      if (chip) chip.style.color = active ? "rgba(250,247,241,0.9)" : "rgba(250,247,241,0.5)";
       old.parentNode.replaceChild(c, old);
     });
   }

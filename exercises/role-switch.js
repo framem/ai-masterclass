@@ -46,7 +46,7 @@
 
   var LABELS = {
     dev: 'Dev',
-    nondev: 'Non-Dev'
+    nondev: 'Fachbereich'
   };
 
   // ---- one-time CSS ----

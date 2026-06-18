@@ -215,6 +215,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Übungs-Slides ===== */
   .qrow {
@@ -556,8 +561,16 @@
   /* Home breadcrumb in each slide topbar — back to the overview */
   /* Nie umbrechen: ein zu langer Breadcrumb darf die Topbar-Höhe nicht verändern */
   .topbar > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .topbar .home { color: var(--ink, #15110c); font-weight: 600; text-decoration: none; vertical-align: baseline; transition: color .18s ease; }
-  .topbar .home:hover { color: var(--accent); }
+  /* Klar als anklickbarer Zurück-Button gestaltet: umrandete Pille + Pfeil, füllt sich beim Hover */
+  .topbar .home {
+    display: inline-flex; align-items: center; gap: 0.45em;
+    padding: 0.3em 0.85em; border: 1.5px solid var(--accent); border-radius: 999px;
+    color: var(--accent); font-weight: 600; text-decoration: none; cursor: pointer;
+    vertical-align: baseline; transition: background .18s ease, color .18s ease;
+  }
+  .topbar .home .pip { display: none; }
+  .topbar .home::before { content: "←"; font-weight: 700; font-size: 1.05em; line-height: 1; }
+  .topbar .home:hover, .topbar .home:focus-visible { background: var(--accent); color: var(--paper); outline: none; }
   .topbar .bc-sep { margin: 0 0.7em; opacity: 0.4; font-weight: 400; }
 </style>
 <style id="bc-chapter-style">
@@ -583,11 +596,11 @@
         Heute zerlegen wir sie — und entwerfen welche.
       </h3>
 
-      <div style="display: flex; gap: 14px; margin-top: 18px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 22px; padding: 8px 18px;">Reason → Act → Observe</span>
-        <span class="pill outline" style="font-size: 22px; padding: 8px 18px;">State statt Amnesie</span>
-        <span class="pill outline" style="font-size: 22px; padding: 8px 18px;">Notausgang &amp; Max-Iter</span>
-        <span class="pill accent" style="font-size: 22px; padding: 8px 18px;">4 Übungen zum selber entwerfen</span>
+      <div class="agenda">
+        <span class="ag-kw">Reason → Act → Observe</span>
+        <span class="ag-kw">State statt Amnesie</span>
+        <span class="ag-kw">Notausgang &amp; Max-Iter</span>
+        <span class="ag-kw accent">4 Übungen zum selber entwerfen</span>
       </div>
 
       <div style="margin-top: auto; padding-bottom: 8px;">
@@ -1506,7 +1519,7 @@
           <div class="mono" style="font-size: 13px; color: var(--accent); letter-spacing: 0.12em;">FRAGE 03</div>
           <div style="font-family: var(--serif); font-size: 28px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Was sind die Nodes?</div>
           <div style="font-size: 16px; color: var(--ink-2); margin-top: 10px; line-height: 1.4;">
-            Reason / Act / Observe sauber trennen. Ein Node = eine Verantwortung. Nicht „LLM denkt UND ruft Tool" im selben Schritt.
+            Reason / Act / Observe sauber trennen. Ein Node = eine Verantwortung. Nicht „Modell denkt UND ruft Tool" im selben Schritt.
           </div>
         </div>
 

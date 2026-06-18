@@ -165,6 +165,11 @@
   }
   .pill.outline { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
   .pill.accent { background: var(--accent); color: #fff; }
+  /* Kapitel-Agenda auf Titelfolien — Schlagworte statt Button-Reihe */
+  .agenda { display: flex; gap: 32px; margin-top: 32px; flex-wrap: wrap; }
+  .agenda .ag-kw { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 22px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .agenda .ag-kw::before { content: "\203A"; color: var(--accent); font-weight: 700; }
+  .agenda .ag-kw.accent { color: var(--accent); }
 
   /* ===== Übungs-Slides ===== */
   .qrow {
@@ -551,22 +556,22 @@
   <section data-screen-label="01 Titel">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span></span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span></span>
         <span></span>
       </div>
 
-      <div class="eyebrow" style="font-size: 24px;">Kapitel — Kurz aufgefrischt</div>
+      <div class="eyebrow" style="font-size: 24px;">Vorbereitung — Kurz aufgefrischt</div>
       <h1 class="title" style="margin-top: 32px;">Was ein <span class="accent">LM</span><br/>eigentlich tut.</h1>
 
       <h3 class="subtitle" style="margin-top: 28px;">
         Drei Schritte, vier Eigenarten — die Mechanik unter der Haube, kompakt aufgefrischt.
       </h3>
 
-      <div style="display: flex; gap: 18px; margin-top: 32px; flex-wrap: wrap;">
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Tokenize</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Predict</span>
-        <span class="pill outline" style="font-size: 24px; padding: 10px 20px;">Sample</span>
-        <span class="pill accent" style="font-size: 24px; padding: 10px 20px;">… und Halluzination als Bonus</span>
+      <div class="agenda">
+        <span class="ag-kw">Tokenize</span>
+        <span class="ag-kw">Predict</span>
+        <span class="ag-kw">Sample</span>
+        <span class="ag-kw accent">… und Halluzination als Bonus</span>
       </div>
 
       <div style="margin-top: auto; padding-bottom: 24px;">
@@ -603,7 +608,7 @@
   <section data-screen-label="02 Drei Schritte">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -632,7 +637,7 @@
           <div class="mono" style="font-size: 13px; line-height: 1.55; color: var(--ink-2); background: var(--bg-2); padding: 10px 12px; border-radius: 6px;">
             <span style="color: var(--ink-3);"># &quot;Hallo Welt&quot; →</span><br/>
             [<span style="color: var(--accent);">12998</span>, <span style="color: var(--accent);">3654</span>]<br/>
-            <span style="color: var(--ink-3);">// 2 Tokens · ~0.7 pro Wort DE</span>
+            <span style="color: var(--ink-3);">// 2 Tokens · DE ~1,5 Tokens / Wort</span>
           </div>
 
           <div style="margin-top: auto; padding-top: 14px;">
@@ -712,7 +717,7 @@
   <section data-screen-label="02a Übung Next-Token Casino">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -768,7 +773,7 @@
   <section data-screen-label="03 Vier Eigenarten">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -851,7 +856,7 @@
   <section data-screen-label="04 Modellfamilien">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -989,7 +994,7 @@
         <div class="cs-rules">
           <div class="cs-rule">
             <div class="r-when">Bilder generieren</div>
-            <div class="r-then"><strong>GPT-Image · Imagen · Midjourney.</strong> Text-LLMs erzeugen keine Bilder.</div>
+            <div class="r-then"><strong>GPT-Image · Imagen · Midjourney.</strong> Text-Modelle erzeugen keine Bilder.</div>
           </div>
           <div class="cs-rule">
             <div class="r-when">Embeddings für Suche</div>
@@ -1010,7 +1015,7 @@
   <section data-screen-label="04a Warum Modelle sich unterscheiden">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
       <style>
@@ -1077,7 +1082,7 @@
   <section data-screen-label="05 Take-away Übergang">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span><a class="home" href="index.html#vorlauf"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Vorbereitung · Was ist ein LM?</span><span class="bc-sep">›</span>Mitnehmen</span>
         <span></span>
       </div>
 

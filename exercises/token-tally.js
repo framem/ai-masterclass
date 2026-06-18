@@ -135,9 +135,6 @@
           '<div class="tally-body">' + TURNS[i].a.text + '</div></div>';
       }
 
-      if (revealed === 0) {
-        html += '<div class="tally-empty">Nur das System-Prompt ist gesetzt. Klicke „Antwort senden", um den ersten Turn zu schicken.</div>';
-      }
       streamEl.innerHTML = html;
       streamEl.scrollTop = streamEl.scrollHeight;
 
