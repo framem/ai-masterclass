@@ -18,7 +18,7 @@
       narrative: 'Aufgabe gestartet. 2 von 8 relevanten Dateien gelesen. <span class="mono" style="font-size: 14px;">tokenStore.ts</span> noch nicht gesichtet.',
       choices: [
         {
-          action: 'CONTINUE EXPLORE',
+          action: 'BLEIBEN · EXPLORE',
           label: 'Weiter explorieren — Rest der Dateien lesen.',
           cost: '+1.5k tok',
           good: true,
@@ -27,7 +27,7 @@
           feedback: 'Du liest tokenStore.ts und findest den Refresh-Code. Solide Basis — Phase 1 sauber.'
         },
         {
-          action: 'ADVANCE → PLAN',
+          action: 'WEITER → PLAN',
           label: 'Plan schreiben — du hast genug gesehen.',
           cost: '+800 tok · +1 Bug',
           good: false,
@@ -36,7 +36,7 @@
           feedback: 'Du planst ohne <span class="mono">tokenStore.ts</span> gesehen zu haben. Refresh-Edge-Case nicht im Plan. +1 Bug.'
         },
         {
-          action: 'SKIP → CODE',
+          action: 'ÜBERSPRINGEN → CODE',
           label: 'Direkt anfangen zu coden.',
           cost: '+3k tok · +2 Bugs',
           good: false,
@@ -52,7 +52,7 @@
       narrative: 'Alle 8 Dateien durch. Du verstehst die Architektur. Plan ausstehend.',
       choices: [
         {
-          action: 'STAY IN EXPLORE',
+          action: 'BLEIBEN · EXPLORE',
           label: 'Noch eine Runde — tertiäre Dateien checken.',
           cost: '+3.5k tok',
           good: false,
@@ -61,7 +61,7 @@
           feedback: 'Tertiäre Dateien lesen sich gut — ändern aber nichts am Plan. Viele Tokens, kein Erkenntnisgewinn. Übersättigung.'
         },
         {
-          action: 'ADVANCE → PLAN',
+          action: 'WEITER → PLAN',
           label: 'Plan beginnen — Architektur skizzieren.',
           cost: '+1.5k tok',
           good: true,
@@ -70,7 +70,7 @@
           feedback: 'Saubere Übergabe. Du dokumentierst Refresh-Strategie inkl. Grace-Period. EPCC im Takt.'
         },
         {
-          action: 'SKIP → CODE',
+          action: 'ÜBERSPRINGEN → CODE',
           label: 'Code direkt — der Plan ist im Kopf.',
           cost: '+2.5k tok · +1 Bug',
           good: false,
@@ -86,7 +86,7 @@
       narrative: 'Plan zu 60% fertig. Offen: Refresh-Strategie für <em>expired</em> Tokens — sofort refreshen oder mit Grace-Period?',
       choices: [
         {
-          action: 'STAY IN PLAN',
+          action: 'BLEIBEN · PLAN',
           label: 'Plan zu Ende denken — Grace-Period klären.',
           cost: '+1k tok',
           good: true,
@@ -95,7 +95,7 @@
           feedback: 'Du legst „Refresh-on-expire + 30s Grace" explizit fest. Saubere Architektur-Entscheidung dokumentiert.'
         },
         {
-          action: 'ADVANCE → CODE',
+          action: 'WEITER → CODE',
           label: 'Code starten — Plan ist gut genug.',
           cost: '+2k tok · +1 Bug',
           good: false,
@@ -104,7 +104,7 @@
           feedback: 'Grace-Period nicht festgelegt → im Code rate-limit-Loop. Test bricht. +1 Bug.'
         },
         {
-          action: 'SKIP → COMMIT',
+          action: 'ÜBERSPRINGEN → COMMIT',
           label: 'Direkt zum Commit springen.',
           cost: '+0.5k tok · +2 Bugs',
           good: false,
@@ -120,7 +120,7 @@
       narrative: 'Plan vollständig. Refresh-Strategie inkl. Grace-Period dokumentiert. Bereit zur Implementation.',
       choices: [
         {
-          action: 'STAY IN PLAN',
+          action: 'BLEIBEN · PLAN',
           label: 'Noch eine Runde Plan-Review.',
           cost: '+3k tok',
           good: false,
@@ -129,7 +129,7 @@
           feedback: 'Plan wird marginal besser, große Token-Investition. Klassische Analyse-Lähmung.'
         },
         {
-          action: 'ADVANCE → CODE',
+          action: 'WEITER → CODE',
           label: 'Code schreiben — gemäß Plan.',
           cost: '+2.5k tok',
           good: true,
@@ -138,7 +138,7 @@
           feedback: 'Implementation läuft mit dem Plan im Rücken. Tests grün beim ersten Versuch.'
         },
         {
-          action: 'SKIP → COMMIT',
+          action: 'ÜBERSPRINGEN → COMMIT',
           label: 'Commit — ohne Code.',
           cost: '+0.5k tok · +2 Bugs',
           good: false,
@@ -154,7 +154,7 @@
       narrative: 'Code geschrieben. Tests grün. Bereit für PR + Commit.',
       choices: [
         {
-          action: 'STAY IN CODE',
+          action: 'BLEIBEN · CODE',
           label: 'Manuell nachtesten — Bauchgefühl-Check.',
           cost: '+3k tok',
           good: false,
@@ -163,7 +163,7 @@
           feedback: 'Manuell-Testen bei grünen automatischen Tests ist Beruhigung, kein Wert. Tokens verbrannt.'
         },
         {
-          action: 'ADVANCE → COMMIT',
+          action: 'WEITER → COMMIT',
           label: 'Commit + PR-Beschreibung generieren.',
           cost: '+1.5k tok',
           good: true,
@@ -172,7 +172,7 @@
           feedback: 'Sauberer Abschluss. PR generiert, Diff klar, Reviewer happy. EPCC durchgezogen.'
         },
         {
-          action: 'SKIP REVIEW',
+          action: 'ÜBERSPRINGEN · REVIEW',
           label: 'Direkt mergen — kein PR-Review.',
           cost: '+0.5k tok · +1 Bug',
           good: false,
@@ -191,9 +191,9 @@
       stripState: ['active', '', '', ''],
       narrative: 'Aufgabe gestartet. 2 von 8 relevanten Dokumenten gesichtet. Die aktuelle <span class="mono" style="font-size: 14px;">Umsatztabelle</span> noch nicht geöffnet.',
       choices: [
-        { action: 'CONTINUE EXPLORE', label: 'Weiter sichten — restliche Dokumente lesen.', cost: '+1.5k tok', good: true, bugs: 0, tokens: 1500, feedback: 'Du öffnest die Umsatztabelle und findest die Sonderbuchungen. Solide Basis — Phase 1 sauber.' },
-        { action: 'ADVANCE → PLAN', label: 'Plan schreiben — du hast genug gesehen.', cost: '+800 tok · +1 Fehler', good: false, bugs: 1, tokens: 800, feedback: 'Du planst, ohne die <span class="mono">Umsatztabelle</span> gesehen zu haben. Die Sonderbuchungen fehlen im Plan. +1 Fehler.' },
-        { action: 'SKIP → CODE', label: 'Direkt anfangen zu schreiben.', cost: '+3k tok · +2 Fehler', good: false, bugs: 2, tokens: 3000, feedback: 'Du schreibst auf gut Glück. Die <span class="mono">Sonderbuchungen</span> tauchen mitten im Entwurf auf — Zahlen widersprechen sich. +2 Fehler.' }
+        { action: 'BLEIBEN · EXPLORE', label: 'Weiter sichten — restliche Dokumente lesen.', cost: '+1.5k tok', good: true, bugs: 0, tokens: 1500, feedback: 'Du öffnest die Umsatztabelle und findest die Sonderbuchungen. Solide Basis — Phase 1 sauber.' },
+        { action: 'WEITER → PLAN', label: 'Plan schreiben — du hast genug gesehen.', cost: '+800 tok · +1 Fehler', good: false, bugs: 1, tokens: 800, feedback: 'Du planst, ohne die <span class="mono">Umsatztabelle</span> gesehen zu haben. Die Sonderbuchungen fehlen im Plan. +1 Fehler.' },
+        { action: 'ÜBERSPRINGEN → CODE', label: 'Direkt anfangen zu schreiben.', cost: '+3k tok · +2 Fehler', good: false, bugs: 2, tokens: 3000, feedback: 'Du schreibst auf gut Glück. Die <span class="mono">Sonderbuchungen</span> tauchen mitten im Entwurf auf — Zahlen widersprechen sich. +2 Fehler.' }
       ]
     },
     {
@@ -201,9 +201,9 @@
       stripState: ['done', 'active', '', ''],
       narrative: 'Alle 8 Dokumente durch. Du verstehst die Datenlage. Plan ausstehend.',
       choices: [
-        { action: 'STAY IN EXPLORE', label: 'Noch eine Runde — Nebenquellen checken.', cost: '+3.5k tok', good: false, bugs: 0, tokens: 3500, feedback: 'Nebenquellen lesen sich gut — ändern aber nichts am Plan. Viele Tokens, kein Erkenntnisgewinn. Übersättigung.' },
-        { action: 'ADVANCE → PLAN', label: 'Plan beginnen — Struktur skizzieren.', cost: '+1.5k tok', good: true, bugs: 0, tokens: 1500, feedback: 'Saubere Übergabe. Du dokumentierst die Gliederung inkl. Umgang mit den Sonderbuchungen. Methode im Takt.' },
-        { action: 'SKIP → CODE', label: 'Schreiben direkt — der Plan ist im Kopf.', cost: '+2.5k tok · +1 Fehler', good: false, bugs: 1, tokens: 2500, feedback: 'Plan im Kopf ist kein Plan. Die Zahlen-Inkonsistenz wird beim ersten Gegenlesen sichtbar. +1 Fehler.' }
+        { action: 'BLEIBEN · EXPLORE', label: 'Noch eine Runde — Nebenquellen checken.', cost: '+3.5k tok', good: false, bugs: 0, tokens: 3500, feedback: 'Nebenquellen lesen sich gut — ändern aber nichts am Plan. Viele Tokens, kein Erkenntnisgewinn. Übersättigung.' },
+        { action: 'WEITER → PLAN', label: 'Plan beginnen — Struktur skizzieren.', cost: '+1.5k tok', good: true, bugs: 0, tokens: 1500, feedback: 'Saubere Übergabe. Du dokumentierst die Gliederung inkl. Umgang mit den Sonderbuchungen. Methode im Takt.' },
+        { action: 'ÜBERSPRINGEN → CODE', label: 'Schreiben direkt — der Plan ist im Kopf.', cost: '+2.5k tok · +1 Fehler', good: false, bugs: 1, tokens: 2500, feedback: 'Plan im Kopf ist kein Plan. Die Zahlen-Inkonsistenz wird beim ersten Gegenlesen sichtbar. +1 Fehler.' }
       ]
     },
     {
@@ -211,9 +211,9 @@
       stripState: ['done', 'active', '', ''],
       narrative: 'Plan zu 60% fertig. Offen: Umgang mit den <em>Sonderbuchungen</em> — herausrechnen oder separat ausweisen?',
       choices: [
-        { action: 'STAY IN PLAN', label: 'Plan zu Ende denken — Sonderbuchungen klären.', cost: '+1k tok', good: true, bugs: 0, tokens: 1000, feedback: 'Du legst „separat ausweisen, mit Fußnote" explizit fest. Saubere Entscheidung dokumentiert.' },
-        { action: 'ADVANCE → CODE', label: 'Schreiben starten — Plan ist gut genug.', cost: '+2k tok · +1 Fehler', good: false, bugs: 1, tokens: 2000, feedback: 'Umgang mit Sonderbuchungen nicht festgelegt → im Entwurf widersprüchliche Summen. Gegenlesen bricht ab. +1 Fehler.' },
-        { action: 'SKIP → COMMIT', label: 'Direkt zur Abgabe springen.', cost: '+0.5k tok · +2 Fehler', good: false, bugs: 2, tokens: 500, feedback: 'Es gibt keinen Entwurf. Du springst zurück — aber zwei Disziplin-Marker. +2 Fehler.' }
+        { action: 'BLEIBEN · PLAN', label: 'Plan zu Ende denken — Sonderbuchungen klären.', cost: '+1k tok', good: true, bugs: 0, tokens: 1000, feedback: 'Du legst „separat ausweisen, mit Fußnote" explizit fest. Saubere Entscheidung dokumentiert.' },
+        { action: 'WEITER → CODE', label: 'Schreiben starten — Plan ist gut genug.', cost: '+2k tok · +1 Fehler', good: false, bugs: 1, tokens: 2000, feedback: 'Umgang mit Sonderbuchungen nicht festgelegt → im Entwurf widersprüchliche Summen. Gegenlesen bricht ab. +1 Fehler.' },
+        { action: 'ÜBERSPRINGEN → COMMIT', label: 'Direkt zur Abgabe springen.', cost: '+0.5k tok · +2 Fehler', good: false, bugs: 2, tokens: 500, feedback: 'Es gibt keinen Entwurf. Du springst zurück — aber zwei Disziplin-Marker. +2 Fehler.' }
       ]
     },
     {
@@ -221,9 +221,9 @@
       stripState: ['done', 'done', 'active', ''],
       narrative: 'Plan vollständig. Umgang mit Sonderbuchungen inkl. Fußnote dokumentiert. Bereit zum Schreiben.',
       choices: [
-        { action: 'STAY IN PLAN', label: 'Noch eine Runde Plan-Review.', cost: '+3k tok', good: false, bugs: 0, tokens: 3000, feedback: 'Plan wird marginal besser, große Token-Investition. Klassische Analyse-Lähmung.' },
-        { action: 'ADVANCE → CODE', label: 'Bericht schreiben — gemäß Plan.', cost: '+2.5k tok', good: true, bugs: 0, tokens: 2500, feedback: 'Der Entwurf läuft mit dem Plan im Rücken. Gegenlesen grün beim ersten Versuch.' },
-        { action: 'SKIP → COMMIT', label: 'Abgabe — ohne Entwurf.', cost: '+0.5k tok · +2 Fehler', good: false, bugs: 2, tokens: 500, feedback: 'Es gibt nichts abzugeben. Großer Disziplin-Bruch. +2 Fehler.' }
+        { action: 'BLEIBEN · PLAN', label: 'Noch eine Runde Plan-Review.', cost: '+3k tok', good: false, bugs: 0, tokens: 3000, feedback: 'Plan wird marginal besser, große Token-Investition. Klassische Analyse-Lähmung.' },
+        { action: 'WEITER → CODE', label: 'Bericht schreiben — gemäß Plan.', cost: '+2.5k tok', good: true, bugs: 0, tokens: 2500, feedback: 'Der Entwurf läuft mit dem Plan im Rücken. Gegenlesen grün beim ersten Versuch.' },
+        { action: 'ÜBERSPRINGEN → COMMIT', label: 'Abgabe — ohne Entwurf.', cost: '+0.5k tok · +2 Fehler', good: false, bugs: 2, tokens: 500, feedback: 'Es gibt nichts abzugeben. Großer Disziplin-Bruch. +2 Fehler.' }
       ]
     },
     {
@@ -231,9 +231,9 @@
       stripState: ['done', 'done', 'done', 'active'],
       narrative: 'Bericht geschrieben. Gegenlesen grün. Bereit zur Abgabe + Freigabe.',
       choices: [
-        { action: 'STAY IN CODE', label: 'Manuell nachrechnen — Bauchgefühl-Check.', cost: '+3k tok', good: false, bugs: 0, tokens: 3000, feedback: 'Nachrechnen bei sauberem Gegenlesen ist Beruhigung, kein Wert. Tokens verbrannt.' },
-        { action: 'ADVANCE → COMMIT', label: 'Abgabe + Management-Summary generieren.', cost: '+1.5k tok', good: true, bugs: 0, tokens: 1500, feedback: 'Sauberer Abschluss. Summary erstellt, Änderungen klar, Freigeber happy. Methode durchgezogen.' },
-        { action: 'SKIP REVIEW', label: 'Direkt verschicken — keine Freigabe.', cost: '+0.5k tok · +1 Fehler', good: false, bugs: 1, tokens: 500, feedback: 'Eine Freigabe hätte einen Zahlendreher gefangen. Geht jetzt so raus. +1 Fehler.' }
+        { action: 'BLEIBEN · CODE', label: 'Manuell nachrechnen — Bauchgefühl-Check.', cost: '+3k tok', good: false, bugs: 0, tokens: 3000, feedback: 'Nachrechnen bei sauberem Gegenlesen ist Beruhigung, kein Wert. Tokens verbrannt.' },
+        { action: 'WEITER → COMMIT', label: 'Abgabe + Management-Summary generieren.', cost: '+1.5k tok', good: true, bugs: 0, tokens: 1500, feedback: 'Sauberer Abschluss. Summary erstellt, Änderungen klar, Freigeber happy. Methode durchgezogen.' },
+        { action: 'ÜBERSPRINGEN · REVIEW', label: 'Direkt verschicken — keine Freigabe.', cost: '+0.5k tok · +1 Fehler', good: false, bugs: 1, tokens: 500, feedback: 'Eine Freigabe hätte einen Zahlendreher gefangen. Geht jetzt so raus. +1 Fehler.' }
       ]
     }
   ];
@@ -289,8 +289,7 @@
         btn.className = 'epcc-choice';
         btn.innerHTML =
           '<div class="ec-action">' + c.action + '</div>' +
-          '<div class="ec-label">' + c.label + '</div>' +
-          '<div class="ec-cost">' + c.cost + '</div>';
+          '<div class="ec-label">' + c.label + '</div>';
         btn.addEventListener('click', function () { choose(c); });
         choicesEl.appendChild(btn);
       });

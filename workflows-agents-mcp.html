@@ -414,135 +414,13 @@
       <h1 class="title" style="margin-top: 32px;">Workflow oder<br/><span class="accent">Agent?</span></h1>
 
       <h3 class="subtitle" style="margin-top: 28px;">
-        Ein Spektrum, fünf Muster, ein Tool-Loop — und ein Stecker, der alle Werkzeuge spricht.
+        Fünf Muster, ein Tool-Loop — und ein Stecker, der alle Werkzeuge spricht.
       </h3>
 
       <div class="agenda">
-        <span class="ag-kw">Spektrum, nicht Schalter</span>
         <span class="ag-kw">5 Workflow-Patterns</span>
         <span class="ag-kw">Tool-Use-Loop</span>
         <span class="ag-kw">MCP als USB-C</span>
-      </div>
-
-      <div style="margin-top: auto; padding-bottom: 24px;">
-        <div style="font-family: var(--mono); font-size: 24px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 14px;">
-          <span style="display: inline-block; width: 28px; height: 1px; background: var(--accent);"></span>
-          Das Spektrum in 3 Stationen
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center;">
-          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
-            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">STATION 01</div>
-            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Augmented LLM</div>
-            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">ein Prompt + Tools</div>
-          </div>
-          <div class="mono accent" style="font-size: 28px;">→</div>
-          <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
-            <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">STATION 02</div>
-            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Workflow</div>
-            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">Code orchestriert</div>
-          </div>
-          <div class="mono accent" style="font-size: 28px;">→</div>
-          <div style="background: var(--accent); border: 1px solid var(--accent); border-radius: 12px; padding: 22px 24px; color: #fff;">
-            <div class="mono" style="font-size: 18px; color: rgba(255,255,255,0.7); letter-spacing: 0.1em;">STATION 03</div>
-            <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Agent</div>
-            <div style="font-size: 18px; color: rgba(255,255,255,0.85); margin-top: 4px;">Modell entscheidet</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ===================== 02 DAS SPEKTRUM ===================== -->
-  <section data-screen-label="02 Spektrum">
-    <div class="chrome">
-      <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
-        <span></span>
-      </div>
-
-      <div class="eyebrow">Kein Schalter — ein Schieberegler</div>
-      <h2 class="title" style="font-size: 56px;">Wer trifft die <span class="accent">Entscheidungen</span>?</h2>
-
-      <p class="lede" style="margin-top: 6px; max-width: 1700px;">
-        Der Unterschied liegt nicht in den Modellen, sondern in der <strong>Kontrolle des Kontrollflusses</strong>. Bei einem Workflow entscheidet <em>dein Code</em>, was als nächstes passiert. Bei einem Agenten entscheidet das <em>Modell</em>. Dazwischen liegt alles.
-      </p>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-top: 28px; flex: 1;">
-
-        <div class="card" style="padding: 24px 28px; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">STATION 01</div>
-            <span class="pill outline" style="font-size: 11px;">einfachster Fall</span>
-          </div>
-          <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Augmented LLM</div>
-          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">ein Modell + Werkzeuge</div>
-          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
-          <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 0 0 12px;">
-            Ein Aufruf, optional Retrieval/Tools/Memory. Kein Loop, keine Verzweigung — Aufruf rein, Antwort raus.
-          </p>
-          <div class="mono" style="font-size: 13px; line-height: 1.55; color: var(--ink-2); background: var(--bg-2); padding: 10px 12px; border-radius: 6px;">
-            <span style="color: var(--ink-3);"># Beispiel</span><br/>
-            chat(prompt + RAG-context)
-          </div>
-          <div style="margin-top: auto; padding-top: 14px;">
-            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↑ Kontrolle</div>
-            <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">100 % beim Aufrufer. Das Modell antwortet — sonst nichts.</div>
-          </div>
-        </div>
-
-        <div class="card" style="padding: 24px 28px; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <div class="mono" style="font-size: 14px; color: var(--ink-3); letter-spacing: 0.08em;">STATION 02</div>
-            <span class="pill outline" style="font-size: 11px;">vorhersehbar</span>
-          </div>
-          <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em;">Workflow</div>
-          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--ink-3); margin-top: 2px;">Code orchestriert mehrere Modell-Aufrufe</div>
-          <div style="height: 1px; background: var(--hair); margin: 16px 0;"></div>
-          <p style="font-size: 18px; line-height: 1.45; color: var(--ink-2); margin: 0 0 12px;">
-            Dein Code legt fest, in welcher Reihenfolge welche Modelle/Tools laufen. Verzweigungen sind hartcodiert, keine offene Schleife.
-          </p>
-          <div class="mono" style="font-size: 13px; line-height: 1.55; color: var(--ink-2); background: var(--bg-2); padding: 10px 12px; border-radius: 6px;">
-            <span style="color: var(--ink-3);"># Beispiel</span><br/>
-            classify → if A: extract<br/>
-            &nbsp;&nbsp;&nbsp;&nbsp;else: summarize
-          </div>
-          <div style="margin-top: auto; padding-top: 14px;">
-            <div class="mono accent" style="font-size: 13px; letter-spacing: 0.06em;">↑ Kontrolle</div>
-            <div style="font-size: 16px; color: var(--ink-2); margin-top: 4px; line-height: 1.4;">Beim Code. Reproduzierbar, testbar — dafür starrer.</div>
-          </div>
-        </div>
-
-        <div class="card dark" style="padding: 24px 28px; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline;">
-            <div class="mono" style="font-size: 14px; color: var(--accent-soft); letter-spacing: 0.08em;">STATION 03</div>
-            <span class="pill accent" style="font-size: 11px;">offen</span>
-          </div>
-          <div style="font-family: var(--serif); font-size: 40px; font-weight: 500; margin-top: 6px; letter-spacing: -0.01em; color: #f0ece3;">Agent</div>
-          <div style="font-family: var(--serif); font-style: italic; font-size: 18px; color: #c8c2b6; margin-top: 2px;">Modell wählt Tools &amp; Reihenfolge selbst</div>
-          <div style="height: 1px; background: rgba(255,255,255,0.14); margin: 16px 0;"></div>
-          <p style="font-size: 18px; line-height: 1.45; color: #d8d2c5; margin: 0 0 12px;">
-            Loop: Modell denkt → ruft Tool → liest Ergebnis → entscheidet selbst, was als nächstes — bis ein Abbruchkriterium greift.
-          </p>
-          <div class="mono" style="font-size: 13px; line-height: 1.55; color: #d8d2c5; background: rgba(255,255,255,0.06); padding: 10px 12px; border-radius: 6px;">
-            <span style="color: #c8c2b6;"># Beispiel</span><br/>
-            while not done:<br/>
-            &nbsp;&nbsp;think + call_tool()
-          </div>
-          <div style="margin-top: auto; padding-top: 14px;">
-            <div class="mono" style="color: var(--accent-soft); font-size: 13px; letter-spacing: 0.06em;">↑ Kontrolle</div>
-            <div style="font-size: 16px; color: #d8d2c5; margin-top: 4px; line-height: 1.4;">Beim Modell. Flexibel — und teurer, langsamer, schwerer zu testen.</div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="callout" style="margin-top: 22px;">
-        <div class="callout-label">Merksatz</div>
-        <div class="callout-body">
-          Bei einem <strong>Workflow ist der Pfad bekannt</strong>, das Modell füllt die Schritte. Bei einem <strong>Agenten ist nur das Ziel bekannt</strong>, das Modell findet den Pfad. <em>Beides ist erlaubt — aber kosten unterschiedlich.</em>
-        </div>
       </div>
 
     </div>

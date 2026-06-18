@@ -550,6 +550,37 @@
   .a-mcp .mfan-targets { display: flex; flex-direction: column; gap: 8px; }
   .a-mcp .mfan-targets .cc-chip { text-align: center; }
 
+  /* 03 · agent team — Orchestrator (links) delegiert an zwei Agenten,
+     jeder Agent fächert parallel zu Skill / MCP-Tool / Antwort auf */
+  .a-team { display: flex; flex-direction: row; align-items: center; gap: 4px; width: 100%; max-width: 360px; }
+  .a-team .tp { fill: none; stroke: rgba(21,17,12,0.22); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+  .a-team .tp.hot {
+    stroke: var(--accent); stroke-width: 1.9;
+    stroke-dasharray: 100; stroke-dashoffset: 100; opacity: 0;
+  }
+  .a-team .torch {
+    flex: none; background: var(--ink); color: var(--paper); border-color: var(--ink);
+    font-size: 12px; letter-spacing: 0.05em;
+  }
+  .a-team .tfan { flex: none; align-self: stretch; width: 30px; }
+  .a-team .tteam { display: flex; flex-direction: column; gap: 16px; flex: 1 1 auto; min-width: 0; }
+  .a-team .tagent { display: flex; flex-direction: row; align-items: center; gap: 3px; }
+  .a-team .tagent-h { flex: none; font-size: 11.5px; border-color: rgba(21,17,12,0.3); }
+  .a-team .tspread { flex: none; align-self: stretch; width: 26px; }
+  .a-team .tnodes { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  .a-team .tn {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em;
+    color: var(--ink-2); background: var(--paper);
+    border: 1px solid var(--hair); border-radius: 7px;
+    padding: 5px 9px; line-height: 1; white-space: nowrap; text-align: center;
+  }
+  .a-team .tans {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.02em;
+    color: var(--accent); background: var(--paper);
+    border: 1px solid rgba(200,66,31,0.42); border-radius: 7px;
+    padding: 5px 9px; line-height: 1; white-space: nowrap; text-align: center;
+  }
+
   /* 04 · defense in depth: Bedrohung fällt durch vier Ebenen */
   .a-guard { display: flex; flex-direction: column; align-items: center; width: min(272px, 100%); }
   .a-guard .gthreat {
@@ -742,6 +773,17 @@
     .a-mcp .mfan-targets .ft.t2 { animation-delay: 3s; }
     .a-mcp .mfan-targets .ft.t3 { animation-delay: 6s; }
     .a-mcp .magent { animation: mfthink 3s ease infinite; }
+
+    /* 03-Team · 9s-Umlauf: Orchestrator pulst, Pfade ziehen LR zu beiden Agenten,
+       jeder Agent fächert dann PARALLEL zu Skill / MCP-Tool auf, Antwort pulst */
+    .a-team .torch { animation: mfthink 3s ease infinite; }
+    .a-team .tfan .tp.hot { animation: mfdraw 9s ease-in-out infinite; }
+    .a-team .tfan .tp.hot.th2 { animation-delay: 0.2s; }
+    .a-team .tspread .tp.hot { animation: mfdraw 9s ease-in-out infinite; animation-delay: 0.9s; }
+    .a-team .tagent:nth-child(2) .tspread .tp.hot { animation-delay: 1.15s; }
+    .a-team .tnodes .tn { animation: mfhot 9s ease infinite; animation-delay: 1.4s; }
+    .a-team .tagent:nth-child(2) .tnodes .tn { animation-delay: 1.65s; }
+    .a-team .tans { animation: mfthink 3s ease infinite; animation-delay: 1.5s; }
 
     /* 7s-Umlauf: Bedrohung pulst, Sweep wandert Ebene für Ebene nach unten, Schild bestätigt */
     .a-guard .gthreat { animation: gthot 7s linear infinite; }
@@ -1270,43 +1312,55 @@
       <a class="chapter-card" href="workflows-agents-mcp.html">
         <div class="cc-body">
           <span class="cc-num">Kapitel 03</span>
-          <span class="cc-title">Workflows vs Agents · MCP</span>
-          <span class="cc-desc">Wer entscheidet? Augmented LLM, Workflow, Agent — plus Tool-Use und das MCP-Protokoll.</span>
+          <span class="cc-title">Agent-Teams · Orchestrator</span>
+          <span class="cc-desc">Ein Orchestrator delegiert an spezialisierte Agenten — jeder mit eigenen Skills und MCP-Tools, die ihre Antworten zurückspielen.</span>
           <div class="cc-meta">
-            <span class="cc-tag">Augmented LLM → Agent</span>
-            <span class="cc-tag">Tool-Use · MCP</span>
+            <span class="cc-tag">Orchestrator → Workers</span>
+            <span class="cc-tag">Skills · MCP · A2A</span>
           </div>
           <span class="cc-go">Öffnen →</span>
         </div>
         <div class="cc-aside">
           <div class="dots"></div>
-          <div class="cc-anim a-mcp" aria-hidden="true">
-            <div class="mrow">
-              <span class="mtag">Workflow · fester Pfad</span>
-              <div class="mtrack">
-                <span class="cc-chip">Step 1</span>
-                <span class="mlink marrow"></span>
-                <span class="cc-chip">Step 2</span>
-                <span class="mlink marrow"></span>
-                <span class="cc-chip">Step 3</span>
-              </div>
-            </div>
-            <div class="mrow">
-              <span class="mtag">Agent · entscheidet selbst</span>
-              <div class="mfan">
-                <span class="cc-chip magent">Agent</span>
-                <svg class="mfan-svg" viewBox="0 0 56 104" aria-hidden="true">
-                  <path class="fp" d="M0 52 C 22 52, 26 15, 56 15"></path>
-                  <path class="fp" d="M0 52 L 56 52"></path>
-                  <path class="fp" d="M0 52 C 22 52, 26 89, 56 89"></path>
-                  <path class="fp hot h1" pathLength="100" d="M0 52 C 22 52, 26 15, 56 15"></path>
-                  <path class="fp hot h2" pathLength="100" d="M0 52 L 56 52"></path>
-                  <path class="fp hot h3" pathLength="100" d="M0 52 C 22 52, 26 89, 56 89"></path>
+          <div class="cc-anim a-team" aria-hidden="true">
+            <span class="cc-chip torch">Orchestrator</span>
+            <svg class="tfan" viewBox="0 0 30 120" preserveAspectRatio="none" aria-hidden="true">
+              <path class="tp" d="M0 60 C 17 60, 14 30, 30 30"></path>
+              <path class="tp" d="M0 60 C 17 60, 14 90, 30 90"></path>
+              <path class="tp hot th1" pathLength="100" d="M0 60 C 17 60, 14 30, 30 30"></path>
+              <path class="tp hot th2" pathLength="100" d="M0 60 C 17 60, 14 90, 30 90"></path>
+            </svg>
+            <div class="tteam">
+              <div class="tagent">
+                <span class="cc-chip tagent-h ta1">Agent A</span>
+                <svg class="tspread" viewBox="0 0 26 96" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="tp" d="M0 48 C 13 48, 13 12, 26 12"></path>
+                  <path class="tp" d="M0 48 L 26 48"></path>
+                  <path class="tp" d="M0 48 C 13 48, 13 84, 26 84"></path>
+                  <path class="tp hot s1" pathLength="100" d="M0 48 C 13 48, 13 12, 26 12"></path>
+                  <path class="tp hot s2" pathLength="100" d="M0 48 L 26 48"></path>
+                  <path class="tp hot s3" pathLength="100" d="M0 48 C 13 48, 13 84, 26 84"></path>
                 </svg>
-                <div class="mfan-targets">
-                  <span class="cc-chip ft t1">Skill</span>
-                  <span class="cc-chip ft t2">MCP · Tool</span>
-                  <span class="cc-chip ft t3">Antwort</span>
+                <div class="tnodes">
+                  <span class="tn n1">Skill</span>
+                  <span class="tn n2">MCP-Tool</span>
+                  <span class="tans n3">Antwort</span>
+                </div>
+              </div>
+              <div class="tagent">
+                <span class="cc-chip tagent-h ta2">Agent B</span>
+                <svg class="tspread" viewBox="0 0 26 96" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="tp" d="M0 48 C 13 48, 13 12, 26 12"></path>
+                  <path class="tp" d="M0 48 L 26 48"></path>
+                  <path class="tp" d="M0 48 C 13 48, 13 84, 26 84"></path>
+                  <path class="tp hot s1" pathLength="100" d="M0 48 C 13 48, 13 12, 26 12"></path>
+                  <path class="tp hot s2" pathLength="100" d="M0 48 L 26 48"></path>
+                  <path class="tp hot s3" pathLength="100" d="M0 48 C 13 48, 13 84, 26 84"></path>
+                </svg>
+                <div class="tnodes">
+                  <span class="tn n1">Skill</span>
+                  <span class="tn n2">MCP-Tool</span>
+                  <span class="tans n3">Antwort</span>
                 </div>
               </div>
             </div>
