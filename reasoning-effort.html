@@ -202,7 +202,7 @@
   .ex-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 
   /* ===== Exercise A — Effort-Dial ===== */
-  .dial { display: grid; grid-template-columns: 460px 1fr; gap: 24px; flex: 1; min-height: 0; }
+  .dial { display: grid; grid-template-columns: 660px 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 10px 24px; flex: 1; min-height: 0; }
   .dial-left { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
   .dial-tasklabel { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
   .dial-tasks { display: flex; flex-direction: column; gap: 10px; }
@@ -216,7 +216,7 @@
   .dial-task.active .dt-tag { color: var(--accent-soft); }
   .dial-task .dt-text { font-family: var(--serif); font-size: 18px; line-height: 1.3; }
 
-  .dial-control { background: var(--ink); color: #f0ece3; border-radius: 14px; padding: 20px 22px; margin-top: auto; }
+  .dial-control { background: var(--ink); color: #f0ece3; border-radius: 14px; padding: 22px 24px; margin-top: auto; height: 168px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
   .dial-control .dc-head { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #c8c2b6; margin-bottom: 14px; }
   .dial-control .dc-head .dc-val { font-size: 18px; color: #f0ece3; letter-spacing: 0; font-weight: 600; }
   .dial-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 6px; background: rgba(255,255,255,0.12); border-radius: 3px; outline: none; }
@@ -239,8 +239,8 @@
   .dial-ticks span { cursor: pointer; transition: color .15s; }
   .dial-ticks span.on { color: #f0ece3; font-weight: 600; }
 
-  .dial-right { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 22px 26px; display: flex; flex-direction: column; min-height: 0; }
-  .dial-meters { display: flex; flex-direction: column; gap: 16px; }
+  .dial-right { display: flex; flex-direction: column; min-height: 0; }
+  .dial-meters { background: var(--paper); border: 1px solid var(--hair); border-radius: 14px; padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; }
   .dm { }
   .dm .dm-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px; }
   .dm .dm-label { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
@@ -254,7 +254,14 @@
   .dm .dm-val.q-mid { color: var(--warn); }
   .dm .dm-val.q-ok  { color: var(--ok); }
 
-  .dial-verdict { margin-top: auto; padding-top: 18px; }
+  .dial-verdict { margin-top: auto; height: 168px; box-sizing: border-box; display: flex; }
+  .dial-check-prompt, .dial-verdict-inner { flex: 1; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; }
+  .dial-check-prompt #dial-check { align-self: flex-start; }
+  .dial-check-prompt { border-radius: 12px; padding: 18px 22px; background: var(--bg-2); border-left: 4px solid var(--ink-3); }
+  .dial-check-prompt .dial-check-text { font-family: var(--serif); font-size: 21px; line-height: 1.35; color: var(--ink); margin: 6px 0 16px; }
+  .dial-check-prompt .dial-check-text strong { color: var(--accent); }
+  .dial-check-prompt[hidden], .dial-verdict-inner[hidden] { display: none; }
+  .dm .dm-val.q-hidden { color: var(--ink-3); }
   .dial-verdict-inner { border-radius: 12px; padding: 16px 20px; background: var(--bg-2); border-left: 4px solid var(--ink-3); transition: background .2s, border-color .2s; }
   .dial-verdict-inner.ok      { background: rgba(61,138,74,0.12);  border-left-color: var(--ok); }
   .dial-verdict-inner.over    { background: rgba(184,132,31,0.14); border-left-color: var(--warn); }
@@ -317,10 +324,6 @@
 
   /* ===== Audience-Switcher (role-switch.js) ===== */
   section[data-screen-label] > .role-toggle { top: 44px; right: var(--pad-x); }
-  /* Overthinking has only 4 cards — center them in the tall stage */
-  #overthink-grid { align-content: center; gap: 16px 14px; }
-  #overthink-grid .ematch-item { min-height: 132px; }
-  #overthink-grid .em-scn { align-self: center; }
 
   /* Effort-Match now has 10 cards (5 rows) — compress so revealed feedback still fits */
   section[data-screen-label*="Effort-Match"] #ematch-grid { gap: 10px 14px; }
@@ -479,7 +482,7 @@
             <div class="er-step med"><div class="er-bar"></div><span class="er-label">Mittel</span></div>
             <div class="er-step high"><div class="er-bar"></div><span class="er-label">Hoch</span></div>
           </div>
-          <span class="effort-caption">Drei Stufen — wie viel das Modell nachdenkt</span>
+          <span class="effort-caption">Wie viel das Modell nachdenkt — hier in drei Stufen, je nach Modell auch feiner</span>
         </div>
       </div>
     </div>
@@ -622,7 +625,7 @@
             <text x="770" y="420" fill="#6b6357" font-size="17" text-anchor="middle" data-om-id="621d70a3:213">Hoch</text>
             <text x="470" y="452" fill="#15110c" font-size="16" text-anchor="middle" opacity="0.6" data-om-id="621d70a3:214">Reasoning Effort →</text>
 
-            <text x="848" y="30" fill="#9a8f7d" font-size="14" text-anchor="end" data-om-id="621d70a3:215">schematische Darstellung</text>
+            <text x="848" y="30" fill="#6b6357" font-size="14" text-anchor="end" data-om-id="621d70a3:215">Steigung = Nutzen von mehr Effort</text>
 
             <!-- gridlines -->
             <line x1="170" y1="40" x2="170" y2="390" stroke="#15110c" stroke-opacity="0.07" data-om-id="621d70a3:216"></line>
@@ -639,7 +642,7 @@
 
             <!-- "wasted" zone marker on easy curve -->
             <text x="770" y="68" fill="#9a8f7d" font-size="15" text-anchor="end" data-om-id="621d70a3:227">leichte Aufgabe</text>
-            <text x="190" y="338" fill="#c8421f" font-size="15" text-anchor="start" data-om-id="621d70a3:228">schwere Aufgabe</text>
+            <text x="182" y="378" fill="#c8421f" font-size="15" text-anchor="start" data-om-id="621d70a3:228">schwere Aufgabe</text>
           </svg>
           <div class="chart-legend" data-om-id="621d70a3:229">
             <div class="cl" data-om-id="621d70a3:230"><span class="sw" style="background:#c9b89a;" data-om-id="621d70a3:231"></span>Leichte Aufgabe — sofort am Limit</div>
@@ -733,14 +736,15 @@
 
       <div class="eyebrow" style="margin: 28px 0 12px;" data-om-id="621d70a3:312">Trade-off fühlen</div>
       <p class="ex-instructions" data-om-id="621d70a3:313">
-        Wähle eine Aufgabe, dann dreh am <strong data-om-id="621d70a3:314">Effort-Regler</strong>. Beobachte, wie sich <strong data-om-id="621d70a3:315">Qualität</strong>, <strong data-om-id="621d70a3:316">Kosten</strong> und <strong data-om-id="621d70a3:317">Latenz</strong> bewegen — und finde die <strong data-om-id="621d70a3:318">niedrigste Stufe, die noch gute Qualität liefert</strong>. Das ist der Sweet-Spot. <strong data-om-id="621d70a3:319">Vorsicht:</strong> Eine der vier Aufgaben verträgt gar keinen hohen Effort. <span class="mono" style="color: var(--ink-3); font-size: 14px;">· Alle Werte illustrativ.</span>
+        Wähle eine Aufgabe und stell den <strong data-om-id="621d70a3:314">Effort-Regler</strong> auf die <strong data-om-id="621d70a3:318">niedrigste Stufe, die deiner Einschätzung nach noch gute Qualität liefert</strong> — <strong data-om-id="621d70a3:316">Kosten</strong> und <strong data-om-id="621d70a3:317">Latenz</strong> siehst du dabei live. Dann <strong data-om-id="621d70a3:315">prüfen</strong>: Antwort-Qualität und Urteil erscheinen erst nach deiner Entscheidung. <strong data-om-id="621d70a3:319">Vorsicht:</strong> Eine der sechs Aufgaben verträgt gar keinen hohen Effort. <span class="mono" style="color: var(--ink-3); font-size: 14px;">· Alle Werte illustrativ.</span>
       </p>
 
       <div class="ex-stage" data-om-id="621d70a3:320">
         <div class="dial" data-om-id="621d70a3:321">
+          <div class="dial-tasklabel" data-om-id="621d70a3:323">Aufgabe wählen</div>
+          <div class="dial-tasklabel">Auswirkung bei dieser Stufe</div>
           <div class="dial-left" data-om-id="621d70a3:322">
-            <div class="dial-tasklabel" data-om-id="621d70a3:323">Aufgabe wählen</div>
-            <div class="dial-tasks" id="dial-tasks" data-om-id="621d70a3:324"><div class="dial-task active"><div class="dt-tag">Einfach</div><div class="dt-text">Extrahiere alle TODO-Kommentare aus dieser Datei und liste sie als Tabelle.</div></div><div class="dial-task"><div class="dt-tag">Mittel</div><div class="dt-text">Schreibe eine aussagekräftige Commit-Message für dieses Diff.</div></div><div class="dial-task"><div class="dt-tag">Schwer</div><div class="dt-text">Finde den Off-by-one-Bug, der nur bei leeren Eingaben auftritt — über 4 Dateien.</div></div><div class="dial-task"><div class="dt-tag">Falle</div><div class="dt-text">Welcher HTTP-Status passt für „Ressource nicht gefunden“?</div></div></div>
+            <div class="dial-tasks" id="dial-tasks" data-om-id="621d70a3:324"><div class="dial-task active"><div class="dt-text">Extrahiere alle TODO-Kommentare aus dieser Datei und liste sie als Tabelle.</div></div><div class="dial-task"><div class="dt-text">Schreibe eine aussagekräftige Commit-Message für dieses Diff.</div></div><div class="dial-task"><div class="dt-text">Finde den Off-by-one-Bug, der nur bei leeren Eingaben auftritt — über 4 Dateien.</div></div><div class="dial-task"><div class="dt-text">Klassifiziere 300 Log-Zeilen nach Schweregrad (info / warn / error).</div></div><div class="dial-task"><div class="dt-text">Schreibe Docstrings für ein mittelgroßes Modul mit 15 Methoden.</div></div><div class="dial-task"><div class="dt-text">Welcher HTTP-Status passt für „Ressource nicht gefunden“?</div></div></div>
             <div class="dial-control" data-om-id="621d70a3:325">
               <div class="dc-head" data-om-id="621d70a3:326"><span data-om-id="621d70a3:327">Reasoning Effort</span><span class="dc-val" id="dial-level-name" data-om-id="621d70a3:328">Mittel</span></div>
               <input type="range" min="0" max="2" step="1" value="1" class="dial-slider" id="dial-slider" data-om-id="621d70a3:329">
@@ -753,8 +757,8 @@
           <div class="dial-right" data-om-id="621d70a3:334">
             <div class="dial-meters" data-om-id="621d70a3:335">
               <div class="dm quality" data-om-id="621d70a3:336">
-                <div class="dm-top" data-om-id="621d70a3:337"><span class="dm-label" data-om-id="621d70a3:338">Antwort-Qualität</span><span class="dm-val q-ok" id="m-quality" data-om-id="621d70a3:339">98 %</span></div>
-                <div class="dm-bar" data-om-id="621d70a3:340"><div id="m-quality-bar" style="width: 98%;" data-om-id="621d70a3:341"></div></div>
+                <div class="dm-top" data-om-id="621d70a3:337"><span class="dm-label" data-om-id="621d70a3:338">Antwort-Qualität</span><span class="dm-val q-hidden" id="m-quality" data-om-id="621d70a3:339">?</span></div>
+                <div class="dm-bar" data-om-id="621d70a3:340"><div id="m-quality-bar" style="width: 0%;" data-om-id="621d70a3:341"></div></div>
               </div>
               <div class="dm cost" data-om-id="621d70a3:342">
                 <div class="dm-top" data-om-id="621d70a3:343"><span class="dm-label" data-om-id="621d70a3:344">Kosten · Reasoning-Tokens</span><span class="dm-val" id="m-cost" data-om-id="621d70a3:345">450 tok</span></div>
@@ -767,7 +771,12 @@
             </div>
 
             <div class="dial-verdict" data-om-id="621d70a3:354">
-              <div class="dial-verdict-inner over" id="dial-verdict" data-om-id="621d70a3:355">
+              <div class="dial-check-prompt" id="dial-check-prompt">
+                <div class="dial-verdict-label">Deine Entscheidung</div>
+                <div class="dial-check-text">Steht der Regler auf der <strong>niedrigsten Stufe mit noch guter Qualität</strong>? Prüfe deine Wahl.</div>
+                <button class="qbutton" type="button" id="dial-check">Antwort prüfen</button>
+              </div>
+              <div class="dial-verdict-inner over" id="dial-verdict" hidden="" data-om-id="621d70a3:355">
                 <div class="dial-verdict-label" id="dial-verdict-label" data-om-id="621d70a3:356">Overkill</div>
                 <div class="dial-verdict-text" id="dial-verdict-text" data-om-id="621d70a3:357"><strong>Verschwendung.</strong> Nur <strong>+1 Punkte</strong> Qualität, aber rund <strong>7,5×</strong> Tokens und <strong>4,4×</strong> Latenz. „Niedrig" hätte gereicht.</div>
               </div>
@@ -940,36 +949,8 @@
     </div>
   </section>
 
-  <!-- ===================== 10 ÜBUNG D — OVERTHINKING-DETEKTOR ===================== -->
-  <section data-screen-label="10 Übung D Overthinking-Detektor" data-roleswitch="" data-om-id="621d70a3:513" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="9" data-role="dev">
-    <div class="chrome" data-om-id="621d70a3:514">
-      <div class="topbar" data-om-id="621d70a3:515">
-        <span data-om-id="621d70a3:516"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:517"><span class="pip" data-om-id="621d70a3:518"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:519">›</span><span class="bc-chapter" data-om-id="621d70a3:520">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:521">›</span>Praxis</span>
-        <span data-om-id="621d70a3:522"><div class="role-toggle" contenteditable="false"><span class="rt-lbl">Persona</span><button type="button" data-role="dev" aria-pressed="true" style="background: rgb(200, 66, 31); color: rgb(255, 255, 255);">Dev</button><button type="button" data-role="nondev" aria-pressed="false">Fachbereich</button></div></span>
-      </div>
-
-      <div class="eyebrow" style="margin: 28px 0 10px;" data-om-id="621d70a3:523">„Mehr ≠ besser“ erkennen</div>
-      <p class="ex-instructions" data-om-id="621d70a3:524">
-        Bei jeder Aufgabe wurde der <strong data-om-id="621d70a3:525">Effort hochgedreht</strong>. Entscheide, was das brachte: es war <strong data-om-id="621d70a3:526">sinnvoll</strong>, war <strong data-om-id="621d70a3:527">Verschwendung</strong> (Plateau) oder es <strong data-om-id="621d70a3:528">schadete</strong> sogar — Overthinking auf einer zu leichten Aufgabe.
-      </p>
-
-      <div class="ex-stage" data-om-id="621d70a3:529">
-        <div class="ematch-grid" id="overthink-grid" data-om-id="621d70a3:530"><div class="ematch-item"><div class="em-scn">Formatiere eine unsortierte JSON-Datei sauber ein. <span class="em-meta">· Effort Mittel → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="0" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="0" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="0" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Wähle zwischen zwei fast identischen if-Bedingungen. <span class="em-meta">· Effort Niedrig → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="1" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="1" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="1" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Entwirf das Datenbank-Schema für ein neues Feature. <span class="em-meta">· Effort Niedrig → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="2" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="2" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="2" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Bestimme die Big-O-Komplexität einer einfachen Schleife. <span class="em-meta">· Effort Mittel → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="3" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="3" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="3" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div><div class="ematch-item"><div class="em-scn">Finde einen subtilen Off-by-one-Fehler in einer rekursiven Funktion. <span class="em-meta">· Effort Mittel → Hoch</span></div><div class="ematch-row"><div class="em-btns"><button class="em-btn" type="button" data-i="4" data-opt="help">Sinnvoll</button><button class="em-btn" type="button" data-i="4" data-opt="waste">Verschwendung</button><button class="em-btn" type="button" data-i="4" data-opt="hurt">Schadete</button></div></div><div class="em-fb"></div></div></div>
-
-        <div class="reveal-row" data-om-id="621d70a3:531">
-          <div class="reveal-status" id="overthink-status" data-om-id="621d70a3:532">Noch nichts beantwortet.</div>
-          <div style="display: flex; gap: 10px;" data-om-id="621d70a3:533">
-            <button class="qbutton ghost" data-overthink-action="reset" data-om-id="621d70a3:534">Zurücksetzen</button>
-            <button class="qbutton" data-overthink-action="reveal" data-om-id="621d70a3:535">Alles auflösen</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
   <!-- ===================== 10 CHEAT-SHEET ===================== -->
-  <section data-screen-label="11 Cheat-Sheet" data-om-id="621d70a3:539" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="10" data-deck-last-visible="">
+  <section data-screen-label="10 Cheat-Sheet" data-om-id="621d70a3:539" data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text" data-deck-slide="9" data-deck-last-visible="">
     <div class="chrome" data-om-id="621d70a3:540">
       <div class="topbar" data-om-id="621d70a3:541">
         <span data-om-id="621d70a3:542"><a class="home" href="index.html#vertiefung" data-om-id="621d70a3:543"><span class="pip" data-om-id="621d70a3:544"></span>Übersicht</a><span class="bc-sep" data-om-id="621d70a3:545">›</span><span class="bc-chapter" data-om-id="621d70a3:546">Reasoning Effort</span><span class="bc-sep" data-om-id="621d70a3:547">›</span>Mitnehmen</span>
@@ -1069,7 +1050,6 @@
 <script src="exercises/effort-dial.js"></script>
 <script src="exercises/effort-match.js"></script>
 <script src="exercises/escalate.js"></script>
-<script src="exercises/overthink.js"></script>
 <script src="exercises/role-switch.js"></script>
 
 </body>

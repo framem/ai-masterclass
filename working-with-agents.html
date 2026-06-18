@@ -579,7 +579,9 @@
   .ld-bignum { font-family: var(--mono); font-size: 30px; color: var(--accent); letter-spacing: 0.12em; }
   .ld-bigname { font-family: var(--serif); font-size: 80px; font-weight: 500; line-height: 0.98; margin-top: 10px; letter-spacing: -0.02em; }
   .ld-model { font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--ink-3); margin-top: 22px; line-height: 1.3; max-width: 520px; }
-  .ld-tags { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .ld-tags { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 24px; }
+  .ld-tags .ld-tag { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--mono); font-size: 18px; letter-spacing: 0.02em; color: var(--ink-2); }
+  .ld-tags .ld-tag::before { content: "\2022"; color: var(--accent); font-weight: 700; }
 
   .spec { display: flex; flex-direction: column; }
   .spec .srow { display: grid; grid-template-columns: 190px 1fr; gap: 28px; padding: 18px 0; border-top: 1px solid var(--hair); align-items: start; }
@@ -592,9 +594,145 @@
     background: var(--bg-2); border-radius: 12px; padding: 15px 20px; color: var(--ink);
   }
   .ex-block .u { color: var(--ink-3); }
+  .ex-block .ex-gap { display: block; height: 16px; }
   .ex-block .res { color: var(--ink-2); }
   .ex-block .agent-plan { display: grid; gap: 2px; margin: 5px 0 7px; padding-left: 1.7em; font-size: 18px; }
   .ex-block .agent-plan .n { color: var(--accent); font-weight: 600; margin-right: 0.15em; }
+
+  /* ===== Schematische Stufen-Animation (links auf Befehl / Plan / Ziel) =====
+     Läuft selbstständig in Endlosschleife, nur auf der aktiven Folie.
+     Symbole:  ▪ du   ● Agent   (?)→(✓) Kontrollpunkt (Questmarker). */
+  .lv-anim {
+    margin-top: auto; padding-top: 26px;
+    max-width: 560px;
+  }
+  .lv-anim .la-cap {
+    font-family: var(--mono); font-size: 16px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-3); margin-bottom: 26px;
+  }
+  .lv-anim .la-cap b { color: var(--accent); font-weight: 600; }
+
+  /* primitives */
+  .an-you { width: 30px; height: 30px; background: var(--ink); border-radius: 6px; flex: 0 0 auto; }
+  .an-ag  { width: 34px; height: 34px; background: var(--accent); border-radius: 50%; flex: 0 0 auto; }
+  .an-lab { font-family: var(--mono); font-size: 16px; color: var(--ink-3); letter-spacing: 0.03em; line-height: 1.25; }
+  .an-link {
+    flex: 1 1 auto; height: 3px; min-width: 26px; border-radius: 3px;
+    background: var(--hair); position: relative; overflow: hidden;
+  }
+  .an-link::after {
+    content: ""; position: absolute; inset: 0; width: 100%;
+    background: var(--accent); transform-origin: left;
+  }
+
+  /* Questmarker — Kontrollpunkt: erst ?, dann ✓ */
+  .qmark {
+    position: relative; width: 54px; height: 54px; border-radius: 50%; flex: 0 0 auto;
+    border: 2.5px solid var(--accent); background: var(--accent);
+    display: grid; place-items: center;
+    box-shadow: 0 0 0 6px var(--paper);
+  }
+  .qmark.sm { width: 46px; height: 46px; }
+  .qmark > span { grid-area: 1 / 1; font-family: var(--mono); font-weight: 700; line-height: 1; }
+  .qmark .q { font-size: 26px; color: #fff; opacity: 0; }
+  .qmark .c { font-size: 26px; color: #fff; opacity: 1; }
+  .qmark.sm .q, .qmark.sm .c { font-size: 22px; }
+
+  /* === Befehl: drei Schritte, je ein eigener Kontrollpunkt === */
+  .step-flow { display: flex; flex-direction: column; gap: 22px; }
+  .sf-step { display: flex; align-items: center; gap: 16px; }
+
+  /* === Plan: ein Kontrollpunkt — die Freigabe === */
+  .plan-flow { display: grid; grid-template-columns: auto 1fr; column-gap: 22px; align-items: center; row-gap: 0; }
+  .pf-node { display: flex; justify-content: center; }
+  .pf-conn { width: 3px; height: 26px; background: var(--hair); justify-self: center; border-radius: 3px; position: relative; overflow: hidden; }
+  .pf-conn::after { content: ""; position: absolute; inset: 0; background: var(--accent); transform-origin: top; }
+  .plan-card { display: flex; flex-direction: column; gap: 9px; padding: 14px 18px; background: var(--bg-2); border-radius: 11px; }
+  .pc-bar { height: 9px; border-radius: 4px; background: var(--accent); transform-origin: left; }
+  .pc-bar:nth-child(1) { width: 96%; }
+  .pc-bar:nth-child(2) { width: 78%; }
+  .pc-bar:nth-child(3) { width: 88%; }
+
+  /* === Ziel: autonomer Loop, ein Kontrollpunkt am Ende === */
+  .ziel-flow { display: grid; grid-template-columns: auto 1fr; column-gap: 22px; align-items: center; }
+  .zf-loop { position: relative; width: 84px; height: 84px; display: grid; place-items: center; justify-self: center; }
+  .zf-loop .zl-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 3px solid var(--hair); border-top-color: var(--accent); border-right-color: var(--accent);
+  }
+  .zf-loop .an-ag { width: 30px; height: 30px; }
+
+  /* ---- Selbstlaufende Schleife ----
+     Reveal: gestaffelt über transition-delay var(--rd) (pro Element gesetzt).
+     Reset:  die Klasse .playing wird (per JS, nur auf aktiver Folie) entfernt
+             → der Grundzustand trägt KEINE delay → alle Elemente blenden
+             GLEICHZEITIG aus. Danach startet der nächste Durchlauf synchron. */
+
+  /* Grundzustand = verborgen, mit Transition fürs sanfte Ein-/Ausblenden */
+  /* Der ganze Flow-Container blendet als Einheit aus → garantiert SYNCHRONER
+     Reset (kein --rd am Container), egal in welchem Zustand die Einzelteile sind. */
+  .lv-anim .step-flow, .lv-anim .plan-flow, .lv-anim .ziel-flow {
+    opacity: 0; transition: opacity .45s ease;
+  }
+  .lv-anim.playing .step-flow, .lv-anim.playing .plan-flow, .lv-anim.playing .ziel-flow {
+    opacity: 1;
+  }
+  .lv-anim .an-you, .lv-anim .an-ag {
+    opacity: 0; transform: scale(0.5);
+    transition: opacity .4s ease, transform .45s cubic-bezier(.34,1.4,.6,1);
+  }
+  .lv-anim .an-link::after { transform: scaleX(0); transition: transform .5s ease; transition-delay: var(--rd, 0s); }
+  .lv-anim .pf-conn::after { transform: scaleY(0); transform-origin: top; transition: transform .5s ease; transition-delay: var(--rd, 0s); }
+  .lv-anim .pc-bar {
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .45s ease;
+  }
+  .lv-anim .qmark {
+    opacity: 0; border-color: var(--ink-3); background: var(--paper);
+    transition: opacity .4s ease, background .3s ease, border-color .3s ease;
+  }
+  .lv-anim .qmark .q { color: var(--ink-3); opacity: 1; transition: opacity .25s ease; }
+  .lv-anim .qmark .c { color: #fff; opacity: 0; transform: scale(0.4); transition: opacity .3s ease, transform .3s cubic-bezier(.34,1.6,.6,1); }
+  .lv-anim .zl-ring { opacity: 0; transition: opacity .4s ease, border-color .5s ease; }
+
+  /* Reset ignoriert --rd (Grundzustand ohne delay) → alles blendet synchron aus */
+  .lv-anim:not(.playing) .an-link::after,
+  .lv-anim:not(.playing) .pf-conn::after,
+  .lv-anim:not(.playing) .qmark,
+  .lv-anim:not(.playing) .qmark .q,
+  .lv-anim:not(.playing) .qmark .c { transition-delay: 0s; }
+
+  /* Aktiver Zustand (.playing) = aufgelöst, mit gestaffeltem Reveal */
+  .lv-anim.playing .an-you, .lv-anim.playing .an-ag { opacity: 1; transform: scale(1); transition-delay: var(--rd, 0s); }
+  .lv-anim.playing .an-link::after { transform: scaleX(1); }
+  .lv-anim.playing .pf-conn::after { transform: scaleY(1); }
+  .lv-anim.playing .pc-bar { transform: scaleX(1); transition-delay: var(--rd, 0s); }
+  /* Marker erscheint zuerst als „?“ (bei --rd), kippt dann bei +.45s zu „✓“ */
+  .lv-anim.playing .qmark { opacity: 1; border-color: var(--accent); background: var(--accent); transition-delay: var(--rd, 0s), calc(var(--rd, 0s) + .45s), calc(var(--rd, 0s) + .45s); }
+  .lv-anim.playing .qmark .q { opacity: 0; transition-delay: calc(var(--rd, 0s) + .45s); }
+  .lv-anim.playing .qmark .c { opacity: 1; transform: scale(1); transition-delay: calc(var(--rd, 0s) + .45s); }
+  /* Der Spinner dreht NUR während der autonomen Laufphase und stoppt, sobald
+     der Lauf fertig ist (endliche Iterationen). Der Ring wird dann zum vollen
+     Akzent-Ring (= erledigt), bevor der Ergebnis-Kontrollpunkt erscheint. */
+  .lv-anim.playing .zl-ring {
+    opacity: 1; border-color: var(--accent);
+    transition-delay: var(--rd, 0s), calc(var(--rd, 0s) + 3s);
+    animation: la-spin 1.2s linear var(--rd, 0s) 2.6 forwards;
+  }
+
+  @keyframes la-spin { to { transform: rotate(360deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lv-anim .step-flow, .lv-anim .plan-flow, .lv-anim .ziel-flow { opacity: 1; }
+    .lv-anim .an-you, .lv-anim .an-ag { opacity: 1; transform: none; }
+    .lv-anim .an-link::after, .lv-anim .pc-bar { transform: scaleX(1); }
+    .lv-anim .pf-conn::after { transform: scaleY(1); }
+    .lv-anim .qmark { opacity: 1; border-color: var(--accent); background: var(--accent); }
+    .lv-anim .qmark .q { opacity: 0; }
+    .lv-anim .qmark .c { opacity: 1; transform: none; }
+    .lv-anim .zl-ring { opacity: 1; border-color: var(--accent); }
+    .lv-anim *, .lv-anim *::after { transition: none !important; animation: none !important; }
+  }
 
 </style>
 <style id="breadcrumb-nav">
@@ -633,7 +771,7 @@
       <h1 class="title" style="margin-top: 32px;">Befehl, Plan<br/>oder <span class="accent">Ziel</span>.</h1>
 
       <h3 class="subtitle" style="margin-top: 28px;">
-        Dieselbe Aufgabe, drei Eingriffstiefen. Je autonomer, desto mehr denkt der Agent selbst — und desto mehr Kontrolle gibst du an Freigabe-Punkte und Guardrails ab.
+        Dieselbe Aufgabe, drei Eingriffstiefen. Je autonomer, desto mehr denkt der Agent selbst — und desto mehr Kontrolle gibst du ab.
       </h3>
 
       <div class="agenda">
@@ -658,7 +796,7 @@
       <h2 class="title" style="font-size: 60px;">Von <span class="accent">steuern</span> zu <span class="accent">delegieren</span>.</h2>
 
       <p class="lede" style="margin-top: 4px;">
-        Es ist nicht „Befehl <em>oder</em> Autonomie" — es ist ein Schieberegler. Du wählst pro Aufgabe, wie viel du dem Agenten überlässt — und wo du eingreifen willst.
+        Pro Aufgabe wählst du eine von drei Stufen: wie viel du dem Agenten überlässt und wo du eingreifst.
       </p>
 
       <div class="lvl-rail">
@@ -666,7 +804,7 @@
           <div class="lv-num">01</div>
           <div class="lv-name">Befehl</div>
           <div class="lv-tag">Eingriff: jeder Schritt</div>
-          <div class="lv-line">Du gibst <strong>eine Anweisung</strong>, der Agent führt genau sie aus.</div>
+          <div class="lv-line">Du gibst <strong>eine eng gefasste Anweisung</strong> — ein Schritt, sofort prüfbar.</div>
         </div>
         <div class="lvl-arrow">→</div>
         <div class="lvl-card">
@@ -723,22 +861,47 @@
           <div class="ld-bigname">Befehl</div>
           <div class="ld-model">„Du führst, das Modell führt aus — jeder Schritt unter deiner Kontrolle."</div>
           <div class="ld-tags">
-            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">Eingriff: jeder Schritt</span>
-            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">Kontrolle maximal</span>
+            <span class="ld-tag">feinste Granularität</span>
+          </div>
+
+          <div class="lv-anim" aria-hidden="true" data-cycle="4800">
+            <div class="step-flow">
+              <div class="sf-step">
+                <span class="an-you" style="--rd:.1s"></span>
+                <span class="an-link" style="--rd:.3s"></span>
+                <span class="an-ag" style="--rd:.45s"></span>
+                <span class="an-link" style="--rd:.6s"></span>
+                <span class="qmark sm" style="--rd:.8s"><span class="q">?</span><span class="c">✓</span></span>
+              </div>
+              <div class="sf-step">
+                <span class="an-you" style="--rd:1.0s"></span>
+                <span class="an-link" style="--rd:1.2s"></span>
+                <span class="an-ag" style="--rd:1.35s"></span>
+                <span class="an-link" style="--rd:1.5s"></span>
+                <span class="qmark sm" style="--rd:1.7s"><span class="q">?</span><span class="c">✓</span></span>
+              </div>
+              <div class="sf-step">
+                <span class="an-you" style="--rd:1.9s"></span>
+                <span class="an-link" style="--rd:2.1s"></span>
+                <span class="an-ag" style="--rd:2.25s"></span>
+                <span class="an-link" style="--rd:2.4s"></span>
+                <span class="qmark sm" style="--rd:2.6s"><span class="q">?</span><span class="c">✓</span></span>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="spec">
           <div class="srow">
             <div class="slabel">Was</div>
-            <div class="sval" data-nd='Eine konkrete Anweisung. Der Agent führt <strong>genau sie</strong> aus — ein Schritt, ein Ergebnis, sofort prüfbar.'>Eine konkrete Anweisung. Der Agent führt <strong>genau sie</strong> aus — ein Schritt, ein Ergebnis, sofort prüfbar.</div>
+            <div class="sval" data-nd='Eine <strong>eng gefasste</strong> Anweisung — ein Schritt, ein Ergebnis, sofort prüfbar.'>Eine <strong>eng gefasste</strong> Anweisung — ein Schritt, ein Ergebnis, sofort prüfbar.</div>
           </div>
           <div class="srow">
             <div class="slabel">Beispiel</div>
             <div class="sval">
-              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Ersetz im ganzen Bericht „<strong>Q3</strong>“ durch „<strong>Q4</strong>“.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">22 Treffer ersetzt ✓</span><br/><span class="u">du</span>&nbsp;»Formulier diesen Absatz eine Spur förmlicher.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">Absatz überarbeitet ✓</span>'>
+              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Ersetz im ganzen Bericht „<strong>Q3</strong>“ durch „<strong>Q4</strong>“.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">22 Treffer ersetzt ✓</span><br/><span class="ex-gap"></span><span class="u">du</span>&nbsp;»Formulier diesen Absatz eine Spur förmlicher.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">Absatz überarbeitet ✓</span>'>
                 <span class="u">du</span>&nbsp;»Benenne <strong>getUser</strong> überall zu <strong>fetchUser</strong> um.«<br/>
-                <span class="u">agent</span>&nbsp;→ <span class="res">14 Stellen in 6 Dateien umbenannt ✓</span><br/>
+                <span class="u">agent</span>&nbsp;→ <span class="res">14 Stellen in 6 Dateien umbenannt ✓</span><br/><span class="ex-gap"></span>
                 <span class="u">du</span>&nbsp;»Füg hier einen Null-Check ein.«<br/>
                 <span class="u">agent</span>&nbsp;→ <span class="res">3 Zeilen ergänzt ✓</span>
               </div>
@@ -750,7 +913,7 @@
           </div>
           <div class="srow">
             <div class="slabel">Grenze</div>
-            <div class="sval" data-nd='Du denkst, der Agent schreibt. Skaliert nicht auf große, mehrstufige Aufgaben.'>Du denkst, der Agent tippt. Skaliert nicht auf große, mehrstufige Aufgaben.</div>
+            <div class="sval" data-nd='Du denkst, der Agent schreibt. Skaliert nicht auf große, mehrstufige Aufgaben — dafür <strong>Plan</strong> oder <strong>Ziel</strong>.'>Du denkst, der Agent tippt. Skaliert nicht auf große, mehrstufige Aufgaben — dafür <strong>Plan</strong> oder <strong>Ziel</strong>.</div>
           </div>
         </div>
       </div>
@@ -779,8 +942,36 @@
           <div class="ld-bigname">Plan</div>
           <div class="ld-model">„Das Modell erstellt einen Plan, du gibst frei — die Umsetzung folgt erst nach deiner Freigabe."</div>
           <div class="ld-tags">
-            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">Eingriff: Plan-Freigabe</span>
-            <span class="pill outline" style="font-size: 18px; padding: 8px 16px;">wichtigster Checkpoint</span>
+            <span class="ld-tag">günstigste Korrektur</span>
+          </div>
+
+          <div class="lv-anim" aria-hidden="true" data-cycle="5600">
+            <div class="plan-flow">
+              <div class="pf-node"><span class="an-you" style="--rd:.1s"></span></div>
+              <span class="an-lab">Ziel beschrieben</span>
+
+              <span class="pf-conn" style="--rd:.5s"></span>
+              <span></span>
+
+              <div class="plan-card">
+                <span class="pc-bar" style="--rd:.9s"></span>
+                <span class="pc-bar" style="--rd:1.1s"></span>
+                <span class="pc-bar" style="--rd:1.3s"></span>
+              </div>
+              <span class="an-lab">Agent schlägt<br/>Plan vor</span>
+
+              <span class="pf-conn" style="--rd:1.9s"></span>
+              <span></span>
+
+              <div class="pf-node"><span class="qmark" style="--rd:2.4s"><span class="q">?</span><span class="c">✓</span></span></div>
+              <span class="an-lab">Du gibst frei</span>
+
+              <span class="pf-conn" style="--rd:3.0s"></span>
+              <span></span>
+
+              <div class="pf-node"><span class="an-ag" style="--rd:3.5s"></span></div>
+              <span class="an-lab">Umsetzung läuft</span>
+            </div>
           </div>
         </div>
 
@@ -839,8 +1030,30 @@
           <div class="ld-bigname">Ziel</div>
           <div class="ld-model">„Du definierst das Ziel, der Agent liefert — du kontrollierst das Ergebnis."</div>
           <div class="ld-tags">
-            <span class="pill" style="font-size: 18px; padding: 8px 16px;">Claude · Goal</span>
-            <span class="pill" style="font-size: 18px; padding: 8px 16px;">Copilot · Autopilot</span>
+            <span class="ld-tag">Claude: Goal</span>
+            <span class="ld-tag">Copilot: Autopilot</span>
+          </div>
+
+          <div class="lv-anim" aria-hidden="true" data-cycle="6600">
+            <div class="ziel-flow">
+              <div class="pf-node"><span class="an-you" style="--rd:.1s"></span></div>
+              <span class="an-lab">Ziel + Erfolgs&shy;kriterium</span>
+
+              <span class="pf-conn" style="--rd:.6s"></span>
+              <span></span>
+
+              <div class="zf-loop">
+                <span class="zl-ring" style="--rd:1.0s"></span>
+                <span class="an-ag" style="--rd:1.0s"></span>
+              </div>
+              <span class="an-lab">Agent plant &amp; läuft<br/>eigenständig</span>
+
+              <span class="pf-conn" style="--rd:4.2s"></span>
+              <span></span>
+
+              <div class="pf-node"><span class="qmark" style="--rd:4.7s"><span class="q">?</span><span class="c">✓</span></span></div>
+              <span class="an-lab">Ergebnis geprüft</span>
+            </div>
           </div>
         </div>
 
@@ -852,9 +1065,9 @@
           <div class="srow">
             <div class="slabel">Beispiel</div>
             <div class="sval">
-              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Bring den Monatsreport <strong>durch die Plausibilitätsprüfung</strong>.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">prüft, korrigiert 4 Werte … ✓ stimmig</span><br/><span class="u">du</span>&nbsp;»Übertrag alle Verträge ins neue Format, <strong>leg sie zur Freigabe vor</strong>.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">37 Verträge übertragen, liegen bereit</span>'>
+              <div class="ex-block" data-nd='<span class="u">du</span>&nbsp;»Bring den Monatsreport <strong>durch die Plausibilitätsprüfung</strong>.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">prüft, korrigiert 4 Werte … ✓ stimmig</span><br/><span class="ex-gap"></span><span class="u">du</span>&nbsp;»Übertrag alle Verträge ins neue Format, <strong>leg sie zur Freigabe vor</strong>.«<br/><span class="u">agent</span>&nbsp;→ <span class="res">37 Verträge übertragen, liegen bereit</span>'>
                 <span class="u">du</span>&nbsp;»Mach die <strong>Test-Suite grün</strong>.«<br/>
-                <span class="u">agent</span>&nbsp;→ <span class="res">fixt 3 Tests, läuft 2× nach … ✓ grün</span><br/>
+                <span class="u">agent</span>&nbsp;→ <span class="res">fixt 3 Tests, läuft 2× nach … ✓ grün</span><br/><span class="ex-gap"></span>
                 <span class="u">du</span>&nbsp;»Migrier das Modul auf die neue API, <strong>öffne einen PR</strong>.«<br/>
                 <span class="u">agent</span>&nbsp;→ <span class="res">umgestellt, getestet, PR #248 offen</span>
               </div>
@@ -911,5 +1124,34 @@
 
 <script src="exercises/stage-match.js"></script>
 <script src="exercises/role-switch.js"></script>
+<script>
+/* Stufen-Animation (Befehl/Plan/Ziel): selbstlaufende Schleife.
+   Reveal gestaffelt (CSS transition-delay), Reset synchron (Klasse .playing
+   entfällt → Grundzustand ohne delay → alles blendet gleichzeitig aus).
+   Läuft nur, solange die jeweilige Folie aktiv ist. */
+(function () {
+  'use strict';
+  var GAP = 850; // verborgene Pause zwischen zwei Durchläufen (deckt das Ausblenden)
+  function controller(anim) {
+    var sec = anim.closest('section');
+    var CYCLE = parseInt(anim.getAttribute('data-cycle') || '5500', 10);
+    var timer = null;
+    function active() { return !sec || sec.hasAttribute('data-deck-active'); }
+    function play() {
+      clearTimeout(timer);
+      if (!active()) { anim.classList.remove('playing'); timer = setTimeout(play, 350); return; }
+      anim.classList.add('playing');
+      timer = setTimeout(function () {
+        anim.classList.remove('playing'); // synchroner Reset
+        timer = setTimeout(play, GAP);
+      }, CYCLE);
+    }
+    play();
+  }
+  function init() { document.querySelectorAll('.lv-anim[data-cycle]').forEach(controller); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 </body>
 </html>

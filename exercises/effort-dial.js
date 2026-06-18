@@ -1,10 +1,15 @@
 /**
- * Übung A — Effort-Dial.
+ * Übung A — Effort-Dial (Wissenscheck-Variante).
  *
- * Pick a task, slide the reasoning-effort dial (Niedrig / Mittel / Hoch) and
- * watch hand-authored Quality / Cost / Latency meters move. A per-task
- * "sweet spot" (cheapest level that still hits near-max quality) drives the
- * verdict: correct hit, overkill (wasted tokens), or under-powered.
+ * Pick a task, then set the reasoning-effort dial (Niedrig / Mittel / Hoch).
+ * Cost & Latency update live — they're the knowable price of each level.
+ * Quality and the verdict are HIDDEN until the learner commits via the
+ * "Antwort prüfen" button: predict the cheapest level that still delivers
+ * good quality, then check. A per-task "sweet spot" drives the verdict:
+ * correct hit, overkill (wasted tokens), under-powered, or overthinking.
+ *
+ * Changing the level or the task re-hides quality + verdict and restores
+ * the prompt — every new dial position is a fresh prediction.
  *
  * No persistence, no API. Mounts into the slide via data-screen-label.
  */
@@ -44,6 +49,20 @@
         sweet: 2
       },
       {
+        id: 'classify',
+        tag: 'Einfach',
+        text: 'Klassifiziere 300 Log-Zeilen nach Schweregrad (info / warn / error).',
+        quality: [96, 97, 97],
+        sweet: 0
+      },
+      {
+        id: 'docstrings',
+        tag: 'Mittel',
+        text: 'Schreibe Docstrings für ein mittelgroßes Modul mit 15 Methoden.',
+        quality: [73, 90, 91],
+        sweet: 1
+      },
+      {
         id: 'trap',
         tag: 'Falle',
         text: 'Welcher HTTP-Status passt für „Ressource nicht gefunden“?',
@@ -74,6 +93,20 @@
         sweet: 2
       },
       {
+        id: 'sort',
+        tag: 'Einfach',
+        text: 'Sortiere 80 Rückmeldungen in „positiv / neutral / negativ“.',
+        quality: [96, 97, 97],
+        sweet: 0
+      },
+      {
+        id: 'summary',
+        tag: 'Mittel',
+        text: 'Fasse ein 20-seitiges Protokoll auf eine halbe Seite zusammen.',
+        quality: [72, 90, 91],
+        sweet: 1
+      },
+      {
         id: 'trap',
         tag: 'Falle',
         text: 'Stimmt diese Anrede: „Sehr geehrte Frau Dr. Weber“? Ja oder Nein.',
@@ -102,9 +135,12 @@
     var verdictBox  = section.querySelector('#dial-verdict');
     var verdictLbl  = section.querySelector('#dial-verdict-label');
     var verdictText = section.querySelector('#dial-verdict-text');
+    var checkPrompt = section.querySelector('#dial-check-prompt');
+    var checkBtn    = section.querySelector('#dial-check');
 
     var activeTask = 0;
     var level = 1;
+    var checked = false;
     var role = section.dataset.role || 'dev';
     var TASKS = TASKS_BY_ROLE[role] || TASKS_BY_ROLE.dev;
 
@@ -114,13 +150,13 @@
       TASKS.forEach(function (t, i) {
         var card = document.createElement('div');
         card.className = 'dial-task' + (i === activeTask ? ' active' : '');
-        card.innerHTML = '<div class="dt-tag">' + t.tag + '</div><div class="dt-text">' + t.text + '</div>';
+        card.innerHTML = '<div class="dt-text">' + t.text + '</div>';
         card.addEventListener('click', function () {
           activeTask = i;
           Array.prototype.forEach.call(tasksEl.children, function (c, j) {
             c.classList.toggle('active', j === i);
           });
-          render();
+          resetCheck();
         });
         tasksEl.appendChild(card);
       });
@@ -133,39 +169,37 @@
       TASKS = TASKS_BY_ROLE[role] || TASKS_BY_ROLE.dev;
       activeTask = 0;
       buildTasks();
-      render();
+      resetCheck();
     });
 
     // ---- slider ----
     slider.addEventListener('input', function () {
       slider.classList.add('touched');
       level = parseInt(slider.value, 10);
-      render();
+      resetCheck();
     });
     Array.prototype.forEach.call(ticksEl.children, function (sp) {
       sp.addEventListener('click', function () {
         slider.classList.add('touched');
         level = parseInt(sp.getAttribute('data-lvl'), 10);
         slider.value = level;
-        render();
+        resetCheck();
       });
     });
 
-    function render() {
+    // ---- check button: reveal quality + verdict for the current choice ----
+    checkBtn.addEventListener('click', reveal);
+
+    // Live meters: level name, ticks, cost, latency always reflect the dial.
+    // Quality is gated — shown only once the learner has checked.
+    function renderLive() {
       var t = TASKS[activeTask];
       var L = LEVELS[level];
-      var q = t.quality[level];
 
-      // level name + ticks
       levelName.textContent = L.name;
       Array.prototype.forEach.call(ticksEl.children, function (sp, j) {
         sp.classList.toggle('on', j === level);
       });
-
-      // meters
-      qVal.textContent = q + ' %';
-      qVal.className = 'dm-val ' + qClass(q);
-      qBar.style.width = q + '%';
 
       cVal.textContent = L.rtok.toLocaleString('de-DE') + ' tok';
       cBar.style.width = Math.max(3, (L.rtok / MAX_TOK) * 100) + '%';
@@ -173,7 +207,40 @@
       lVal.textContent = fmtLat(L.lat);
       lBar.style.width = Math.max(4, (L.lat / MAX_LAT) * 100) + '%';
 
-      // verdict
+      if (checked) {
+        var q = t.quality[level];
+        qVal.textContent = q + ' %';
+        qVal.className = 'dm-val ' + qClass(q);
+        qBar.style.width = q + '%';
+      } else {
+        qVal.textContent = '?';
+        qVal.className = 'dm-val q-hidden';
+        qBar.style.width = '0%';
+      }
+    }
+
+    // Back to "predict" state: hide quality + verdict, show the prompt.
+    function resetCheck() {
+      checked = false;
+      checkPrompt.hidden = false;
+      verdictBox.hidden = true;
+      renderLive();
+    }
+
+    // Commit: reveal quality + verdict for the current task/level.
+    function reveal() {
+      checked = true;
+      checkPrompt.hidden = true;
+      verdictBox.hidden = false;
+      renderLive();
+      renderVerdict();
+    }
+
+    function renderVerdict() {
+      var t = TASKS[activeTask];
+      var L = LEVELS[level];
+      var q = t.quality[level];
+
       verdictBox.classList.remove('ok', 'over', 'under');
       // "trap" = quality actually drops when effort rises past the sweet spot
       var isTrap = t.quality[LEVELS.length - 1] < t.quality[t.sweet];
@@ -211,7 +278,7 @@
       }
     }
 
-    render();
+    resetCheck();
   }
 
   if (document.readyState === 'loading') {
