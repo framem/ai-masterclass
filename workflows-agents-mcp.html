@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8" />
-<title>Workflows vs Agents · Tool-Use &amp; MCP — Kapitel 4</title>
+<title>Agent-Teams · Orchestrator — Kapitel 03</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -11,15 +11,18 @@
 <template id="__bundler_thumbnail" data-bg-color="#f4f1ea">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#f4f1ea"/>
-    <rect x="120" y="320" width="280" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
-    <rect x="460" y="320" width="280" height="160" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
-    <rect x="800" y="320" width="280" height="160" rx="14" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
-    <text x="260" y="410" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Augmented LLM</text>
-    <text x="600" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#15110c">Workflow</text>
-    <text x="940" y="410" text-anchor="middle" font-family="serif" font-size="32" fill="#fff">Agent</text>
-    <text x="600" y="240" text-anchor="middle" font-family="serif" font-size="46" fill="#15110c" font-weight="500">Workflows vs Agents</text>
-    <text x="410" y="410" font-family="monospace" font-size="22" fill="#c8421f">→</text>
-    <text x="750" y="410" font-family="monospace" font-size="22" fill="#c8421f">→</text>
+    <rect x="470" y="280" width="260" height="120" rx="16" fill="#c8421f" stroke="#c8421f" stroke-width="3"/>
+    <text x="600" y="352" text-anchor="middle" font-family="serif" font-size="34" fill="#fff">Orchestrator</text>
+    <line x1="600" y1="400" x2="290" y2="520" stroke="#15110c" stroke-width="3"/>
+    <line x1="600" y1="400" x2="600" y2="520" stroke="#15110c" stroke-width="3"/>
+    <line x1="600" y1="400" x2="910" y2="520" stroke="#15110c" stroke-width="3"/>
+    <rect x="170" y="520" width="240" height="120" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="480" y="520" width="240" height="120" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <rect x="790" y="520" width="240" height="120" rx="14" fill="#faf7f1" stroke="#15110c" stroke-width="3"/>
+    <text x="290" y="592" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Worker</text>
+    <text x="600" y="592" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Worker</text>
+    <text x="910" y="592" text-anchor="middle" font-family="serif" font-size="30" fill="#15110c">Worker</text>
+    <text x="600" y="210" text-anchor="middle" font-family="serif" font-size="44" fill="#15110c" font-weight="500">Agent-Teams · Orchestrator</text>
   </svg>
 </template>
 
@@ -406,40 +409,41 @@
   <section data-screen-label="01 Titel">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span></span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span></span>
         <span></span>
       </div>
 
-      <div class="eyebrow" style="font-size: 24px;">Kapitel — was die Eng-Architektur braucht</div>
-      <h1 class="title" style="margin-top: 32px;">Workflow oder<br/><span class="accent">Agent?</span></h1>
+      <div class="eyebrow" style="font-size: 24px;">Kapitel — was die Architektur braucht</div>
+      <h1 class="title" style="margin-top: 32px;">Ein Agent —<br/>oder ein <span class="accent">Team?</span></h1>
 
       <h3 class="subtitle" style="margin-top: 28px;">
-        Fünf Muster, ein Tool-Loop — und ein Stecker, der alle Werkzeuge spricht.
+        Ein Orchestrator zerlegt die Aufgabe und delegiert an spezialisierte Subagenten — jeder mit eigenem Context, eigenen Skills und MCP-Tools.
       </h3>
 
       <div class="agenda">
-        <span class="ag-kw">5 Workflow-Patterns</span>
-        <span class="ag-kw">Tool-Use-Loop</span>
-        <span class="ag-kw">MCP als USB-C</span>
+        <span class="ag-kw">Orchestrator + Worker</span>
+        <span class="ag-kw">Subagenten &amp; Rollen</span>
+        <span class="ag-kw">Eigener Context pro Agent</span>
+        <span class="ag-kw">MCP-Tools pro Agent</span>
       </div>
 
     </div>
   </section>
 
 
-  <!-- ===================== 03 WORKFLOW-PATTERNS ===================== -->
-  <section data-screen-label="03 Workflow Patterns">
+  <!-- ===================== 03 BAUSTEINE AGENT-TEAM ===================== -->
+  <section data-screen-label="03 Bausteine Agent-Team">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">Bevor du zum Agenten greifst</div>
-      <h2 class="title" style="font-size: 56px;">Fünf Muster, die <span class="accent">90 %</span> der Fälle abdecken.</h2>
+      <div class="eyebrow">Woraus ein Agent-Team besteht</div>
+      <h2 class="title" style="font-size: 56px;">Fünf Bausteine — vom <span class="accent">Orchestrator</span> bis zur Synthese.</h2>
 
       <p class="body" style="margin: 0; max-width: 1700px;">
-        Kombinier- und stapelbar. Jedes Muster hat einen klaren Anwendungsfall — und einen typischen Fehler, wenn du daraus einen Agenten machst, der es nicht braucht.
+        Ein Team ist kein größerer Agent, sondern eine Rollenteilung. Ein Orchestrator zerlegt und koordiniert, spezialisierte Subagenten arbeiten parallel — jeder mit eigenem Context und eigenen Tools. Das sind die Teile, die jedes Team braucht.
       </p>
 
       <!-- 5 pattern cards in a grid -->
@@ -447,131 +451,124 @@
 
         <!-- Prompt Chaining -->
         <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
-          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 01</div>
-          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Prompt<br/>Chaining</div>
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">BAUSTEIN 01</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Orchestrator</div>
 
           <div class="pat" style="margin: 14px 0;">
             <div class="pat-row" style="justify-content: center;">
-              <div class="node">LLM</div><div class="arrow">→</div>
-              <div class="node">LLM</div><div class="arrow">→</div>
-              <div class="node accent">LLM</div>
+              <div class="node accent">Orch.</div><div class="arrow">→</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="node" style="font-size: 11px; padding: 3px 8px;">Worker</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px;">Worker</div>
+              </div>
             </div>
-            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em;">Ausgabe = nächste Eingabe</div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em;">zerlegt · delegiert · führt zusammen</div>
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Aufgabe in feste Teilschritte zerlegen — jeder Schritt prüfbar.
+            Plant die Aufgabe, verteilt Subtasks zur Laufzeit, hält den Überblick — arbeitet selbst nicht inhaltlich.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
-            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
-            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Outline → Entwurf → Review</div>
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Rolle</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Lead, der nur koordiniert</div>
           </div>
         </div>
 
         <!-- Routing -->
         <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
-          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 02</div>
-          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Routing</div>
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">BAUSTEIN 02</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Spezialisierte<br/>Subagenten</div>
 
           <div class="pat" style="margin: 14px 0; align-items: center;">
             <div class="pat-row">
-              <div class="node">Router</div><div class="arrow">→</div>
               <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">A</div>
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">B</div>
-                <div class="node accent" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">C</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 64px;">Recherche</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 64px;">Analyse</div>
+                <div class="node accent" style="font-size: 11px; padding: 3px 8px; min-width: 64px;">Draft</div>
               </div>
             </div>
-            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">klassifizieren → spezialisieren</div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">eine Rolle · ein Job</div>
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Eingabe in Typen einsortieren — jeder Typ kriegt seinen eigenen Prompt/sein eigenes Modell.
+            Jeder Worker hat eine enge Rolle und einen scharfen System-Prompt — ein Job, gut gemacht, statt Allkönner.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
-            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
-            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Support-Tickets: Refund / Tech / Sales</div>
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Rolle</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Spezialist mit Fokus</div>
           </div>
         </div>
 
         <!-- Parallelization -->
         <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
-          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 03</div>
-          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Parallelisation</div>
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">BAUSTEIN 03</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Eigener<br/>Context</div>
 
           <div class="pat" style="margin: 14px 0; align-items: center;">
-            <div class="pat-row" style="justify-content: center;">
-              <div class="node">Split</div>
-              <div class="arrow">→</div>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">LLM</div>
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">LLM</div>
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">LLM</div>
-              </div>
-              <div class="arrow">→</div>
-              <div class="node accent">Merge</div>
+            <div class="pat-row" style="justify-content: center; gap: 10px;">
+              <div class="node" style="font-size: 11px; padding: 6px 10px; text-align: center;">ctx<br/>A</div>
+              <div class="node" style="font-size: 11px; padding: 6px 10px; text-align: center;">ctx<br/>B</div>
+              <div class="node accent" style="font-size: 11px; padding: 6px 10px; text-align: center;">ctx<br/>C</div>
             </div>
-            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">sectioning · voting</div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">getrennte Fenster</div>
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Mehrere Aufrufe gleichzeitig — entweder Teile (sectioning) oder Stimmen (voting).
+            Jeder Subagent startet mit frischem, eigenem Context — kein Token-Stau, keine Vermischung der Aufgaben.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
-            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
-            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Mehrfach prüfen, Mehrheit gewinnt</div>
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Effekt</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Mehr nutzbarer Kontext insgesamt</div>
           </div>
         </div>
 
         <!-- Orchestrator-Workers -->
         <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
-          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 04</div>
-          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Orchestrator<br/>+ Workers</div>
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">BAUSTEIN 04</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Skills +<br/>MCP-Tools</div>
 
           <div class="pat" style="margin: 14px 0; align-items: center;">
             <div class="pat-row" style="justify-content: center;">
-              <div class="node accent">Orch.</div>
+              <div class="node">Worker</div>
               <div class="arrow">↔</div>
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">Worker</div>
-                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">Worker</div>
-                <div class="node ghost" style="font-size: 11px; padding: 3px 8px; min-width: 50px;">…</div>
-              </div>
+              <div class="node accent">MCP</div>
             </div>
-            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">Aufgaben zur Laufzeit verteilen</div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">nur die nötigen Tools</div>
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Ein Modell teilt eine Aufgabe in Subtasks, delegiert an Worker-Modelle, fasst zusammen.
+            Jede Rolle bekommt genau die Tools, die sie braucht — der Recherche-Agent liest, der Draft-Agent schreibt.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
-            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
-            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Multi-File-Refactor über ein Repo</div>
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Prinzip</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Least privilege pro Rolle</div>
           </div>
         </div>
 
         <!-- Evaluator-Optimizer -->
         <div class="card" style="padding: 18px 20px; display: flex; flex-direction: column;">
-          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">PATTERN 05</div>
-          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Evaluator<br/>+ Optimizer</div>
+          <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em;">BAUSTEIN 05</div>
+          <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 2px; line-height: 1.1;">Ergebnis-<br/>Synthese</div>
 
           <div class="pat" style="margin: 14px 0; align-items: center;">
             <div class="pat-row" style="justify-content: center;">
-              <div class="node">Gen.</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">A</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">B</div>
+                <div class="node" style="font-size: 11px; padding: 3px 8px; min-width: 40px;">C</div>
+              </div>
               <div class="arrow">→</div>
-              <div class="node">Eval</div>
-              <div class="arrow">↺</div>
-              <div class="node accent">OK</div>
+              <div class="node accent">Synth.</div>
             </div>
-            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">Feedback-Schleife bis Kriterium</div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.06em; margin-top: 6px;">Teilantworten → ein Ergebnis</div>
           </div>
 
           <div style="font-size: 14.5px; color: var(--ink-2); line-height: 1.4; margin-top: 4px;">
-            Ein Modell generiert, ein zweites bewertet — Schleife bis das Ergebnis den Test besteht.
+            Der Orchestrator sammelt die Teilergebnisse ein, prüft Widersprüche und baut eine kohärente Antwort daraus.
           </div>
           <div style="margin-top: auto; padding-top: 12px;">
-            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Beispiel</div>
-            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">Übersetzung mit literarischem Lektorat</div>
+            <div class="mono" style="font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;">Ohne sie</div>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.35; margin-top: 2px;">N Fragmente statt einer Antwort</div>
           </div>
         </div>
 
@@ -580,7 +577,7 @@
       <div class="callout" style="margin-top: 22px; padding: 16px 24px; min-height: 0;">
         <div class="callout-label">Anti-Pattern</div>
         <div class="callout-body" style="font-size: 20px;">
-          „Wir brauchen einen <em>Agenten</em>." — meistens nein. Erst die Patterns prüfen. Ein <strong>Workflow</strong> ist <strong>billiger, schneller, testbarer</strong>. Agenten erst, wenn der Pfad <em>tatsächlich</em> nicht vorab bekannt ist.
+          „Mehr Agenten = besser.“ — meistens nein. Jeder Subagent kostet Tokens, Latenz und eine Schnittstelle, die schiefgehen kann. Ein <strong>Team</strong> erst, wenn ein <strong>einzelner</strong> Agent an Context oder Fokus scheitert.
         </div>
       </div>
 
@@ -588,19 +585,19 @@
   </section>
 
 
-  <!-- ===================== 04 WANN AGENT, WANN WORKFLOW ===================== -->
-  <section data-screen-label="04 Wann was">
+  <!-- ===================== 04 SINGLE VS MULTI-AGENT ===================== -->
+  <section data-screen-label="04 Single vs Multi-Agent">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">Wann was — die Architektur-Frage</div>
-      <h2 class="title" style="font-size: 56px;">Workflow oder <span class="accent">Agent</span>?</h2>
+      <div class="eyebrow">Wann was — die Team-Frage</div>
+      <h2 class="title" style="font-size: 56px;">Ein Agent oder ein <span class="accent">Team</span>?</h2>
 
       <p class="body" style="margin: 0 0 22px; max-width: 1700px;">
-        Default: <strong>so wenig Autonomie wie möglich</strong>. Jeder Schritt in Richtung Agent erkauft Flexibilität mit Kosten, Latenz und Unvorhersehbarkeit. Diese Tabelle hilft bei der Wahl.
+        Default: <strong>so wenige Agenten wie möglich</strong>. Jeder zusätzliche Subagent erkauft Parallelität und Fokus mit Koordination, Kosten und Latenz. Diese Tabelle hilft bei der Wahl.
       </p>
 
       <div style="display: grid; grid-template-columns: 1.55fr 1fr; gap: 28px;">
@@ -609,40 +606,40 @@
           <thead>
             <tr>
               <th style="width: 26%;">Dimension</th>
-              <th>Workflow</th>
-              <th>Agent</th>
+              <th>Single-Agent</th>
+              <th>Multi-Agent · Team</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Pfad bekannt?</strong></td>
-              <td class="cell-yes">ja — fest verdrahtet</td>
-              <td class="cell-soft">nein — Modell entscheidet</td>
+              <td><strong>Aufgaben-Umfang</strong></td>
+              <td class="cell-yes">passt in einen Context</td>
+              <td class="cell-soft">sprengt einen Context</td>
             </tr>
             <tr>
-              <td><strong>Reproduzierbarkeit</strong></td>
-              <td class="cell-yes">hoch — gleiche Eingabe, gleicher Pfad</td>
-              <td class="cell-soft">niedrig — Pfad variiert mit Sample</td>
+              <td><strong>Teilaufgaben</strong></td>
+              <td class="cell-yes">sequenziell, voneinander abhängig</td>
+              <td class="cell-soft">unabhängig, parallelisierbar</td>
             </tr>
             <tr>
-              <td><strong>Testbarkeit</strong></td>
-              <td class="cell-yes">Unit-Tests pro Schritt</td>
-              <td class="cell-soft">End-to-End-Evals, Trajektorien</td>
+              <td><strong>Spezialisierung</strong></td>
+              <td class="cell-yes">ein Prompt deckt alles ab</td>
+              <td class="cell-soft">je Rolle ein scharfer Prompt</td>
             </tr>
             <tr>
               <td><strong>Kosten / Latenz</strong></td>
-              <td class="cell-yes">vorhersagbar, niedrig</td>
-              <td class="cell-soft">unbegrenzte Loops möglich</td>
+              <td class="cell-yes">niedrig — ein Loop</td>
+              <td class="cell-soft">höher — N Loops + Synthese</td>
             </tr>
             <tr>
-              <td><strong>Aufgaben-Form</strong></td>
-              <td class="cell-yes">stabil, wiederkehrend</td>
-              <td class="cell-soft">offen, explorativ</td>
+              <td><strong>Context-Last</strong></td>
+              <td class="cell-yes">ein Fenster für alles</td>
+              <td class="cell-soft">frisches Fenster pro Worker</td>
             </tr>
             <tr>
               <td><strong>Fehlerbild</strong></td>
-              <td class="cell-yes">starr — übersehene Ausnahmen</td>
-              <td class="cell-soft">Driftet, irrt, dreht im Kreis</td>
+              <td class="cell-yes">Context-Überlauf, Fokus-Drift</td>
+              <td class="cell-soft">Koordinations-Bugs, Doppelarbeit</td>
             </tr>
           </tbody>
         </table>
@@ -650,25 +647,25 @@
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <div class="card" style="padding: 20px 24px;">
             <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">→ Default</div>
-            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Workflow</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Single-Agent</div>
             <p style="font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 6px 0 0;">
-              Augmented LLM oder ein Pattern aus der vorherigen Folie. <strong>90 % der Produktionsfälle.</strong>
+              Ein Agent mit Tool-Use — solange Aufgabe und Context überschaubar bleiben. <strong>Die meisten Fälle.</strong>
             </p>
           </div>
           <div class="card" style="padding: 20px 24px;">
             <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;">→ Eskalation</div>
-            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Agent</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; margin-top: 4px; line-height: 1.1;">Orchestrator-Team</div>
             <p style="font-size: 16px; color: var(--ink-2); line-height: 1.4; margin: 6px 0 0;">
-              Wenn Aufgaben <em>genuin offen</em> sind und die Anzahl der Schritte <em>nicht vorab</em> bekannt — z. B. agentic Coding, Research, Exploration.
+              Wenn die Aufgabe <em>zu breit</em> ist oder echte <em>Parallelität</em> braucht — breite Recherche, Multi-File-Refactor, viele Quellen.
             </p>
           </div>
           <div class="card dark" style="padding: 20px 24px;">
-            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">→ Pflicht für Agenten</div>
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.1em; text-transform: uppercase;">→ Pflicht für Teams</div>
             <ul style="font-size: 16px; color: #d8d2c5; line-height: 1.5; margin: 8px 0 0; padding-left: 22px;">
-              <li>Loop-Limit + Token-Budget</li>
-              <li>klar definierte Stop-Conditions</li>
-              <li>Mensch-im-Loop bei irreversiblen Aktionen</li>
-              <li>Trace + Replay pro Run</li>
+              <li>Token-/Schritt-Budget pro Subagent</li>
+              <li>klare Schnittstelle: was rein, was raus</li>
+              <li>eine Synthese-Stufe am Ende</li>
+              <li>Trace pro Subagent — wer tat was</li>
             </ul>
           </div>
         </div>
@@ -678,7 +675,7 @@
       <div class="callout" style="margin-top: 22px; padding: 16px 24px; min-height: 0;">
         <div class="callout-label">Faustregel</div>
         <div class="callout-body" style="font-size: 20px;">
-          <strong>Workflow → Vorhersagbarkeit. Agent → Flexibilität.</strong> Wähle die <em>einfachste Lösung</em>, die das Problem löst. Komplexität ist eine Schuld, die du später bezahlst — in Bugs, Kosten und Vertrauen.
+          <strong>Single-Agent → Einfachheit. Team → Parallelität &amp; Fokus.</strong> Nimm das <em>kleinste Setup</em>, das die Aufgabe trägt. Jeder Subagent ist eine Schnittstelle mehr, die du später debuggen musst.
         </div>
       </div>
 
@@ -686,267 +683,196 @@
   </section>
 
 
-  <!-- ===================== 05 FLOW: Workflow vs Agent ===================== -->
-  <section data-screen-label="05 Flow Workflow vs Agent">
+  <!-- ===================== 05 FLOW: Orchestrator-Delegation ===================== -->
+  <style id="orch-flow-style">
+    .orch-flow { display: flex; align-items: stretch; gap: 0; margin-top: 22px; flex: 1; min-height: 0; }
+    .of-stage { display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+    .of-arrow { flex: 0 0 auto; align-self: center; color: var(--accent); font-size: 30px; font-weight: 700; padding: 0 14px; line-height: 1; }
+    .of-phase { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+
+    /* Endpunkte */
+    .of-end { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      border-radius: 16px; padding: 22px 18px; text-align: center; min-width: 150px; }
+    .of-end.start { background: var(--ink); color: #f0ece3; }
+    .of-end.result { background: var(--accent); color: #fff; }
+    .of-end .e-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; }
+    .of-end .e-text { font-family: var(--serif); font-size: 21px; font-weight: 500; line-height: 1.15; }
+
+    /* Orchestrator-Knoten */
+    .of-orch { background: var(--paper); border: 2px solid var(--ink); border-radius: 14px; padding: 18px 20px; min-width: 188px; }
+    .of-orch .o-name { font-family: var(--serif); font-size: 22px; font-weight: 500; line-height: 1.1; }
+    .of-orch .o-act { font-size: 15px; color: var(--ink-2); line-height: 1.4; margin-top: 6px; }
+
+    /* Subagenten-Stapel */
+    .of-team { display: flex; flex-direction: column; gap: 8px; }
+    .sa-card { background: var(--ink); border-radius: 12px; padding: 11px 15px; }
+    .sa-role { font-family: var(--serif); font-size: 17px; font-weight: 500; color: #f0ece3; line-height: 1.1; }
+    .sa-meta { font-family: var(--mono); font-size: 11px; color: var(--accent-soft); letter-spacing: 0.04em; margin-top: 2px; }
+    .sa-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .sa-tool { font-family: var(--mono); font-size: 11px; color: #d8d2c5; background: rgba(255,255,255,0.08); border-radius: 6px; padding: 2px 8px; }
+    .of-team-cap { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); letter-spacing: 0.06em; text-align: center; }
+  </style>
+  <section data-screen-label="05 Flow Orchestrator-Delegation">
     <div class="chrome">
-      <div class="topbar"><span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span><span></span></div>
+      <div class="topbar"><span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Theorie</span><span></span></div>
 
-      <div class="eyebrow">Mensch im Loop — wer steuert den Pfad?</div>
-      <h2 class="title" style="font-size: 48px; margin-bottom: 4px;">Den Pfad steuern — oder nur das <span class="accent">Ziel</span> setzen.</h2>
+      <div class="eyebrow">Wie Delegation wirklich abläuft</div>
+      <h2 class="title" style="font-size: 48px; margin-bottom: 4px;">Zerlegen, delegieren — und wieder <span class="accent">zusammenführen</span>.</h2>
+      <p class="body" style="margin: 8px 0 0; max-width: 1500px; font-size: 18px;">
+        Ein Auftrag, vier Phasen. Der Orchestrator denkt und koordiniert; die Arbeit passiert in <strong>parallelen Subagenten</strong> — jeder mit <strong>eigenem Context-Fenster</strong> und nur den Tools seiner Rolle.
+      </p>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 12px;">
+      <div class="orch-flow">
 
-        <!-- ============ WORKFLOW DIAGRAM ============ -->
-        <div class="card" style="padding: 22px 24px 20px;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
-            <div>
-              <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;">Workflow</div>
-              <div style="font-size: 26px; font-weight: 500; margin-top: 2px;">Mensch <span class="accent">steuert</span> den Pfad</div>
-            </div>
-            <span class="pill outline">deterministisch</span>
+        <!-- 1 · Auftrag -->
+        <div class="of-stage">
+          <div class="of-phase">① Auftrag</div>
+          <div class="of-end start">
+            <span class="e-label">Mensch</span>
+            <span class="e-text">„Erstell den<br/>Quartals-Report.“</span>
           </div>
-
-          <svg viewBox="0 0 760 540" style="width: 100%; height: 500px; display: block;" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="arrW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="#15110c"/>
-              </marker>
-              <marker id="arrWa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="#c8421f"/>
-              </marker>
-            </defs>
-
-            <!-- Human start -->
-            <g>
-              <rect x="40" y="30" width="180" height="64" rx="32" fill="#15110c"/>
-              <text x="130" y="60" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="#c8c2b6" letter-spacing="1">MENSCH</text>
-              <text x="130" y="82" text-anchor="middle" font-family="IBM Plex Sans" font-size="18" fill="#f0ece3" font-weight="500">definiert Schritte</text>
-            </g>
-            <line x1="130" y1="94" x2="130" y2="124" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
-
-            <!-- Step 1 -->
-            <rect x="40" y="124" width="180" height="56" rx="8" fill="#faf7f1" stroke="#15110c" stroke-width="2"/>
-            <text x="130" y="148" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">1. E-Mail empfangen</text>
-            <text x="130" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#6b6357">trigger</text>
-            <line x1="130" y1="180" x2="130" y2="206" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
-
-            <!-- Step 2 LLM -->
-            <rect x="40" y="206" width="180" height="56" rx="8" fill="#f6dccf" stroke="#c8421f" stroke-width="2"/>
-            <text x="130" y="230" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">2. LLM klassifiziert</text>
-            <text x="130" y="250" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#7a2a10">prompt #1</text>
-            <line x1="130" y1="262" x2="130" y2="288" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
-
-            <!-- Step 3 LLM -->
-            <rect x="40" y="288" width="180" height="56" rx="8" fill="#f6dccf" stroke="#c8421f" stroke-width="2"/>
-            <text x="130" y="312" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">3. LLM entwirft</text>
-            <text x="130" y="332" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#7a2a10">prompt #2</text>
-            <line x1="130" y1="344" x2="130" y2="370" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
-
-            <!-- Human gate -->
-            <g>
-              <rect x="20" y="370" width="220" height="68" rx="34" fill="#15110c"/>
-              <text x="130" y="398" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#c8c2b6" letter-spacing="1">MENSCH · GATE</text>
-              <text x="130" y="420" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" fill="#f0ece3" font-weight="500">prüft &amp; gibt frei</text>
-            </g>
-            <line x1="130" y1="438" x2="130" y2="466" stroke="#15110c" stroke-width="2" marker-end="url(#arrW)"/>
-
-            <!-- Step 4 send -->
-            <rect x="40" y="466" width="180" height="50" rx="8" fill="#faf7f1" stroke="#15110c" stroke-width="2"/>
-            <text x="130" y="496" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#15110c">4. Antwort senden</text>
-
-            <!-- Right side annotations -->
-            <line x1="240" y1="62" x2="370" y2="62" stroke="#c8421f" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#arrWa)"/>
-            <text x="380" y="58" font-family="JetBrains Mono" font-size="14" fill="#c8421f">vorab</text>
-            <text x="380" y="76" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">Pfad ist festgelegt,</text>
-            <text x="380" y="94" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">bevor irgendetwas läuft</text>
-
-            <line x1="240" y1="234" x2="370" y2="234" stroke="#c8421f" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#arrWa)"/>
-            <text x="380" y="230" font-family="JetBrains Mono" font-size="14" fill="#c8421f">LLM-Aufrufe</text>
-            <text x="380" y="248" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">eng begrenzt: ein Job,</text>
-            <text x="380" y="266" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">ein Output, weiter im Pfad</text>
-
-            <line x1="240" y1="404" x2="370" y2="404" stroke="#c8421f" stroke-width="1.5" stroke-dasharray="3 4" marker-end="url(#arrWa)"/>
-            <text x="380" y="400" font-family="JetBrains Mono" font-size="14" fill="#c8421f">Kontrollpunkt</text>
-            <text x="380" y="418" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">Mensch sieht jeden</text>
-            <text x="380" y="436" font-family="IBM Plex Sans" font-size="14" fill="#3a342a">Output bevor er rausgeht</text>
-
-            <!-- Legend -->
-            <rect x="380" y="486" width="14" height="14" fill="#f6dccf" stroke="#c8421f" stroke-width="1.5"/>
-            <text x="402" y="498" font-family="JetBrains Mono" font-size="13" fill="#3a342a">LLM-Schritt</text>
-            <rect x="500" y="486" width="14" height="14" fill="#15110c"/>
-            <text x="522" y="498" font-family="JetBrains Mono" font-size="13" fill="#3a342a">Mensch</text>
-            <rect x="600" y="486" width="14" height="14" fill="#faf7f1" stroke="#15110c" stroke-width="1.5"/>
-            <text x="622" y="498" font-family="JetBrains Mono" font-size="13" fill="#3a342a">Code/System</text>
-          </svg>
         </div>
 
-        <!-- ============ AGENT DIAGRAM ============ -->
-        <div class="card dark" style="padding: 22px 24px 20px;">
-          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
-            <div>
-              <div class="mono" style="font-size: 15px; color: #c8c2b6; letter-spacing: 0.08em; text-transform: uppercase;">Agent</div>
-              <div style="font-size: 26px; font-weight: 500; margin-top: 2px; color: #f0ece3;">Mensch <span class="accent">setzt nur das Ziel</span></div>
-            </div>
-            <span class="pill accent">autonom</span>
+        <div class="of-arrow">→</div>
+
+        <!-- 2 · Orchestrator zerlegt -->
+        <div class="of-stage">
+          <div class="of-phase">② Zerlegen</div>
+          <div class="of-orch">
+            <div class="o-name">Orchestrator</div>
+            <div class="o-act">plant die Teilaufgaben und entscheidet, welche Rollen er braucht — parallel statt nacheinander.</div>
           </div>
+        </div>
 
-          <svg viewBox="0 0 760 540" style="width: 100%; height: 500px; display: block;" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="#f0ece3"/>
-              </marker>
-              <marker id="arrAa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="#e89379"/>
-              </marker>
-            </defs>
+        <div class="of-arrow">→</div>
 
-            <!-- Human start -->
-            <g>
-              <rect x="280" y="20" width="200" height="64" rx="32" fill="#c8421f"/>
-              <text x="380" y="48" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#fff" letter-spacing="1">MENSCH</text>
-              <text x="380" y="70" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" fill="#fff" font-weight="500">gibt Ziel vor</text>
-            </g>
-            <line x1="380" y1="84" x2="380" y2="118" stroke="#f0ece3" stroke-width="2" marker-end="url(#arrA)"/>
+        <!-- 3 · Subagenten parallel -->
+        <div class="of-stage" style="flex: 1.15;">
+          <div class="of-phase">③ Delegieren · parallel</div>
+          <div class="of-team">
+            <div class="sa-card">
+              <div class="sa-role">Daten-Agent</div>
+              <div class="sa-meta">eigener Context · read-only</div>
+              <div class="sa-tools"><span class="sa-tool">postgres-mcp</span><span class="sa-tool">jira-mcp</span></div>
+            </div>
+            <div class="sa-card">
+              <div class="sa-role">Recherche-Agent</div>
+              <div class="sa-meta">eigener Context · read-only</div>
+              <div class="sa-tools"><span class="sa-tool">confluence-mcp</span><span class="sa-tool">web-search</span></div>
+            </div>
+            <div class="sa-card">
+              <div class="sa-role">Draft-Agent</div>
+              <div class="sa-meta">eigener Context · schreibt</div>
+              <div class="sa-tools"><span class="sa-tool">confluence-mcp</span></div>
+            </div>
+          </div>
+          <div class="of-team-cap">drei Fenster, drei Rollen — kein geteilter Context</div>
+        </div>
 
-            <!-- Agent loop center -->
-            <circle cx="380" cy="280" r="160" fill="none" stroke="#e89379" stroke-width="1.5" stroke-dasharray="4 6"/>
-            <text x="380" y="160" text-anchor="middle" font-family="JetBrains Mono" font-size="13" fill="#e89379" letter-spacing="1">AUTONOMER LOOP</text>
+        <div class="of-arrow">→</div>
 
-            <!-- Think node (top) -->
-            <rect x="310" y="170" width="140" height="50" rx="8" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
-            <text x="380" y="194" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#f0ece3">Denke</text>
-            <text x="380" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#c8c2b6">LLM-Reasoning</text>
+        <!-- 4 · Synthese -->
+        <div class="of-stage">
+          <div class="of-phase">④ Synthese</div>
+          <div class="of-orch">
+            <div class="o-name">Orchestrator</div>
+            <div class="o-act">sammelt die Teilergebnisse, prüft auf Widersprüche und baut einen Report daraus.</div>
+          </div>
+        </div>
 
-            <!-- Act node (right) -->
-            <rect x="510" y="255" width="140" height="50" rx="8" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
-            <text x="580" y="279" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#f0ece3">Handle</text>
-            <text x="580" y="297" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#c8c2b6">Tool-Aufruf</text>
+        <div class="of-arrow">→</div>
 
-            <!-- Observe node (bottom) -->
-            <rect x="310" y="340" width="140" height="50" rx="8" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
-            <text x="380" y="364" text-anchor="middle" font-family="IBM Plex Sans" font-size="17" font-weight="500" fill="#f0ece3">Beobachte</text>
-            <text x="380" y="382" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#c8c2b6">Ergebnis</text>
-
-            <!-- Tools node (left) -->
-            <rect x="110" y="255" width="140" height="50" rx="8" fill="#1f1a13" stroke="#c8c2b6" stroke-width="1.5" stroke-dasharray="3 3"/>
-            <text x="180" y="279" text-anchor="middle" font-family="IBM Plex Sans" font-size="16" fill="#c8c2b6">Werkzeuge</text>
-            <text x="180" y="297" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="#c8c2b6">Suche · Code · API</text>
-
-            <!-- Loop arrows: think -> act -->
-            <path d="M 450 195 Q 540 220 555 254" fill="none" stroke="#e89379" stroke-width="2" marker-end="url(#arrAa)"/>
-            <!-- act -> observe -->
-            <path d="M 555 305 Q 540 340 450 360" fill="none" stroke="#e89379" stroke-width="2" marker-end="url(#arrAa)"/>
-            <!-- observe -> think -->
-            <path d="M 310 360 Q 220 340 220 280 Q 220 220 310 200" fill="none" stroke="#e89379" stroke-width="2" marker-end="url(#arrAa)"/>
-
-            <!-- act <-> tools -->
-            <line x1="510" y1="280" x2="252" y2="280" stroke="#c8c2b6" stroke-width="1.5" stroke-dasharray="3 3"/>
-
-            <!-- Decision: done? -->
-            <g>
-              <path d="M 380 410 L 430 440 L 380 470 L 330 440 z" fill="#1f1a13" stroke="#e89379" stroke-width="2"/>
-              <text x="380" y="438" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="500" fill="#f0ece3">Ziel</text>
-              <text x="380" y="454" text-anchor="middle" font-family="IBM Plex Sans" font-size="14" font-weight="500" fill="#f0ece3">erreicht?</text>
-            </g>
-            <!-- no -> back to think -->
-            <path d="M 330 440 Q 240 440 240 380 Q 240 250 290 195" fill="none" stroke="#e89379" stroke-width="1.5" stroke-dasharray="2 4" marker-end="url(#arrAa)"/>
-            <text x="218" y="395" font-family="JetBrains Mono" font-size="12" fill="#e89379">nein ↺</text>
-
-            <!-- yes -> human end -->
-            <line x1="380" y1="470" x2="380" y2="496" stroke="#f0ece3" stroke-width="2" marker-end="url(#arrA)"/>
-            <text x="395" y="488" font-family="JetBrains Mono" font-size="12" fill="#f0ece3">ja</text>
-
-            <!-- Human end -->
-            <g>
-              <rect x="280" y="496" width="200" height="36" rx="18" fill="#c8421f"/>
-              <text x="380" y="520" text-anchor="middle" font-family="IBM Plex Sans" font-size="16" fill="#fff" font-weight="500">Mensch erhält Ergebnis</text>
-            </g>
-          </svg>
+        <!-- Ergebnis -->
+        <div class="of-stage">
+          <div class="of-phase">Ergebnis</div>
+          <div class="of-end result">
+            <span class="e-label">an den Menschen</span>
+            <span class="e-text">ein fertiger<br/>Report</span>
+          </div>
         </div>
 
       </div>
 
-      <div class="callout" style="margin-top: 14px; padding: 14px 22px;">
+      <div class="callout" style="margin-top: 20px; padding: 14px 22px;">
         <div class="callout-label">Merksatz</div>
-        <div class="callout-body"><strong>Mensch im Workflow:</strong> definiert Pfad &amp; sitzt an jedem Gate.&nbsp;&nbsp;·&nbsp;&nbsp;<strong>Mensch beim Agent:</strong> definiert Ziel &amp; Werkzeuge — sieht erst das Ergebnis.</div>
+        <div class="callout-body"><strong>Der Orchestrator arbeitet nicht — er teilt ein und führt zusammen.</strong>&nbsp;&nbsp;·&nbsp;&nbsp;Jeder Subagent hat <strong>eigenen Context</strong> &amp; nur die Tools seiner Rolle — so bleibt jedes Fenster fokussiert und billig.</div>
       </div>
 
     </div>
   </section>
 
 
-  <!-- ===================== 05A WISSENSCHECK — PATTERN-ERKENNUNG ===================== -->
-  <section data-screen-label="05a Wissenscheck Patterns">
+  <!-- ===================== 05A WISSENSCHECK — TEAM-ERKENNUNG ===================== -->
+  <section data-screen-label="05a Wissenscheck Agent-Teams">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Wissenscheck</span>
         <span></span>
       </div>
 
-      <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.03em; margin: 40px 0 0;">Fünf Szenarien — ordne jedes dem passenden Muster zu. Die <strong style="color: var(--ink);">Leitfrage bleibt: wer entscheidet den Pfad?</strong></div>
-      <div class="eyebrow" style="margin: 18px 0 22px;">Szenario → Muster — die fünf Workflow-Patterns &amp; der Agent</div>
-      <h2 class="title" style="font-size: 52px; margin-bottom: 18px;">Welches Muster passt? <span class="accent">Eine</span> richtige Antwort pro Szenario.</h2>
+      <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.03em; margin: 40px 0 0;">Sechs Szenarien — Single-Agent, Team oder welcher Baustein? Die <strong style="color: var(--ink);">Leitfrage: braucht es wirklich mehr als einen Agenten?</strong></div>
+      <div class="eyebrow" style="margin: 18px 0 22px;">Szenario → Architektur — Single-Agent, Orchestrator-Team &amp; seine Rollen</div>
+      <h2 class="title" style="font-size: 52px; margin-bottom: 18px;">Single oder Team? <span class="accent">Eine</span> richtige Antwort pro Szenario.</h2>
 
-      <div class="quiz" data-quiz="patterns">
+      <div class="quiz" data-quiz="teams">
 
-        <div class="qitem" data-correct="chaining">
-          <div class="qbody"><em>„Outline → Entwurf → Lektorat → Veröffentlichen."</em> Jeder Schritt nimmt das Ergebnis des vorigen — kein Verzweigen, kein Loop.</div>
+        <div class="qitem" data-correct="single">
+          <div class="qbody"><em>„Wie ist der Status von Ticket PROJ-123?“</em> Eine Frage, eine Quelle, eine Antwort.</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
-            <button class="qchoice" data-key="routing">Routing</button>
-            <button class="qchoice" data-key="agent">Agent</button>
+            <button class="qchoice" data-key="single">Single-Agent</button>
+            <button class="qchoice" data-key="team">Orchestrator-Team</button>
+            <button class="qchoice" data-key="synth">Synthese-Stufe</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Prompt-Chaining</span> — linearer Output-zu-Input-Chain, vorab festgelegt. <span class="no">Routing</span> würde verzweigen, ein <span class="no">Agent</span> den Pfad selbst wählen.</div>
+          <div class="qfb"><span class="ok">✓ Single-Agent</span> — schmale Aufgabe, ein Tool-Call genügt. Ein Team wäre reine Overhead-Kosten ohne Nutzen.</div>
         </div>
 
-        <div class="qitem" data-correct="routing">
-          <div class="qbody"><em>„Pro Support-Ticket: einordnen (Bug / Frage / Refund), je nach Kategorie passend behandeln — bei Bug an Eng eskalieren."</em></div>
+        <div class="qitem" data-correct="team">
+          <div class="qbody"><em>„Vergleich 30 Wettbewerber-Seiten, lies sie parallel und verdichte das Ganze zu einem Briefing.“</em></div>
           <div class="qchoices">
-            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
-            <button class="qchoice" data-key="routing">Routing</button>
-            <button class="qchoice" data-key="parallel">Parallelisierung</button>
+            <button class="qchoice" data-key="single">Single-Agent</button>
+            <button class="qchoice" data-key="team">Orchestrator-Team</button>
+            <button class="qchoice" data-key="context">Eigener Context</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Routing</span> — Klassifikation + Dispatch. Der Klassifizierer ist die einzige variable Stelle, jede Sub-Pipeline bleibt deterministisch.</div>
-        </div>
-
-        <div class="qitem" data-correct="evaloptimizer">
-          <div class="qbody"><em>„Generiere einen Blogpost. Ein Editor-Modell bewertet Stil &amp; Faktendichte — solange Score &lt; 8, überarbeite."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
-            <button class="qchoice" data-key="evaloptimizer">Evaluator-Optimizer</button>
-            <button class="qchoice" data-key="agent">Agent</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Evaluator-Optimizer</span> — Generieren + Bewerten + Verfeinern bis zur Qualitätsschwelle. Der definierende Feedback-Loop, mit endlicher Iteration.</div>
-        </div>
-
-        <div class="qitem" data-correct="parallel">
-          <div class="qbody"><em>„Ein Dokument gleichzeitig auf Sentiment, Thema und Sprache analysieren, dann die Ergebnisse zusammenführen."</em></div>
-          <div class="qchoices">
-            <button class="qchoice" data-key="routing">Routing</button>
-            <button class="qchoice" data-key="parallel">Parallelisierung</button>
-            <button class="qchoice" data-key="evaloptimizer">Evaluator-Optimizer</button>
-          </div>
-          <div class="qfb"><span class="ok">✓ Parallelisierung</span> — unabhängige Teilaufgaben im Fan-out, danach Aggregat. <span class="no">Routing</span> wählt <em>einen</em> Pfad, hier laufen mehrere gleichzeitig.</div>
+          <div class="qfb"><span class="ok">✓ Orchestrator-Team</span> — breit, unabhängig, parallelisierbar. Ein Agent würde an Context und Fokus ersticken; mehrere Worker teilen die Last.</div>
         </div>
 
         <div class="qitem" data-correct="orchestrator">
-          <div class="qbody"><em>„Benenne eine Funktion im ganzen Repo um."</em> Ein Modell findet zur Laufzeit die betroffenen Dateien, verteilt pro Datei eine Teil-Änderung an Worker-Modelle und führt alles zusammen.</div>
+          <div class="qbody">In einem Team — wer <strong>zerlegt</strong> die Aufgabe und entscheidet, welche Rollen es braucht?</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="parallel">Parallelisierung</button>
-            <button class="qchoice" data-key="orchestrator">Orchestrator-Workers</button>
-            <button class="qchoice" data-key="agent">Agent</button>
+            <button class="qchoice" data-key="orchestrator">Der Orchestrator</button>
+            <button class="qchoice" data-key="worker">Ein Worker</button>
+            <button class="qchoice" data-key="synth">Die Synthese-Stufe</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Orchestrator-Workers</span> — ein Modell zerlegt die Aufgabe <em>zur Laufzeit</em> und delegiert an Worker. <span class="no">Parallelisierung</span> hätte einen festen, vorab definierten Split; ein <span class="no">Agent</span> würde auch das Ziel selbst bestimmen.</div>
+          <div class="qfb"><span class="ok">✓ Orchestrator</span> — er plant, delegiert und koordiniert, arbeitet aber selbst nicht inhaltlich. Die Worker führen aus.</div>
         </div>
 
-        <div class="qitem" data-correct="agent">
-          <div class="qbody"><em>„Plan ein langes Wochenende in Lissabon — 600 € Budget, Kunst-Fokus."</em> Recherchier Flüge, Hotels, Museen — und koordinier alles.</div>
+        <div class="qitem" data-correct="context">
+          <div class="qbody">Warum bekommt jeder Subagent ein <strong>eigenes Context-Fenster</strong>?</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
-            <button class="qchoice" data-key="routing">Routing</button>
-            <button class="qchoice" data-key="agent">Agent</button>
+            <button class="qchoice" data-key="context">Aufgaben vermischen sich nicht — mehr nutzbarer Kontext</button>
+            <button class="qchoice" data-key="speed">Damit das Modell schneller tippt</button>
+            <button class="qchoice" data-key="cost">Damit es keine Tokens kostet</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Agent</span> — die Schritte hängen davon ab, was du findest. Der Pfad lässt sich nicht vorab planen — genau die Definition für einen Agenten.</div>
+          <div class="qfb"><span class="ok">✓ Getrennte Fenster</span> — jeder startet frisch, kein Token-Stau, keine Vermischung. In Summe steht dem Team viel mehr Kontext zur Verfügung als einem Agenten.</div>
+        </div>
+
+        <div class="qitem" data-correct="synth">
+          <div class="qbody">Die drei Worker sind fertig und liefern je ein Teilergebnis. Was <strong>fehlt</strong> noch?</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="synth">Eine Synthese-Stufe</button>
+            <button class="qchoice" data-key="worker">Noch ein vierter Worker</button>
+            <button class="qchoice" data-key="single">Nichts — fertig</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Synthese</span> — ohne sie hast du N Fragmente statt einer Antwort. Der Orchestrator muss zusammenführen und Widersprüche prüfen.</div>
+        </div>
+
+        <div class="qitem" data-correct="single">
+          <div class="qbody">Default-Architektur im Zweifelsfall:</div>
+          <div class="qchoices">
+            <button class="qchoice" data-key="team">Team — maximale Parallelität</button>
+            <button class="qchoice" data-key="single">Single-Agent — Team nur wenn nötig</button>
+          </div>
+          <div class="qfb"><span class="ok">✓ Erst Single-Agent</span> — einfacher, billiger, leichter zu debuggen. Ein Team kommt erst, wenn ein einzelner Agent an Context oder Breite scheitert.</div>
         </div>
 
       </div>
@@ -967,15 +893,15 @@
   <section data-screen-label="06 Tool-Use Loop">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
-      <div class="eyebrow">Was passiert, wenn ein Modell ein Tool ruft</div>
+      <div class="eyebrow">Was in jedem Subagenten passiert, wenn er ein Tool ruft</div>
       <h2 class="title" style="font-size: 56px;">Der <span class="accent">Tool-Use-Loop</span>.</h2>
 
       <p class="body" style="margin: 0 0 22px; max-width: 1700px;">
-        Egal ob Workflow oder Agent — der Mechanismus ist derselbe. Du registrierst Tools (Name + JSON-Schema), das Modell antwortet mit einem <span class="mono">tool_use</span>-Block, dein Code führt das Tool aus, du gibst das Ergebnis zurück. Wiederholen.
+        Ob Single-Agent oder ein einzelner Worker im Team — der Mechanismus ist derselbe. <strong>Jeder Subagent läuft seinen eigenen Loop:</strong> Du registrierst Tools (Name + JSON-Schema), das Modell antwortet mit einem <span class="mono">tool_use</span>-Block, dein Code führt das Tool aus, du gibst das Ergebnis zurück. Wiederholen.
       </p>
 
       <!-- 4-step loop visualization -->
@@ -1049,7 +975,7 @@
       <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
         <div class="callout-label">Merksatz</div>
         <div class="callout-body" style="font-size: 20px;">
-          Ein „agentic Tool-Call" ist <strong>kein magischer Aufruf</strong> — es ist ein JSON-Block hin, ein JSON-Block zurück. Wer das versteht, debugged Agenten.
+          Ein „agentic Tool-Call" ist <strong>kein magischer Aufruf</strong> — es ist ein JSON-Block hin, ein JSON-Block zurück. Wer das versteht, debugged einzelne Agenten <strong>und ganze Teams</strong>.
         </div>
       </div>
 
@@ -1061,7 +987,7 @@
   <section data-screen-label="07 MCP">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
@@ -1069,7 +995,7 @@
       <h2 class="title" style="font-size: 56px;">MCP — <span class="accent">ein</span> Protokoll, viele Quellen.</h2>
 
       <p class="body" style="margin: 0; max-width: 1700px;">
-        <strong>Model Context Protocol</strong>: offener Standard, der LLM-Clients (Desktop-App, IDE, Agent) eine einheitliche Sprache gibt, um Tools, Daten und Ressourcen einzubinden. Pro Datenquelle ein <em>MCP-Server</em> — jeder MCP-fähige Client kann ihn nutzen.
+        <strong>Model Context Protocol</strong>: offener Standard, der LLM-Clients (Desktop-App, IDE, Agent) eine einheitliche Sprache gibt, um Tools, Daten und Ressourcen einzubinden. Pro Datenquelle ein <em>MCP-Server</em> — jeder MCP-fähige Client kann ihn nutzen. <strong>Im Team heißt das: jeder Subagent bekommt genau die Server, die seine Rolle braucht.</strong>
       </p>
 
       <div style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 28px; margin-top: 24px; flex: 1;">
@@ -1086,7 +1012,7 @@
               <div class="mono" style="font-size: 10px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">CLIENTS</div>
               <div class="node" style="font-size: 14px; padding: 10px 14px;">Desktop-App</div>
               <div class="node" style="font-size: 14px; padding: 10px 14px;">Cursor / IDE</div>
-              <div class="node" style="font-size: 14px; padding: 10px 14px;">Agent (eigen)</div>
+              <div class="node" style="font-size: 14px; padding: 10px 14px;">Subagent (Rolle)</div>
               <div class="node ghost" style="font-size: 14px; padding: 10px 14px;">… alle MCP-fähigen</div>
             </div>
 
@@ -1179,14 +1105,14 @@
   <section data-screen-label="07b MCP Praxis Jira Confluence">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Theorie</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Theorie</span>
         <span></span>
       </div>
 
       <div class="eyebrow">Konkret: Jira &amp; Confluence per MCP</div>
       <h2 class="title" style="font-size: 48px;">So sieht <span class="accent">MCP</span> im Alltag aus.</h2>
       <p class="body" style="margin: 0 0 14px; max-width: 1600px; font-size: 20px;">
-        Ein MCP-Server kapselt die jeweilige API als standardisierte Tools. Der Agent muss weder Atlassian-REST-Endpoints noch Auth-Details kennen — er sagt, <em>was</em> er will, der Server übersetzt.
+        Ein MCP-Server kapselt die jeweilige API als standardisierte Tools. Ein Subagent muss weder Atlassian-REST-Endpoints noch Auth-Details kennen — er sagt, <em>was</em> er will, der Server übersetzt.
       </p>
 
       <!-- Zwei Spalten: Jira / Confluence -->
@@ -1262,15 +1188,15 @@
       <div class="card dark" style="margin-top: 14px; padding: 16px 28px;">
         <div style="display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center;">
           <div>
-            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Beide zusammen</div>
-            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px;">Mehrere Server,<br/>ein Agent.</div>
+            <div class="mono" style="font-size: 12px; color: var(--accent-soft); letter-spacing: 0.12em; text-transform: uppercase;">Im Team</div>
+            <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3; margin-top: 4px;">Mehrere Server,<br/>ein Team.</div>
           </div>
           <div>
             <div style="font-family: var(--mono); font-size: 18px; line-height: 1.5; color: #f0ece3;">
               „Welche Tickets aus Q1 referenzieren die <strong>Auth-Service-Architektur-Doku</strong>? Schreib mir eine kurze Übersicht."
             </div>
             <div style="font-size: 16px; line-height: 1.45; color: #c8c2b6; margin-top: 8px;">
-              → Agent fragt <span class="mono" style="color: var(--accent-soft);">jira-mcp</span> nach Tickets mit Confluence-Link, holt via <span class="mono" style="color: var(--accent-soft);">confluence-mcp</span> die Doku-Metadaten, korreliert beides. Ein Prompt — zwei Quellen.
+              → Der Orchestrator schickt einen <span class="mono" style="color: var(--accent-soft);">jira-mcp</span>-Subagenten und einen <span class="mono" style="color: var(--accent-soft);">confluence-mcp</span>-Subagenten <strong>parallel</strong> los, korreliert ihre Treffer und synthetisiert. Ein Prompt — zwei Rollen, zwei Quellen.
             </div>
           </div>
         </div>
@@ -1376,30 +1302,30 @@
     .mtx-idea .i-name { flex: 0 0 235px; font-family: var(--mono); font-size: 15px; font-weight: 600; color: var(--ink); }
     .mtx-idea .i-desc { font-size: 15px; color: var(--ink-2); line-height: 1.35; }
   </style>
-  <section data-screen-label="07d Übung MCP-Tool schreiben" data-roleswitch>
+  <section data-screen-label="07d Übung Subagenten-Team" data-roleswitch>
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Praxis</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Praxis</span>
         <span></span>
       </div>
 
       <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; margin: 32px 0 16px;">
-        <div class="eyebrow" style="margin: 0;"><span class="mtx-ex">Paar-Übung · 15 min · Papier schlägt Editor</span><span class="mtx-sol" hidden>Paar-Übung · Beispiellösung — eine von vielen richtigen</span></div>
+        <div class="eyebrow" style="margin: 0;"><span class="mtx-ex">Paar-Übung · 15 min · Rollen schlagen Zeilen</span><span class="mtx-sol" hidden>Paar-Übung · Beispiellösung — eine von vielen richtigen</span></div>
         <button class="ex-eg-btn" type="button" data-eg-open="eg-mcp" style="flex: none;">Beispiel-Runde ansehen</button>
       </div>
-      <h2 class="title" style="font-size: 44px; margin-bottom: 8px;"><span class="mtx-ex">Schreibt euer <span class="accent">eigenes MCP-Tool</span> — Definition, nicht Code.</span><span class="mtx-sol" hidden>Beispiellösung: <span class="accent">„Wie wird das Wetter?“</span></span></h2>
-      <p class="body" style="margin: 0; max-width: 1700px; font-size: 19px;"><span class="mtx-ex" data-nd='Zu zweit. Ihr schreibt den Steckbrief eines Werkzeugs, das euer Assistent nutzen soll: Name, Beschreibung, benötigte Angaben. Keine Technik — die eigentliche Arbeit ist, für <strong>jede Angabe</strong> zu beantworten: <em>Woher bekommt das Modell diesen Wert?</em>'>Zu zweit. Ihr schreibt genau das, was sonst in <span class="mono" style="font-size: 17px;">registerTool()</span> steht: Name, Beschreibung, Parameter-Schema. Kein Handler, kein Code dahinter — die eigentliche Arbeit ist, für <strong>jeden Parameter</strong> zu beantworten: <em>Woher bekommt das Modell diesen Wert?</em></span><span class="mtx-sol" hidden>Zwei Parameter reichen: <strong>Ort</strong> (Pflicht) und <strong>Tag</strong> (optional, Standard: heute). Entscheidend ist nicht das Schema — sondern dass für <strong>jeden Wert die Quelle</strong> geklärt ist.</span></p>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 8px;"><span class="mtx-ex">Entwerft ein <span class="accent">Subagenten-Team</span> — Rollen, nicht Code.</span><span class="mtx-sol" hidden>Beispiellösung: <span class="accent">Quartals-Report</span></span></h2>
+      <p class="body" style="margin: 0; max-width: 1700px; font-size: 19px;"><span class="mtx-ex" data-nd='Zu zweit. Ihr nehmt eine Aufgabe und zerlegt sie in ein Team: Welche Helfer braucht es? Für jeden: <strong>Rolle</strong>, was er bekommt, womit er arbeitet, was er zurückgibt. Die eigentliche Arbeit ist, für <strong>jeden Helfer</strong> zu fragen: <em>Braucht das wirklich einen eigenen — oder macht es die Leitung selbst?</em>'>Zu zweit. Ihr nehmt eine Aufgabe und zerlegt sie in ein Team: Welche Subagenten braucht es? Für jeden: <strong>Rolle</strong>, Input, Tools, Rückgabe. Kein Handler-Code — die eigentliche Arbeit ist, für <strong>jeden Subagenten</strong> zu fragen: <em>Braucht das wirklich einen eigenen Agenten — oder kann es der Orchestrator selbst?</em></span><span class="mtx-sol" hidden>Drei Rollen reichen: <strong>Daten</strong>, <strong>Recherche</strong>, <strong>Draft</strong>. Entscheidend ist nicht die Zahl — sondern dass jede Rolle <strong>eigenen Fokus, eigenen Context und nur die nötigen Tools</strong> hat.</span></p>
 
       <div class="mtx-setup">
         <span class="s-tag"><span class="mtx-ex">Setup · 2 min</span><span class="mtx-sol" hidden>Auflösung</span></span>
         <span class="mtx-ex" style="display: contents;">
         <span class="s-step"><span class="s-num">1</span> Paarbildung</span>
-        <span class="s-step"><span class="s-num">2</span> Tool-Idee rechts wählen</span>
+        <span class="s-step"><span class="s-num">2</span> Aufgabe rechts wählen</span>
         <span class="s-step"><span class="s-num">3</span> Timer starten</span>
         <span class="s-div"></span>
-        <span class="s-roles"><strong>Rollen:</strong> Eine:r schreibt (<strong>Autor</strong>) · eine:r spielt das Modell (<strong>Modell-Anwalt</strong>) und fragt bei jedem Parameter laut: <em>„Woher weiß ich das?“</em></span>
+        <span class="s-roles"><strong>Rollen:</strong> Eine:r entwirft (<strong>Architekt</strong>) · eine:r ist <strong>Team-Kritiker</strong> und fragt bei jedem Subagenten laut: <em>„Braucht das einen eigenen Agenten?“</em></span>
         </span>
-        <span class="mtx-sol s-roles" hidden>Vergleicht euren Entwurf: <strong>gleiche Parameter, gleiche Quellen?</strong> Abweichung heißt nicht falsch — oft ist es nur eine andere, ebenso gültige Quelle.</span>
+        <span class="mtx-sol s-roles" hidden>Vergleicht euren Entwurf: <strong>gleiche Rollen, gleiche Tools?</strong> Eine Rolle weniger ist oft besser — wenn der Orchestrator sie selbst erledigt.</span>
         <span style="margin-left: auto;"></span>
         <span class="timer" data-seconds="900">
           <span class="t-display mono">15:00</span>
@@ -1414,100 +1340,96 @@
         <!-- Links: das Gerüst, das die Paare füllen -->
         <div class="mtx-file">
           <div class="mtx-filebar">
-            <span class="mtx-fname"><span class="mtx-ex" data-nd='Werkzeug-Steckbrief'>tools/euer-tool.ts</span><span class="mtx-sol" hidden data-nd='Werkzeug-Steckbrief · ausgefüllt'>tools/get-weather.ts</span></span>
-            <span class="mtx-fmeta"><span class="mtx-ex" data-nd='4 Felder — Papier oder Whiteboard reicht'>das Innere von registerTool() — mehr nicht</span><span class="mtx-sol" hidden>so sieht ein fertiger Entwurf aus</span></span>
+            <span class="mtx-fname"><span class="mtx-ex" data-nd='Team-Steckbrief'>team/plan.ts</span><span class="mtx-sol" hidden data-nd='Team-Steckbrief · ausgefüllt'>team/quartals-report.ts</span></span>
+            <span class="mtx-fmeta"><span class="mtx-ex" data-nd='Rolle · Input · Werkzeuge · Rückgabe — Papier reicht'>orchestrator.plan() — Rollen, kein Handler</span><span class="mtx-sol" hidden>so sieht ein fertiges Team aus</span></span>
           </div>
-          <div class="mtx-filebody mtx-ex" data-nd='<div class="mtx-form"><div class="mtx-frow"><div class="mtx-flabel">① Name</div><div class="mtx-fval">Verb + Objekt, eindeutig — z. B. <b>urlaub_beantragen</b>: <span class="mtx-blank">______________</span></div></div><div class="mtx-frow"><div class="mtx-flabel">② Beschreibung</div><div class="mtx-fval">Zwei Sätze <b>für das Modell</b>, nicht für Menschen: Wann soll der Assistent das Werkzeug nutzen — und wann <b>nicht</b>?</div></div><div class="mtx-frow"><div class="mtx-flabel">③ Benötigte Angaben</div><div class="mtx-fval">Mindestens drei Zeilen, je: <b>Angabe</b> · Pflicht oder optional? · Quelle <span class="src">A–E</span> vom Spickzettel rechts.<br>1. <span class="mtx-blank">__________</span> · <span class="src">?</span>&nbsp;&nbsp; 2. <span class="mtx-blank">__________</span> · <span class="src">?</span>&nbsp;&nbsp; 3. <span class="mtx-blank">__________</span> · <span class="src">?</span></div></div><div class="mtx-frow"><div class="mtx-flabel">④ Ergebnis</div><div class="mtx-fval">Ein Satz: Was kommt zurück? Den technischen Unterbau baut später die IT — heute zählt nur die Schnittstelle.</div></div></div>'>
-<pre class="mtx-code"><span class="c">// Euer Entwurf — Lücken füllen. Pro Parameter: Quelle A–E notieren (Spickzettel →)</span>
-server.<span class="fn">registerTool</span>(
-  <span class="str">"verb_objekt"</span>,                      <span class="c">// ① Name — eindeutig, Verb + Objekt</span>
-  {
-    title: <span class="str">"______________"</span>,
-    description: <span class="str">"______________</span>     <span class="c">// ② Wann nutzen? Wann NICHT?</span>
-<span class="str">      ____________________________"</span>, <span class="c">//    Liest das Modell — nicht der User.</span>
-    inputSchema: {
-      ________: z.string(),            <span class="c">// ③ Quelle? → <span class="src">A B C D E</span></span>
-      ________: z.string(),            <span class="c">//    Quelle? → <span class="src">A B C D E</span></span>
-      ________: z.enum([______]),      <span class="c">//    Pflicht — oder optional?</span>
-    },
-  },
-  <span class="c">async</span> (args) =&gt; { <span class="c">/* ④ der echte Call — baut heute niemand */</span> }
-);</pre>
+          <div class="mtx-filebody mtx-ex" data-nd='<div class="mtx-form"><div class="mtx-frow"><div class="mtx-flabel">① Aufgabe</div><div class="mtx-fval">Die Gesamtaufgabe in einem Satz: <span class="mtx-blank">______________</span></div></div><div class="mtx-frow"><div class="mtx-flabel">② Subagent 1</div><div class="mtx-fval"><b>Rolle</b> · was bekommt er? · <b>Werkzeuge</b> (nur die nötigen!) · was gibt er zurück?<br>Begründet mit <span class="src">A–D</span> rechts — sonst <span class="src">E</span> (streichen).</div></div><div class="mtx-frow"><div class="mtx-flabel">③ Subagent 2 + 3</div><div class="mtx-fval">Weitere Rollen — <b>parallel</b>, unabhängig. Mindestens zwei, höchstens vier.</div></div><div class="mtx-frow"><div class="mtx-flabel">④ Zusammenführen</div><div class="mtx-fval">Wer baut aus den Teilergebnissen die Endfassung? Immer die Leitung.</div></div></div>'>
+<pre class="mtx-code"><span class="c">// Euer Team-Entwurf — Lücken füllen. Pro Subagent mit <span class="src">A–D</span> begründen (Checkliste →)</span>
+orchestrator.<span class="fn">plan</span>({
+  task: <span class="str">"______________"</span>,          <span class="c">// ① die Gesamtaufgabe</span>
+  subagents: [
+    { role: <span class="str">"__________"</span>,           <span class="c">// ② Rolle — ein Job, scharf umrissen</span>
+      input: <span class="str">"__________"</span>,          <span class="c">//    was bekommt er vom Orchestrator?</span>
+      tools: [ ________ ],             <span class="c">//    nur was die Rolle braucht → <span class="src">D</span></span>
+      returns: <span class="str">"__________"</span> },       <span class="c">//    was gibt er zurück?</span>
+    { role: <span class="str">"__________"</span>, ... },     <span class="c">// ③ weitere Rollen — parallel, unabhängig</span>
+  ],
+  synthesize: <span class="str">true</span>                     <span class="c">// ④ Orchestrator führt zusammen — nie ein Worker</span>
+});</pre>
           </div>
-          <div class="mtx-filebody mtx-sol" hidden data-nd='<div class="mtx-form"><div class="mtx-frow"><div class="mtx-flabel">① Name</div><div class="mtx-fval"><b>wetter_abfragen</b> — Verb + Objekt, eindeutig.</div></div><div class="mtx-frow"><div class="mtx-flabel">② Beschreibung</div><div class="mtx-fval">„Liefert die Wettervorhersage für einen Ort. Nutzen bei Fragen wie <b>„Wie wird das Wetter?“</b>. Fehlt der Ort und ist er nicht aus dem Gespräch klar: <b>nachfragen, nicht raten</b>.“</div></div><div class="mtx-frow"><div class="mtx-flabel">③ Benötigte Angaben</div><div class="mtx-fval">1. <b>Ort</b> · Pflicht · Quelle <span class="src">A</span> Auftrag — fehlt er: <span class="src">B</span> Rückfrage<br>2. <b>Tag</b> · optional · Standard: <b>heute</b> <span class="src">E</span> — oder aus dem Auftrag <span class="src">A</span> („morgen“)</div></div><div class="mtx-frow"><div class="mtx-flabel">④ Ergebnis</div><div class="mtx-fval">Vorhersage für Ort + Tag: Temperatur, Niederschlag, ein Satz Zusammenfassung.</div></div></div>'>
-<pre class="mtx-code"><span class="c">// Beispiellösung — kompakt, aber vollständig</span>
-server.<span class="fn">registerTool</span>(
-  <span class="str">"get_weather"</span>,                       <span class="c">// ① Verb + Objekt, eindeutig</span>
-  {
-    title: <span class="str">"Wettervorhersage"</span>,
-    description: <span class="str">"Liefert die Wettervorhersage für einen Ort.</span>
-<span class="str">      Nutzen bei Fragen wie 'Wie wird das Wetter?'.</span>      <span class="c">// ② wann nutzen</span>
-<span class="str">      Wenn kein Ort genannt oder aus dem Kontext klar ist:</span>
-<span class="str">      nachfragen — nicht raten."</span>,                          <span class="c">//    wann NICHT raten → <span class="src">B</span></span>
-    inputSchema: {
-      ort: z.string(),                     <span class="c">// ③ Pflicht · Quelle <span class="src">A</span> Auftrag, sonst <span class="src">B</span></span>
-      tag: z.string().optional()           <span class="c">//    optional · <span class="src">A</span> („morgen“)</span>
-            .default(<span class="str">"heute"</span>),             <span class="c">//    fehlt er → Default <span class="src">E</span></span>
-    },
-  },
-  <span class="c">async</span> ({ ort, tag }) =&gt; { <span class="c">/* ④ Wetter-API → Temperatur, Niederschlag, Zusammenfassung */</span> }
-);</pre>
+          <div class="mtx-filebody mtx-sol" hidden data-nd='<div class="mtx-form"><div class="mtx-frow"><div class="mtx-flabel">① Aufgabe</div><div class="mtx-fval"><b>Quartals-Report Q1 erstellen.</b></div></div><div class="mtx-frow"><div class="mtx-flabel">② Daten-Agent</div><div class="mtx-fval">Zieht die Kennzahlen · Werkzeuge: <b>Datenbank, Tickets</b> (nur lesen) · gibt eine Kennzahlen-Tabelle zurück. <span class="src">A</span> Fokus · <span class="src">D</span> nur-lesen.</div></div><div class="mtx-frow"><div class="mtx-flabel">③ Recherche- + Draft-Agent</div><div class="mtx-fval"><b>Recherche</b> liest Markt &amp; Wiki parallel · <b>Draft</b> schreibt den Entwurf. <span class="src">B</span> eigener Context · <span class="src">C</span> parallel.</div></div><div class="mtx-frow"><div class="mtx-flabel">④ Zusammenführen</div><div class="mtx-fval">Die Leitung prüft Widersprüche und baut die Endfassung — kein eigener „Formatierer“.</div></div></div>'>
+<pre class="mtx-code"><span class="c">// Beispiellösung — Quartals-Report, drei Worker</span>
+orchestrator.<span class="fn">plan</span>({
+  task: <span class="str">"Quartals-Report Q1"</span>,
+  subagents: [
+    { role: <span class="str">"Daten-Agent"</span>,             <span class="c">// <span class="src">A</span> Fokus · <span class="src">D</span> read-only</span>
+      tools: [ postgres-mcp, jira-mcp ],
+      returns: <span class="str">"Kennzahlen-Tabelle"</span> },
+    { role: <span class="str">"Recherche-Agent"</span>,         <span class="c">// <span class="src">B</span> eigener Context · <span class="src">C</span> parallel</span>
+      tools: [ confluence-mcp, web-search ],
+      returns: <span class="str">"Markt-Briefing"</span> },
+    { role: <span class="str">"Draft-Agent"</span>,             <span class="c">// schreibt aus Tabelle + Briefing</span>
+      tools: [ confluence-mcp ],
+      returns: <span class="str">"Report-Entwurf"</span> },
+  ],
+  synthesize: <span class="str">true</span>                     <span class="c">// Orchestrator baut die Endfassung</span>
+});</pre>
           </div>
         </div>
 
-        <!-- Rechts: Quellen-Spickzettel + Tool-Ideen -->
+        <!-- Rechts: Checkliste + Aufgaben-Ideen -->
         <div style="display: flex; flex-direction: column; gap: 14px; min-height: 0;">
 
           <div class="card" style="padding: 16px 22px;">
-            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">Spickzettel · Woher bekommt das Modell den Wert?</div>
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">Checkliste · Braucht das einen eigenen Subagenten?</div>
             <div style="margin-top: 6px;">
               <div class="mtx-src-row">
                 <div class="mtx-src-chip">A</div>
-                <div><div class="mtx-src-name">Nutzer-Anfrage</div><div class="mtx-src-desc" data-nd='Steht schon wörtlich im Auftrag — <em>„buch den großen Raum für Donnerstag“</em>.'>Steht schon wörtlich im Auftrag — <em>„leg ein Ticket für den Login-Bug an“</em>.</div></div>
+                <div><div class="mtx-src-name">Eigener Fokus</div><div class="mtx-src-desc">Eine klar abgegrenzte Rolle mit eigenem System-Prompt — ein Job, gut gemacht.</div></div>
               </div>
               <div class="mtx-src-row">
                 <div class="mtx-src-chip">B</div>
-                <div><div class="mtx-src-name">Rückfrage</div><div class="mtx-src-desc">Fehlt und ist wichtig → das Modell muss <em>nachfragen</em>, statt zu raten. Die Beschreibung sollte das sagen.</div></div>
+                <div><div class="mtx-src-name">Eigener Context</div><div class="mtx-src-desc">Die Teilaufgabe würde ein gemeinsames Fenster sprengen — sie braucht frischen Kontext.</div></div>
               </div>
               <div class="mtx-src-row">
                 <div class="mtx-src-chip">C</div>
-                <div><div class="mtx-src-name">Session / Kontext</div><div class="mtx-src-desc">Ergibt sich aus dem bisherigen Gespräch, angehängten Dateien oder dem geöffneten Projekt.</div></div>
+                <div><div class="mtx-src-name">Parallelisierbar</div><div class="mtx-src-desc">Läuft unabhängig von den anderen Rollen — kann gleichzeitig arbeiten.</div></div>
               </div>
               <div class="mtx-src-row">
                 <div class="mtx-src-chip">D</div>
-                <div><div class="mtx-src-name">Anderer Tool-Call</div><div class="mtx-src-desc" data-nd='Ein Such-Werkzeug liefert vorher die ID — erst <em>suchen</em>, dann <em>ändern</em>.'>Ein Lookup-Tool liefert vorher die ID — erst <em>search_x</em>, dann <em>update_x</em>.</div></div>
+                <div><div class="mtx-src-name">Eigene Tools / Rechte</div><div class="mtx-src-desc" data-nd='Braucht Zugänge, die andere <em>nicht</em> haben sollen — z.B. nur lesen statt schreiben.'>Braucht Tools/Rechte, die andere <em>nicht</em> haben sollen — least privilege pro Rolle.</div></div>
               </div>
               <div class="mtx-src-row">
                 <div class="mtx-src-chip">E</div>
-                <div><div class="mtx-src-name">Config / Default</div><div class="mtx-src-desc">Fest hinterlegt (Profil, Projekt, Umgebung) — gehört dann oft <em>gar nicht</em> ins Schema.</div></div>
+                <div><div class="mtx-src-name">Kein eigener Agent</div><div class="mtx-src-desc">Trivial oder rein zusammenfügend → der <em>Orchestrator</em> macht es beim Synthetisieren selbst.</div></div>
               </div>
             </div>
           </div>
 
           <div class="card mtx-ex" style="padding: 16px 22px; flex: 1; min-height: 0;">
-            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Tool-Ideen · pickt eine — oder nehmt eine echte aus eurem Alltag</div>
-            <div style="margin-top: 6px;" data-nd='<div class="mtx-idea"><div class="i-name">urlaub_beantragen</div><div class="i-desc">Urlaubsantrag im HR-System einreichen.</div></div><div class="mtx-idea"><div class="i-name">raum_buchen</div><div class="i-desc">Meetingraum für einen Termin reservieren.</div></div><div class="mtx-idea"><div class="i-name">bericht_ziehen</div><div class="i-desc">Monatszahlen aus dem CRM zusammenstellen.</div></div><div class="mtx-idea"><div class="i-name">rechnung_pruefen</div><div class="i-desc">Status einer Eingangsrechnung abfragen.</div></div>'>
-              <div class="mtx-idea"><div class="i-name">create_ticket</div><div class="i-desc">Bug-Ticket im Tracker anlegen.</div></div>
-              <div class="mtx-idea"><div class="i-name">trigger_deploy</div><div class="i-desc">Deployment einer Umgebung anstoßen.</div></div>
-              <div class="mtx-idea"><div class="i-name">query_logs</div><div class="i-desc">Fehler-Logs eines Service durchsuchen.</div></div>
-              <div class="mtx-idea"><div class="i-name">summarize_prs</div><div class="i-desc">Gemergte PRs der Woche einsammeln.</div></div>
+            <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Aufgaben-Ideen · pickt eine — oder nehmt eine echte aus eurem Alltag</div>
+            <div style="margin-top: 6px;" data-nd='<div class="mtx-idea"><div class="i-name">Quartalsbericht</div><div class="i-desc">Zahlen, Markt, Entwurf zusammenstellen.</div></div><div class="mtx-idea"><div class="i-name">Onboarding-Paket</div><div class="i-desc">Doku, Checkliste und Zugänge für neue Leute.</div></div><div class="mtx-idea"><div class="i-name">Angebots-Recherche</div><div class="i-desc">Mehrere Anbieter parallel vergleichen.</div></div><div class="mtx-idea"><div class="i-name">Event-Planung</div><div class="i-desc">Location, Catering, Einladungen koordinieren.</div></div>'>
+              <div class="mtx-idea"><div class="i-name">quartals_report</div><div class="i-desc">Zahlen, Markt-Kontext, Entwurf zusammenstellen.</div></div>
+              <div class="mtx-idea"><div class="i-name">repo_migration</div><div class="i-desc">Eine API-Änderung über viele Dateien ziehen.</div></div>
+              <div class="mtx-idea"><div class="i-name">markt_analyse</div><div class="i-desc">Viele Quellen parallel lesen und verdichten.</div></div>
+              <div class="mtx-idea"><div class="i-name">incident_postmortem</div><div class="i-desc">Logs, Tickets und Timeline zusammenführen.</div></div>
             </div>
           </div>
 
           <div class="card mtx-sol" hidden style="padding: 16px 22px; flex: 1; min-height: 0;">
-            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">So füllt das Modell die Parameter — drei Fälle</div>
+            <div class="mono" style="font-size: 12px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase;">So prüft der Team-Kritiker — drei Vorschläge</div>
             <div style="margin-top: 6px;">
               <div class="mtx-dlg">
-                <div class="d-user">„Wie wird das Wetter <em>morgen in Hamburg</em>?“</div>
-                <div class="d-act" data-nd='→ <b>wetter_abfragen</b>( Ort: <b>Hamburg</b> <span class="src">A</span>, Tag: <b>morgen</b> <span class="src">A</span> ) — alles steht im Auftrag.'>→ get_weather( ort: <b>"Hamburg"</b> <span class="src">A</span>, tag: <b>"morgen"</b> <span class="src">A</span> ) — alles steht im Auftrag.</div>
+                <div class="d-user">„<em>Daten-Agent</em> — zieht Kennzahlen aus DB &amp; Tickets.“</div>
+                <div class="d-act" data-nd='→ eigener Agent: <b>A</b> klarer Fokus, <b>D</b> nur-Lesen-Rechte. Bleibt.'>→ eigener Agent: <b>A</b> Fokus, <b>D</b> read-only. Bleibt.</div>
               </div>
               <div class="mtx-dlg">
-                <div class="d-user">„Wie wird das Wetter?“</div>
-                <div class="d-act" data-nd='→ kein Werkzeug-Einsatz. Erst Rückfrage <span class="src">B</span>: <b>„Für welchen Ort?“</b> — die Pflicht-Angabe fehlt, raten verboten.'>→ kein Tool-Call. Erst Rückfrage <span class="src">B</span>: <b>„Für welchen Ort?“</b> — der Pflicht-Parameter fehlt, raten verboten.</div>
+                <div class="d-user">„<em>Recherche-Agent</em> — liest Wiki &amp; Web parallel.“</div>
+                <div class="d-act">→ eigener Agent: <b>B</b> eigener Context, <b>C</b> läuft parallel. Bleibt.</div>
               </div>
               <div class="mtx-dlg">
-                <div class="d-user">„Wie wird das Wetter <em>in Kiel</em>?“</div>
-                <div class="d-act" data-nd='→ <b>wetter_abfragen</b>( Ort: <b>Kiel</b> <span class="src">A</span> ) — Tag weggelassen, Standard greift: <b>heute</b> <span class="src">E</span>.'>→ get_weather( ort: <b>"Kiel"</b> <span class="src">A</span> ) — tag weggelassen, Default greift: <b>heute</b> <span class="src">E</span>.</div>
+                <div class="d-user">„<em>Formatierer</em> — macht hübsche Überschriften.“</div>
+                <div class="d-act" data-nd='→ <b>kein</b> eigener Agent: <span class="src">E</span> — das macht die Leitung beim Zusammenführen selbst. Gestrichen.'>→ <b>kein</b> eigener Agent: <span class="src">E</span> — der Orchestrator macht das bei der Synthese. Gestrichen.</div>
               </div>
             </div>
           </div>
@@ -1516,9 +1438,9 @@ server.<span class="fn">registerTool</span>(
       </div>
 
       <div class="callout" style="margin-top: 16px; padding: 14px 24px; min-height: 0;">
-        <div class="callout-label"><span class="mtx-ex">Debrief · 5 min</span><span class="mtx-sol" hidden>Warum das eine gute Lösung ist</span></div>
+        <div class="callout-label"><span class="mtx-ex">Debrief · 5 min</span><span class="mtx-sol" hidden>Warum das ein gutes Team ist</span></div>
         <div class="callout-body" style="font-size: 19px;">
-          <span class="mtx-ex">Welcher Parameter war <strong>strittig</strong> — und welche Quelle hat gewonnen? Und: Welche Angabe gehört <strong>gar nicht ins Tool</strong>, sondern in die Konfiguration?</span><span class="mtx-sol" hidden><strong>Minimal:</strong> nur zwei Angaben — kein Zugangsschlüssel, keine Einheit, kein Format: das gehört in die Config <span class="mono" style="font-size: 15px; color: var(--accent);">E</span>, nicht ins Schema. Und die Beschreibung sagt dem Modell explizit, wann es <strong>nachfragen</strong> statt raten soll.</span>
+          <span class="mtx-ex">Welcher Subagent war <strong>strittig</strong> — eigener Agent oder zurück in den Orchestrator (<span class="mono" style="font-size: 15px; color: var(--accent);">E</span>)? Und: hat ein Worker <strong>Tools, die er gar nicht braucht</strong>?</span><span class="mtx-sol" hidden><strong>Minimal:</strong> drei Rollen, jede mit eigenem Fokus und nur den nötigen Tools. Der „Formatierer“ ist <span class="mono" style="font-size: 15px; color: var(--accent);">E</span> — kein eigener Agent. Und der Daten-Agent bleibt <strong>read-only</strong>: keine Schreibrechte, die er nie braucht.</span>
         </div>
       </div>
 
@@ -1529,30 +1451,30 @@ server.<span class="fn">registerTool</span>(
       <div class="ex-eg" role="dialog" aria-modal="true" aria-label="Beispiel-Runde">
         <div class="ex-eg-head">
           <div>
-            <div class="eg-eyebrow">Beispiel-Runde · so entsteht ein Tool-Steckbrief</div>
-            <div class="eg-title" data-nd="Beispiel-Runde: <span class='accent'>Wetter abfragen</span> — wer fragt was?">Beispiel-Runde: <span class="accent">get_weather</span> — wer fragt was?</div>
+            <div class="eg-eyebrow">Beispiel-Runde · so entsteht ein Team-Entwurf</div>
+            <div class="eg-title" data-nd="Beispiel-Runde: <span class='accent'>Quartalsbericht</span> — wer fragt was?">Beispiel-Runde: <span class="accent">Quartals-Report</span> — wer fragt was?</div>
           </div>
           <button class="ex-eg-close" type="button" aria-label="Schließen">✕</button>
         </div>
         <div class="ex-eg-body">
           <div class="eg-script">
-            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Beschreibung</span></div><div class="eg-say">Dein Werkzeug heißt nur „Wetter“. Wenn jemand fragt „wie wird das Wetter?“ — was tue ich, wenn <strong>kein Ort</strong> dasteht?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say">Stimmt. Die Beschreibung muss sagen: fehlt der Ort, <strong>nachfragen</strong> — nicht raten.</div></div>
-            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Angabe · Ort</span></div><div class="eg-say">Erste Angabe: Ort. Woher nehme ich den?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say">Quelle <strong>A</strong> — steht im Auftrag: „morgen in Hamburg“.</div></div>
-            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Angabe · Tag</span></div><div class="eg-say">Und der Tag? Wenn keiner gesagt wird?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say" data-nd="Optional, Standard heute — Quelle E. Keine Pflicht-Angabe.">Optional, Standard heute — Quelle E. Kein Pflichtfeld.</div></div>
-            <div class="eg-line nav"><div class="eg-who">Modell-Anwalt<span class="eg-gate">Konfiguration</span></div><div class="eg-say" data-nd="Brauchst du einen Zugangsschlüssel im Steckbrief?">Brauchst du einen Zugangsschlüssel im Schema?</div></div>
-            <div class="eg-line drv"><div class="eg-who">Autor</div><div class="eg-say" data-nd="Nein — der gehört in die Konfiguration, nicht in den Steckbrief. Raus damit.">Nein — der ist Config, nicht Sache des Modells. Raus aus dem Schema.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Team-Kritiker<span class="eg-gate">Zerlegen</span></div><div class="eg-say">Bevor wir Rollen verteilen: Welche Teile laufen <strong>unabhängig</strong> voneinander?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Architekt</div><div class="eg-say">Zahlen ziehen und Markt recherchieren — die brauchen einander nicht. Erst der Entwurf braucht beides.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Team-Kritiker<span class="eg-gate">Subagent · Daten</span></div><div class="eg-say">Der Daten-Agent — braucht der Schreibrechte?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Architekt</div><div class="eg-say">Nein. Nur lesen — Checkliste <strong>D</strong>. Schreibrechte hätte er nie gebraucht.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Team-Kritiker<span class="eg-gate">Subagent · Format</span></div><div class="eg-say">Du wolltest noch einen „Formatierer“. Braucht der wirklich einen eigenen Agenten?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Architekt</div><div class="eg-say" data-nd="Stimmt — das ist E. Die Leitung macht die Endfassung selbst. Gestrichen.">Stimmt — das ist E. Der Orchestrator macht das bei der Synthese. Gestrichen.</div></div>
+            <div class="eg-line nav"><div class="eg-who">Team-Kritiker<span class="eg-gate">Synthese</span></div><div class="eg-say">Wer baut am Ende den Report?</div></div>
+            <div class="eg-line drv"><div class="eg-who">Architekt</div><div class="eg-say">Immer der Orchestrator — nie ein Worker. Der sieht alle Teilergebnisse.</div></div>
           </div>
           <div class="eg-aside">
             <div class="eg-setup">
               <div class="eg-setup-label">Die Aufgabe</div>
-              <div class="eg-setup-task" data-nd="<strong>Werkzeug-Steckbrief</strong> — Name, Beschreibung, benötigte Angaben. Für jede Angabe: woher bekommt das Modell den Wert? In 15 Minuten."><strong>Tool-Steckbrief</strong> — Name, Beschreibung, Parameter-Schema. Für jeden Parameter: woher bekommt das Modell den Wert? In 15 Minuten.</div>
+              <div class="eg-setup-task" data-nd="<strong>Team-Steckbrief</strong> — welche Helfer, je Rolle/Werkzeuge/Rückgabe. Für jeden: braucht das einen eigenen? In 15 Minuten."><strong>Team-Steckbrief</strong> — welche Subagenten, je Rolle/Tools/Rückgabe. Für jeden: braucht das einen eigenen Agenten? In 15 Minuten.</div>
             </div>
             <div class="eg-learning">
               <div class="eg-learning-label">Das Learning</div>
-              <div class="eg-learning-text" data-nd="Der Modell-Anwalt hat keinen Steckbrief geschrieben — er hat bei jeder Angabe nur gefragt: <em>„Woher weiß ich das?“</em> Das deckte zwei Dinge auf: eine Beschreibung, die <strong>Nachfragen statt Raten</strong> erzwingt, und eine Angabe (Zugangsschlüssel), die gar nicht in den Steckbrief gehört. Gutes Werkzeug-Design entscheidet sich nicht am Typ — sondern an der <strong>Quelle jedes Werts</strong>.">Der Modell-Anwalt hat kein Schema geschrieben — er hat bei jedem Wert nur gefragt: <em>„Woher weiß ich das?“</em> Das deckte zwei Dinge auf: eine Beschreibung, die <strong>Nachfragen statt Raten</strong> erzwingt, und ein Feld (Zugangsschlüssel), das gar nicht ins Schema gehört. Gutes Tool-Design entscheidet sich nicht am Parameter-Typ — sondern an der <strong>Quelle jedes Werts</strong>.</div>
+              <div class="eg-learning-text" data-nd="Der Team-Kritiker hat kein Team entworfen — er hat bei jeder Rolle nur gefragt: <em>„Braucht das wirklich einen eigenen?“</em> Das strich eine Rolle (Formatierer → Leitung) und beschränkte den Daten-Helfer aufs Lesen. Gute Team-Architektur entscheidet sich nicht an der <strong>Zahl</strong> der Helfer — sondern an Fokus, Kontext und Rechten je Rolle.">Der Team-Kritiker hat kein Team entworfen — er hat bei jeder Rolle nur gefragt: <em>„Braucht das wirklich einen eigenen Agenten?“</em> Das strich eine Rolle (Formatierer → Orchestrator) und beschränkte den Daten-Agenten auf read-only. Gute Team-Architektur entscheidet sich nicht an der <strong>Zahl</strong> der Agenten — sondern an Fokus, Context und Rechten je Rolle.</div>
             </div>
           </div>
         </div>
@@ -1595,69 +1517,68 @@ server.<span class="fn">registerTool</span>(
   <section data-screen-label="08b Wissenscheck Kapitel-Recap">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Wissenscheck</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Wissenscheck</span>
         <span></span>
       </div>
 
       <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.03em; margin: 40px 0 0;">Sechs Fragen quer durchs Kapitel — jede mit sofortigem Richtig/Falsch-Feedback. Diesmal <strong style="color: var(--ink);">gibt es eine richtige Antwort.</strong></div>
-      <div class="eyebrow" style="margin: 18px 0 22px;">Sitzt das Modell — Workflow, Agent, Tool-Use, MCP?</div>
+      <div class="eyebrow" style="margin: 18px 0 22px;">Sitzt das Modell — Single, Team, Orchestrator, Context, MCP?</div>
       <h2 class="title" style="font-size: 52px; margin-bottom: 18px;">Prüf dich selbst — <span class="accent">eine</span> richtige Antwort pro Frage.</h2>
 
       <div class="quiz" data-quiz="recap">
 
-        <div class="qitem" data-correct="workflow">
-          <div class="qbody"><em>„E-Mail empfangen → klassifizieren → Entwurf → Mensch gibt frei → senden."</em> Fester Pfad, vorab festgelegt.</div>
+        <div class="qitem" data-correct="single">
+          <div class="qbody"><em>„Wie ist der Status von Ticket PROJ-123?“</em> Eine Frage, eine Quelle, eine Antwort.</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="workflow">Workflow</button>
-            <button class="qchoice" data-key="agent">Agent</button>
+            <button class="qchoice" data-key="single">Single-Agent</button>
+            <button class="qchoice" data-key="team">Orchestrator-Team</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Workflow</span> — der Pfad steht fest, <em>bevor</em> etwas läuft. Das Modell füllt nur einzelne, fest verdrahtete Schritte.</div>
+          <div class="qfb"><span class="ok">✓ Single-Agent</span> — schmale Aufgabe, ein Tool-Call genügt. Ein Team wäre nur Overhead.</div>
         </div>
 
-        <div class="qitem" data-correct="agent">
-          <div class="qbody"><em>„Das Modell wählt selbst, welche Werkzeuge es in welcher Reihenfolge nutzt — bis das Ziel erreicht ist."</em></div>
+        <div class="qitem" data-correct="orchestrator">
+          <div class="qbody"><em>„Zerlegt die Aufgabe, verteilt sie an Rollen und führt am Ende zusammen — arbeitet aber selbst nicht inhaltlich."</em> Wer ist das?</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="workflow">Workflow</button>
-            <button class="qchoice" data-key="agent">Agent</button>
+            <button class="qchoice" data-key="orchestrator">Der Orchestrator</button>
+            <button class="qchoice" data-key="worker">Ein Subagent</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Agent</span> — nicht der Code, das <em>Modell</em> steuert den Pfad. Du setzt nur das Ziel, nicht die Schritte.</div>
+          <div class="qfb"><span class="ok">✓ Orchestrator</span> — plant, delegiert, synthetisiert. Die Subagenten führen die eigentliche Arbeit aus.</div>
         </div>
 
-        <div class="qitem" data-correct="routing">
-          <div class="qbody"><em>„Ein erster Schritt sortiert die Anfrage und leitet sie an den passenden Spezial-Prompt."</em> Welches Workflow-Muster?</div>
+        <div class="qitem" data-correct="context">
+          <div class="qbody">Jeder Subagent bekommt ein <strong>eigenes Context-Fenster</strong> — vor allem, damit …</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="chaining">Prompt-Chaining</button>
-            <button class="qchoice" data-key="routing">Routing</button>
-            <button class="qchoice" data-key="parallel">Parallelisierung</button>
+            <button class="qchoice" data-key="context">… sich Aufgaben nicht vermischen &amp; mehr Kontext nutzbar wird</button>
+            <button class="qchoice" data-key="cost">… der Aufruf nichts kostet</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Routing</span> — erst klassifizieren, dann in den richtigen Zweig leiten. <span class="no">Chaining</span> = feste Schrittkette, <span class="no">Parallelisierung</span> = mehrere Wege gleichzeitig.</div>
+          <div class="qfb"><span class="ok">✓ Getrennte Fenster</span> — frischer Fokus pro Rolle, keine Vermischung. In Summe steht dem Team viel mehr Kontext zur Verfügung.</div>
         </div>
 
-        <div class="qitem" data-correct="nocall">
-          <div class="qbody">Der <em>Tool-Use-Loop</em> läuft so lange, bis …</div>
+        <div class="qitem" data-correct="loop">
+          <div class="qbody">In jedem einzelnen Subagenten läuft …</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="fixed">… eine feste Schrittzahl erreicht ist</button>
-            <button class="qchoice" data-key="nocall">… das Modell keinen Tool-Call mehr ausgibt</button>
+            <button class="qchoice" data-key="loop">… sein eigener Tool-Use-Loop</button>
+            <button class="qchoice" data-key="orch">… der Loop des Orchestrators</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Kein Tool-Call mehr</span> — das Modell signalisiert selbst, dass es fertig ist. Eine Max-Steps-Grenze dient nur als Notbremse, nicht als Taktgeber.</div>
+          <div class="qfb"><span class="ok">✓ Eigener Tool-Use-Loop</span> — jeder Worker registriert Tools, ruft <span class="mono">tool_use</span>, bekommt <span class="mono">tool_result</span>. Derselbe Mechanismus, nur pro Rolle.</div>
         </div>
 
-        <div class="qitem" data-correct="tools">
-          <div class="qbody"><strong>MCP</strong> verbindet vor allem …</div>
+        <div class="qitem" data-correct="role">
+          <div class="qbody">Welche <strong>MCP-Server</strong> bekommt ein Subagent?</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="tools">… einen Agenten mit Werkzeugen &amp; Daten</button>
-            <button class="qchoice" data-key="agents">… mehrere Agenten untereinander</button>
+            <button class="qchoice" data-key="role">… nur die, die seine Rolle braucht</button>
+            <button class="qchoice" data-key="all">… alle verfügbaren, sicherheitshalber</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Agent ↔ Werkzeuge</span> — ein Protokoll, viele Quellen (USB-C für LLM-Tools). <span class="no">Agenten untereinander</span> verbindet A2A.</div>
+          <div class="qfb"><span class="ok">✓ Nur die nötigen</span> — least privilege: der Recherche-Agent liest, der Draft-Agent schreibt. Kein Worker bekommt Rechte, die er nie braucht.</div>
         </div>
 
-        <div class="qitem" data-correct="workflow">
+        <div class="qitem" data-correct="single">
           <div class="qbody">Faustregel für die Architektur-Wahl im Zweifelsfall:</div>
           <div class="qchoices">
-            <button class="qchoice" data-key="agent">Agent — maximale Flexibilität</button>
-            <button class="qchoice" data-key="workflow">Workflow — Agent nur wenn nötig</button>
+            <button class="qchoice" data-key="team">Team — maximale Parallelität</button>
+            <button class="qchoice" data-key="single">Single-Agent — Team nur wenn nötig</button>
           </div>
-          <div class="qfb"><span class="ok">✓ Erst Workflow</span> — deterministisch, testbar, günstiger. Ein Agent kommt erst, wenn sich der Pfad <em>nicht</em> vorab festlegen lässt.</div>
+          <div class="qfb"><span class="ok">✓ Erst Single-Agent</span> — einfacher, billiger, leichter zu debuggen. Ein Team kommt erst, wenn ein einzelner Agent an Context oder Breite scheitert.</div>
         </div>
 
       </div>
@@ -1678,7 +1599,7 @@ server.<span class="fn">registerTool</span>(
   <section data-screen-label="09 Cheat Sheet">
     <div class="chrome">
       <div class="topbar">
-        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Workflows vs Agents · MCP</span><span class="bc-sep">›</span>Mitnehmen</span>
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 03 · Agent-Teams · Orchestrator</span><span class="bc-sep">›</span>Mitnehmen</span>
         <span></span>
       </div>
 
@@ -1687,7 +1608,7 @@ server.<span class="fn">registerTool</span>(
           <div class="eyebrow">Cheat-Sheet — eine Folie, alles drauf</div>
           <h2 class="title" style="font-size: 56px; margin-bottom: 14px;">Architektur auf <span class="accent">einer Seite</span>.</h2>
           <p class="body" style="margin: 0; max-width: 1100px; font-size: 19px;">
-            Vier Stationen mit Auslöser, Default-Werkzeug, Failure-Mode und einer Daumenregel — abfotografieren, an die Wand hängen.
+            Vier Team-Stationen mit Auslöser, Default-Werkzeug, Failure-Mode und einer Daumenregel — abfotografieren, an die Wand hängen.
           </p>
         </div>
       </div>
@@ -1695,85 +1616,85 @@ server.<span class="fn">registerTool</span>(
       <div class="cs-grid">
         <div class="cs-card">
           <div class="cs-num">01</div>
-          <div class="cs-name">Augmented LLM</div>
+          <div class="cs-name">Single-Agent</div>
           <div class="cs-row">
             <div class="cs-label">Auslöser</div>
-            <div class="cs-val">eine Antwort, keine Verzweigung nötig</div>
+            <div class="cs-val">schmale Aufgabe, passt in einen Context</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Default-Tool</div>
-            <div class="cs-val mono">chat() + RAG / Tool-Use</div>
+            <div class="cs-val mono">ein Loop mit Tool-Use</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Failure-Mode</div>
-            <div class="cs-val">Aufgabe zu groß für einen Aufruf — Halluzination</div>
+            <div class="cs-val">Context-Überlauf, Fokus-Drift</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
             <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
-            <div class="cs-val"><strong>Erstmal nur eine Antwort holen.</strong></div>
+            <div class="cs-val"><strong>Erst hiermit versuchen.</strong></div>
           </div>
         </div>
 
         <div class="cs-card">
           <div class="cs-num">02</div>
-          <div class="cs-name">Workflow</div>
+          <div class="cs-name">Orchestrator</div>
           <div class="cs-row">
             <div class="cs-label">Auslöser</div>
-            <div class="cs-val">Pfad ist bekannt, Schritte sind stabil</div>
+            <div class="cs-val">Aufgabe zu breit oder parallelisierbar</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Default-Tool</div>
-            <div class="cs-val mono">Chain · Router · Parallel</div>
+            <div class="cs-val mono">plan · delegate · synthesize</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Failure-Mode</div>
-            <div class="cs-val">starr — Ausnahmen werden zum Bug</div>
+            <div class="cs-val">arbeitet selbst, statt zu delegieren</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
             <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
-            <div class="cs-val"><strong>Code orchestriert — das Modell denkt.</strong></div>
+            <div class="cs-val"><strong>Koordinieren, nicht selbst tippen.</strong></div>
           </div>
         </div>
 
         <div class="cs-card">
           <div class="cs-num">03</div>
-          <div class="cs-name">Agent</div>
+          <div class="cs-name">Subagent</div>
           <div class="cs-row">
             <div class="cs-label">Auslöser</div>
-            <div class="cs-val">Schrittanzahl unbekannt, Pfad genuin offen</div>
+            <div class="cs-val">klar abgegrenzte Rolle, eigener Fokus</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Default-Tool</div>
-            <div class="cs-val mono">Loop mit Tool-Use + Stop-Conditions</div>
+            <div class="cs-val mono">eigener Context + nur Rollen-Tools</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Failure-Mode</div>
-            <div class="cs-val">Drift, endlose Schleifen, hohe Kosten</div>
+            <div class="cs-val">Rolle zu breit, zu viele Rechte</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
             <div class="cs-label" style="color: var(--accent);">Daumenregel</div>
-            <div class="cs-val"><strong>Loop-Limit + Mensch-im-Loop.</strong></div>
+            <div class="cs-val"><strong>Ein Job, least privilege.</strong></div>
           </div>
         </div>
 
         <div class="cs-card dark">
           <div class="cs-num">04</div>
-          <div class="cs-name">MCP</div>
+          <div class="cs-name">Synthese &amp; MCP</div>
           <div class="cs-row">
             <div class="cs-label">Auslöser</div>
-            <div class="cs-val">Tools sollen wiederverwendbar sein</div>
+            <div class="cs-val">Teilergebnisse müssen zusammen</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Default-Tool</div>
-            <div class="cs-val mono">MCP-Server pro Datenquelle</div>
+            <div class="cs-val mono">Orchestrator-Synthese · MCP pro Rolle</div>
           </div>
           <div class="cs-row">
             <div class="cs-label">Failure-Mode</div>
-            <div class="cs-val">N × M-Integrationen statt N + M</div>
+            <div class="cs-val">N Fragmente statt einer Antwort</div>
           </div>
           <div class="cs-row" style="margin-top: auto; padding-top: 14px;">
             <div class="cs-label" style="color: var(--accent-soft);">Daumenregel</div>
-            <div class="cs-val"><strong>Custom-Connector? Erst nach MCP fragen.</strong></div>
+            <div class="cs-val"><strong>Zusammenführen ist Chefsache.</strong></div>
           </div>
         </div>
       </div>
@@ -1782,16 +1703,16 @@ server.<span class="fn">registerTool</span>(
         <div class="mono" style="font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;">Wenn / Dann · drei Architektur-Heuristiken</div>
         <div class="cs-rules">
           <div class="cs-rule">
-            <div class="r-when">Wenn jemand „Agent" sagt</div>
-            <div class="r-then"><strong>Frag</strong>, welcher <em>Schritt</em> nicht vorab bekannt ist. Wenn keiner — Workflow.</div>
+            <div class="r-when">Wenn jemand „mehr Agenten“ will</div>
+            <div class="r-then"><strong>Frag</strong>, welche <em>Teilaufgabe</em> ein einzelner Agent nicht schafft. Wenn keine — ein Agent.</div>
           </div>
           <div class="cs-rule">
-            <div class="r-when">Wenn der Loop &gt; 10 Tool-Aufrufe braucht</div>
-            <div class="r-then"><strong>Zerlege.</strong> Orchestrator + Workers oder Sub-Workflow — keine 50-Step-Agents.</div>
+            <div class="r-when">Wenn ein Subagent &gt; die halbe Aufgabe macht</div>
+            <div class="r-then"><strong>Rolle zu breit.</strong> Enger schneiden — oder den Teil in die Synthese geben.</div>
           </div>
           <div class="cs-rule">
-            <div class="r-when">Wenn ein Tool irreversibel ist</div>
-            <div class="r-then"><strong>Mensch-im-Loop</strong> — Approval-Gate vor dem Aufruf, nicht danach.</div>
+            <div class="r-when">Wenn ein Worker schreiben/löschen kann, ohne es zu brauchen</div>
+            <div class="r-then"><strong>Rechte kürzen</strong> — least privilege pro Rolle, read-only als Default.</div>
           </div>
         </div>
       </div>
@@ -1799,7 +1720,7 @@ server.<span class="fn">registerTool</span>(
       <div class="callout" style="margin-top: 18px; padding: 14px 24px; min-height: 0;">
         <div class="callout-label">Mitnehmen</div>
         <div class="callout-body" style="font-size: 19px;">
-          Wähl die <strong>einfachste Architektur, die funktioniert</strong>: Workflow vor Agent, Agent nur bei genuin offenem Pfad — und <strong>Mensch-im-Loop</strong>, sobald ein Schritt irreversibel ist.
+          Wähl das <strong>kleinste Team, das die Aufgabe trägt</strong>: Single-Agent vor Team, ein Team nur bei breitem oder parallelem Auftrag — und der <strong>Orchestrator führt immer selbst zusammen</strong>.
         </div>
       </div>
 

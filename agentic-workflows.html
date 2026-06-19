@@ -644,7 +644,7 @@
           <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
             <div class="mono" style="font-size: 18px; color: var(--ink-3); letter-spacing: 0.1em;">02</div>
             <div style="font-family: var(--serif); font-size: 36px; font-weight: 500; margin-top: 4px;">Plan</div>
-            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">vorher denken, dann tippen</div>
+            <div style="font-size: 18px; color: var(--ink-3); margin-top: 4px;">erst denken, dann tippen</div>
           </div>
           <div class="mono accent" style="font-size: 28px;">→</div>
           <div style="background: var(--paper); border: 1px solid var(--ink); border-radius: 12px; padding: 22px 24px;">
@@ -734,6 +734,70 @@
       <div class="callout" style="margin-top: 20px; padding: 16px 24px; min-height: 0;">
         <div class="callout-label">Merksatz</div>
         <div class="callout-body" style="font-size: 20px;">Agentisch arbeiten heißt nicht „Agent macht alles allein". Es heißt: <strong>klare Phasen, klare Übergaben</strong> — der Agent füllt die Phasen, der Mensch öffnet die Tore.</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ===================== 02b WORKFLOW VS AGENT ===================== -->
+  <section data-screen-label="02b Workflow vs Agent">
+    <div class="chrome">
+      <div class="topbar">
+        <span><a class="home" href="index.html#kapitel"><span class="pip"></span>Übersicht</a><span class="bc-sep">›</span><span class="bc-chapter">Kap. 02 · Agentic Workflows</span><span class="bc-sep">›</span>Theorie</span>
+        <span></span>
+      </div>
+
+      <div class="eyebrow">Abgrenzung</div>
+      <h2 class="title" style="font-size: 56px;">Workflow <span style="color: var(--ink-3);">oder</span> <span class="accent">Agent</span>?</h2>
+
+      <p class="lede" style="margin-top: 4px; max-width: 1500px;">
+        Beide lassen ein Modell handeln — der Unterschied liegt darin, <strong>wer den Pfad bestimmt.</strong>
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 36px;">
+
+        <!-- Workflow -->
+        <div class="card" style="padding: 32px 36px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 15px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase;">Workflow</div>
+            <span class="pill outline">fester Pfad</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 38px; font-weight: 500; margin-top: 14px; line-height: 1.1;">Das Modell <span class="accent">füllt</span> die Schritte.</div>
+          <p style="font-size: 21px; line-height: 1.45; color: var(--ink-2); margin: 18px 0 0;">
+            Phasen und Übergänge stehen <em>vorher</em> fest. Das Modell entscheidet nicht über die Struktur, nur über den Inhalt jeder Phase.
+          </p>
+          <div style="height: 1px; background: var(--hair); margin: 22px 0;"></div>
+          <ul style="font-size: 20px; line-height: 1.5; padding-left: 24px; color: var(--ink-2); margin: 0;">
+            <li>vorhersagbar &amp; wiederholbar</li>
+            <li>prüfbar an jedem Übergang</li>
+            <li>der Mensch öffnet die Tore</li>
+          </ul>
+        </div>
+
+        <!-- Agent -->
+        <div class="card dark" style="padding: 32px 36px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="mono" style="font-size: 15px; color: #c8c2b6; letter-spacing: 0.08em; text-transform: uppercase;">Agent</div>
+            <span class="pill accent">freie Wahl</span>
+          </div>
+          <div style="font-family: var(--serif); font-size: 38px; font-weight: 500; margin-top: 14px; line-height: 1.1; color: #f0ece3;">Das Modell <span style="color: var(--accent-soft);">wählt</span> den Pfad.</div>
+          <p style="font-size: 21px; line-height: 1.45; color: #d8d2c5; margin: 18px 0 0;">
+            Nur das <em>Ziel</em> steht fest. Das Modell entscheidet zur Laufzeit selbst, welche Werkzeuge es in welcher Reihenfolge aufruft — und läuft in einer Schleife, bis das Ziel erreicht ist.
+          </p>
+          <div style="height: 1px; background: rgba(255,255,255,0.12); margin: 22px 0;"></div>
+          <ul style="font-size: 20px; line-height: 1.5; padding-left: 24px; color: #d8d2c5; margin: 0;">
+            <li>flexibel, kann verzweigen &amp; wiederholen</li>
+            <li>weniger vorhersagbar</li>
+            <li>steuert die eigene Schleife</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="callout" style="margin-top: 28px; padding: 16px 24px; min-height: 0;">
+        <div class="callout-label">Brücke</div>
+        <div class="callout-body" style="font-size: 20px;"><strong>Explore → Plan → Execute → Commit</strong> ist beides zugleich: ein <strong>Agent, der einem Workflow folgt</strong>. Die Autonomie des Agenten bekommt die Leitplanken fester Phasen.</div>
       </div>
 
     </div>
@@ -935,11 +999,11 @@
             <div class="mono accent" style="font-size: 18px;">Halluzinierten Konventionen</div>
           </div>
           <p style="font-size: 19px; line-height: 1.45; color: var(--ink-2); margin: 10px 0 0;">
-            Ohne Lesen erfindet der Agent Pfade, Namen und Patterns, die im Repo gar nicht existieren — Code, der lokal nach Lehrbuch aussieht und im Projekt komplett aus dem Rahmen fällt.
+            Ohne Lesen erfindet der Agent Pfade, Namen und Patterns, die im Repo gar nicht existieren — Code, der für sich genommen nach Lehrbuch aussieht und im Projekt komplett aus dem Rahmen fällt.
           </p>
           <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-2); border-radius: 8px; font-family: var(--mono); font-size: 15px; color: var(--ink-2);">
             <span style="color: var(--ink-3);">// Anti-Pattern:</span><br/>
-            „Ich nehme an, ihr habt einen <span class="accent">UserService</span>…"
+            „Ich nehme an, ihr macht das mit einer <span class="accent">Standard-Vorlage</span>…"
           </div>
         </div>
 
@@ -967,11 +1031,11 @@
             <div class="mono accent" style="font-size: 18px;">Theorie ohne Realität</div>
           </div>
           <p style="font-size: 19px; line-height: 1.45; color: var(--ink-2); margin: 10px 0 0;">
-            Pläne, die nie laufen, sind nie falsifizierbar. Erst die Ausführung — Schritt für Schritt, mit Tests dazwischen — zeigt, was wirklich greift. Kleine Iterationen schlagen den großen Wurf.
+            Pläne, die nie laufen, lassen sich nie überprüfen. Erst die Ausführung — Schritt für Schritt, mit Tests dazwischen — zeigt, was wirklich greift. Kleine Iterationen schlagen den großen Wurf.
           </p>
           <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-2); border-radius: 8px; font-family: var(--mono); font-size: 15px; color: var(--ink-2);">
             <span style="color: var(--ink-3);">// Anti-Pattern:</span><br/>
-            „Im Prinzip funktioniert das so…" — ohne <span class="accent">npm test</span>.
+            „Im Prinzip funktioniert das so…" — <span class="accent">ohne es je auszuprobieren</span>.
           </div>
         </div>
 
@@ -1056,7 +1120,7 @@
             <div>
               <div style="font-family: var(--serif); font-size: 26px; font-weight: 500; color: #f0ece3;">Mitten in <em>Execute</em> die Aufgabe ändern</div>
               <p style="font-size: 19px; line-height: 1.5; color: #d8d2c5; margin: 6px 0 0;">
-                Neue Anforderung = zurück zu <span class="mono">Plan</span>. Nicht im laufenden Loop draufsatteln — sonst verwässert der Kontext.
+                Neue Anforderung = zurück zu <span class="mono">Plan</span>. Nicht im laufenden Loop dranhängen — sonst verwässert der Kontext.
               </p>
             </div>
             <div>
@@ -1270,12 +1334,8 @@
         <span></span>
       </div>
 
-      <div class="eyebrow" style="margin: 44px 0 26px;">Warm-up · Phase erkennen</div>
+      <div class="eyebrow" style="margin: 44px 0 26px;">Aufgabe · Phase erkennen</div>
       <h2 class="title" style="font-size: 40px; margin-bottom: 6px;">Ordne jedes Zitat der <span class="accent">richtigen EPEC-Phase</span> zu.</h2>
-      <p class="body" style="margin: 0; max-width: 1600px; font-size: 19px;">
-        Klick die Phase, die du erkennst — grün = richtig, rot = daneben.
-      </p>
-
       <!-- Phasen-Legende -->
       <div class="options-rail" style="grid-template-columns: repeat(4, 1fr); margin-top: 14px;">
         <div class="opt"><div class="opt-name">Explore</div><div class="opt-tag">lesen · verstehen, was da ist</div></div>
@@ -1310,7 +1370,7 @@
         </div>
 
         <div class="qitem" data-correct="code">
-          <div class="qbody" data-nd='<em>„Abschnitt 3 angepasst, zwei Zahlen korrigiert, Gegencheck mit der Quelle läuft noch — von 17 Positionen passen jetzt 15."</em>'><em>„<span class="mono">service.ts</span> +47 / −2, <span class="mono">pnpm test</span> grün, ein Snapshot war stale — neu gebaut, jetzt 17 passed."</em></div>
+          <div class="qbody" data-nd='<em>„Abschnitt 3 angepasst, zwei Zahlen korrigiert, Gegencheck mit der Quelle läuft noch — von 17 Positionen passen jetzt 15."</em>'><em>„<span class="mono">service.ts</span> geändert, <span class="mono">pnpm test</span> grün, ein Snapshot war veraltet — neu erstellt, jetzt 17 passed."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="explore">Explore</button>
             <button class="qchoice" data-key="plan">Plan</button>
@@ -1343,7 +1403,7 @@
         </div>
 
         <div class="qitem" data-correct="explore">
-          <div class="qbody" data-nd='<em>„Stichwortsuche „Versandprozess" → 3 Treffer, alle im Ops-Handbuch. Ihr habt also schon einen definierten Ablauf. Gut zu wissen."</em>'><em>„<span class="mono">grep -r &quot;sendTransactional&quot;</span> → 3 Treffer, alle in <span class="mono">src/email/</span>. Ihr habt also schon einen E-Mail-Layer. Gut zu wissen."</em></div>
+          <div class="qbody" data-nd='<em>„Stichwortsuche „Versandprozess" → 3 Treffer, alle im Ops-Handbuch. Ihr habt also schon einen definierten Ablauf. Gut zu wissen."</em>'><em>„<span class="mono">suche &quot;sendTransactional&quot;</span> → 3 Treffer, alle in <span class="mono">src/email/</span>. Ihr habt also schon einen E-Mail-Layer. Gut zu wissen."</em></div>
           <div class="qchoices">
             <button class="qchoice" data-key="explore">Explore</button>
             <button class="qchoice" data-key="plan">Plan</button>
@@ -1375,7 +1435,7 @@
         <span></span>
       </div>
 
-      <div class="eyebrow">Disziplin spüren, indem man sie verletzt</div>
+      <div class="eyebrow">Der EPCC-Saboteur</div>
       <h2 class="title">Fünf Turns. Jede <span class="accent">übersprungene Phase</span> kostet — Bugs und Tokens.</h2>
       <p class="ex-instructions" style="margin-top: 8px;" data-nd='Aufgabe: <em>„Monatsreport aus drei Umsatzquellen nach festem Template bauen."</em> Pro Turn drei Optionen — bei <em>Bleiben</em> bleibst du in der Phase, bei <em>Weiter</em> gehst du zur nächsten, bei <em>Überspringen</em> überspringst du eine. Drei Fehler = Bericht unbrauchbar.'>
         Aufgabe: <em>„Refactor authMiddleware.ts auf Refresh-Tokens."</em> Pro Turn drei Optionen — bei <em>Bleiben</em> bleibst du in der Phase, bei <em>Weiter</em> gehst du zur nächsten, bei <em>Überspringen</em> überspringst du eine. Drei Bugs = kaputter Build.
@@ -1535,7 +1595,7 @@
       <!-- Modell-Legende -->
       <div class="options-rail" style="margin-top: 14px;">
         <div class="opt"><div class="opt-name">Haiku 4.5</div><div class="opt-tag">schnell · günstig · Volumen</div></div>
-        <div class="opt"><div class="opt-name">Sonnet 4.6</div><div class="opt-tag" data-nd='agentische Aufgaben · balanced'>agentisches Coding · balanced</div></div>
+        <div class="opt"><div class="opt-name">Sonnet 4.6</div><div class="opt-tag">agentische Aufgaben · ausgewogen</div></div>
         <div class="opt"><div class="opt-name">Opus 4.8</div><div class="opt-tag">tiefstes Reasoning</div></div>
         <div class="opt"><div class="opt-name">GPT-5.5</div><div class="opt-tag">multimodal · generalistisch</div></div>
         <div class="opt"><div class="opt-name">GPT-Codex</div><div class="opt-tag">Coding-Agent · OpenAIs Pendant zu Sonnet</div></div>
@@ -1649,7 +1709,7 @@
       <div class="quiz" data-quiz="awl" style="margin-top: 18px;">
 
         <div class="qitem" data-correct="lm">
-          <div class="qbody">Mitarbeiter fragt im Firmenchat: <em>„Was sagt DSGVO Art. 15?"</em> Modell antwortet einmalig, fertig.</div>
+          <div class="qbody">Mitarbeiter fragt im KI-Chat: <em>„Was sagt DSGVO Art. 15?"</em> Modell antwortet einmalig, fertig.</div>
           <div class="qchoices">
             <button class="qchoice" data-key="lm">LM</button>
             <button class="qchoice" data-key="workflow">Workflow</button>
@@ -1740,11 +1800,11 @@
         <span></span>
       </div>
 
-      <div class="eyebrow" data-nd='Echte Praxis — solo arbeiten → im Pair den EPEC-Loop fahren'>Echte Praxis — solo coden → im Pair den EPEC-Loop fahren</div>
-      <h2 class="title" style="font-size: 44px; margin-bottom: 6px;">Macht <span class="accent">einen EPEC-Loop</span> — zu zweit, mit echter Disziplin.</h2>
+      <div class="eyebrow" data-nd='Echte Praxis — im Pair den EPEC-Loop fahren'>Echte Praxis — im Pair den EPEC-Loop fahren</div>
+      <h2 class="title" style="font-size: 44px; margin-bottom: 6px;">Macht <span class="accent">einen EPEC-Loop</span> — zu zweit, Tor für Tor.</h2>
       <div style="display: flex; align-items: center; justify-content: space-between; gap: 28px; margin: 0;">
-        <p class="body" style="margin: 0; max-width: 1300px; font-size: 19px;" data-nd='15 Min Arbeiten · 5 Min Debrief. Einer schreibt, einer moderiert — und stoppt den Agenten, wenn er eine Phase überspringen will.'>
-          15 Min Coden · 5 Min Debrief. Einer schreibt, einer moderiert — und stoppt den Agenten, wenn er eine Phase überspringen will.
+        <p class="body" style="margin: 0; max-width: 1300px; font-size: 19px;" data-nd='15 Min Arbeiten · 5 Min Debrief. Einer schreibt, einer moderiert — und stoppt den User, wenn er eine Phase überspringen will.'>
+          15 Min Coden · 5 Min Debrief. Einer schreibt, einer moderiert — und stoppt den User, wenn er eine Phase überspringen will.
         </p>
         <button class="ex-eg-btn" type="button" data-eg-open="eg-epec" style="flex: none;">Beispiel-Runde ansehen</button>
       </div>
@@ -1771,8 +1831,8 @@
           <div class="r-tag">Rolle · User</div>
           <div class="r-name">User</div>
           <div class="r-sub">am Laptop · tippt</div>
-          <div class="r-body" data-nd='Öffnet die Aufgabe + den Agenten im Chat. Sagt laut, was passiert. Überspringt <strong>keine</strong> Phasen im Alleingang.'>
-            Öffnet ein Repo + Coding-Agent in der IDE. Sagt laut, was passiert. Überspringt <strong>keine</strong> Phasen im Alleingang.
+          <div class="r-body" data-nd='Wählt eine Aufgabe und öffnet den Agenten im Chat. Sagt laut, was passiert. Überspringt <strong>keine</strong> Phasen im Alleingang.'>
+            Öffnet ein Repo + Coding-Agent. Sagt laut, was passiert. Überspringt <strong>keine</strong> Phasen im Alleingang.
           </div>
         </div>
         <div class="role-card">
@@ -1789,7 +1849,7 @@
       <div class="loop-line" style="margin-top: 8px;">
         <span class="ll-tag">Pro Runde</span>
         <div class="ll-body">
-          <strong>Navigator nennt das nächste Tor</strong> <span class="ll-arrow">→</span> <strong>User lässt den Agenten die Phase erfüllen</strong> (Explore · Plan · Code · Commit) <span class="ll-arrow">→</span> Navigator prüft, bevor es weitergeht <span class="ll-arrow">→</span> wiederholen, bis der Task durch <strong>alle 4 Tore</strong> ist.
+          <strong>Navigator nennt das nächste Tor</strong> <span class="ll-arrow">→</span> <strong>User geht zum Folgeschritt</strong> (Explore <span class="ll-arrow">→</span> Plan <span class="ll-arrow">→</span> Code <span class="ll-arrow">→</span> Commit) <span class="ll-arrow">→</span> Navigator prüft, bevor es weitergeht <span class="ll-arrow">→</span> wiederholen, bis der Task durch <strong>alle 4 Tore</strong> ist.
         </div>
       </div>
 
@@ -1861,7 +1921,7 @@
               </div>
               <div class="task-row">
                 <div class="t-letter">E</div>
-                <div class="t-body" data-nd='<strong>Eigener Mini-Task</strong> — z.&nbsp;B. fehlende Angaben in einer Vorlage finden &amp; ergänzen.'><strong>Eigener Mini-Task</strong> aus dem aktuellen Repo — z.&nbsp;B. fehlende Übersetzungs-Keys finden &amp; ergänzen.</div>
+                <div class="t-body" data-nd='<strong>Eigener Task</strong> — z.&nbsp;B. fehlende Angaben in einer Vorlage finden &amp; ergänzen.'><strong>Eigener Task</strong> aus dem aktuellen Repo — z.&nbsp;B. fehlende Übersetzungs-Keys finden &amp; ergänzen.</div>
               </div>
             </div>
           </div>
@@ -1870,8 +1930,8 @@
             <div class="mono" style="font-size: 12px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;">Debrief · 5 min in der Runde</div>
             <div style="font-family: var(--serif); font-size: 22px; font-weight: 500; margin-top: 2px;">Drei Fragen</div>
             <ul style="font-size: 16px; line-height: 1.4; color: var(--ink-2); margin: 6px 0 0; padding-left: 22px;">
-              <li>Welche Phase war am <strong>schwersten durchzuhalten</strong>?</li>
-              <li>eine <strong>Phase zu überspringen</strong>?</li>
+              <li>Welche Phase war am <strong>schwierigsten</strong>?</li>
+              <li>Wolltet ihr eine <strong>Phase überspringen</strong>?</li>
               <li>Hat eure Aufgabe wirklich <strong>in einen Loop</strong> gepasst?</li>
             </ul>
                     </div>
@@ -1924,7 +1984,7 @@
           <div class="eg-aside">
             <div class="eg-setup">
               <div class="eg-setup-label">Die Aufgabe</div>
-              <div class="eg-setup-task"><strong>Statusbericht</strong> — aus verstreuten Notizen einen klaren Wochenbericht machen. In 15 Minuten machbar.</div>
+              <div class="eg-setup-task"><strong>Statusbericht</strong> — aus verstreuten Notizen einen klaren Wochenbericht machen.</div>
             </div>
             <div class="eg-learning">
               <div class="eg-learning-label">Das Learning</div>
@@ -2052,7 +2112,7 @@
           </div>
           <div class="cs-rule">
             <div class="r-when">Wenn mitten in Execute neue Anforderung kommt</div>
-            <div class="r-then"><strong>Nicht draufsatteln.</strong> Loop schließen, dann neuen Loop bei <em>Plan</em> aufmachen.</div>
+            <div class="r-then"><strong>Nicht dranhängen.</strong> Loop schließen, dann neuen Loop bei <em>Plan</em> aufmachen.</div>
           </div>
           <div class="cs-rule">
             <div class="r-when">Wenn der Loop schon 30 Min läuft</div>
